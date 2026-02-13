@@ -484,6 +484,85 @@ export default function UndergraduateTab() {
           </h2>
         </div>
 
+        {/* Information Section */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+          }}
+        >
+          {/* Info Box 1 */}
+          <div
+            style={{
+              display: 'flex',
+              gap: '24px',
+              paddingBottom: '20px',
+              borderBottom: '1px solid #e0e0e0ff',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#4e535bff',
+                fontFamily: 'Pretendard',
+                margin: '0',
+                width: '60px',
+                flexShrink: 0,
+              }}
+            >
+              트랙
+            </p>
+            <p
+              style={{
+                fontSize: '18px',
+                fontWeight: '400',
+                color: '#4e535bff',
+                fontFamily: 'Pretendard',
+                margin: '0',
+                lineHeight: 1.6,
+              }}
+            >
+              전공교육과정을 기반으로 한 전문 인재육성 교육커리큘럼, 진출분야 및 역량강화를 위한 모듈과 교과목으로 구성된 전공로드맵
+            </p>
+          </div>
+
+          {/* Info Box 2 */}
+          <div
+            style={{
+              display: 'flex',
+              gap: '24px',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#4e535bff',
+                fontFamily: 'Pretendard',
+                margin: '0',
+                width: '60px',
+                flexShrink: 0,
+              }}
+            >
+              모듈
+            </p>
+            <p
+              style={{
+                fontSize: '18px',
+                fontWeight: '400',
+                color: '#4e535bff',
+                fontFamily: 'Pretendard',
+                margin: '0',
+                lineHeight: 1.6,
+              }}
+            >
+              공통된 주제의 교과목으로 구성된 집합체
+            </p>
+          </div>
+        </div>
+
         {/* First Table Header (Track Table) */}
         <div
           style={{
@@ -860,85 +939,6 @@ export default function UndergraduateTab() {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Information Section */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-          }}
-        >
-          {/* Info Box 1 */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '24px',
-              paddingBottom: '20px',
-              borderBottom: '1px solid #e0e0e0ff',
-            }}
-          >
-            <p
-              style={{
-                fontSize: '18px',
-                fontWeight: '600',
-                color: '#4e535bff',
-                fontFamily: 'Pretendard',
-                margin: '0',
-                width: '60px',
-                flexShrink: 0,
-              }}
-            >
-              트랙
-            </p>
-            <p
-              style={{
-                fontSize: '18px',
-                fontWeight: '400',
-                color: '#4e535bff',
-                fontFamily: 'Pretendard',
-                margin: '0',
-                lineHeight: 1.6,
-              }}
-            >
-              전공교육과정을 기반으로 한 전문 인재육성 교육커리큘럼, 진출분야 및 역량강화를 위한 모듈과 교과목으로 구성된 전공로드맵
-            </p>
-          </div>
-
-          {/* Info Box 2 */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '24px',
-            }}
-          >
-            <p
-              style={{
-                fontSize: '18px',
-                fontWeight: '600',
-                color: '#4e535bff',
-                fontFamily: 'Pretendard',
-                margin: '0',
-                width: '60px',
-                flexShrink: 0,
-              }}
-            >
-              모듈
-            </p>
-            <p
-              style={{
-                fontSize: '18px',
-                fontWeight: '400',
-                color: '#4e535bff',
-                fontFamily: 'Pretendard',
-                margin: '0',
-                lineHeight: 1.6,
-              }}
-            >
-              공통된 주제의 교과목으로 구성된 집합체
-            </p>
-          </div>
         </div>
       </div>
     </div>
