@@ -113,6 +113,8 @@ export default function OurPeopleTab() {
           gap: '10px',
           alignItems: 'flex-start',
           width: '100%',
+          paddingBottom: '60px',
+          borderBottom: '1px solid #000000ff',
         }}
       >
         <h2
@@ -228,6 +230,8 @@ export default function OurPeopleTab() {
           gap: '10px',
           alignItems: 'flex-start',
           width: '100%',
+          paddingBottom: '60px',
+          borderBottom: '1px solid #000000ff',
         }}
       >
         <h2
