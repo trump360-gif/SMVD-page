@@ -458,7 +458,7 @@ export default function UndergraduateTab() {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '40px',
+          gap: '0px',
         }}
       >
         {/* Section Title */}
@@ -489,7 +489,8 @@ export default function UndergraduateTab() {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '20px',
+            gap: '0px',
+            marginTop: '40px',
           }}
         >
           {/* Info Box 1 */}
@@ -498,7 +499,6 @@ export default function UndergraduateTab() {
               display: 'flex',
               gap: '24px',
               paddingBottom: '20px',
-              borderBottom: '1px solid #e0e0e0ff',
             }}
           >
             <p
@@ -567,29 +567,28 @@ export default function UndergraduateTab() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 2fr 1fr 0.8fr',
-            gap: '0',
+            gridTemplateColumns: '1.2fr 1.5fr 1fr 0.8fr',
+            gap: '20px',
             width: '100%',
             marginBottom: '0',
+            marginTop: '40px',
           }}
         >
           <div
             style={{
-              padding: '12px 0',
-              borderBottom: '1px solid #000000ff',
+              padding: '0px 0 4px 0',
               fontSize: '18px',
               fontWeight: '700',
               color: '#000000ff',
               fontFamily: 'Pretendard',
-              textAlign: 'center',
+              textAlign: 'left',
             }}
           >
-            트랙
+            트랙명
           </div>
           <div
             style={{
-              padding: '12px 0',
-              borderBottom: '1px solid #000000ff',
+              padding: '0px 0 4px 0',
               fontSize: '18px',
               fontWeight: '700',
               color: '#000000ff',
@@ -601,29 +600,27 @@ export default function UndergraduateTab() {
           </div>
           <div
             style={{
-              padding: '12px 0',
-              borderBottom: '1px solid #000000ff',
+              padding: '0px 0 4px 0',
               fontSize: '18px',
               fontWeight: '700',
               color: '#000000ff',
               fontFamily: 'Pretendard',
-              textAlign: 'center',
+              textAlign: 'left',
             }}
           >
             이수기준
           </div>
           <div
             style={{
-              padding: '12px 0',
-              borderBottom: '1px solid #000000ff',
+              padding: '0px 0 4px 0',
               fontSize: '18px',
               fontWeight: '700',
               color: '#000000ff',
               fontFamily: 'Pretendard',
-              textAlign: 'center',
+              textAlign: 'left',
             }}
           >
-            기초학점
+            기준학점
           </div>
         </div>
 
@@ -644,10 +641,10 @@ export default function UndergraduateTab() {
               key={index}
               style={{
                 display: 'grid',
-                gridTemplateColumns: '1fr 2fr 1fr 0.8fr',
-                gap: '0',
+                gridTemplateColumns: '1.2fr 1.5fr 1fr 0.8fr',
+                gap: '20px',
                 alignItems: 'center',
-                minHeight: '100px',
+                minHeight: '80px',
                 borderBottom: '1px solid #000000ff',
                 borderTop: '1px solid #000000ff',
                 boxSizing: 'border-box',
@@ -679,7 +676,7 @@ export default function UndergraduateTab() {
                     color: '#353030ff',
                     fontFamily: 'Pretendard',
                     margin: '0',
-                    textAlign: 'center',
+                    textAlign: 'left',
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'keep-all',
                     lineHeight: 1.6,
@@ -722,7 +719,7 @@ export default function UndergraduateTab() {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
+                  justifyContent: 'flex-start',
                   height: '100%',
                   padding: '20px 12px',
                   borderRight: 'none',
@@ -735,9 +732,9 @@ export default function UndergraduateTab() {
                     color: '#353030ff',
                     fontFamily: 'Pretendard',
                     margin: '0',
-                    textAlign: 'center',
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'keep-all',
+                    textAlign: 'left',
+                    whiteSpace: 'nowrap',
+                    wordBreak: 'break-word',
                     lineHeight: 1.6,
                   }}
                 >
@@ -750,7 +747,7 @@ export default function UndergraduateTab() {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
+                  justifyContent: 'flex-start',
                   height: '100%',
                   padding: '20px 12px',
                 }}
@@ -762,7 +759,7 @@ export default function UndergraduateTab() {
                     color: '#353030ff',
                     fontFamily: 'Pretendard',
                     margin: '0',
-                    textAlign: 'center',
+                    textAlign: 'left',
                   }}
                 >
                   {module.credits}
@@ -777,7 +774,7 @@ export default function UndergraduateTab() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: '343px 685px 332px',
+            gridTemplateColumns: '1fr 1.5fr 1fr',
             gap: '0',
             width: '100%',
             marginBottom: '0',
@@ -838,9 +835,10 @@ export default function UndergraduateTab() {
               key={index}
               style={{
                 display: 'grid',
-                gridTemplateColumns: '343px 685px 332px',
+                gridTemplateColumns: '1fr 1.5fr 1fr',
                 gap: '0',
-                alignItems: 'start',
+                alignItems: 'center',
+                minHeight: '120px',
                 borderBottom: '1px solid #000000ff',
                 borderTop: '1px solid #000000ff',
                 boxSizing: 'border-box',
@@ -854,7 +852,7 @@ export default function UndergraduateTab() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '10px',
-                  padding: '20px 0',
+                  padding: '0px',
                   height: '100%',
                 }}
               >
@@ -890,7 +888,7 @@ export default function UndergraduateTab() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '20px 0',
+                  padding: '0px',
                   height: '100%',
                 }}
               >
@@ -915,7 +913,7 @@ export default function UndergraduateTab() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '20px 0',
+                  padding: '0px',
                   height: '100%',
                 }}
               >
