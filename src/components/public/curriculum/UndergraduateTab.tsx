@@ -141,8 +141,28 @@ const undergraduateModules: GraduateModule[] = [
   },
 ];
 
+interface FilterOption {
+  label: string;
+  value: string;
+  color?: string;
+}
+
+const classificationOptions: FilterOption[] = [
+  { label: '전공필수', value: 'required' },
+  { label: '전공선택', value: 'elective' },
+];
+
+const trackOptions: FilterOption[] = [
+  { label: '브랜드\n커뮤니케이션 디자인', value: 'branding', color: '#489bffff' },
+  { label: 'AI 디지털\n마케팅\n디자인', value: 'ai_marketing', color: '#ffcc54ff' },
+  { label: 'XR & 영상\n디자인', value: 'xr_video', color: '#a24affff' },
+  { label: 'UX 디자인', value: 'ux', color: '#ff5f5aff' },
+  { label: '공통과목', value: 'common', color: '#1abc9cff' },
+];
+
 export default function UndergraduateTab() {
-  const [, ] = useState<string>('');
+  const [checkedClassification, setCheckedClassification] = useState<string>('required');
+  const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
 
   return (
     <div
@@ -169,38 +189,111 @@ export default function UndergraduateTab() {
             flexWrap: 'wrap',
             paddingBottom: '20px',
             borderBottom: '1px solid #e0e0e0ff',
+            alignItems: 'flex-start',
           }}
         >
-          <button
+          {/* Classification Filter */}
+          <div
             style={{
-              fontSize: '14px',
-              fontWeight: '500',
-              fontFamily: 'Pretendard',
-              color: '#141414ff',
-              backgroundColor: '#ffffffff',
-              border: '1px solid #141414ff',
-              padding: '8px 16px',
-              cursor: 'pointer',
-              borderRadius: '4px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px',
             }}
           >
-            분류
-          </button>
-          <button
+            {classificationOptions.map((option) => (
+              <label
+                key={option.value}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  fontWeight: '500',
+                  fontFamily: 'Pretendard',
+                  color: '#000000ff',
+                  margin: '0',
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={checkedClassification === option.value}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setCheckedClassification(option.value);
+                    }
+                  }}
+                  style={{
+                    width: '14px',
+                    height: '14px',
+                    cursor: 'pointer',
+                    accentColor: '#000000ff',
+                  }}
+                />
+                {option.label}
+              </label>
+            ))}
+          </div>
+
+          {/* Track Filter */}
+          <div
             style={{
-              fontSize: '14px',
-              fontWeight: '500',
-              fontFamily: 'Pretendard',
-              color: '#141414ff',
-              backgroundColor: '#ffffffff',
-              border: '1px solid #141414ff',
-              padding: '8px 16px',
-              cursor: 'pointer',
-              borderRadius: '4px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, auto)',
+              gap: '20px',
+              marginLeft: '40px',
             }}
           >
-            트랙
-          </button>
+            {trackOptions.map((option) => (
+              <div
+                key={option.value}
+                onClick={() => {
+                  setSelectedTracks((prev) =>
+                    prev.includes(option.value)
+                      ? prev.filter((v) => v !== option.value)
+                      : [...prev, option.value]
+                  );
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  cursor: 'pointer',
+                  padding: '8px 12px',
+                  borderRadius: '4px',
+                  backgroundColor: selectedTracks.includes(option.value)
+                    ? option.color
+                    : '#ffffffff',
+                  border: `1px solid ${option.color}`,
+                }}
+              >
+                <div
+                  style={{
+                    width: '14px',
+                    height: '14px',
+                    backgroundColor: option.color,
+                    flexShrink: 0,
+                  }}
+                />
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    fontFamily: 'Pretendard',
+                    color: selectedTracks.includes(option.value)
+                      ? '#ffffffff'
+                      : '#000000ff',
+                    margin: '0',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'keep-all',
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {option.label}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Semesters Grid - 4 columns */}
