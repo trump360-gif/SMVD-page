@@ -61,7 +61,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                 (e.currentTarget as HTMLElement).style.color = '#7b828eff';
               }}
             >
-              Archive
+              Achieve
             </button>
           </Link>
           <span
