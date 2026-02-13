@@ -685,8 +685,6 @@ export default function UndergraduateTab() {
                     lineHeight: 1.6,
                   }}
                 >
-                  {module.name}
-                  <br />
                   {module.track}
                 </p>
               </div>
