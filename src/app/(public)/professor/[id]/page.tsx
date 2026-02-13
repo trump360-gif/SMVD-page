@@ -11,7 +11,7 @@ interface Professor {
   office: string;
   email: string[];
   phone: string;
-  homepage: string;
+  homepage?: string;
   courses: {
     undergraduate: string[];
     graduate: string[];
@@ -33,7 +33,6 @@ const professorsData: Record<string, Professor> = {
     office: '미술대학 711호',
     email: ['zoneidea@sookmyung.ac.kr', 'h7023@hanmail.net'],
     phone: '02-710-9688',
-    homepage: 'https://smvd.sookmyung.ac.kr/?page_id=1033',
     courses: {
       undergraduate: ['브랜드디자인', '광고디자인', '졸업프로젝트스튜디오'],
       graduate: ['시각영상디자인'],
@@ -62,11 +61,11 @@ const professorsData: Record<string, Professor> = {
     name: '김기영',
     badge: 'Video & Marketing',
     office: '미술대학 702호',
-    email: ['kiyoungkim@sookmyung.ac.kr'],
-    phone: '+82-2-710-9683',
+    email: ['juice@sookmyung.ac.kr'],
+    phone: '02-710-9683',
     homepage: 'https://smvd.sookmyung.ac.kr/?page_id=1033',
     courses: {
-      undergraduate: ['마케팅디자인', '졸업프로젝트스튜디오'],
+      undergraduate: ['영상콘텐츠디자인', '유튜브영상디자인', '졸업프로젝트스튜디오'],
       graduate: ['시각영상디자인'],
     },
     biography: {
@@ -79,7 +78,10 @@ const professorsData: Record<string, Professor> = {
       experience: [
         '• (주)제일기획 19기 공채입사',
         '• 삼성전자, 풀무원, 맥심커피 업무수행',
+        '• (주) 하쿠호도제일 입사',
         '• SPC그룹 파리바게트 디자인고문',
+        '• 국가브랜드 위원회, 정부통합디자인 GI(Government Identity) 전문위원',
+        '• 신세계그룹 브랜드전략실 고문',
       ],
     },
     profileImage: '/images/people/kim-kiyoung.png',
@@ -90,8 +92,7 @@ const professorsData: Record<string, Professor> = {
     badge: 'User Experience',
     office: '미술대학 702호',
     email: ['jisun.lee@sookmyung.ac.kr'],
-    phone: '+82-2-710-9684',
-    homepage: 'https://smvd.sookmyung.ac.kr/?page_id=1034',
+    phone: '02-710-9684',
     courses: {
       undergraduate: ['사용자경험디자인', '졸업프로젝트스튜디오'],
       graduate: ['시각영상디자인'],
@@ -117,8 +118,7 @@ const professorsData: Record<string, Professor> = {
     badge: 'User Experience',
     office: '미술대학 702호',
     email: ['youmi.na@sookmyung.ac.kr'],
-    phone: '+82-2-710-9685',
-    homepage: 'https://smvd.sookmyung.ac.kr/?page_id=1035',
+    phone: '02-710-9685',
     courses: {
       undergraduate: ['사용자경험디자인', '졸업프로젝트스튜디오'],
       graduate: ['시각영상디자인'],
@@ -428,47 +428,54 @@ export default function ProfessorDetailPage() {
               </p>
             </div>
 
-            {/* Phone */}
-            <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
-              <div
-                style={{
-                  backgroundColor: '#ebecf0ff',
-                  padding: '0 12px',
-                  borderRadius: '0px',
-                  width: '80px',
-                  flexShrink: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  minHeight: '28px',
-                }}
-              >
-                <span
+            {/* Homepage */}
+            {professor.homepage && (
+              <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+                <div
                   style={{
-                    fontSize: '14px',
-                    fontWeight: 'normal',
-                    color: '#141414ff',
-                    fontFamily: 'Helvetica',
-                    lineHeight: 1.5,
+                    backgroundColor: '#ebecf0ff',
+                    padding: '0 12px',
+                    borderRadius: '0px',
+                    width: '80px',
+                    flexShrink: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minHeight: '28px',
                   }}
                 >
-                  연락처
-                </span>
+                  <span
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 'normal',
+                      color: '#141414ff',
+                      fontFamily: 'Helvetica',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    홈페이지
+                  </span>
+                </div>
+                <a
+                  href={professor.homepage}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: 'normal',
+                    color: '#141414ff',
+                    fontFamily: 'Inter',
+                    margin: '0',
+                    letterSpacing: '-0.44px',
+                    lineHeight: 1.5,
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {professor.homepage}
+                </a>
               </div>
-              <p
-                style={{
-                  fontSize: '18px',
-                  fontWeight: 'normal',
-                  color: '#141414ff',
-                  fontFamily: 'Inter',
-                  margin: '0',
-                  letterSpacing: '-0.44px',
-                  lineHeight: 1.5,
-                }}
-              >
-                {professor.phone}
-              </p>
-            </div>
+            )}
 
             {/* Courses */}
             <div style={{ display: 'flex', gap: '30px', alignItems: 'flex-start' }}>
