@@ -1,0 +1,177 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - link [ref=e4] [cursor=pointer]:
+        - /url: /
+        - img [ref=e5]
+      - navigation [ref=e23]:
+        - link "About" [ref=e24] [cursor=pointer]:
+          - /url: /about
+        - link "Curriculum" [ref=e25] [cursor=pointer]:
+          - /url: /curriculum
+        - link "Work" [ref=e26] [cursor=pointer]:
+          - /url: /work
+        - link "News&Event" [ref=e27] [cursor=pointer]:
+          - /url: /news
+    - generic [ref=e30]:
+      - generic [ref=e31]:
+        - heading "Curriculum" [level=2] [ref=e32]
+        - generic [ref=e33]:
+          - button "Undergraduate" [ref=e34] [cursor=pointer]
+          - button "Graduate" [ref=e35] [cursor=pointer]
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - paragraph [ref=e40]: 분류
+              - generic [ref=e41]:
+                - generic [ref=e42] [cursor=pointer]:
+                  - checkbox "전공필수" [checked] [disabled] [ref=e43]
+                  - text: 전공필수
+                - generic [ref=e44] [cursor=pointer]:
+                  - checkbox "전공선택" [disabled] [ref=e45]
+                  - text: 전공선택
+            - generic [ref=e46]:
+              - paragraph [ref=e47]: 트랙
+              - generic [ref=e48]:
+                - paragraph [ref=e51]: 브랜드 커뮤니케이션 디자인
+                - paragraph [ref=e54]: AI 디지털 마케팅 디자인
+                - paragraph [ref=e57]: UX 디자인
+                - paragraph [ref=e60]: XR & 영상 디자인
+                - paragraph [ref=e63]: 공통과목
+          - generic [ref=e64]:
+            - generic [ref=e65]:
+              - heading "1학년 1학기" [level=3] [ref=e66]
+              - generic [ref=e67]:
+                - paragraph [ref=e70]: 기초그래픽디자인I
+                - paragraph [ref=e73]: 기초영상디자인I
+                - paragraph [ref=e76]: 일러스트레이션과스토리텔링디자인 I
+            - generic [ref=e77]:
+              - heading "1학년 2학기" [level=3] [ref=e78]
+              - generic [ref=e79]:
+                - paragraph [ref=e82]: 기초그래픽디자인II
+                - paragraph [ref=e85]: 기초영상디자인II
+                - paragraph [ref=e88]: 일러스트레이션과스토리텔링디자인 II
+                - paragraph [ref=e91]: 타이포그래피디자인I
+                - paragraph [ref=e94]: 디자인과문화
+            - generic [ref=e95]:
+              - heading "2학년 1학기" [level=3] [ref=e96]
+              - generic [ref=e97]:
+                - paragraph [ref=e100]: AI창업디자인I
+                - paragraph [ref=e103]: 브랜드디자인I
+                - paragraph [ref=e106]: 데이터시각화와정보보디자인I
+                - paragraph [ref=e109]: 모션디자인I
+                - paragraph [ref=e112]: 애니메이션I
+                - paragraph [ref=e115]: 타이포그래피디자인I
+                - paragraph [ref=e118]: 마케팅디자인
+            - generic [ref=e119]:
+              - heading "2학년 2학기" [level=3] [ref=e120]
+              - generic [ref=e121]:
+                - paragraph [ref=e124]: AI창업디자인II
+                - paragraph [ref=e127]: 브랜드디자인II
+                - paragraph [ref=e130]: 데이터시각화와정보보디자인II
+                - paragraph [ref=e133]: 모션디자인III
+                - paragraph [ref=e136]: 애니메이션II
+                - paragraph [ref=e139]: 디자인심리학
+            - generic [ref=e140]:
+              - heading "3학년 1학기" [level=3] [ref=e141]
+              - generic [ref=e142]:
+                - paragraph [ref=e145]: 광고디자인I
+                - paragraph [ref=e148]: 사용자경험디자인I
+                - paragraph [ref=e151]: 편집디자인I
+                - paragraph [ref=e154]: 유튜브영상디자인I
+                - paragraph [ref=e157]: AI메타버스디자인I
+            - generic [ref=e158]:
+              - heading "3학년 2학기" [level=3] [ref=e159]
+              - generic [ref=e160]:
+                - paragraph [ref=e163]: 광고디자인II
+                - paragraph [ref=e166]: 사용자경험디자인II
+                - paragraph [ref=e169]: 편집디자인II
+                - paragraph [ref=e172]: 유튜브영상디자인II
+                - paragraph [ref=e175]: AI메타버스디자인II
+            - generic [ref=e176]:
+              - heading "4학년 1학기" [level=3] [ref=e177]
+              - paragraph [ref=e181]: 졸업프로젝트스튜디오 I
+            - generic [ref=e182]:
+              - heading "4학년 2학기" [level=3] [ref=e183]
+              - paragraph [ref=e187]: 졸업프로젝트스튜디오 II
+        - generic [ref=e188]:
+          - heading "트랙별 과목 및 이수기준" [level=2] [ref=e190]
+          - generic [ref=e191]:
+            - generic [ref=e192]:
+              - paragraph [ref=e193]: 트랙
+              - paragraph [ref=e194]: 전공교육과정을 기반으로 한 전문 인재육성 교육커리큘럼, 진출분야 및 역량강화를 위한 모듈과 교과목으로 구성된 전공로드맵
+            - generic [ref=e195]:
+              - paragraph [ref=e196]: 모듈
+              - paragraph [ref=e197]: 공통된 주제의 교과목으로 구성된 집합체
+          - generic [ref=e198]:
+            - generic [ref=e199]: 트랙명
+            - generic [ref=e200]: 해당과목
+            - generic [ref=e201]: 이수기준
+            - generic [ref=e202]: 기초학점
+          - generic [ref=e203]:
+            - generic [ref=e204]:
+              - paragraph [ref=e207]: 브랜드 커뮤니케이션 디자인
+              - paragraph [ref=e209]: 타이포그래피디자인Ⅰ,Ⅱ 브랜드디자인Ⅰ,Ⅱ 광고디자인Ⅰ,Ⅱ 편집디자인Ⅰ
+              - paragraph [ref=e211]: 모듈 A 필수 이수, 트랙 내 교과 필수 이수
+              - paragraph [ref=e213]: "16"
+            - generic [ref=e214]:
+              - paragraph [ref=e217]: AI 디지털 마케팅 디자인
+              - paragraph [ref=e219]: 일러스트레이션과스토리텔링디자인Ⅰ,Ⅱ AI창업디자인Ⅰ,Ⅱ 마케팅디자인 유튜브영상디자인Ⅰ,Ⅱ
+              - paragraph [ref=e221]: 모듈 A 필수 이수, 트랙 내 교과 필수 이수
+              - paragraph [ref=e223]: "16"
+            - generic [ref=e224]:
+              - paragraph [ref=e227]: UX 디자인
+              - paragraph [ref=e229]: 기초그래픽디자인Ⅰ,Ⅱ 데이터시각화와정보디자인Ⅰ,Ⅱ 디자인심리학 사용자경험디자인Ⅰ,Ⅱ
+              - paragraph [ref=e231]: 모듈 A 필수 이수, 트랙 내 교과 필수 이수
+              - paragraph [ref=e233]: "16"
+            - generic [ref=e234]:
+              - paragraph [ref=e237]: XR & 영상 디자인
+              - paragraph [ref=e239]: 기초영상디자인Ⅰ,Ⅱ 모션디자인Ⅰ,Ⅱ 에니메이션 AI메타버스디자인Ⅰ,Ⅱ
+              - paragraph [ref=e241]: 모듈 A 필수 이수, 트랙 내 교과 필수 이수
+              - paragraph [ref=e243]: "16"
+          - generic [ref=e244]:
+            - generic [ref=e245]: 구분
+            - generic [ref=e246]: 설명
+            - generic [ref=e247]: 해당과목
+          - generic [ref=e248]:
+            - generic [ref=e249]:
+              - generic [ref=e250]:
+                - paragraph [ref=e251]: 모듈 A
+                - paragraph [ref=e252]: 브랜드 디자인
+              - paragraph [ref=e254]: 시각디자인의 기본이되는 그래픽 커뮤니케이션 영역으로, 국내외 사례 및 현 디자인의 트랜드를 이해하고 프로젝트에 맞는 창의적 아이디어를 도출하여 자기화한다. 향후 각자의 진로 방향을 모색하여 디자인프로세스를 배우고 포트폴리오화 시키는 과정이다.
+              - paragraph [ref=e256]: 브랜드디자인I, II 광고디자인I, II
+            - generic [ref=e257]:
+              - generic [ref=e258]:
+                - paragraph [ref=e259]: 모듈 B
+                - paragraph [ref=e260]: 브랜드 커뮤니케이션 디자인
+              - paragraph [ref=e262]: 인스타, 유튜브 중심의 개인이 발산하는 SNS가 시작영상의 핵심으로 자신을 브랜딩하고 크리에이티브한 마케팅 컨텐츠 제작을 연구한다.
+              - paragraph [ref=e264]: AI창업디자인I, II 유튜브영상디자인I, II
+            - generic [ref=e265]:
+              - generic [ref=e266]:
+                - paragraph [ref=e267]: 모듈 C
+                - paragraph [ref=e268]: UX 디자인
+              - paragraph [ref=e270]: 데이터 수집, 분석을 통한 데이터 시각화와 정보 디자인을 진행하는 이 위에 디자인 사고를 바탕으로하는 AI를 접목한 사용장 경험 설계 문제 해결을 위해 구현 되는 서비스 및 제품 컨텐츠를 웹, 모바일, 스마트 기기, 게임, 메타버스 등의 새로운 미디어 상의 UX / UI / 인터랙션 디자인은 능력을 갖춘다.
+              - paragraph [ref=e272]: 데이터시각화정보디자인I, II 사용자경험디자인I, II
+            - generic [ref=e273]:
+              - generic [ref=e274]:
+                - paragraph [ref=e275]: 모듈 D
+                - paragraph [ref=e276]: 영상 디자인
+              - paragraph [ref=e278]: 기초 영상디자인부터 모션디자인 심화까지 단계적으로 다루며, 국내·외 사례 분석 프로젝트 중심 수업을 통해 현대 영상과 모션디자인의 흐름을 이해하고 창의적 문제 해결 능력 기른다. 학생은 자신만의 시각 언어를 구축하고 포트폴리오로 작성할 수 있는 실무
+              - paragraph [ref=e280]: 기초영상디자인I, II 모션디자인I, II
+    - contentinfo [ref=e281]:
+      - generic [ref=e282]:
+        - generic [ref=e283]:
+          - img "logo" [ref=e284]
+          - generic [ref=e285]:
+            - paragraph [ref=e286]: 숙명여자대학교 미술대학 시각영상디자인학과
+            - paragraph [ref=e287]: University of Sookmyung Women, Visual Media Design
+        - generic [ref=e288]:
+          - paragraph [ref=e289]: Contact
+          - paragraph [ref=e290]:
+            - text: +82 (0)2 710 9958
+            - text: 서울 특별시 용산구 청파로 47길 100 숙명여자대학교
+            - text: 시각영상디자인과 (미술대학 201호)
+  - button "Open Next.js Dev Tools" [ref=e296] [cursor=pointer]:
+    - img [ref=e297]
+  - alert [ref=e300]
