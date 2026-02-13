@@ -1,0 +1,322 @@
+'use client';
+
+import { useState } from 'react';
+
+interface NewsItem {
+  id: string;
+  category: string;
+  date: string;
+  title: string;
+  description: string;
+  image: string;
+}
+
+const newsItems: NewsItem[] = [
+  {
+    id: '1',
+    category: 'Notice',
+    date: '2025-01-05',
+    title: '미술대학 2024년도 학생경비 집행내역 공개',
+    description: '',
+    image: '/Group-27.svg',
+  },
+  {
+    id: '2',
+    category: 'Notice',
+    date: '2025-01-05',
+    title: '디자인학과(박사) 2024년도 학생경비 집행내역 공개',
+    description: '',
+    image: '/Group-27.svg',
+  },
+  {
+    id: '3',
+    category: 'Notice',
+    date: '2025-01-05',
+    title: '시각영상디자인학과(석사) 2024년도 학생경비 집행내역 공개',
+    description: '',
+    image: '/Group-27.svg',
+  },
+  {
+    id: '4',
+    category: 'Notice',
+    date: '2025-01-05',
+    title: '시각영상디자인학과 2024년도 학생경비 집행내역 공개',
+    description: '',
+    image: '/Group-27.svg',
+  },
+  {
+    id: '5',
+    category: 'Event',
+    date: '2025-01-05',
+    title: '2024 시각·영상디자인과 졸업전시회',
+    description: '이번 전시 주제인 "Ready, Set, Go!" KICK OFF는 들을 제기 한전을 넘어 새로운 도약을 준비하는 결심을 담고 있습니다...',
+    image: '/images/news/Image-1.png',
+  },
+  {
+    id: '6',
+    category: 'Event',
+    date: '2025-01-05',
+    title: '2024 시각·영상디자인과 동문의 밤',
+    description: '2024년 10월 28일, 백주년기념관 한상은 라운지에서 2024 시각·영상디자인과 동문의 밤 행사를 진행했습니다. 1부에는 동문 특강을, 2부에는 황순선 교수님의 서프라이즈 퇴임식을 진행했습니다...',
+    image: '/images/news/Image.png',
+  },
+  {
+    id: '7',
+    category: 'Notice',
+    date: '2025-01-05',
+    title: '학생경비 집행 내역',
+    description: '',
+    image: '/Group-27.svg',
+  },
+  {
+    id: '8',
+    category: 'Notice',
+    date: '2025-01-05',
+    title: '[ 시각영상디자인과(박사) 2023 학생경비 집행내역 공개 ]',
+    description: '',
+    image: '/Group-27.svg',
+  },
+  {
+    id: '9',
+    category: 'Notice',
+    date: '2025-01-05',
+    title: '[ 시각영상디자인과(석사) 2023 학생경비 집행내역 공개 ]',
+    description: '',
+    image: '/Group-27.svg',
+  },
+  {
+    id: '10',
+    category: 'Notice',
+    date: '2025-01-05',
+    title: '[졸업] 재학생 졸업학점 이수완환 확인 및 과목 정리 실시',
+    description: '',
+    image: '/Group-27.svg',
+  },
+];
+
+const categories = ['ALL', 'Notice', 'Event', 'Awards', 'Recruiting'];
+
+export default function NewsEventArchive() {
+  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+
+  // Filter items based on selected category
+  const displayedItems =
+    selectedCategory === 'ALL'
+      ? newsItems
+      : newsItems.filter((item) => item.category === selectedCategory);
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+  };
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '40px',
+        width: '100%',
+      }}
+    >
+      {/* Title and Filter Tabs */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
+          paddingBottom: '20px',
+          borderBottom: '2px solid #141414ff',
+        }}
+      >
+        <h1
+          style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            fontFamily: 'Satoshi',
+            color: '#1b1d1fff',
+            margin: '0',
+          }}
+        >
+          News&Event
+        </h1>
+
+        {/* Filter Tabs */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '20px',
+          }}
+        >
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => handleCategoryChange(category)}
+              style={{
+                fontSize: '16px',
+                fontWeight: selectedCategory === category ? '600' : '400',
+                fontFamily: 'Satoshi',
+                color:
+                  selectedCategory === category ? '#141414ff' : '#7b828eff',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                borderBottom:
+                  selectedCategory === category
+                    ? '2px solid #141414ff'
+                    : 'none',
+                paddingBottom: '4px',
+              }}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Cards Grid */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '40px',
+          width: '100%',
+        }}
+      >
+        {displayedItems.map((item) => (
+          <div
+            key={item.id}
+            style={{
+              display: 'flex',
+              gap: '20px',
+              paddingBottom: '20px',
+              borderBottom: '1px solid #d6d8dcff',
+              cursor: 'pointer',
+              transition: 'transform 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.transform =
+                'translateY(-4px)';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.transform =
+                'translateY(0)';
+            }}
+          >
+            {/* Thumbnail Image */}
+            <div
+              style={{
+                width: '160px',
+                height: '160px',
+                minWidth: '160px',
+                backgroundColor: '#ebecf0ff',
+                borderRadius: '4px',
+                overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <img
+                src={item.image}
+                alt={item.title}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
+              />
+            </div>
+
+            {/* Content */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                flex: 1,
+              }}
+            >
+              {/* Category and Date */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                {/* Category Badge */}
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    fontFamily: 'Satoshi',
+                    color: '#141414ff',
+                    backgroundColor: '#ebecf0ff',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    minWidth: 'fit-content',
+                  }}
+                >
+                  {item.category}
+                </span>
+
+                {/* Date */}
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    fontFamily: 'Pretendard',
+                    color: '#626872ff',
+                    letterSpacing: '-0.14px',
+                  }}
+                >
+                  {item.date}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h3
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  fontFamily: 'Pretendard',
+                  color: '#141414ff',
+                  margin: '0',
+                  lineHeight: '1.45',
+                  letterSpacing: '-0.2px',
+                }}
+              >
+                {item.title}
+              </h3>
+
+              {/* Description */}
+              {item.description && (
+                <p
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    fontFamily: 'Pretendard',
+                    color: '#7b828eff',
+                    margin: '0',
+                    lineHeight: '1.45',
+                    letterSpacing: '-0.16px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                  }}
+                >
+                  {item.description}
+                </p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  );
+}
