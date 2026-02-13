@@ -167,12 +167,12 @@ export default function NewsEventDetailContent({ itemId }: { itemId: string }) {
                   fontSize: '16px',
                   fontWeight: '600',
                   fontFamily: 'Satoshi',
-                  color: '#141414ff',
+                  color: '#a0a6adff',
                   backgroundColor: 'transparent',
                   border: 'none',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
-                  borderBottom: '2px solid #141414ff',
+                  borderBottom: 'none',
                   paddingBottom: '4px',
                 }}
               >
