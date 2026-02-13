@@ -21,7 +21,6 @@ export default function CurriculumTab() {
         style={{
           display: 'flex',
           flexDirection: 'row',
-          gap: '1125px',
           alignItems: 'flex-start',
           justifyContent: 'space-between',
           width: '100%',
@@ -81,9 +80,10 @@ export default function CurriculumTab() {
               cursor: 'pointer',
               margin: '0',
               transition: 'color 0.3s ease',
+              whiteSpace: 'nowrap',
             }}
           >
-            Graduate
+            Graduate School
           </button>
         </div>
       </div>
