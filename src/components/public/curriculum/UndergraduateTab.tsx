@@ -941,7 +941,7 @@ export default function UndergraduateTab() {
       <div
         style={{
           textAlign: 'right',
-          marginTop: '0',
+          marginTop: '-60px',
           padding: '0',
         }}
       >
