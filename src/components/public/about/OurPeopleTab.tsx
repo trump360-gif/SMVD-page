@@ -262,7 +262,7 @@ export default function OurPeopleTab() {
               key={index}
               style={{
                 display: 'flex',
-                justifyContent: 'space-between',
+                gap: '40px',
                 alignItems: 'center',
                 paddingBottom: '34px',
                 paddingTop: '34px',
