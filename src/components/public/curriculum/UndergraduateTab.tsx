@@ -426,85 +426,6 @@ export default function UndergraduateTab() {
           gap: '40px',
         }}
       >
-        {/* Information Section */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-          }}
-        >
-          {/* Info Box 1 */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '24px',
-              paddingBottom: '20px',
-              borderBottom: '1px solid #e0e0e0ff',
-            }}
-          >
-            <p
-              style={{
-                fontSize: '18px',
-                fontWeight: '600',
-                color: '#4e535bff',
-                fontFamily: 'Pretendard',
-                margin: '0',
-                width: '60px',
-                flexShrink: 0,
-              }}
-            >
-              트랙
-            </p>
-            <p
-              style={{
-                fontSize: '18px',
-                fontWeight: '400',
-                color: '#4e535bff',
-                fontFamily: 'Pretendard',
-                margin: '0',
-                lineHeight: 1.6,
-              }}
-            >
-              전공교육과정을 기반으로 한 전문 인재육성 교육커리큘럼, 진출분야 및 역량강화를 위한 모듈과 교과목으로 구성된 전공로드맵
-            </p>
-          </div>
-
-          {/* Info Box 2 */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '24px',
-            }}
-          >
-            <p
-              style={{
-                fontSize: '18px',
-                fontWeight: '600',
-                color: '#4e535bff',
-                fontFamily: 'Pretendard',
-                margin: '0',
-                width: '60px',
-                flexShrink: 0,
-              }}
-            >
-              모듈
-            </p>
-            <p
-              style={{
-                fontSize: '18px',
-                fontWeight: '400',
-                color: '#4e535bff',
-                fontFamily: 'Pretendard',
-                margin: '0',
-                lineHeight: 1.6,
-              }}
-            >
-              공통된 주제의 교과목으로 구성된 집합체
-            </p>
-          </div>
-        </div>
-
         {/* Section Title */}
         <div
           style={{
@@ -600,88 +521,223 @@ export default function UndergraduateTab() {
             gap: '0',
           }}
         >
-          {undergraduateModules.map((module, index) => (
+          {undergraduateModules.map((module, index) => {
+            const colors = ['#489bffff', '#ffcc54ff', '#ff5f5aff', '#a24affff'];
+            const moduleColor = colors[index % colors.length];
+
+            return (
             <div
               key={index}
               style={{
                 display: 'grid',
-                gridTemplateColumns: '1fr 2fr 1fr 0.8fr',
+                gridTemplateColumns: '343px 342px 343px 332px',
                 gap: '0',
-                alignItems: 'start',
-                minHeight: '140px',
-                padding: '20px 0',
+                alignItems: 'center',
+                height: '140px',
                 borderBottom: '1px solid #000000ff',
+                borderTop: '1px solid #000000ff',
                 boxSizing: 'border-box',
               }}
             >
-              {/* Track Name */}
-              <p
+              {/* Track Name with Color Box */}
+              <div
                 style={{
-                  fontSize: '16px',
-                  fontWeight: '500',
-                  color: '#000000ff',
-                  fontFamily: 'Pretendard',
-                  margin: '0',
-                  textAlign: 'center',
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'keep-all',
-                  lineHeight: 1.6,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  height: '100%',
+                  padding: '12px 12px 12px 12px',
+                  borderRight: 'none',
                 }}
               >
-                {module.name}
-                <br />
-                {module.track}
-              </p>
+                <div
+                  style={{
+                    width: '14px',
+                    height: '14px',
+                    backgroundColor: moduleColor,
+                    flexShrink: 0,
+                  }}
+                />
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: '#353030ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    textAlign: 'center',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'keep-all',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {module.name}
+                  <br />
+                  {module.track}
+                </p>
+              </div>
 
               {/* Courses */}
-              <p
+              <div
                 style={{
-                  fontSize: '16px',
-                  fontWeight: '400',
-                  color: '#353030ff',
-                  fontFamily: 'Pretendard',
-                  margin: '0',
-                  textAlign: 'center',
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'keep-all',
-                  lineHeight: 1.6,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  padding: '12px 0',
+                  borderRight: 'none',
                 }}
               >
-                {module.courses}
-              </p>
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: '#353030ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    textAlign: 'center',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'keep-all',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {module.courses}
+                </p>
+              </div>
 
               {/* Requirements */}
-              <p
+              <div
                 style={{
-                  fontSize: '14px',
-                  fontWeight: '400',
-                  color: '#353030ff',
-                  fontFamily: 'Pretendard',
-                  margin: '0',
-                  textAlign: 'center',
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'keep-all',
-                  lineHeight: 1.6,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  padding: '12px 0',
+                  borderRight: 'none',
                 }}
               >
-                {module.requirements}
-              </p>
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: '#353030ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    textAlign: 'center',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'keep-all',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {module.requirements}
+                </p>
+              </div>
 
               {/* Credits */}
-              <p
+              <div
                 style={{
-                  fontSize: '18px',
-                  fontWeight: '500',
-                  color: '#000000ff',
-                  fontFamily: 'Pretendard',
-                  margin: '0',
-                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  padding: '12px 0',
                 }}
               >
-                {module.credits}
-              </p>
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: '#353030ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    textAlign: 'center',
+                  }}
+                >
+                  {module.credits}
+                </p>
+              </div>
             </div>
-          ))}
+          );
+          })}
+        </div>
+
+        {/* Information Section */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+          }}
+        >
+          {/* Info Box 1 */}
+          <div
+            style={{
+              display: 'flex',
+              gap: '24px',
+              paddingBottom: '20px',
+              borderBottom: '1px solid #e0e0e0ff',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#4e535bff',
+                fontFamily: 'Pretendard',
+                margin: '0',
+                width: '60px',
+                flexShrink: 0,
+              }}
+            >
+              트랙
+            </p>
+            <p
+              style={{
+                fontSize: '18px',
+                fontWeight: '400',
+                color: '#4e535bff',
+                fontFamily: 'Pretendard',
+                margin: '0',
+                lineHeight: 1.6,
+              }}
+            >
+              전공교육과정을 기반으로 한 전문 인재육성 교육커리큘럼, 진출분야 및 역량강화를 위한 모듈과 교과목으로 구성된 전공로드맵
+            </p>
+          </div>
+
+          {/* Info Box 2 */}
+          <div
+            style={{
+              display: 'flex',
+              gap: '24px',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#4e535bff',
+                fontFamily: 'Pretendard',
+                margin: '0',
+                width: '60px',
+                flexShrink: 0,
+              }}
+            >
+              모듈
+            </p>
+            <p
+              style={{
+                fontSize: '18px',
+                fontWeight: '400',
+                color: '#4e535bff',
+                fontFamily: 'Pretendard',
+                margin: '0',
+                lineHeight: 1.6,
+              }}
+            >
+              공통된 주제의 교과목으로 구성된 집합체
+            </p>
+          </div>
         </div>
       </div>
     </div>
