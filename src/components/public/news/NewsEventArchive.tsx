@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 interface NewsItem {
   id: string;
@@ -185,25 +186,25 @@ export default function NewsEventArchive() {
         }}
       >
         {displayedItems.map((item) => (
-          <div
-            key={item.id}
-            style={{
-              display: 'flex',
-              gap: '20px',
-              paddingBottom: '20px',
-              borderBottom: '1px solid #d6d8dcff',
-              cursor: 'pointer',
-              transition: 'transform 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.transform =
-                'translateY(-4px)';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.transform =
-                'translateY(0)';
-            }}
-          >
+          <Link key={item.id} href={`/news/${item.id}`}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '20px',
+                paddingBottom: '20px',
+                borderBottom: '1px solid #d6d8dcff',
+                cursor: 'pointer',
+                transition: 'transform 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.transform =
+                  'translateY(-4px)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.transform =
+                  'translateY(0)';
+              }}
+            >
             {/* Thumbnail Image */}
             <div
               style={{
@@ -313,7 +314,8 @@ export default function NewsEventArchive() {
                 </p>
               )}
             </div>
-          </div>
+            </div>
+          </Link>
         ))}
       </div>
 
