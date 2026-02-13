@@ -594,7 +594,7 @@ export default function UndergraduateTab() {
               fontWeight: '700',
               color: '#000000ff',
               fontFamily: 'Pretendard',
-              textAlign: 'center',
+              textAlign: 'left',
             }}
           >
             해당과목
@@ -693,8 +693,8 @@ export default function UndergraduateTab() {
               <div
                 style={{
                   display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  alignItems: 'flex-start',
+                  justifyContent: 'flex-start',
                   height: '100%',
                   padding: '20px 12px',
                   borderRight: 'none',
@@ -818,7 +818,7 @@ export default function UndergraduateTab() {
               fontWeight: '700',
               color: '#000000ff',
               fontFamily: 'Pretendard',
-              textAlign: 'center',
+              textAlign: 'left',
             }}
           >
             해당과목
