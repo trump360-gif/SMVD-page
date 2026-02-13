@@ -484,172 +484,7 @@ export default function UndergraduateTab() {
           </h2>
         </div>
 
-        {/* Second Table: Module Details Header */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '343px 685px 332px',
-            gap: '0',
-            width: '100%',
-            marginBottom: '0',
-          }}
-        >
-          <div
-            style={{
-              padding: '12px 0',
-              borderBottom: '1px solid #000000ff',
-              fontSize: '18px',
-              fontWeight: '700',
-              color: '#000000ff',
-              fontFamily: 'Pretendard',
-              textAlign: 'center',
-            }}
-          >
-            구분
-          </div>
-          <div
-            style={{
-              padding: '12px 0',
-              borderBottom: '1px solid #000000ff',
-              fontSize: '18px',
-              fontWeight: '700',
-              color: '#000000ff',
-              fontFamily: 'Pretendard',
-              textAlign: 'center',
-            }}
-          >
-            설명
-          </div>
-          <div
-            style={{
-              padding: '12px 0',
-              borderBottom: '1px solid #000000ff',
-              fontSize: '18px',
-              fontWeight: '700',
-              color: '#000000ff',
-              fontFamily: 'Pretendard',
-              textAlign: 'center',
-            }}
-          >
-            해당과목
-          </div>
-        </div>
-
-        {/* Module Details Rows */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0',
-          }}
-        >
-          {moduleDetails.map((detail, index) => (
-            <div
-              key={index}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '343px 685px 332px',
-                gap: '0',
-                alignItems: 'start',
-                borderBottom: '1px solid #000000ff',
-                borderTop: '1px solid #000000ff',
-                boxSizing: 'border-box',
-              }}
-            >
-              {/* Module & Title */}
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '10px',
-                  padding: '20px 0',
-                  height: '100%',
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '500',
-                    color: '#000000ff',
-                    fontFamily: 'Pretendard',
-                    margin: '0',
-                    textAlign: 'center',
-                  }}
-                >
-                  {detail.module}
-                </p>
-                <p
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '500',
-                    color: '#353030ff',
-                    fontFamily: 'Pretendard',
-                    margin: '0',
-                    textAlign: 'center',
-                  }}
-                >
-                  {detail.title}
-                </p>
-              </div>
-
-              {/* Description */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '20px 0',
-                  height: '100%',
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '500',
-                    color: '#353030ff',
-                    fontFamily: 'Pretendard',
-                    margin: '0',
-                    textAlign: 'center',
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {detail.description}
-                </p>
-              </div>
-
-              {/* Courses */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '20px 0',
-                  height: '100%',
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '500',
-                    color: '#353030ff',
-                    fontFamily: 'Pretendard',
-                    margin: '0',
-                    textAlign: 'center',
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'keep-all',
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {detail.courses}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* First Table Header */}
+        {/* First Table Header (Track Table) */}
         <div
           style={{
             display: 'grid',
@@ -657,7 +492,6 @@ export default function UndergraduateTab() {
             gap: '0',
             width: '100%',
             marginBottom: '0',
-            marginTop: '40px',
           }}
         >
           <div
@@ -665,7 +499,7 @@ export default function UndergraduateTab() {
               padding: '12px 0',
               borderBottom: '1px solid #000000ff',
               fontSize: '18px',
-              fontWeight: '500',
+              fontWeight: '700',
               color: '#000000ff',
               fontFamily: 'Pretendard',
               textAlign: 'center',
@@ -678,7 +512,7 @@ export default function UndergraduateTab() {
               padding: '12px 0',
               borderBottom: '1px solid #000000ff',
               fontSize: '18px',
-              fontWeight: '500',
+              fontWeight: '700',
               color: '#000000ff',
               fontFamily: 'Pretendard',
               textAlign: 'center',
@@ -691,7 +525,7 @@ export default function UndergraduateTab() {
               padding: '12px 0',
               borderBottom: '1px solid #000000ff',
               fontSize: '18px',
-              fontWeight: '500',
+              fontWeight: '700',
               color: '#000000ff',
               fontFamily: 'Pretendard',
               textAlign: 'center',
@@ -704,7 +538,7 @@ export default function UndergraduateTab() {
               padding: '12px 0',
               borderBottom: '1px solid #000000ff',
               fontSize: '18px',
-              fontWeight: '500',
+              fontWeight: '700',
               color: '#000000ff',
               fontFamily: 'Pretendard',
               textAlign: 'center',
@@ -860,6 +694,172 @@ export default function UndergraduateTab() {
             </div>
           );
           })}
+        </div>
+
+        {/* Module Details Table Header */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '343px 685px 332px',
+            gap: '0',
+            width: '100%',
+            marginBottom: '0',
+            marginTop: '40px',
+          }}
+        >
+          <div
+            style={{
+              padding: '12px 0',
+              borderBottom: '1px solid #000000ff',
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#000000ff',
+              fontFamily: 'Pretendard',
+              textAlign: 'center',
+            }}
+          >
+            구분
+          </div>
+          <div
+            style={{
+              padding: '12px 0',
+              borderBottom: '1px solid #000000ff',
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#000000ff',
+              fontFamily: 'Pretendard',
+              textAlign: 'center',
+            }}
+          >
+            설명
+          </div>
+          <div
+            style={{
+              padding: '12px 0',
+              borderBottom: '1px solid #000000ff',
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#000000ff',
+              fontFamily: 'Pretendard',
+              textAlign: 'center',
+            }}
+          >
+            해당과목
+          </div>
+        </div>
+
+        {/* Module Details Rows */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0',
+          }}
+        >
+          {moduleDetails.map((detail, index) => (
+            <div
+              key={index}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '343px 685px 332px',
+                gap: '0',
+                alignItems: 'start',
+                borderBottom: '1px solid #000000ff',
+                borderTop: '1px solid #000000ff',
+                boxSizing: 'border-box',
+              }}
+            >
+              {/* Module & Title */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  padding: '20px 0',
+                  height: '100%',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: '#000000ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    textAlign: 'center',
+                  }}
+                >
+                  {detail.module}
+                </p>
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: '#353030ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    textAlign: 'center',
+                  }}
+                >
+                  {detail.title}
+                </p>
+              </div>
+
+              {/* Description */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '20px 0',
+                  height: '100%',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: '#353030ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    textAlign: 'center',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {detail.description}
+                </p>
+              </div>
+
+              {/* Courses */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '20px 0',
+                  height: '100%',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: '#353030ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    textAlign: 'center',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'keep-all',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {detail.courses}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Information Section */}
