@@ -21,7 +21,7 @@ const timelineItems = [
 
 export default function AboutPageHistory({
   title = 'History',
-  introText = '숙명여자대학교 시각영상디자인과는 설립 이래 디지털 시대가 요구하는\n창의적 시각 커뮤니케이션의 중심에서 인재를 배출해 왔습니다.\n축적된 전통과 혁신을 바탕으로 미래 디자인 교육을 선도하고 있습니다.',
+  introText = '숙명여자대학교 시각영상디자인과는 설립 이래 디지털 시대가 요구하는 창의적 시각 커뮤니케이션의 중심에서 인재를 배출해 왔습니다.\n축적된 전통과 혁신을 바탕으로 미래 디자인 교육을 선도하고 있습니다.',
 }: AboutPageHistoryProps) {
   return (
     <div
