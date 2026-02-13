@@ -1,0 +1,2 @@
+[     183ms] [ERROR] Error: <polyline> attribute points: Expected number, "15 18l-6-6 6-6". @ http://localhost:3000/:0
+[     183ms] [ERROR] Error: <polyline> attribute points: Expected number, "9 18l6-6-6-6". @ http://localhost:3000/:0

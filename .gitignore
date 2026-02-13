@@ -1,0 +1,23 @@
+# Design files
+*.fig
+*.psd
+*.sketch
+
+# Node modules
+node_modules/
+.next/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.log
+.playwright-mcp/
