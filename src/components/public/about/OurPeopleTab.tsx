@@ -11,6 +11,7 @@ interface Professor {
   phone: string;
   major: string;
   specialty: string;
+  courses: string;
   badge: string;
   description: string;
   profileImage: string;
@@ -25,6 +26,7 @@ const professors: Professor[] = [
     phone: '+82-2-710-9682',
     major: '시각영상디자인',
     specialty: 'UI/UX 디자인',
+    courses: '브랜드디자인\n졸업프로젝트스튜디오 I/II',
     badge: 'Research & Mentoring',
     description:
       '윤여종 교수는 UI/UX 디자인의 선구자로, 사용자 중심 설계와 인터페이스 혁신을 통해 디지털 커뮤니케이션의 미래를 개척하고 있습니다.\n\n주요 연구 분야:\n• UI/UX 디자인 및 사용자 경험 연구\n• 인터랙티브 미디어 개발\n• 디지털 인터페이스 설계 방법론\n• 사용자 연구 및 인지심리학',
@@ -38,6 +40,7 @@ const professors: Professor[] = [
     phone: '+82-2-710-9683',
     major: '시각영상디자인',
     specialty: '그래픽 디자인',
+    courses: '마케팅디자인\n졸업프로젝트스튜디오 I/II',
     badge: 'Vision & Marketing',
     description:
       '김기영 교수는 브랜드 비전과 시각 전략을 통해 기업의 정체성을 재정의하는 전문가입니다. 마케팅과 디자인의 융합을 추구합니다.\n\n주요 연구 분야:\n• 브랜드 아이덴티티 개발\n• 마케팅 커뮤니케이션 디자인\n• 비주얼 스토리텔링\n• 기업 이미지 전략',
@@ -51,6 +54,7 @@ const professors: Professor[] = [
     phone: '+82-2-710-9684',
     major: '시각영상디자인',
     specialty: '사용자 경험',
+    courses: '사용자경험디자인\n졸업프로젝트스튜디오 I/II',
     badge: 'User Experience',
     description:
       '이지선 교수는 사용자 중심의 디자인 철학으로 다양한 디지털 경험을 창출하고 있습니다. 사용성과 미학의 조화를 추구합니다.\n\n주요 연구 분야:\n• 사용자 경험(UX) 설계\n• 웹 및 모바일 인터페이스\n• 접근성 있는 디자인\n• 사용자 테스트 및 평가',
@@ -64,6 +68,7 @@ const professors: Professor[] = [
     phone: '+82-2-710-9685',
     major: '시각영상디자인',
     specialty: '디지털 미디어',
+    courses: '사용자경험디자인\n졸업프로젝트스튜디오 I/II',
     badge: 'User Experience',
     description:
       '나유미 교수는 멀티미디어 콘텐츠 설계와 디지털 경험 개발의 전문가로, 기술과 예술의 경계를 넘어 새로운 창의성을 추구합니다.\n\n주요 연구 분야:\n• 멀티미디어 콘텐츠 제작\n• 인터랙티브 영상 디자인\n• 디지털 미디어 전략\n• 콘텐츠 기획 및 실행',
@@ -178,29 +183,33 @@ export default function OurPeopleTab() {
                   boxSizing: 'border-box',
                 }}
               >
-                <h3
+                <p
                   style={{
-                    fontSize: '14px',
+                    fontSize: '18px',
                     fontWeight: '400',
-                    color: '#141414ff',
+                    color: '#353030ff',
                     fontFamily: 'Helvetica',
                     margin: '0 0 37px 0',
+                    lineHeight: 1.4,
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'keep-all',
+                  }}
+                >
+                  {prof.courses}
+                </p>
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '400',
+                    color: '#000000ff',
+                    fontFamily: 'Helvetica',
+                    margin: '0',
+                    letterSpacing: '-0.18px',
                     lineHeight: 1.5,
                   }}
                 >
                   {prof.name}
                 </h3>
-                <p
-                  style={{
-                    fontSize: '12px',
-                    fontWeight: '400',
-                    color: '#666666ff',
-                    fontFamily: 'Helvetica',
-                    margin: '0',
-                  }}
-                >
-                  {prof.specialty}
-                </p>
               </div>
             </div>
           ))}
