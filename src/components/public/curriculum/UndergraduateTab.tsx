@@ -707,7 +707,7 @@ export default function UndergraduateTab() {
                     color: '#353030ff',
                     fontFamily: 'Pretendard',
                     margin: '0',
-                    textAlign: 'center',
+                    textAlign: 'left',
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'keep-all',
                     lineHeight: 1.6,
