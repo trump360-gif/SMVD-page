@@ -940,7 +940,6 @@ export default function UndergraduateTab() {
       {/* Footer Note - Right aligned, above footer */}
       <div
         style={{
-          marginTop: '60px',
           textAlign: 'right',
         }}
       >
