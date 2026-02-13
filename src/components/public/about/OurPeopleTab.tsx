@@ -224,18 +224,22 @@ export default function OurPeopleTab() {
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
+          flexDirection: 'row',
+          gap: '10px',
+          alignItems: 'flex-start',
+          width: '100%',
         }}
       >
         <h2
           style={{
-            fontSize: '20px',
+            fontSize: '48px',
             fontWeight: '400',
-            color: '#141414ff',
+            color: '#000000ff',
             fontFamily: 'Helvetica',
             margin: '0',
-            letterSpacing: '0px',
+            letterSpacing: '-0.48px',
+            width: '333px',
+            flexShrink: 0,
           }}
         >
           Instructor
@@ -246,7 +250,7 @@ export default function OurPeopleTab() {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            width: '100%',
+            flex: 1,
           }}
         >
           {instructors.map((instructor, index) => (
