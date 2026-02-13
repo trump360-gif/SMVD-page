@@ -187,20 +187,6 @@ export default function OurPeopleTab() {
                   boxSizing: 'border-box',
                 }}
               >
-                <p
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '400',
-                    color: '#353030ff',
-                    fontFamily: 'Helvetica',
-                    margin: '0 0 37px 0',
-                    lineHeight: 1.4,
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'keep-all',
-                  }}
-                >
-                  {prof.courses}
-                </p>
                 <h3
                   style={{
                     fontSize: '18px',
@@ -214,6 +200,20 @@ export default function OurPeopleTab() {
                 >
                   {prof.name}
                 </h3>
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '400',
+                    color: '#353030ff',
+                    fontFamily: 'Helvetica',
+                    margin: '20px 0 0 0',
+                    lineHeight: 1.4,
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'keep-all',
+                  }}
+                >
+                  {prof.courses}
+                </p>
               </div>
             </div>
           ))}
