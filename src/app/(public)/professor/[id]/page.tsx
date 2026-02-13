@@ -247,7 +247,7 @@ export default function ProfessorDetailPage() {
             margin: '0 auto',
             display: 'flex',
             flexDirection: 'row',
-            gap: '40px',
+            gap: '80px',
             alignItems: 'flex-start',
             width: '100%',
           }}
