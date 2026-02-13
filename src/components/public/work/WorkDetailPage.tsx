@@ -19,7 +19,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
         backgroundColor: '#ffffffff',
       }}
     >
-      {/* Header Navigation */}
+      {/* Header Navigation - Same as Archive */}
       <div
         style={{
           maxWidth: '1440px',
@@ -30,50 +30,47 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
           width: '100%',
           paddingTop: '80px',
           paddingBottom: '40px',
-          borderBottom: '1px solid #e5e5e5ff',
         }}
       >
+        <h1
+          style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            color: '#1b1d1fff',
+            fontFamily: 'Satoshi',
+            margin: '0',
+            letterSpacing: '-0.24px',
+          }}
+        >
+          Achieve
+        </h1>
+
+        {/* Category Filter Tabs */}
         <div
           style={{
             display: 'flex',
-            gap: '24px',
+            gap: '20px',
+            flexWrap: 'wrap',
             width: '100%',
+            paddingBottom: '20px',
+            borderBottom: '1px solid #e5e5e5ff',
           }}
         >
-          <Link href="/work" style={{ textDecoration: 'none' }}>
-            <button
+          {['All', 'UX/UI', 'Motion', 'Branding', 'Game', 'Graphics'].map((category) => (
+            <span
+              key={category}
               style={{
                 fontSize: '16px',
                 fontWeight: '500',
                 fontFamily: 'Satoshi',
-                color: '#7b828eff',
-                backgroundColor: 'transparent',
-                border: 'none',
-                padding: '8px 0',
+                color: project.category === category ? '#141414ff' : '#7b828eff',
                 cursor: 'pointer',
-                margin: '0',
                 transition: 'color 0.3s ease',
               }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.color = '#141414ff';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.color = '#7b828eff';
-              }}
             >
-              Achieve
-            </button>
-          </Link>
-          <span
-            style={{
-              fontSize: '16px',
-              fontWeight: '500',
-              fontFamily: 'Satoshi',
-              color: '#141414ff',
-            }}
-          >
-            {project.title}
-          </span>
+              {category}
+            </span>
+          ))}
         </div>
       </div>
 
