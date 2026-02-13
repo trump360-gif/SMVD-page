@@ -1,2 +1,0 @@
-[   41783ms] [WARNING] Image with src "/images/work/Rectangle_240652487-9.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
-Read more: https://nextjs.org/docs/app/api-reference/components/image#loading @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:2297

@@ -12,13 +12,71 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
     <div
       style={{
         width: '100%',
-        paddingTop: '80px',
+        paddingTop: '0px',
         paddingBottom: '61px',
         paddingLeft: '40px',
         paddingRight: '40px',
         backgroundColor: '#ffffffff',
       }}
     >
+      {/* Header Navigation */}
+      <div
+        style={{
+          maxWidth: '1440px',
+          margin: '0 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '40px',
+          width: '100%',
+          paddingTop: '80px',
+          paddingBottom: '40px',
+          borderBottom: '1px solid #e5e5e5ff',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            gap: '24px',
+            width: '100%',
+          }}
+        >
+          <Link href="/work" style={{ textDecoration: 'none' }}>
+            <button
+              style={{
+                fontSize: '16px',
+                fontWeight: '500',
+                fontFamily: 'Satoshi',
+                color: '#7b828eff',
+                backgroundColor: 'transparent',
+                border: 'none',
+                padding: '8px 0',
+                cursor: 'pointer',
+                margin: '0',
+                transition: 'color 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.color = '#141414ff';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.color = '#7b828eff';
+              }}
+            >
+              Archive
+            </button>
+          </Link>
+          <span
+            style={{
+              fontSize: '16px',
+              fontWeight: '500',
+              fontFamily: 'Satoshi',
+              color: '#141414ff',
+            }}
+          >
+            {project.title}
+          </span>
+        </div>
+      </div>
+
       <div
         style={{
           maxWidth: '1440px',
@@ -26,6 +84,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
           display: 'flex',
           flexDirection: 'column',
           gap: '80px',
+          paddingTop: '80px',
         }}
       >
         {/* Main Content */}

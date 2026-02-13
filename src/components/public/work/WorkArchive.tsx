@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 interface PortfolioItem {
   id: string;
@@ -210,7 +211,7 @@ export default function WorkArchive() {
                 transition: 'color 0.3s ease',
               }}
             >
-              {category} ({categoryCounts[category]})
+              {category}
             </button>
           ))}
         </div>
@@ -226,8 +227,8 @@ export default function WorkArchive() {
         }}
       >
         {displayedItems.map((item) => (
+          <Link key={item.id} href={`/work/${item.id}`}>
           <div
-            key={item.id}
             style={{
               display: 'flex',
               flexDirection: 'column',
@@ -273,42 +274,6 @@ export default function WorkArchive() {
                 gap: '4px',
               }}
             >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                }}
-              >
-                {/* Category Badge */}
-                <span
-                  style={{
-                    fontSize: '12px',
-                    fontWeight: '500',
-                    color: '#666666',
-                    fontFamily: 'Satoshi',
-                    backgroundColor: '#f5f5f5ff',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {item.category}
-                </span>
-
-                {/* Date */}
-                <span
-                  style={{
-                    fontSize: '12px',
-                    fontWeight: '400',
-                    color: '#999999',
-                    fontFamily: 'Satoshi',
-                  }}
-                >
-                  {item.date}
-                </span>
-              </div>
-
               {/* Title */}
               <h3
                 style={{
@@ -328,7 +293,7 @@ export default function WorkArchive() {
                 style={{
                   fontSize: '12px',
                   fontWeight: '400',
-                  color: '#999999',
+                  color: '#000000',
                   fontFamily: 'Satoshi',
                 }}
               >
@@ -336,6 +301,7 @@ export default function WorkArchive() {
               </span>
             </div>
           </div>
+          </Link>
         ))}
       </div>
 
