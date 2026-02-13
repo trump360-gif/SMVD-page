@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import WorkHeader from './WorkHeader';
 
 interface PortfolioItem {
   id: string;
@@ -156,66 +157,15 @@ export default function WorkArchive() {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '60px',
+        gap: '5px',
         width: '100%',
       }}
     >
       {/* Archive Section Header */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '40px',
-          width: '100%',
-        }}
-      >
-        <h1
-          style={{
-            fontSize: '24px',
-            fontWeight: '700',
-            color: '#1b1d1fff',
-            fontFamily: 'Satoshi',
-            margin: '0',
-            letterSpacing: '-0.24px',
-          }}
-        >
-          Archive
-        </h1>
-
-        {/* Category Filter Tabs */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '20px',
-            flexWrap: 'wrap',
-            width: '100%',
-            paddingBottom: '20px',
-            borderBottom: '1px solid #e5e5e5ff',
-          }}
-        >
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => handleCategoryChange(category)}
-              style={{
-                fontSize: '16px',
-                fontWeight: '500',
-                fontFamily: 'Satoshi',
-                color:
-                  selectedCategory === category ? '#141414ff' : '#7b828eff',
-                backgroundColor: 'transparent',
-                border: 'none',
-                padding: '8px 0',
-                cursor: 'pointer',
-                margin: '0',
-                transition: 'color 0.3s ease',
-              }}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-      </div>
+      <WorkHeader
+        currentCategory={selectedCategory}
+        onCategoryChange={handleCategoryChange}
+      />
 
       {/* Portfolio Grid */}
       <div
@@ -274,6 +224,18 @@ export default function WorkArchive() {
                 gap: '4px',
               }}
             >
+              {/* Category Badge */}
+              <span
+                style={{
+                  fontSize: '12px',
+                  fontWeight: '500',
+                  color: '#7b828eff',
+                  fontFamily: 'Satoshi',
+                }}
+              >
+                {item.category}
+              </span>
+
               {/* Title */}
               <h3
                 style={{

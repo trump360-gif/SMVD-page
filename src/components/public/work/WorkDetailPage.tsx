@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { WorkDetail } from '@/constants/work-details';
+import WorkHeader from './WorkHeader';
 
 interface WorkDetailPageProps {
   project: WorkDetail;
@@ -19,60 +20,8 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
         backgroundColor: '#ffffffff',
       }}
     >
-      {/* Header Navigation - Same as Archive */}
-      <div
-        style={{
-          maxWidth: '1440px',
-          margin: '0 auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '40px',
-          width: '100%',
-          paddingTop: '80px',
-          paddingBottom: '40px',
-        }}
-      >
-        <h1
-          style={{
-            fontSize: '24px',
-            fontWeight: '700',
-            color: '#1b1d1fff',
-            fontFamily: 'Satoshi',
-            margin: '0',
-            letterSpacing: '-0.24px',
-          }}
-        >
-          Achieve
-        </h1>
-
-        {/* Category Filter Tabs */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '20px',
-            flexWrap: 'wrap',
-            width: '100%',
-            paddingBottom: '20px',
-            borderBottom: '1px solid #e5e5e5ff',
-          }}
-        >
-          {['All', 'UX/UI', 'Motion', 'Branding', 'Game', 'Graphics'].map((category) => (
-            <span
-              key={category}
-              style={{
-                fontSize: '16px',
-                fontWeight: '500',
-                fontFamily: 'Satoshi',
-                color: project.category === category ? '#141414ff' : '#7b828eff',
-                cursor: 'pointer',
-                transition: 'color 0.3s ease',
-              }}
-            >
-              {category}
-            </span>
-          ))}
-        </div>
-      </div>
+      {/* Header Navigation */}
+      <WorkHeader currentCategory={project.category} />
 
       <div
         style={{
@@ -81,7 +30,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
           display: 'flex',
           flexDirection: 'column',
           gap: '80px',
-          paddingTop: '80px',
+          paddingTop: '0px',
         }}
       >
         {/* Main Content */}

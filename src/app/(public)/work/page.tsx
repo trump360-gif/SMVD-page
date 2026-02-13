@@ -16,7 +16,7 @@ export default function WorkPage() {
       <div
         style={{
           width: '100%',
-          paddingTop: '80px',
+          paddingTop: '0px',
           paddingBottom: '61px',
           paddingLeft: '40px',
           paddingRight: '40px',
