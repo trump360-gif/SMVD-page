@@ -260,6 +260,7 @@ export default function ProfessorDetailPage() {
               width: '333px',
               flexShrink: 0,
               paddingTop: '100px',
+              position: 'relative',
             }}
           >
             {/* Image */}
@@ -283,12 +284,17 @@ export default function ProfessorDetailPage() {
               />
             </div>
 
-            {/* Badge */}
+            {/* Badge - Overlay on image */}
             <div
               style={{
+                position: 'absolute',
+                bottom: '0',
+                left: '0',
+                right: '0',
                 backgroundColor: '#141414ff',
                 padding: '12px 0',
                 textAlign: 'center',
+                width: '100%',
               }}
             >
               <span
