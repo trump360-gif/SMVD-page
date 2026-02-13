@@ -13,6 +13,14 @@ interface PortfolioItem {
   subtitle: string;
 }
 
+interface ExhibitionItem {
+  id: string;
+  title: string;
+  date: string;
+  image: string;
+  artist: string;
+}
+
 interface CategoryCount {
   [key: string]: number;
 }
@@ -116,10 +124,56 @@ const portfolioItems: PortfolioItem[] = [
   },
 ];
 
+const exhibitionItems: ExhibitionItem[] = [
+  {
+    id: '1',
+    title: 'Vora',
+    date: '권나연 외 3명, 2025',
+    image: '/images/exhibition/Rectangle 45-5.png',
+    artist: 'Voice Out Recovery Assistant',
+  },
+  {
+    id: '2',
+    title: 'Mindit',
+    date: '도인영 외 3명, 2025',
+    image: '/images/exhibition/Rectangle 45-4.png',
+    artist: '도민앱 외 3명',
+  },
+  {
+    id: '3',
+    title: 'MIST AWAY',
+    date: '신예지, 2025',
+    image: '/images/exhibition/Rectangle 45-3.png',
+    artist: '신예지',
+  },
+  {
+    id: '4',
+    title: 'GALJIDO (갈지도)',
+    date: '조혜원, 2025',
+    image: '/images/exhibition/Rectangle 45-2.png',
+    artist: '조혜원',
+  },
+  {
+    id: '5',
+    title: 'Callmate',
+    date: '고은빈, 2025',
+    image: '/images/exhibition/Rectangle 45-1.png',
+    artist: '고은빈',
+  },
+  {
+    id: '6',
+    title: 'MOA',
+    date: '강세정 외 2명, 2025',
+    image: '/images/exhibition/Rectangle 45.png',
+    artist: '강세정',
+  },
+];
+
 const ITEMS_PER_PAGE = 12;
 const categories = ['All', 'UX/UI', 'Motion', 'Branding', 'Game', 'Graphics'];
 
 export default function WorkArchive() {
+  const [activeTab, setActiveTab] = useState<'achieve' | 'exhibition'>('achieve');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -161,114 +215,261 @@ export default function WorkArchive() {
         width: '100%',
       }}
     >
-      {/* Archive Section Header */}
-      <WorkHeader
-        currentCategory={selectedCategory}
-        onCategoryChange={handleCategoryChange}
-      />
-
-      {/* Portfolio Grid */}
+      {/* Achieve / Exhibition Tabs */}
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          display: 'flex',
           gap: '20px',
           width: '100%',
+          marginBottom: '20px',
+          borderBottom: '1px solid #e5e7ebff',
+          paddingBottom: '0px',
         }}
       >
-        {displayedItems.map((item) => (
-          <Link key={item.id} href={`/work/${item.id}`}>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-              cursor: 'pointer',
-              transition: 'transform 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.transform =
-                'translateY(-4px)';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.transform =
-                'translateY(0)';
-            }}
-          >
-            {/* Portfolio Item Image */}
-            <div
-              style={{
-                width: '100%',
-                aspectRatio: '4 / 3',
-                backgroundColor: '#f0f0f0ff',
-                borderRadius: '4px',
-                overflow: 'hidden',
-              }}
-            >
-              <img
-                src={item.image}
-                alt={item.title}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
-            </div>
+        <button
+          onClick={() => {
+            setActiveTab('achieve');
+            setCurrentPage(1);
+          }}
+          style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            fontFamily: 'Satoshi',
+            color: activeTab === 'achieve' ? '#1b1d1fff' : '#7b828eff',
+            backgroundColor: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            paddingBottom: '8px',
+            borderBottom: activeTab === 'achieve' ? '2px solid #141414ff' : 'none',
+            transition: 'all 0.3s ease',
+          }}
+        >
+          Achieve
+        </button>
+        <button
+          onClick={() => {
+            setActiveTab('exhibition');
+            setCurrentPage(1);
+          }}
+          style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            fontFamily: 'Satoshi',
+            color: activeTab === 'exhibition' ? '#1b1d1fff' : '#7b828eff',
+            backgroundColor: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            paddingBottom: '8px',
+            borderBottom: activeTab === 'exhibition' ? '2px solid #141414ff' : 'none',
+            transition: 'all 0.3s ease',
+          }}
+        >
+          Exhibition
+        </button>
+      </div>
 
-            {/* Portfolio Item Info */}
+      {/* Archive Section Header - Only show for Achieve tab */}
+      {activeTab === 'achieve' && (
+        <WorkHeader
+          currentCategory={selectedCategory}
+          onCategoryChange={handleCategoryChange}
+        />
+      )}
+
+      {/* Achieve Tab Grid */}
+      {activeTab === 'achieve' && (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '20px',
+            width: '100%',
+          }}
+        >
+          {displayedItems.map((item) => (
+            <Link key={item.id} href={`/work/${item.id}`}>
             <div
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '4px',
+                gap: '10px',
+                cursor: 'pointer',
+                transition: 'transform 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.transform =
+                  'translateY(-4px)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.transform =
+                  'translateY(0)';
               }}
             >
-              {/* Category Badge */}
-              <span
+              {/* Portfolio Item Image */}
+              <div
                 style={{
-                  fontSize: '12px',
-                  fontWeight: '500',
-                  color: '#7b828eff',
-                  fontFamily: 'Satoshi',
+                  width: '100%',
+                  aspectRatio: '4 / 3',
+                  backgroundColor: '#f0f0f0ff',
+                  borderRadius: '4px',
+                  overflow: 'hidden',
                 }}
               >
-                {item.category}
-              </span>
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </div>
 
-              {/* Title */}
-              <h3
+              {/* Portfolio Item Info */}
+              <div
                 style={{
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#141414ff',
-                  fontFamily: 'Pretendard',
-                  margin: '0',
-                  lineHeight: '1.4',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
                 }}
               >
-                {item.title}
-              </h3>
+                {/* Category Badge */}
+                <span
+                  style={{
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    color: '#7b828eff',
+                    fontFamily: 'Satoshi',
+                  }}
+                >
+                  {item.category}
+                </span>
 
-              {/* Subtitle */}
-              <span
-                style={{
-                  fontSize: '12px',
-                  fontWeight: '400',
-                  color: '#000000',
-                  fontFamily: 'Satoshi',
-                }}
-              >
-                {item.subtitle}
-              </span>
+                {/* Title */}
+                <h3
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#141414ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    lineHeight: '1.4',
+                  }}
+                >
+                  {item.title}
+                </h3>
+
+                {/* Subtitle */}
+                <span
+                  style={{
+                    fontSize: '12px',
+                    fontWeight: '400',
+                    color: '#000000',
+                    fontFamily: 'Satoshi',
+                  }}
+                >
+                  {item.subtitle}
+                </span>
+              </div>
             </div>
-          </div>
-          </Link>
-        ))}
-      </div>
+            </Link>
+          ))}
+        </div>
+      )}
 
-      {/* Pagination */}
-      {totalPages > 1 && (
+      {/* Exhibition Tab Grid */}
+      {activeTab === 'exhibition' && (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '40px',
+            width: '100%',
+            paddingTop: '20px',
+          }}
+        >
+          {exhibitionItems.map((item) => (
+            <div
+              key={item.id}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+                cursor: 'pointer',
+                transition: 'transform 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.transform =
+                  'translateY(-4px)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.transform =
+                  'translateY(0)';
+              }}
+            >
+              {/* Exhibition Item Image */}
+              <div
+                style={{
+                  width: '100%',
+                  aspectRatio: '4 / 3',
+                  backgroundColor: '#f0f0f0ff',
+                  borderRadius: '4px',
+                  overflow: 'hidden',
+                }}
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </div>
+
+              {/* Exhibition Item Info */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                }}
+              >
+                {/* Title */}
+                <h3
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#141414ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    lineHeight: '1.4',
+                  }}
+                >
+                  {item.title}
+                </h3>
+
+                {/* Date/Artist */}
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '400',
+                    color: '#000000',
+                    fontFamily: 'Satoshi',
+                  }}
+                >
+                  {item.date}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Pagination - Only show for Achieve tab */}
+      {activeTab === 'achieve' && totalPages > 1 && (
         <div
           style={{
             display: 'flex',
@@ -276,6 +477,7 @@ export default function WorkArchive() {
             alignItems: 'center',
             gap: '8px',
             width: '100%',
+            marginTop: '40px',
           }}
         >
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
