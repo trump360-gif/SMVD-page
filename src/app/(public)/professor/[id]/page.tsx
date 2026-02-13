@@ -492,73 +492,106 @@ export default function ProfessorDetailPage() {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '10px',
+                  gap: '0px',
                 }}
               >
                 {/* Undergraduate */}
-                <div>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '12px',
+                    alignItems: 'flex-start',
+                    marginBottom: '8px',
+                  }}
+                >
                   <p
                     style={{
                       fontSize: '14px',
                       fontWeight: 'normal',
                       color: '#353030ff',
                       fontFamily: 'Inter',
-                      margin: '0 0 8px 0',
+                      margin: '0',
                       letterSpacing: '-0.44px',
                       lineHeight: 1.5,
+                      minWidth: '30px',
+                      flexShrink: 0,
                     }}
                   >
                     학사
                   </p>
-                  {professor.courses.undergraduate.map((course, idx) => (
-                    <p
-                      key={idx}
-                      style={{
-                        fontSize: '18px',
-                        fontWeight: 'normal',
-                        color: '#141414ff',
-                        fontFamily: 'Inter',
-                        margin: '0',
-                        letterSpacing: '-0.44px',
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      {course}
-                    </p>
-                  ))}
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0px',
+                    }}
+                  >
+                    {professor.courses.undergraduate.map((course, idx) => (
+                      <p
+                        key={idx}
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: 'normal',
+                          color: '#141414ff',
+                          fontFamily: 'Inter',
+                          margin: '0',
+                          letterSpacing: '-0.44px',
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {course}
+                      </p>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Graduate */}
-                <div>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '12px',
+                    alignItems: 'flex-start',
+                  }}
+                >
                   <p
                     style={{
                       fontSize: '14px',
                       fontWeight: 'normal',
                       color: '#353030ff',
                       fontFamily: 'Inter',
-                      margin: '10px 0 8px 0',
+                      margin: '0',
                       letterSpacing: '-0.44px',
                       lineHeight: 1.5,
+                      minWidth: '30px',
+                      flexShrink: 0,
                     }}
                   >
                     석사
                   </p>
-                  {professor.courses.graduate.map((course, idx) => (
-                    <p
-                      key={idx}
-                      style={{
-                        fontSize: '18px',
-                        fontWeight: 'normal',
-                        color: '#141414ff',
-                        fontFamily: 'Inter',
-                        margin: '0',
-                        letterSpacing: '-0.44px',
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      {course}
-                    </p>
-                  ))}
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0px',
+                    }}
+                  >
+                    {professor.courses.graduate.map((course, idx) => (
+                      <p
+                        key={idx}
+                        style={{
+                          fontSize: '18px',
+                          fontWeight: 'normal',
+                          color: '#141414ff',
+                          fontFamily: 'Inter',
+                          margin: '0',
+                          letterSpacing: '-0.44px',
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {course}
+                      </p>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -633,19 +666,6 @@ export default function ProfessorDetailPage() {
 
                 {/* Education */}
                 <div>
-                  <p
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: 'normal',
-                      color: '#353030ff',
-                      fontFamily: 'Inter',
-                      margin: '0 0 8px 0',
-                      letterSpacing: '-0.44px',
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    학력
-                  </p>
                   {professor.biography.education.map((edu, idx) => (
                     <p
                       key={idx}
@@ -666,19 +686,6 @@ export default function ProfessorDetailPage() {
 
                 {/* Experience */}
                 <div>
-                  <p
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: 'normal',
-                      color: '#353030ff',
-                      fontFamily: 'Inter',
-                      margin: '10px 0 8px 0',
-                      letterSpacing: '-0.44px',
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    경력
-                  </p>
                   {professor.biography.experience.map((exp, idx) => (
                     <p
                       key={idx}
