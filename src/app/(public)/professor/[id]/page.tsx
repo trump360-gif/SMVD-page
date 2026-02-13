@@ -506,7 +506,7 @@ export default function ProfessorDetailPage() {
                 >
                   <p
                     style={{
-                      fontSize: '14px',
+                      fontSize: '18px',
                       fontWeight: 'normal',
                       color: '#353030ff',
                       fontFamily: 'Inter',
@@ -555,7 +555,7 @@ export default function ProfessorDetailPage() {
                 >
                   <p
                     style={{
-                      fontSize: '14px',
+                      fontSize: '18px',
                       fontWeight: 'normal',
                       color: '#353030ff',
                       fontFamily: 'Inter',
