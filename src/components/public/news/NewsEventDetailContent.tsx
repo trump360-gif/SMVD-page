@@ -264,7 +264,7 @@ export default function NewsEventDetailContent({ itemId }: { itemId: string }) {
               gap: '20px',
               width: '100%',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'space-between',
             }}
           >
             <div
@@ -314,7 +314,7 @@ export default function NewsEventDetailContent({ itemId }: { itemId: string }) {
               gap: '20px',
               width: '100%',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'space-between',
             }}
           >
             <div
