@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 interface NewsItem {
@@ -98,7 +99,13 @@ const newsItems: NewsItem[] = [
 const categories = ['ALL', 'Notice', 'Event', 'Awards', 'Recruiting'];
 
 export default function NewsEventArchive() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category') || 'ALL';
+  const [selectedCategory, setSelectedCategory] = useState<string>(categoryParam);
+
+  useEffect(() => {
+    setSelectedCategory(categoryParam);
+  }, [categoryParam]);
 
   // Filter items based on selected category
   const displayedItems =

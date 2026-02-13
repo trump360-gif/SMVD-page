@@ -1,5 +1,4 @@
-'use client';
-
+import { Suspense } from 'react';
 import {
   Header,
   Footer,
@@ -33,7 +32,9 @@ export default function NewsPage() {
           }}
         >
           {/* News&Event Archive Component */}
-          <NewsEventArchive />
+          <Suspense fallback={<div>Loading...</div>}>
+            <NewsEventArchive />
+          </Suspense>
         </div>
       </div>
 

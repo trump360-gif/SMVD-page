@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 interface NewsDetailItem {
   id: string;
@@ -22,6 +23,23 @@ interface NewsDetailItem {
 
 // 졸업전시회 상세 데이터
 const newsDetailData: { [key: string]: NewsDetailItem } = {
+  '4': {
+    id: '4',
+    category: 'Notice',
+    date: '2025-01-05',
+    title: '시각영상디자인학과 2024년도 학생경비 집행내역 공개',
+    description: '',
+    introTitle: '시각영상디자인학과 2024년도 학생경비 집행내역 공개',
+    introText: '시각영상디자인학과 2024년도 학생경비 집행내역을 공개합니다.',
+    images: {
+      main: '/Group-27.svg',
+      centerLeft: '/Group-27.svg',
+      centerRight: '/Group-27.svg',
+      bottomLeft: '/Group-27.svg',
+      bottomCenter: '/Group-27.svg',
+      bottomRight: '/Group-27.svg',
+    },
+  },
   '5': {
     id: '5',
     category: 'Event',
@@ -40,6 +58,24 @@ const newsDetailData: { [key: string]: NewsDetailItem } = {
       bottomRight: '/images/work-detail/Rectangle 240652484.png',
     },
   },
+  '6': {
+    id: '6',
+    category: 'Event',
+    date: '2025-01-05',
+    title: '2024 시각·영상디자인과 동문의 밤',
+    description: '',
+    introTitle: '2024 시각·영상디자인과 동문의 밤',
+    introText:
+      `2024년 10월 28일, 백주년기념관 한상은 라운지에서 2024 시각·영상디자인과 동문의 밤 행사를 진행했습니다.\n1부에는 동문 특강을, 2부에는 황순선 교수님의 서프라이즈 퇴임식을 진행했습니다.`,
+    images: {
+      main: '/images/news/Image.png',
+      centerLeft: '/images/news/Image.png',
+      centerRight: '/images/news/Image.png',
+      bottomLeft: '/images/news/Image.png',
+      bottomCenter: '/images/news/Image.png',
+      bottomRight: '/images/news/Image.png',
+    },
+  },
 };
 
 const categories = ['ALL', 'Notice', 'Event', 'Awards', 'Recruiting'];
@@ -47,6 +83,14 @@ const categories = ['ALL', 'Notice', 'Event', 'Awards', 'Recruiting'];
 export default function NewsEventDetailContent({ itemId }: { itemId: string }) {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const item = newsDetailData[itemId];
+
+  // Get all available IDs for navigation
+  const allIds = Object.keys(newsDetailData).sort((a, b) => parseInt(a) - parseInt(b));
+  const currentIndex = allIds.indexOf(itemId);
+  const prevId = currentIndex > 0 ? allIds[currentIndex - 1] : null;
+  const nextId = currentIndex < allIds.length - 1 ? allIds[currentIndex + 1] : null;
+  const prevItem = prevId ? newsDetailData[prevId] : null;
+  const nextItem = nextId ? newsDetailData[nextId] : null;
 
   if (!item) {
     return (
@@ -83,17 +127,27 @@ export default function NewsEventDetailContent({ itemId }: { itemId: string }) {
           borderBottom: '2px solid #141414ff',
         }}
       >
-        <h1
-          style={{
-            fontSize: '24px',
-            fontWeight: '700',
-            fontFamily: 'Satoshi',
-            color: '#1b1d1fff',
-            margin: '0',
-          }}
-        >
-          News&Event
-        </h1>
+        <Link href="/news" style={{ textDecoration: 'none' }}>
+          <h1
+            style={{
+              fontSize: '24px',
+              fontWeight: '700',
+              fontFamily: 'Satoshi',
+              color: '#1b1d1fff',
+              margin: '0',
+              cursor: 'pointer',
+              transition: 'opacity 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.opacity = '0.7';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.opacity = '1';
+            }}
+          >
+            News&Event
+          </h1>
+        </Link>
 
         {/* Filter Tabs */}
         <div
@@ -103,28 +157,28 @@ export default function NewsEventDetailContent({ itemId }: { itemId: string }) {
           }}
         >
           {categories.map((category) => (
-            <button
+            <Link
               key={category}
-              onClick={() => setSelectedCategory(category)}
-              style={{
-                fontSize: '16px',
-                fontWeight: selectedCategory === category ? '600' : '400',
-                fontFamily: 'Satoshi',
-                color:
-                  selectedCategory === category ? '#141414ff' : '#7b828eff',
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                borderBottom:
-                  selectedCategory === category
-                    ? '2px solid #141414ff'
-                    : 'none',
-                paddingBottom: '4px',
-              }}
+              href={category === 'ALL' ? '/news' : `/news?category=${category}`}
+              style={{ textDecoration: 'none' }}
             >
-              {category}
-            </button>
+              <button
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  fontFamily: 'Satoshi',
+                  color: '#141414ff',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  borderBottom: '2px solid #141414ff',
+                  paddingBottom: '4px',
+                }}
+              >
+                {category}
+              </button>
+            </Link>
           ))}
         </div>
       </div>
@@ -375,6 +429,130 @@ export default function NewsEventDetailContent({ itemId }: { itemId: string }) {
               />
             </div>
           </div>
+        </div>
+
+        {/* Navigation to Previous/Next Posts */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '20px',
+            width: '100%',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingTop: '40px',
+            borderTop: '1px solid #e5e7ebff',
+            marginTop: '40px',
+          }}
+        >
+          {prevItem ? (
+            <Link href={`/news/${prevId}`}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  cursor: 'pointer',
+                  transition: 'opacity 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = '0.7';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = '1';
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '16px',
+                    color: '#7b828eff',
+                    fontFamily: 'Satoshi',
+                  }}
+                >
+                  ↑
+                </span>
+                <div>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: '#7b828eff',
+                      fontFamily: 'Satoshi',
+                    }}
+                  >
+                    이전 글
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#141414ff',
+                      fontFamily: 'Pretendard',
+                      marginTop: '4px',
+                    }}
+                  >
+                    {prevItem.title}
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ) : (
+            <div />
+          )}
+
+          {nextItem ? (
+            <Link href={`/news/${nextId}`}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  cursor: 'pointer',
+                  transition: 'opacity 0.3s ease',
+                  justifyContent: 'flex-end',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = '0.7';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = '1';
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: '#7b828eff',
+                      fontFamily: 'Satoshi',
+                      textAlign: 'right',
+                    }}
+                  >
+                    다음 글
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#141414ff',
+                      fontFamily: 'Pretendard',
+                      marginTop: '4px',
+                    }}
+                  >
+                    {nextItem.title}
+                  </div>
+                </div>
+                <span
+                  style={{
+                    fontSize: '16px',
+                    color: '#7b828eff',
+                    fontFamily: 'Satoshi',
+                  }}
+                >
+                  ↓
+                </span>
+              </div>
+            </Link>
+          ) : (
+            <div />
+          )}
         </div>
       </div>
     </div>
