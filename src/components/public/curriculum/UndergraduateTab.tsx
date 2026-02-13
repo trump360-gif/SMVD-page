@@ -789,27 +789,27 @@ export default function UndergraduateTab() {
               fontWeight: '700',
               color: '#000000ff',
               fontFamily: 'Pretendard',
-              textAlign: 'center',
+              textAlign: 'left',
             }}
           >
             구분
           </div>
           <div
             style={{
-              padding: '12px 0',
+              padding: '12px 0 12px 12px',
               borderBottom: '1px solid #000000ff',
               fontSize: '18px',
               fontWeight: '700',
               color: '#000000ff',
               fontFamily: 'Pretendard',
-              textAlign: 'center',
+              textAlign: 'left',
             }}
           >
             설명
           </div>
           <div
             style={{
-              padding: '12px 0',
+              padding: '12px 0 12px 12px',
               borderBottom: '1px solid #000000ff',
               fontSize: '18px',
               fontWeight: '700',
@@ -848,22 +848,21 @@ export default function UndergraduateTab() {
               <div
                 style={{
                   display: 'flex',
-                  flexDirection: 'column',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '10px',
-                  padding: '0px',
+                  justifyContent: 'flex-start',
+                  padding: '0px 0px',
                   height: '100%',
+                  gap: '8px',
                 }}
               >
                 <p
                   style={{
                     fontSize: '18px',
-                    fontWeight: '500',
+                    fontWeight: '700',
                     color: '#000000ff',
                     fontFamily: 'Pretendard',
                     margin: '0',
-                    textAlign: 'center',
+                    textAlign: 'left',
                   }}
                 >
                   {detail.module}
@@ -872,10 +871,10 @@ export default function UndergraduateTab() {
                   style={{
                     fontSize: '18px',
                     fontWeight: '500',
-                    color: '#353030ff',
+                    color: '#000000ff',
                     fontFamily: 'Pretendard',
                     margin: '0',
-                    textAlign: 'center',
+                    textAlign: 'left',
                   }}
                 >
                   {detail.title}
@@ -887,8 +886,8 @@ export default function UndergraduateTab() {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '0px',
+                  justifyContent: 'flex-start',
+                  padding: '0px 12px',
                   height: '100%',
                 }}
               >
@@ -899,7 +898,7 @@ export default function UndergraduateTab() {
                     color: '#353030ff',
                     fontFamily: 'Pretendard',
                     margin: '0',
-                    textAlign: 'center',
+                    textAlign: 'left',
                     lineHeight: 1.5,
                   }}
                 >
@@ -912,8 +911,8 @@ export default function UndergraduateTab() {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '0px',
+                  justifyContent: 'flex-start',
+                  padding: '0px 12px',
                   height: '100%',
                 }}
               >
@@ -924,7 +923,7 @@ export default function UndergraduateTab() {
                     color: '#353030ff',
                     fontFamily: 'Pretendard',
                     margin: '0',
-                    textAlign: 'center',
+                    textAlign: 'left',
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'keep-all',
                     lineHeight: 1.6,
