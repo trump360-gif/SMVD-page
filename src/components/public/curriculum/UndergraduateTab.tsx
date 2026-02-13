@@ -153,16 +153,15 @@ const classificationOptions: FilterOption[] = [
 ];
 
 const trackOptions: FilterOption[] = [
-  { label: '브랜드\n커뮤니케이션 디자인', value: 'branding', color: '#489bffff' },
-  { label: 'AI 디지털\n마케팅\n디자인', value: 'ai_marketing', color: '#ffcc54ff' },
-  { label: 'XR & 영상\n디자인', value: 'xr_video', color: '#a24affff' },
+  { label: '브랜드 커뮤니케이션 디자인', value: 'branding', color: '#489bffff' },
+  { label: 'AI 디지털 마케팅 디자인', value: 'ai_marketing', color: '#ffcc54ff' },
   { label: 'UX 디자인', value: 'ux', color: '#ff5f5aff' },
+  { label: 'XR & 영상 디자인', value: 'xr_video', color: '#a24affff' },
   { label: '공통과목', value: 'common', color: '#1abc9cff' },
 ];
 
 export default function UndergraduateTab() {
   const [checkedClassification, setCheckedClassification] = useState<string>('required');
-  const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
 
   return (
     <div
@@ -185,7 +184,7 @@ export default function UndergraduateTab() {
         <div
           style={{
             display: 'flex',
-            gap: '20px',
+            gap: '60px',
             flexWrap: 'wrap',
             paddingBottom: '20px',
             borderBottom: '1px solid #e0e0e0ff',
@@ -196,11 +195,30 @@ export default function UndergraduateTab() {
           <div
             style={{
               display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
+              gap: '20px',
+              alignItems: 'flex-start',
             }}
           >
-            {classificationOptions.map((option) => (
+            <p
+              style={{
+                fontSize: '18px',
+                fontWeight: '500',
+                fontFamily: 'Pretendard',
+                color: '#000000ff',
+                margin: '0',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              분류
+            </p>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px',
+              }}
+            >
+              {classificationOptions.map((option) => (
               <label
                 key={option.value}
                 style={{
@@ -232,67 +250,79 @@ export default function UndergraduateTab() {
                 />
                 {option.label}
               </label>
-            ))}
+              ))}
+            </div>
           </div>
 
           {/* Track Filter */}
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, auto)',
-              gap: '20px',
-              marginLeft: '40px',
+              display: 'flex',
+              gap: '30px',
+              alignItems: 'flex-start',
             }}
           >
-            {trackOptions.map((option) => (
-              <div
-                key={option.value}
-                onClick={() => {
-                  setSelectedTracks((prev) =>
-                    prev.includes(option.value)
-                      ? prev.filter((v) => v !== option.value)
-                      : [...prev, option.value]
-                  );
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  cursor: 'pointer',
-                  padding: '8px 12px',
-                  borderRadius: '4px',
-                  backgroundColor: selectedTracks.includes(option.value)
-                    ? option.color
-                    : '#ffffffff',
-                  border: `1px solid ${option.color}`,
-                }}
-              >
+            <p
+              style={{
+                fontSize: '18px',
+                fontWeight: '500',
+                fontFamily: 'Pretendard',
+                color: '#000000ff',
+                margin: '0',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                width: '35px',
+              }}
+            >
+              트랙
+            </p>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, auto)',
+                columnGap: '20px',
+                rowGap: '20px',
+              }}
+            >
+              {trackOptions.map((option) => (
                 <div
+                  key={option.value}
                   style={{
-                    width: '14px',
-                    height: '14px',
-                    backgroundColor: option.color,
-                    flexShrink: 0,
-                  }}
-                />
-                <p
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '500',
-                    fontFamily: 'Pretendard',
-                    color: selectedTracks.includes(option.value)
-                      ? '#ffffffff'
-                      : '#000000ff',
-                    margin: '0',
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'keep-all',
-                    lineHeight: 1.3,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '0',
+                    borderRadius: '0',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    minWidth: 0,
                   }}
                 >
-                  {option.label}
-                </p>
-              </div>
-            ))}
+                  <div
+                    style={{
+                      width: '18px',
+                      height: '18px',
+                      backgroundColor: option.color,
+                      flexShrink: 0,
+                    }}
+                  />
+                  <p
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '500',
+                      fontFamily: 'Pretendard',
+                      color: '#000000ff',
+                      margin: '0',
+                      whiteSpace: 'nowrap',
+                      wordBreak: 'keep-all',
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {option.label}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
