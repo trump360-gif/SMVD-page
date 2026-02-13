@@ -5,6 +5,7 @@ import { useState } from 'react';
 interface Course {
   name: string;
   color: string;
+  classification?: 'required' | 'elective';
 }
 
 interface Semester {
@@ -26,86 +27,81 @@ const semesters: Semester[] = [
     year: 1,
     term: 1,
     courses: [
-      { name: '기초그래픽디자인I', color: '#ff5f5aff' },
-      { name: '기초영상디자인I', color: '#ffcc54ff' },
-      { name: '일러스트레이션과스토리텔링디자인 I', color: '#a24affff' },
+      { name: '기초그래픽디자인I', color: '#ff5f5aff', classification: 'elective' },
+      { name: '기초영상디자인I', color: '#ffcc54ff', classification: 'elective' },
+      { name: '일러스트레이션과스토리텔링디자인 I', color: '#a24affff', classification: 'elective' },
     ],
   },
   {
     year: 1,
     term: 2,
     courses: [
-      { name: '기초그래픽디자인II', color: '#ff5f5aff' },
-      { name: '기초영상디자인II', color: '#ffcc54ff' },
-      { name: '일러스트레이션과스토리텔링디자인 II', color: '#a24affff' },
-      { name: '조형의기초', color: '#53c9ffff' },
-      { name: '커뮤니케이션디자인', color: '#70d970ff' },
+      { name: '기초그래픽디자인II', color: '#ff5f5aff', classification: 'required' },
+      { name: '기초영상디자인II', color: '#ffcc54ff', classification: 'elective' },
+      { name: '일러스트레이션과스토리텔링디자인 II', color: '#a24affff', classification: 'elective' },
+      { name: '타이포그래피디자인I', color: '#53c9ffff', classification: 'elective' },
+      { name: '디자인과문화', color: '#70d970ff', classification: 'elective' },
     ],
   },
   {
     year: 2,
     term: 1,
     courses: [
-      { name: '그래픽디자인I', color: '#1e90ffff' },
-      { name: '웹디자인입문I', color: '#ff6b9dff' },
-      { name: '편집디자인I', color: '#ffa500ff' },
-      { name: '사진학기초', color: '#32cd32ff' },
-      { name: '인터랙션디자인I', color: '#ff1493ff' },
-      { name: '스튜디오I', color: '#4b0082ff' },
-      { name: '한국미술사', color: '#8b4513ff' },
+      { name: 'AI창업디자인I', color: '#ffcc54ff', classification: 'required' },
+      { name: '브랜드디자인I', color: '#1e90ffff', classification: 'elective' },
+      { name: '데이터시각화와정보보디자인I', color: '#ff6b9dff', classification: 'elective' },
+      { name: '모션디자인I', color: '#a24affff', classification: 'elective' },
+      { name: '애니메이션I', color: '#32cd32ff', classification: 'elective' },
+      { name: '타이포그래피디자인I', color: '#1e90ffff', classification: 'elective' },
+      { name: '마케팅디자인', color: '#70d970ff', classification: 'elective' },
     ],
   },
   {
     year: 2,
     term: 2,
     courses: [
-      { name: '브랜드디자인II', color: '#0047abff' },
-      { name: '모션그래픽스', color: '#ffd700ff' },
-      { name: '영상편집', color: '#ff69b4ff' },
-      { name: '사진학응용', color: '#00ced1ff' },
-      { name: '전시디자인', color: '#ff8c00ff' },
-      { name: '스튜디오II', color: '#800080ff' },
+      { name: 'AI창업디자인II', color: '#ffcc54ff', classification: 'required' },
+      { name: '브랜드디자인II', color: '#1e90ffff', classification: 'elective' },
+      { name: '데이터시각화와정보보디자인II', color: '#ff6b9dff', classification: 'elective' },
+      { name: '모션디자인III', color: '#a24affff', classification: 'elective' },
+      { name: '애니메이션II', color: '#32cd32ff', classification: 'elective' },
+      { name: '디자인심리학', color: '#70d970ff', classification: 'elective' },
     ],
   },
   {
     year: 3,
     term: 1,
     courses: [
-      { name: '광고디자인I', color: '#dc143cff' },
-      { name: '사용자경험디자인I', color: '#228b22ff' },
-      { name: '판화디자인I', color: '#4169e1ff' },
-      { name: '유튜브영상디자인I', color: '#ff4500ff' },
-      { name: 'AI메타버스디자인I', color: '#9932ccff' },
-      { name: '졸업프로젝트스튜디오 I', color: '#20b2aaff' },
-      { name: '마케팅디자인', color: '#ff6347ff' },
+      { name: '광고디자인I', color: '#1e90ffff', classification: 'required' },
+      { name: '사용자경험디자인I', color: '#ff5f5aff', classification: 'required' },
+      { name: '편집디자인I', color: '#70d970ff', classification: 'elective' },
+      { name: '유튜브영상디자인I', color: '#ffcc54ff', classification: 'elective' },
+      { name: 'AI메타버스디자인I', color: '#a24affff', classification: 'elective' },
     ],
   },
   {
     year: 3,
     term: 2,
     courses: [
-      { name: '광고디자인II', color: '#dc143cff' },
-      { name: '사용자경험디자인II', color: '#228b22ff' },
-      { name: '판화디자인II', color: '#4169e1ff' },
-      { name: '유튜브영상디자인II', color: '#ff4500ff' },
-      { name: 'AI메타버스디자인II', color: '#9932ccff' },
-      { name: '졸업프로젝트스튜디오 II', color: '#20b2aaff' },
+      { name: '광고디자인II', color: '#1e90ffff', classification: 'required' },
+      { name: '사용자경험디자인II', color: '#ff5f5aff', classification: 'required' },
+      { name: '편집디자인II', color: '#70d970ff', classification: 'elective' },
+      { name: '유튜브영상디자인II', color: '#ffcc54ff', classification: 'elective' },
+      { name: 'AI메타버스디자인II', color: '#a24affff', classification: 'elective' },
     ],
   },
   {
     year: 4,
     term: 1,
     courses: [
-      { name: '글임프로젝트스튜디오 I', color: '#00ff7fff' },
-      { name: '졸업프로젝트스튜디오 I', color: '#20b2aaff' },
+      { name: '졸업프로젝트스튜디오 I', color: '#20b2aaff', classification: 'required' },
     ],
   },
   {
     year: 4,
     term: 2,
     courses: [
-      { name: '졸업프로젝트스튜디오 II', color: '#20b2aaff' },
-      { name: '애니메이션', color: '#ff69b4ff' },
+      { name: '졸업프로젝트스튜디오 II', color: '#20b2aaff', classification: 'required' },
     ],
   },
 ];
@@ -241,11 +237,15 @@ export default function UndergraduateTab() {
                       setCheckedClassification(option.value);
                     }
                   }}
+                  disabled
                   style={{
+                    appearance: 'none',
                     width: '14px',
                     height: '14px',
-                    cursor: 'pointer',
-                    accentColor: '#000000ff',
+                    cursor: 'not-allowed',
+                    backgroundColor: checkedClassification === option.value ? '#d0d0d0ff' : '#ffffffff',
+                    border: '1px solid #ccc',
+                    borderRadius: '2px',
                   }}
                 />
                 {option.label}
@@ -332,7 +332,9 @@ export default function UndergraduateTab() {
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
             gap: '10px',
+            rowGap: '60px',
             width: '100%',
+            gridAutoRows: '1fr',
           }}
         >
           {semesters.map((semester, index) => (
@@ -365,7 +367,9 @@ export default function UndergraduateTab() {
                   gap: '0',
                 }}
               >
-                {semester.courses.map((course, courseIndex) => (
+                {semester.courses.map((course, courseIndex) => {
+                  const isMatchedClassification = course.classification === checkedClassification;
+                  return (
                   <div
                     key={courseIndex}
                     style={{
@@ -374,8 +378,7 @@ export default function UndergraduateTab() {
                       gap: '10px',
                       height: '95px',
                       padding: '35px 0',
-                      backgroundColor: '#ffffffff',
-                      borderTop: '1px solid #000000ff',
+                      backgroundColor: isMatchedClassification ? '#f0f0f0ff' : '#ffffffff',
                       borderBottom: '1px solid #000000ff',
                       boxSizing: 'border-box',
                     }}
@@ -407,7 +410,8 @@ export default function UndergraduateTab() {
                       {course.name}
                     </p>
                   </div>
-                ))}
+                );
+                })}
               </div>
             </div>
           ))}
