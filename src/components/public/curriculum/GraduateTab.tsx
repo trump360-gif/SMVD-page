@@ -1,21 +1,42 @@
 'use client';
 
-interface GraduateCourse {
+interface GraduateModule {
   name: string;
-  credit?: string;
   track: string;
-  hasBackground?: boolean;
+  courses: string;
+  requirements: string;
+  credits: string;
 }
 
-const graduateCourses: GraduateCourse[] = [
-  { name: '디자인세미나', credit: '3', track: 'UX/UI Track', hasBackground: true },
-  { name: '고급그래픽디자인', credit: '3', track: 'Visual Design Track' },
-  { name: '인터랙션설계', credit: '3', track: 'UX/UI Track' },
-  { name: '브랜드전략세미나', credit: '3', track: 'Brand Track', hasBackground: true },
-  { name: '모션영상심화', credit: '3', track: 'Motion Track' },
-  { name: '디지털콘텐츠제작', credit: '3', track: 'Content Track', hasBackground: true },
-  { name: '디자인리서치방법론', credit: '3', track: 'Research Track' },
-  { name: '전시공간디자인', credit: '3', track: 'Spatial Design Track' },
+const graduateModules: GraduateModule[] = [
+  {
+    name: '모듈B',
+    track: '브랜드 커뮤니케이션 디자인',
+    courses: '타이포그래피디자인Ⅰ,Ⅱ\n브랜드디자인Ⅰ,Ⅱ\n광고디자인Ⅰ,Ⅱ\n편집디자인Ⅰ',
+    requirements: '모듈 A 필수 이수, 트랙 내 교과 필수 이수',
+    credits: '16',
+  },
+  {
+    name: '모듈C',
+    track: 'UX 디자인',
+    courses: '일러스트레이션과스토리텔링디자인Ⅰ,Ⅱ\nAI컴퓨터디자인Ⅰ,Ⅱ\n마케팅디자인Ⅰ\n유튜브영상디자인Ⅰ,Ⅱ',
+    requirements: '모듈 A 필수 이수, 트랙 내 교과 필수 이수',
+    credits: '16',
+  },
+  {
+    name: '모듈D',
+    track: '영상 디자인',
+    courses: '기초그래픽디자인Ⅰ,Ⅱ\n데이터시각화정보디자인Ⅰ,Ⅱ\n디자인심리학\n사용자정험디자인Ⅰ,Ⅱ',
+    requirements: '모듈 A 필수 이수, 트랙 내 교과 필수 이수',
+    credits: '16',
+  },
+  {
+    name: '모듈E',
+    track: 'XR & 영상 디자인',
+    courses: '기초영상디자인Ⅰ,Ⅱ\n모션디자인Ⅰ,Ⅱ\n에니메이션\nAI메타버스디자인Ⅰ,Ⅱ',
+    requirements: '모듈 A 필수 이수, 트랙 내 교과 필수 이수',
+    credits: '16',
+  },
 ];
 
 export default function GraduateTab() {
@@ -28,6 +49,85 @@ export default function GraduateTab() {
         width: '100%',
       }}
     >
+      {/* Information Section */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+        }}
+      >
+        {/* Info Box 1 */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '24px',
+            paddingBottom: '20px',
+            borderBottom: '1px solid #e0e0e0ff',
+          }}
+        >
+          <p
+            style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              color: '#4e535bff',
+              fontFamily: 'Pretendard',
+              margin: '0',
+              width: '60px',
+              flexShrink: 0,
+            }}
+          >
+            트랙
+          </p>
+          <p
+            style={{
+              fontSize: '18px',
+              fontWeight: '400',
+              color: '#4e535bff',
+              fontFamily: 'Pretendard',
+              margin: '0',
+              lineHeight: 1.6,
+            }}
+          >
+            전공교육과정을 기반으로 한 전문 인재육성 교육커리큘럼, 진출분야 및 역량강화를 위한 모듈과 교과목으로 구성된 전공로드맵
+          </p>
+        </div>
+
+        {/* Info Box 2 */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '24px',
+          }}
+        >
+          <p
+            style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              color: '#4e535bff',
+              fontFamily: 'Pretendard',
+              margin: '0',
+              width: '60px',
+              flexShrink: 0,
+            }}
+          >
+            모듈
+          </p>
+          <p
+            style={{
+              fontSize: '18px',
+              fontWeight: '400',
+              color: '#4e535bff',
+              fontFamily: 'Pretendard',
+              margin: '0',
+              lineHeight: 1.6,
+            }}
+          >
+            공통된 주제의 교과목으로 구성된 집합체
+          </p>
+        </div>
+      </div>
+
       {/* Section Title */}
       <div
         style={{
@@ -51,7 +151,71 @@ export default function GraduateTab() {
         </h2>
       </div>
 
-      {/* Graduate Courses Table */}
+      {/* Table Header */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 2fr 1fr 0.8fr',
+          gap: '0',
+          width: '100%',
+          marginBottom: '0',
+        }}
+      >
+        <div
+          style={{
+            padding: '12px 0',
+            borderBottom: '1px solid #000000ff',
+            fontSize: '18px',
+            fontWeight: '500',
+            color: '#000000ff',
+            fontFamily: 'Pretendard',
+            textAlign: 'center',
+          }}
+        >
+          트랙
+        </div>
+        <div
+          style={{
+            padding: '12px 0',
+            borderBottom: '1px solid #000000ff',
+            fontSize: '18px',
+            fontWeight: '500',
+            color: '#000000ff',
+            fontFamily: 'Pretendard',
+            textAlign: 'center',
+          }}
+        >
+          해당과목
+        </div>
+        <div
+          style={{
+            padding: '12px 0',
+            borderBottom: '1px solid #000000ff',
+            fontSize: '18px',
+            fontWeight: '500',
+            color: '#000000ff',
+            fontFamily: 'Pretendard',
+            textAlign: 'center',
+          }}
+        >
+          이수기준
+        </div>
+        <div
+          style={{
+            padding: '12px 0',
+            borderBottom: '1px solid #000000ff',
+            fontSize: '18px',
+            fontWeight: '500',
+            color: '#000000ff',
+            fontFamily: 'Pretendard',
+            textAlign: 'center',
+          }}
+        >
+          기초학점
+        </div>
+      </div>
+
+      {/* Table Rows */}
       <div
         style={{
           display: 'flex',
@@ -59,55 +223,57 @@ export default function GraduateTab() {
           gap: '0',
         }}
       >
-        {graduateCourses.map((course, index) => (
+        {graduateModules.map((module, index) => (
           <div
             key={index}
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 0.2fr 1fr',
-              alignItems: 'center',
-              minHeight: '95px',
-              padding: '35px 20px',
-              backgroundColor: course.hasBackground ? '#e8e8e8ff' : '#ffffffff',
-              borderTop: '1px solid #000000ff',
+              gridTemplateColumns: '1fr 2fr 1fr 0.8fr',
+              gap: '0',
+              alignItems: 'start',
+              minHeight: '140px',
+              padding: '20px 0',
               borderBottom: '1px solid #000000ff',
               boxSizing: 'border-box',
-              gap: '20px',
             }}
           >
-            {/* Course Name */}
+            {/* Track Name */}
+            <p
+              style={{
+                fontSize: '16px',
+                fontWeight: '500',
+                color: '#000000ff',
+                fontFamily: 'Pretendard',
+                margin: '0',
+                textAlign: 'center',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'keep-all',
+                lineHeight: 1.6,
+              }}
+            >
+              {module.name}
+              <br />
+              {module.track}
+            </p>
+
+            {/* Courses */}
             <p
               style={{
                 fontSize: '16px',
                 fontWeight: '400',
-                color: '#000000ff',
+                color: '#353030ff',
                 fontFamily: 'Pretendard',
                 margin: '0',
-                textAlign: 'left',
+                textAlign: 'center',
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'keep-all',
+                lineHeight: 1.6,
               }}
             >
-              {course.name}
+              {module.courses}
             </p>
 
-            {/* Credit */}
-            {course.credit && (
-              <p
-                style={{
-                  fontSize: '14px',
-                  fontWeight: '400',
-                  color: '#7b828eff',
-                  fontFamily: 'Pretendard',
-                  margin: '0',
-                  textAlign: 'center',
-                }}
-              >
-                {course.credit}
-              </p>
-            )}
-
-            {/* Track */}
+            {/* Requirements */}
             <p
               style={{
                 fontSize: '14px',
@@ -115,55 +281,30 @@ export default function GraduateTab() {
                 color: '#353030ff',
                 fontFamily: 'Pretendard',
                 margin: '0',
-                textAlign: 'right',
+                textAlign: 'center',
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'keep-all',
+                lineHeight: 1.6,
               }}
             >
-              {course.track}
+              {module.requirements}
+            </p>
+
+            {/* Credits */}
+            <p
+              style={{
+                fontSize: '18px',
+                fontWeight: '500',
+                color: '#000000ff',
+                fontFamily: 'Pretendard',
+                margin: '0',
+                textAlign: 'center',
+              }}
+            >
+              {module.credits}
             </p>
           </div>
         ))}
-      </div>
-
-      {/* Requirements Info */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-          padding: '20px',
-          backgroundColor: '#f5f5f5ff',
-          borderRadius: '4px',
-        }}
-      >
-        <p
-          style={{
-            fontSize: '14px',
-            fontWeight: '700',
-            color: '#000000ff',
-            fontFamily: 'Pretendard',
-            margin: '0',
-          }}
-        >
-          수료 기준
-        </p>
-        <ul
-          style={{
-            margin: '0',
-            paddingLeft: '20px',
-            fontSize: '14px',
-            fontWeight: '400',
-            color: '#353030ff',
-            fontFamily: 'Pretendard',
-            lineHeight: 1.6,
-          }}
-        >
-          <li>총 36학점 이상 이수</li>
-          <li>필수과목 3학점 (디자인세미나) 포함</li>
-          <li>선택 과목 최소 2개 트랙 이상 수강</li>
-          <li>학위논문 또는 졸업 프로젝트 필수</li>
-        </ul>
       </div>
     </div>
   );
