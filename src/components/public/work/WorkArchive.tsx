@@ -8,6 +8,7 @@ interface PortfolioItem {
   title: string;
   date: string;
   image: string;
+  subtitle: string;
 }
 
 interface CategoryCount {
@@ -20,6 +21,7 @@ const portfolioItems: PortfolioItem[] = [
     category: 'UX/UI',
     title: 'Vora',
     date: '2025',
+    subtitle: '권나연 외 3명, 2025',
     image: '/images/work/portfolio-12.png',
   },
   {
@@ -27,6 +29,7 @@ const portfolioItems: PortfolioItem[] = [
     category: 'UX/UI',
     title: 'Mindit',
     date: '2025',
+    subtitle: '도인영 외 3명, 2025',
     image: '/images/work/portfolio-10.png',
   },
   {
@@ -34,6 +37,7 @@ const portfolioItems: PortfolioItem[] = [
     category: 'Game',
     title: 'StarNew Valley',
     date: '2025',
+    subtitle: '안시현 외 3명, 2025',
     image: '/images/work/portfolio-9.png',
   },
   {
@@ -41,6 +45,7 @@ const portfolioItems: PortfolioItem[] = [
     category: 'UX/UI',
     title: 'Pave',
     date: '2025',
+    subtitle: '박지우 외 2명, 2025',
     image: '/images/work/portfolio-11.png',
   },
   {
@@ -48,6 +53,7 @@ const portfolioItems: PortfolioItem[] = [
     category: 'UX/UI',
     title: 'Bolio',
     date: '2025',
+    subtitle: '박근영, 2025',
     image: '/images/work/portfolio-7.png',
   },
   {
@@ -55,6 +61,7 @@ const portfolioItems: PortfolioItem[] = [
     category: 'UX/UI',
     title: 'MIST AWAY',
     date: '2025',
+    subtitle: '신예지, 2025',
     image: '/images/work/portfolio-6.png',
   },
   {
@@ -62,6 +69,7 @@ const portfolioItems: PortfolioItem[] = [
     category: 'Branding',
     title: 'BICHAE',
     date: '2025',
+    subtitle: '최은정, 2025',
     image: '/images/work/portfolio-5.png',
   },
   {
@@ -69,6 +77,7 @@ const portfolioItems: PortfolioItem[] = [
     category: 'UX/UI',
     title: 'Morae',
     date: '2023',
+    subtitle: '고은서, 2023',
     image: '/images/work/portfolio-4.png',
   },
   {
@@ -76,6 +85,7 @@ const portfolioItems: PortfolioItem[] = [
     category: 'Branding',
     title: 'STUDIO KNOT',
     date: '2025',
+    subtitle: '노하린, 2025',
     image: '/images/work/portfolio-3.png',
   },
   {
@@ -83,6 +93,7 @@ const portfolioItems: PortfolioItem[] = [
     category: 'Branding',
     title: 'BLOMÉ',
     date: '2025',
+    subtitle: '김진아 외 1명, 2025',
     image: '/images/work/portfolio-8.png',
   },
   {
@@ -90,6 +101,7 @@ const portfolioItems: PortfolioItem[] = [
     category: 'Motion',
     title: 'alors: romanticize your life, every...',
     date: '2025',
+    subtitle: '정유진, 2025',
     image: '/images/work/portfolio-2.png',
   },
   {
@@ -97,6 +109,7 @@ const portfolioItems: PortfolioItem[] = [
     category: 'Motion',
     title: '고군분투',
     date: '2025',
+    subtitle: '한다인, 2025',
     image: '/images/work/portfolio-1.png',
   },
 ];
@@ -309,6 +322,18 @@ export default function WorkArchive() {
               >
                 {item.title}
               </h3>
+
+              {/* Subtitle */}
+              <span
+                style={{
+                  fontSize: '12px',
+                  fontWeight: '400',
+                  color: '#999999',
+                  fontFamily: 'Satoshi',
+                }}
+              >
+                {item.subtitle}
+              </span>
             </div>
           </div>
         ))}
