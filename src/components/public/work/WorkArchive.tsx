@@ -101,7 +101,7 @@ const portfolioItems: PortfolioItem[] = [
   },
 ];
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 12;
 const categories = ['All', 'UX/UI', 'Motion', 'Branding', 'Game', 'Graphics'];
 
 export default function WorkArchive() {
@@ -235,7 +235,7 @@ export default function WorkArchive() {
             <div
               style={{
                 width: '100%',
-                aspectRatio: '4 / 3',
+                aspectRatio: '3 / 4',
                 backgroundColor: '#f0f0f0ff',
                 borderRadius: '4px',
                 overflow: 'hidden',
