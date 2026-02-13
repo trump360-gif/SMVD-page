@@ -1,0 +1,7 @@
+[     399ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:3000/api/auth/session:0
+[     399ms] [ERROR] [next-auth][error][CLIENT_FETCH_ERROR] 
+https://next-auth.js.org/errors#client_fetch_error undefined {error: Object, url: /api/auth/session, message: undefined} @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[     405ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:3000/api/auth/session:0
+[     405ms] [ERROR] [next-auth][error][CLIENT_FETCH_ERROR] 
+https://next-auth.js.org/errors#client_fetch_error undefined {error: Object, url: /api/auth/session, message: undefined} @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[    4826ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:3000/api/auth/callback/credentials:0

@@ -1,0 +1,336 @@
+[     420ms] [WARNING] Image with src "/images/curriculum/50b155ce342946c1057018893a8cd368197a805e.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:2297
+[     445ms] [WARNING] Image with src "/images/curriculum/50b155ce342946c1057018893a8cd368197a805e.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:2297
+[30004079ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/home'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { HomeHero, VisionSection, ExhibitionSection, InfoSection } from '@/components/public/home';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'SMVD - Sookmyung Visual & Media Design',
+
+Import map: aliased to relative './src/components/public/home' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30004080ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30013803ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/curriculum?_rsc=1czf8:0
+[30013848ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30014008ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30014081ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30014247ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30014274ms] [WARNING] Image with src "/images/curriculum/50b155ce342946c1057018893a8cd368197a805e.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:2297
+[30014280ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30014288ms] [WARNING] Image with src "/images/curriculum/50b155ce342946c1057018893a8cd368197a805e.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:2297
+[30014542ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30014693ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30014695ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/auth/session:0
+[30014696ms] [ERROR] [next-auth][error][CLIENT_FETCH_ERROR] 
+https://next-auth.js.org/errors#client_fetch_error Unexpected token '<', "<!DOCTYPE "... is not valid JSON {error: Object, url: /api/auth/session, message: Unexpected token '<', "<!DOCTYPE "... is not valid JSON} @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30014709ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/auth/_log:0
+[30014734ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30094440ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30100788ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30108280ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30116756ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30120946ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30152327ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30152357ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/curriculum?_rsc=1czf8:0
+[30152379ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/curriculum?_rsc=1czf8:0
+[30152413ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/curriculum?_rsc=1czf8:0
+[30152461ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/curriculum?_rsc=1czf8:0
+[30152530ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[30152553ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/curriculum:0
+[30152679ms] Error: ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (Error: ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at Object.getCompilationErrors (file:///Users/jeonminjun/claude/SMVD_page/smvd-cms/node_modules/next/dist/server/dev/hot-reloader-turbopack.js:1008:59)
+    at DevBundlerService.getCompilationError (file:///Users/jeonminjun/claude/SMVD_page/smvd-cms/node_modules/next/dist/server/lib/dev-bundler-service.js:44:55)
+    at DevServer.getCompilationError (file:///Users/jeonminjun/claude/SMVD_page/smvd-cms/node_modules/next/dist/server/dev/next-dev-server.js:706:42)
+    at DevServer.findPageComponents (file:///Users/jeonminjun/claude/SMVD_page/smvd-cms/node_modules/next/dist/server/dev/next-dev-server.js:676:43)
+    at async DevServer.renderErrorToResponseImpl (file:///Users/jeonminjun/claude/SMVD_page/smvd-cms/node_modules/next/dist/server/base-server.js:1733:26)
+[30152695ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_87da1198._.js:1920
+[30152733ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_87da1198._.js:1920
+[30160227ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_87da1198._.js:1920
+[30167026ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_87da1198._.js:1920
+[30174019ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_87da1198._.js:1920
+[30184104ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/app/(public)/about/page.tsx:2:1
+Module not found: Can't resolve '@/components/public/about'
+  1 | import { prisma } from '@/lib/db';
+> 2 | import { AboutHero, AboutImageShowcase, AboutVision, AboutHistory } from '@/components/public/about';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  3 |
+  4 | export const metadata = {
+  5 |   title: 'About Major - SMVD',
+
+Import map: aliased to relative './src/components/public/about' inside of [project]/claude/SMVD_page/smvd-cms
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_87da1198._.js:1920
+[30187962ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/curriculum:0
+[30198941ms] [WARNING] [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree. @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_87da1198._.js:1206
+[30200457ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3000/curriculum:0
+[30559095ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr' failed: Connection closed before receiving a handshake response @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_client_de1754e0._.js:2266
+[30560097ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_client_de1754e0._.js:2266
+[30561099ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_client_de1754e0._.js:2266
+[30562103ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_client_de1754e0._.js:2266
+[30563105ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_client_de1754e0._.js:2266
+[30568110ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_client_de1754e0._.js:2266
+[30573118ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_client_de1754e0._.js:2266
+[30578128ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_client_de1754e0._.js:2266
+[30583166ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_client_de1754e0._.js:2266
+[30588187ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_client_de1754e0._.js:2266
+[30593232ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_client_de1754e0._.js:2266
+[30598358ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_client_de1754e0._.js:2266

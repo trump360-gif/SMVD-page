@@ -41,3 +41,13 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# Design files
+*.fig
+*.psd
+*.sketch
+
+# Build artifacts
+dist/
+Thumbs.db
+.playwright-mcp/

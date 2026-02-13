@@ -1,0 +1,66 @@
+[  242763ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/images/icon/logo.svg:0
+[  286531ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/components/public/home/Footer.tsx:112:5
+Parsing ecmascript source code failed
+  110 |         </div>
+  111 |       </div>
+> 112 |     </footer>
+      |     ^
+  113 |   );
+  114 | }
+  115 |
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./claude/SMVD_page/smvd-cms/src/components/public/home/Footer.tsx
+    ./claude/SMVD_page/smvd-cms/src/app/(public)/page.tsx @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[  286531ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/components/public/home/Footer.tsx:112:6
+Parsing ecmascript source code failed
+  110 |         </div>
+  111 |       </div>
+> 112 |     </footer>
+      |      ^^^^^^^^
+  113 |   );
+  114 | }
+  115 |
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./claude/SMVD_page/smvd-cms/src/components/public/home/Footer.tsx
+    ./claude/SMVD_page/smvd-cms/src/app/(public)/page.tsx @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[  612703ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/components/public/home/Footer.tsx:120:5
+Parsing ecmascript source code failed
+  118 |         </div>
+  119 |       </div>
+> 120 |     </footer>
+      |     ^
+  121 |   );
+  122 | }
+  123 |
+
+Expression expected
+
+Import trace:
+  Server Component:
+    ./claude/SMVD_page/smvd-cms/src/components/public/home/Footer.tsx
+    ./claude/SMVD_page/smvd-cms/src/app/(public)/page.tsx @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[  612703ms] [ERROR] ./claude/SMVD_page/smvd-cms/src/components/public/home/Footer.tsx:120:6
+Parsing ecmascript source code failed
+  118 |         </div>
+  119 |       </div>
+> 120 |     </footer>
+      |      ^^^^^^^^
+  121 |   );
+  122 | }
+  123 |
+
+Unterminated regexp literal
+
+Import trace:
+  Server Component:
+    ./claude/SMVD_page/smvd-cms/src/components/public/home/Footer.tsx
+    ./claude/SMVD_page/smvd-cms/src/app/(public)/page.tsx @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:3127
+[  656533ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/images/icon/Group%2027-3.svg:0

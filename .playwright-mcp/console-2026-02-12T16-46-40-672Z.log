@@ -1,0 +1,2 @@
+[     454ms] [WARNING] Image with src "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading @ http://localhost:3000/_next/static/chunks/d2e4e_next_dist_71fc4efb._.js:2297
