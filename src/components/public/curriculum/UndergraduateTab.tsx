@@ -137,6 +137,41 @@ const undergraduateModules: GraduateModule[] = [
   },
 ];
 
+interface ModuleDetail {
+  module: string;
+  title: string;
+  description: string;
+  courses: string;
+}
+
+const moduleDetails: ModuleDetail[] = [
+  {
+    module: '모듈 A',
+    title: '브랜드 디자인',
+    description: '시각디자인의 기본이되는 그래픽 커뮤니케이션 영역으로, 국내외 사례 및 현 디자인의 트랜드를 이해하고 프로젝트에 맞는 창의적 아이디어를 도출하여 자기화한다. 향후 각자의 진로 방향을 모색하여 디자인프로세스를 배우고 포트폴리오화 시키는 과정이다.',
+    courses: '브랜드디자인I, II\n광고디자인I, II',
+  },
+  {
+    module: '모듈 B',
+    title: '브랜드 커뮤니케이션 디자인',
+    description: '인스타, 유튜브 중심의 개인이 발산하는 SNS가 시작영상의 핵심으로 자신을 브랜딩하고 크리에이티브한 마케팅 컨텐츠 제작을 연구한다.',
+    courses: 'AI창업디자인I, II\n유튜브영상디자인I, II',
+  },
+  {
+    module: '모듈 C',
+    title: 'UX 디자인',
+    description: '데이터 수집, 분석을 통한 데이터 시각화와 정보 디자인을 진행하는 이 위에 디자인 사고를 바탕으로하는 AI를 접목한 사용장 경험 설계 문제 해결을 위해 구현 되는 서비스 및 제품 컨텐츠를 웹, 모바일, 스마트 기기, 게임, 메타버스 등의 새로운 미디어 상의 UX / UI / 인터랙션 디자인은 능력을 갖춘다.',
+    courses: '데이터시각화정보디자인I, II\n사용자경험디자인I, II',
+  },
+  {
+    module: '모듈 D',
+    title: '영상 디자인',
+    description: '기초 영상디자인부터 모션디자인 심화까지 단계적으로 다루며, 국내·외 사례 분석 프로젝트 중심 수업을 통해 현대 영상과 모션디자인의 흐름을 이해하고 창의적 문제 해결 능력 기른다. 학생은 자신만의 시각 언어를 구축하고 포트폴리오로 작성할 수 있는 실무',
+    courses: '기초영상디자인I, II\n모션디자인I, II',
+  },
+];
+
+
 interface FilterOption {
   label: string;
   value: string;
@@ -449,7 +484,172 @@ export default function UndergraduateTab() {
           </h2>
         </div>
 
-        {/* Table Header */}
+        {/* Second Table: Module Details Header */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '343px 685px 332px',
+            gap: '0',
+            width: '100%',
+            marginBottom: '0',
+          }}
+        >
+          <div
+            style={{
+              padding: '12px 0',
+              borderBottom: '1px solid #000000ff',
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#000000ff',
+              fontFamily: 'Pretendard',
+              textAlign: 'center',
+            }}
+          >
+            구분
+          </div>
+          <div
+            style={{
+              padding: '12px 0',
+              borderBottom: '1px solid #000000ff',
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#000000ff',
+              fontFamily: 'Pretendard',
+              textAlign: 'center',
+            }}
+          >
+            설명
+          </div>
+          <div
+            style={{
+              padding: '12px 0',
+              borderBottom: '1px solid #000000ff',
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#000000ff',
+              fontFamily: 'Pretendard',
+              textAlign: 'center',
+            }}
+          >
+            해당과목
+          </div>
+        </div>
+
+        {/* Module Details Rows */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0',
+          }}
+        >
+          {moduleDetails.map((detail, index) => (
+            <div
+              key={index}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '343px 685px 332px',
+                gap: '0',
+                alignItems: 'start',
+                borderBottom: '1px solid #000000ff',
+                borderTop: '1px solid #000000ff',
+                boxSizing: 'border-box',
+              }}
+            >
+              {/* Module & Title */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  padding: '20px 0',
+                  height: '100%',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: '#000000ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    textAlign: 'center',
+                  }}
+                >
+                  {detail.module}
+                </p>
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: '#353030ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    textAlign: 'center',
+                  }}
+                >
+                  {detail.title}
+                </p>
+              </div>
+
+              {/* Description */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '20px 0',
+                  height: '100%',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: '#353030ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    textAlign: 'center',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {detail.description}
+                </p>
+              </div>
+
+              {/* Courses */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '20px 0',
+                  height: '100%',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: '#353030ff',
+                    fontFamily: 'Pretendard',
+                    margin: '0',
+                    textAlign: 'center',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'keep-all',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {detail.courses}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* First Table Header */}
         <div
           style={{
             display: 'grid',
@@ -457,6 +657,7 @@ export default function UndergraduateTab() {
             gap: '0',
             width: '100%',
             marginBottom: '0',
+            marginTop: '40px',
           }}
         >
           <div
