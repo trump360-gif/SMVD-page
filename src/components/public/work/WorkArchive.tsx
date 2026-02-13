@@ -235,7 +235,7 @@ export default function WorkArchive() {
             <div
               style={{
                 width: '100%',
-                aspectRatio: '3 / 4',
+                aspectRatio: '4 / 3',
                 backgroundColor: '#f0f0f0ff',
                 borderRadius: '4px',
                 overflow: 'hidden',
