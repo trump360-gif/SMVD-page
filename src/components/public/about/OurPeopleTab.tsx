@@ -279,8 +279,6 @@ export default function OurPeopleTab() {
                   color: '#353030ff',
                   fontFamily: 'Helvetica',
                   margin: '0',
-                  width: '332px',
-                  flexShrink: 0,
                 }}
               >
                 {instructor.name}
@@ -293,6 +291,7 @@ export default function OurPeopleTab() {
                   fontFamily: 'Helvetica',
                   margin: '0',
                   lineHeight: 1.4,
+                  textAlign: 'right',
                 }}
               >
                 {instructor.specialty}
