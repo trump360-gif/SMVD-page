@@ -24,7 +24,6 @@ export default function Header() {
         width: '100%',
         height: '80px',
         backgroundColor: '#ffffffff',
-        borderBottom: '1px solid #141414ff',
         display: 'flex',
         alignItems: 'center',
         paddingLeft: '55.5px',

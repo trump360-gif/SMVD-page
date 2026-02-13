@@ -9,7 +9,7 @@ interface AboutPageIntroProps {
 
 export default function AboutPageIntro({
   title = 'About SMVD',
-  imageSrc = '/images/about/e5c4cf027162eec5560ea533a7856322ccd3f614.png',
+  imageSrc = '/images/about/image 32.png',
 }: AboutPageIntroProps) {
   return (
     <div
@@ -17,65 +17,57 @@ export default function AboutPageIntro({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-end',
-        gap: '16px',
+        gap: '32px',
         width: '100%',
       }}
     >
-      {/* Title Section */}
+      {/* Top Section - Title & Description */}
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
           gap: '16px',
-          width: '100%',
+          width: '1360px',
         }}
       >
         <h1
           style={{
             fontSize: '48px',
-            fontWeight: '700',
+            fontWeight: '500',
             color: '#141414ff',
-            fontFamily: 'Satoshi',
+            fontFamily: 'Inter',
             margin: '0',
-            letterSpacing: '-0.48px',
+            letterSpacing: '-0.128px',
             lineHeight: 1.1,
           }}
         >
           {title}
         </h1>
+        {/* Description Section */}
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
+            fontSize: '18px',
+            fontWeight: '500',
+            color: '#141414ff',
+            fontFamily: 'Inter',
+            letterSpacing: '-0.619px',
+            lineHeight: 1.5,
+            width: '848px',
+            wordBreak: 'keep-all',
           }}
         >
-          {/* Icon placeholder or actual icon */}
-          <span
-            style={{
-              fontSize: '18px',
-              fontWeight: '400',
-              color: '#141414ff',
-              fontFamily: 'Pretendard',
-              letterSpacing: '-0.18px',
-              lineHeight: 1.5,
-            }}
-          >
-            {/* Icon would go here */}
-          </span>
+          {`시각·영상디자인과에서는 커뮤니케이션 시대의 다양한 정보, 인간의 의사,\n사물의 이미지를 정확하고 합리적인 방법으로 전달하기 위한 창의적 사고와\n창조 행위를 배웁니다. 사람들의 마음을 움직일 수 있는 시각을 통해\n자신의 생각과 표현력을 효과적으로 전달하는 방법을 탐구하는 학문입니다.`}
         </div>
       </div>
 
-      {/* Image Section - image 32 (1017 x 500px) */}
+      {/* Bottom Section - Image */}
       <div
         style={{
           position: 'relative',
-          width: '1017px',
+          width: '1360px',
           height: '500px',
           backgroundColor: '#e1e1e1ff',
           overflow: 'hidden',
-          maxWidth: '100%',
         }}
       >
         <Image

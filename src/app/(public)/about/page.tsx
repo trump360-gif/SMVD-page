@@ -30,11 +30,52 @@ export default async function AboutPage() {
         {/* Header */}
         <Header />
 
+        {/* About Major Header Section */}
+        <div
+          style={{
+            width: '100%',
+            paddingTop: '60px',
+            paddingBottom: '0px',
+            paddingLeft: '40px',
+            paddingRight: '40px',
+            backgroundColor: '#ffffffff',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px',
+            }}
+          >
+            <h1
+              style={{
+                fontSize: '24px',
+                fontWeight: '700',
+                color: '#141414ff',
+                fontFamily: 'Inter',
+                margin: '0',
+                letterSpacing: '0.0703125px',
+                lineHeight: 1.5,
+              }}
+            >
+              About Major
+            </h1>
+            <div
+              style={{
+                height: '1px',
+                backgroundColor: '#141414ff',
+                width: '100%',
+              }}
+            />
+          </div>
+        </div>
+
         {/* Main Content Container */}
         <div
           style={{
             width: '100%',
-            paddingTop: '81px',
+            paddingTop: '80px',
             paddingBottom: '61px',
             paddingLeft: '40px',
             paddingRight: '40px',
@@ -47,7 +88,7 @@ export default async function AboutPage() {
               margin: '0 auto',
               display: 'flex',
               flexDirection: 'column',
-              gap: '40px',
+              gap: '100px',
             }}
           >
             {/* Intro Section with image 32 */}
@@ -71,10 +112,53 @@ export default async function AboutPage() {
     return (
       <div>
         <Header />
+
+        {/* About Major Header Section */}
         <div
           style={{
             width: '100%',
-            paddingTop: '81px',
+            paddingTop: '60px',
+            paddingBottom: '0px',
+            paddingLeft: '40px',
+            paddingRight: '40px',
+            backgroundColor: '#ffffffff',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px',
+            }}
+          >
+            <h1
+              style={{
+                fontSize: '24px',
+                fontWeight: '700',
+                color: '#141414ff',
+                fontFamily: 'Inter',
+                margin: '0',
+                letterSpacing: '0.0703125px',
+                lineHeight: 1.5,
+              }}
+            >
+              About Major
+            </h1>
+            <div
+              style={{
+                height: '1px',
+                backgroundColor: '#141414ff',
+                width: '100%',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Main Content Container */}
+        <div
+          style={{
+            width: '100%',
+            paddingTop: '80px',
             paddingBottom: '61px',
             paddingLeft: '40px',
             paddingRight: '40px',
@@ -87,7 +171,7 @@ export default async function AboutPage() {
               margin: '0 auto',
               display: 'flex',
               flexDirection: 'column',
-              gap: '40px',
+              gap: '100px',
             }}
           >
             <AboutPageIntro />
@@ -95,6 +179,7 @@ export default async function AboutPage() {
             <AboutPageHistory />
           </div>
         </div>
+
         <Footer />
       </div>
     );
