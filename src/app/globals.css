@@ -1,26 +1,307 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ============================================================
+   SMVD Design System - CSS Custom Properties
+   Based on Figma Design System Analysis
+   ============================================================ */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* --- Primary Brand Colors --- */
+  --color-primary-deep-blue: #0845A7;
+  --color-primary-blue: #1A46E7;
+  --color-primary-light-blue: #489AFF;
+  --color-primary-teal: #1ABC9C;
+
+  /* --- Accent Colors --- */
+  --color-accent-purple: #9747FF;
+  --color-accent-light-purple: #A14AFF;
+
+  /* --- Semantic Colors --- */
+  --color-semantic-error: #FF0000;
+  --color-semantic-error-light: #FF5F59;
+  --color-semantic-warning: #FFCB53;
+  --color-semantic-success: #4CAF50;
+
+  /* --- Neutral Scale (Figma 48-level grey) --- */
+  --color-neutral-0: #FFFFFF;
+  --color-neutral-25: #F5F5F5;
+  --color-neutral-50: #F2F3F4;
+  --color-neutral-75: #EBEEF4;
+  --color-neutral-100: #EAECF0;
+  --color-neutral-150: #E9EBF8;
+  --color-neutral-200: #E8E8E8;
+  --color-neutral-250: #E0E0E0;
+  --color-neutral-300: #DBDBDC;
+  --color-neutral-350: #D9D9D9;
+  --color-neutral-400: #D6D8DC;
+  --color-neutral-450: #B7BEC5;
+  --color-neutral-500: #8E98A8;
+  --color-neutral-550: #8B8B8B;
+  --color-neutral-600: #848990;
+  --color-neutral-650: #7B828E;
+  --color-neutral-700: #7A828E;
+  --color-neutral-750: #6F7580;
+  --color-neutral-800: #626872;
+  --color-neutral-850: #5C626B;
+  --color-neutral-900: #575A60;
+  --color-neutral-950: #4E525A;
+  --color-neutral-1000: #43474F;
+  --color-neutral-1050: #3E3E3E;
+  --color-neutral-1100: #3A3A3A;
+  --color-neutral-1150: #373A40;
+  --color-neutral-1200: #342F2F;
+  --color-neutral-1250: #2B2E32;
+  --color-neutral-1300: #1D1F21;
+  --color-neutral-1350: #1D1D1D;
+  --color-neutral-1400: #1B1D1F;
+  --color-neutral-1450: #141414;
+  --color-neutral-1500: #000000;
+
+  /* --- Font Families --- */
+  --font-primary: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Satoshi', 'Pretendard', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* --- Spacing Scale (8px base) --- */
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-7: 28px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-32: 128px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+
+  /* --- Border Radius --- */
+  --radius-none: 0px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  /* --- Transitions --- */
+  --duration-instant: 100ms;
+  --duration-fast: 200ms;
+  --duration-base: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 800ms;
+
+  /* --- Breakpoints --- */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1440px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================================
+   Base Styles
+   ============================================================ */
+
+:root {
+  --background: var(--color-neutral-0);
+  --foreground: var(--color-neutral-1450);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-primary-blue);
+  color: white;
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out both;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out both;
+}
+
+.animate-fade-in-delay {
+  animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+.animate-fade-in-delay-2 {
+  animation: fadeIn 0.8s ease-out 0.4s both;
+}
+
+.animate-fade-in-delay-3 {
+  animation: fadeIn 0.8s ease-out 0.6s both;
+}
+
+.animate-slide-in-left {
+  animation: slideInFromLeft 0.6s ease-out both;
+}
+
+.animate-slide-in-right {
+  animation: slideInFromRight 0.6s ease-out both;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out both;
+}
+
+/* ============================================================
+   Utility Classes
+   ============================================================ */
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Gradient overlay for hero sections */
+.hero-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: transform var(--duration-base) ease, box-shadow var(--duration-base) ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Text gradient */
+.text-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary-deep-blue), var(--color-primary-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Section container */
+.section-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+@media (max-width: 768px) {
+  .section-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Focus visible for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-primary-blue);
+  outline-offset: 2px;
 }

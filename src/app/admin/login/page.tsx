@@ -1,0 +1,146 @@
+'use client';
+
+import { Suspense, useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-linear-to-br from-blue-900 via-blue-800 to-blue-700 flex items-center justify-center">
+        <div className="text-white text-lg">Loading...</div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState('admin@smvd.ac.kr');
+  const [password, setPassword] = useState('admin123');
+
+  const callbackUrl = searchParams.get('callbackUrl') || '/admin/dashboard';
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError(result.error);
+      } else if (result?.ok) {
+        router.push(callbackUrl);
+      }
+    } catch (err) {
+      setError('로그인 중 오류가 발생했습니다');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-linear-to-br from-blue-900 via-blue-800 to-blue-700 flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">
+            숙명여자대학교
+          </h1>
+          <p className="text-blue-100 text-lg">시각영상디자인과 관리자</p>
+        </div>
+
+        {/* Login Card */}
+        <div className="bg-white rounded-lg shadow-2xl overflow-hidden">
+          <div className="bg-blue-600 px-6 py-4">
+            <h2 className="text-xl font-semibold text-white">관리자 로그인</h2>
+          </div>
+
+          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            {/* Email Input */}
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                이메일
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@smvd.ac.kr"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                disabled={isLoading}
+                required
+              />
+            </div>
+
+            {/* Password Input */}
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                비밀번호
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="비밀번호를 입력하세요"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                disabled={isLoading}
+                required
+              />
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex gap-3">
+                <span className="text-lg">⚠️</span>
+                <span className="text-sm">{error}</span>
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? '로그인 중...' : '로그인'}
+            </button>
+          </form>
+
+          {/* Footer */}
+          <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
+            <p className="text-xs text-gray-500 text-center">
+              기본 계정: admin@smvd.ac.kr / admin123
+            </p>
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="mt-8 text-center text-blue-100 text-sm">
+          <p>© 2026 Sookmyung Women's University</p>
+          <p>Visual & Media Design Department</p>
+        </div>
+      </div>
+    </div>
+  );
+}

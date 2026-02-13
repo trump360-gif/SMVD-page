@@ -1,0 +1,174 @@
+// Prisma schema for SMVD CMS
+// Sookmyung Women's University Visual & Media Design Department
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Admin users
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  role          String    @default("admin")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+// Pages for the website
+model Page {
+  id          String      @id @default(cuid())
+  slug        String      @unique
+  title       String
+  description String?
+  order       Int         @default(0)
+  sections    Section[]
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@map("pages")
+}
+
+// Section types enum
+enum SectionType {
+  HERO
+  TEXT_BLOCK
+  IMAGE_GALLERY
+  TWO_COLUMN
+  THREE_COLUMN
+  TESTIMONIAL
+  CTA_BUTTON
+  VIDEO_EMBED
+  ACCORDION
+  STATS
+  TEAM_GRID
+  PORTFOLIO_GRID
+  NEWS_GRID
+  CURRICULUM_TABLE
+  FACULTY_LIST
+  HOME_ANIMATION
+  WORK_PORTFOLIO
+  EVENT_LIST
+  CONTACT_FORM
+  MAP
+  CUSTOM_HTML
+}
+
+// Sections with flexible content
+model Section {
+  id        String      @id @default(cuid())
+  pageId    String      @map("page_id")
+  page      Page        @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type      SectionType
+  title     String?
+  content   Json?
+  mediaIds  Json?       @map("media_ids")
+  order     Int         @default(0)
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  @@map("sections")
+  @@index([pageId])
+}
+
+// Media management (images, videos, etc.)
+model Media {
+  id          String    @id @default(cuid())
+  filename    String
+  filepath    String    @map("file_path")
+  mimeType    String    @map("mime_type")
+  size        Int
+  formats     Json?     // { webp: { path, size }, thumbnail: { path, size } }
+  width       Int?
+  height      Int?
+  altText     String?   @map("alt_text")
+  uploadedAt  DateTime  @default(now()) @map("uploaded_at")
+
+  @@map("media")
+}
+
+// Navigation menu items
+model Navigation {
+  id        String    @id @default(cuid())
+  label     String
+  href      String
+  order     Int       @default(0)
+  isActive  Boolean   @default(true) @map("is_active")
+  parentId  String?   @map("parent_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@map("navigation")
+}
+
+// Footer content
+model Footer {
+  id          String    @id @default(cuid())
+  title       String    @default("숙명여자대학교 시각영상디자인과")
+  description String?
+  address     String?
+  phone       String?
+  email       String?
+  socialLinks Json?     @map("social_links")
+  copyright   String?
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("footer")
+}
+
+// Work/Portfolio items
+model Work {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  content     Json?
+  mediaIds    Json?     @map("media_ids")
+  order       Int       @default(0)
+  published   Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("works")
+}
+
+// News & Events
+model NewsEvent {
+  id          String    @id @default(cuid())
+  title       String
+  content     String
+  excerpt     String?
+  type        String    @default("news") // "news" or "event"
+  mediaIds    Json?     @map("media_ids")
+  eventDate   DateTime? @map("event_date")
+  published   Boolean   @default(true)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("news_events")
+}
+
+// Faculty & Staff
+model People {
+  id          String    @id @default(cuid())
+  name        String
+  title       String
+  bio         String?
+  email       String?
+  phone       String?
+  mediaId     String?   @map("media_id")
+  order       Int       @default(0)
+  published   Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("people")
+}
