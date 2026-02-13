@@ -941,6 +941,8 @@ export default function UndergraduateTab() {
       <div
         style={{
           textAlign: 'right',
+          marginTop: '0',
+          padding: '0',
         }}
       >
         <p
@@ -950,7 +952,8 @@ export default function UndergraduateTab() {
             color: '#666666',
             fontFamily: 'Pretendard',
             margin: '0',
-            lineHeight: 1.6,
+            lineHeight: 1,
+            padding: '0',
           }}
         >
           *[숙명여자대학교 홈페이지]-[대학생활]-[학사정보]-[교육과정] 에서 확인 가능
