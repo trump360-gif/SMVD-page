@@ -109,8 +109,10 @@ export default function OurPeopleTab() {
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'row',
           gap: '10px',
+          alignItems: 'flex-start',
+          width: '100%',
         }}
       >
         <h2
@@ -121,6 +123,8 @@ export default function OurPeopleTab() {
             fontFamily: 'Helvetica',
             margin: '0',
             letterSpacing: '-0.48px',
+            width: '333px',
+            flexShrink: 0,
           }}
         >
           Professor
@@ -131,7 +135,7 @@ export default function OurPeopleTab() {
           style={{
             display: 'flex',
             gap: '20px',
-            width: '100%',
+            flex: 1,
           }}
         >
           {professors.map((prof) => (
