@@ -154,19 +154,19 @@ const moduleDetails: ModuleDetail[] = [
   {
     module: '모듈 B',
     title: '브랜드 커뮤니케이션 디자인',
-    description: '인스타, 유튜브 중심의 개인이 발산하는 SNS가 시작영상의 핵심으로 자신을 브랜딩하고 크리에이티브한 마케팅 컨텐츠 제작을 연구한다.',
+    description: '인스타, 유튜브 중심의 개인이 발신하는 SNS가 시각영상의 핵심으로 AI를 활용하여 자신을 브랜딩하고 크리에이티브한 마케팅 컨텐츠 제작을 연구한다.',
     courses: 'AI창업디자인I, II\n유튜브영상디자인I, II',
   },
   {
     module: '모듈 C',
     title: 'UX 디자인',
-    description: '데이터 수집, 분석을 통한 데이터 시각화와 정보 디자인을 진행하는 이 위에 디자인 사고를 바탕으로하는 AI를 접목한 사용장 경험 설계 문제 해결을 위해 구현 되는 서비스 및 제품 컨텐츠를 웹, 모바일, 스마트 기기, 게임, 메타버스 등의 새로운 미디어 상의 UX / UI / 인터랙션 디자인은 능력을 갖춘다.',
+    description: '데이터 수집, 분석을 통한 데이터 시각화와 정보 디자인을 통하여 데이터 주도 디자인의 기초를 다진다. 이 위에 디자인 사고를 바탕으로하는 AI를 접목한 사용자 경험 디자인 프로세스로 구현 되는 서비스 및 제품 컨텐츠를 웹, 모바일, 스마트 기기, 게임, 메타버스 등의 새로운 미디어 상의 UX / UI / 인터랙션 디자인하는 능력을 갖춘다.',
     courses: '데이터시각화정보디자인I, II\n사용자경험디자인I, II',
   },
   {
     module: '모듈 D',
     title: '영상 디자인',
-    description: '기초 영상디자인부터 모션디자인 심화까지 단계적으로 다루며, 국내·외 사례 분석 프로젝트 중심 수업을 통해 현대 영상과 모션디자인의 흐름을 이해하고 창의적 문제 해결 능력 기른다. 학생은 자신만의 시각 언어를 구축하고 포트폴리오로 작성할 수 있는 실무',
+    description: '기초 영상디자인부터 모션디자인 심화까지 단계적으로 다루며, 국내·외 사례 분석과 프로젝트 중심 수업을 통해 현대 영상과 모션디자인의 흐름을 이해하고 창의적 문제 해결 능력을 기른다. 학생은 자신만의 시각 언어를 구축하고 포트폴리오로 확장할 수 있는 실무 기반 학습을 받는다.',
     courses: '기초영상디자인I, II\n모션디자인I, II',
   },
 ];
@@ -838,7 +838,7 @@ export default function UndergraduateTab() {
                 gridTemplateColumns: '1fr 1.5fr 1fr',
                 gap: '0',
                 alignItems: 'center',
-                minHeight: '120px',
+                minHeight: '150px',
                 borderBottom: '1px solid #000000ff',
                 borderTop: '1px solid #000000ff',
                 boxSizing: 'border-box',
@@ -935,6 +935,27 @@ export default function UndergraduateTab() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Footer Note - Right aligned, above footer */}
+      <div
+        style={{
+          marginTop: '60px',
+          textAlign: 'right',
+        }}
+      >
+        <p
+          style={{
+            fontSize: '16px',
+            fontWeight: '400',
+            color: '#666666',
+            fontFamily: 'Pretendard',
+            margin: '0',
+            lineHeight: 1.6,
+          }}
+        >
+          *[숙명여자대학교 홈페이지]-[대학생활]-[학사정보]-[교육과정] 에서 확인 가능
+        </p>
       </div>
     </div>
   );
