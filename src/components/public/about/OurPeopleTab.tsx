@@ -231,7 +231,6 @@ export default function OurPeopleTab() {
           alignItems: 'flex-start',
           width: '100%',
           paddingBottom: '60px',
-          borderBottom: '1px solid #000000ff',
         }}
       >
         <h2
