@@ -468,12 +468,12 @@ export default function NewsEventDetailContent({ itemId }: { itemId: string }) {
                     fontFamily: 'Satoshi',
                   }}
                 >
-                  ↑
+                  ←
                 </span>
                 <div>
                   <div
                     style={{
-                      fontSize: '12px',
+                      fontSize: '14px',
                       color: '#7b828eff',
                       fontFamily: 'Satoshi',
                     }}
@@ -519,7 +519,7 @@ export default function NewsEventDetailContent({ itemId }: { itemId: string }) {
                 <div>
                   <div
                     style={{
-                      fontSize: '12px',
+                      fontSize: '14px',
                       color: '#7b828eff',
                       fontFamily: 'Satoshi',
                       textAlign: 'right',
@@ -546,7 +546,7 @@ export default function NewsEventDetailContent({ itemId }: { itemId: string }) {
                     fontFamily: 'Satoshi',
                   }}
                 >
-                  ↓
+                  →
                 </span>
               </div>
             </Link>
