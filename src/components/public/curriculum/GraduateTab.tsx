@@ -228,6 +228,42 @@ export default function GraduateTab() {
         <CurriculumSectionComponent section={doctorCurriculum} />
       </div>
 
+      {/* Footer Note - Right aligned */}
+      <div
+        style={{
+          textAlign: 'right',
+          marginTop: '-55px',
+          padding: '0',
+        }}
+      >
+        <p
+          style={{
+            fontSize: '16px',
+            fontWeight: '400',
+            color: '#666666',
+            fontFamily: 'Pretendard',
+            margin: '0',
+            lineHeight: 1,
+            padding: '0',
+          }}
+        >
+          *
+          <a
+            href="https://www.sookmyung.ac.kr/kr/university-life/curriculum01.do"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: '#666666',
+              textDecoration: 'underline',
+              cursor: 'pointer',
+            }}
+          >
+            [숙명여자대학교 대학원 홈페이지]
+          </a>
+          에서 확인 가능
+        </p>
+      </div>
+
       {/* SECTION 2: Graduation Thesis Cards */}
       <div
         style={{

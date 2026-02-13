@@ -956,7 +956,20 @@ export default function UndergraduateTab() {
             padding: '0',
           }}
         >
-          *[숙명여자대학교 홈페이지]-[대학생활]-[학사정보]-[교육과정] 에서 확인 가능
+          *
+          <a
+            href="https://www.sookmyung.ac.kr/kr/university-life/curriculum01.do"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: '#666666',
+              textDecoration: 'underline',
+              cursor: 'pointer',
+            }}
+          >
+            [숙명여자대학교 홈페이지]-[대학생활]-[학사정보]-[교육과정]
+          </a>
+          {' '}에서 확인 가능
         </p>
       </div>
     </div>
