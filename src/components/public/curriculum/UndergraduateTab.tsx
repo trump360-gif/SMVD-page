@@ -713,7 +713,7 @@ export default function UndergraduateTab() {
                     lineHeight: 1.6,
                   }}
                 >
-                  {module.courses}
+                  {module.courses.replace(/\\n/g, '\n')}
                 </p>
               </div>
 
