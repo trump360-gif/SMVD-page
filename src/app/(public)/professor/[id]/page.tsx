@@ -1,0 +1,708 @@
+'use client';
+
+import { useRouter, useParams } from 'next/navigation';
+import Image from 'next/image';
+import { Header, Footer } from '@/components/public/home';
+
+interface Professor {
+  id: string;
+  name: string;
+  badge: string;
+  office: string;
+  email: string[];
+  phone: string;
+  homepage: string;
+  courses: {
+    undergraduate: string[];
+    graduate: string[];
+  };
+  biography: {
+    cvText: string;
+    position: string;
+    education: string[];
+    experience: string[];
+  };
+  profileImage: string;
+}
+
+const professorsData: Record<string, Professor> = {
+  yun: {
+    id: 'yun',
+    name: '윤여종',
+    badge: 'Brand & Advertising',
+    office: '미술대학 711호',
+    email: ['zoneidea@sookmyung.ac.kr', 'h7023@hanmail.net'],
+    phone: '02-710-9688',
+    homepage: 'https://smvd.sookmyung.ac.kr/?page_id=1033',
+    courses: {
+      undergraduate: ['브랜드디자인', '광고디자인', '졸업프로젝트스튜디오'],
+      graduate: ['시각영상디자인'],
+    },
+    biography: {
+      cvText: 'CV 다운로드',
+      position: '숙명여자대학교 시각영상디자인학과 교수',
+      education: [
+        '• 홍익대학교 시각디자인과 및 동대학원 졸업',
+        '• 대한민국 디자인전람회 초대디자이너',
+      ],
+      experience: [
+        '• 평창동계올림픽/패럴림픽 예술포스터 수상',
+        '• 대한민국 관광포스터 공모전 대통령상 수상',
+        '• 한국방송 광고공사 광고공모전 대상 수상',
+        '• 대한민국 디자인 전람회 산업자원부 장관상 수상',
+        '• Asia Graphic Poster Triennale Best Designer',
+        '• VIDAK 한국시각정보디자인협회 수석부회장 역임',
+        '• KSBDA 한국기초조형학회 부회장 역임',
+      ],
+    },
+    profileImage: '/images/people/yun-yeojong.png',
+  },
+  kim: {
+    id: 'kim',
+    name: '김기영',
+    badge: 'Video & Marketing',
+    office: '미술대학 702호',
+    email: ['kiyoungkim@sookmyung.ac.kr'],
+    phone: '+82-2-710-9683',
+    homepage: 'https://smvd.sookmyung.ac.kr/?page_id=1033',
+    courses: {
+      undergraduate: ['마케팅디자인', '졸업프로젝트스튜디오'],
+      graduate: ['시각영상디자인'],
+    },
+    biography: {
+      cvText: 'CV 다운로드',
+      position: '숙명여자대학교 시각·영상디자인학과 교수',
+      education: [
+        '• 일본 무사시노미술대학 시각영상디자인학과 졸업',
+        '• 일본 다마미술대학 대학원 미술연구과 영상 졸업',
+      ],
+      experience: [
+        '• (주)제일기획 19기 공채입사',
+        '• 삼성전자, 풀무원, 맥심커피 업무수행',
+        '• SPC그룹 파리바게트 디자인고문',
+      ],
+    },
+    profileImage: '/images/people/kim-kiyoung.png',
+  },
+  lee: {
+    id: 'lee',
+    name: '이지선',
+    badge: 'User Experience',
+    office: '미술대학 702호',
+    email: ['jisun.lee@sookmyung.ac.kr'],
+    phone: '+82-2-710-9684',
+    homepage: 'https://smvd.sookmyung.ac.kr/?page_id=1034',
+    courses: {
+      undergraduate: ['사용자경험디자인', '졸업프로젝트스튜디오'],
+      graduate: ['시각영상디자인'],
+    },
+    biography: {
+      cvText: 'CV 다운로드',
+      position: '숙명여자대학교 시각·영상디자인학과 교수',
+      education: [
+        '• 홍익대학교 시각디자인학과 졸업',
+        '• 홍익대학교 대학원 시각디자인 전공 졸업',
+      ],
+      experience: [
+        '• 삼성전자 디자인센터 UX 디자이너',
+        '• LG전자 UX 연구원',
+        '• 네이버 디자인팀 리더',
+      ],
+    },
+    profileImage: '/images/people/lee-jisun.png',
+  },
+  na: {
+    id: 'na',
+    name: '나유미',
+    badge: 'User Experience',
+    office: '미술대학 702호',
+    email: ['youmi.na@sookmyung.ac.kr'],
+    phone: '+82-2-710-9685',
+    homepage: 'https://smvd.sookmyung.ac.kr/?page_id=1035',
+    courses: {
+      undergraduate: ['사용자경험디자인', '졸업프로젝트스튜디오'],
+      graduate: ['시각영상디자인'],
+    },
+    biography: {
+      cvText: 'CV 다운로드',
+      position: '숙명여자대학교 시각·영상디자인학과 교수',
+      education: [
+        '• 이화여자대학교 산업디자인학과 졸업',
+        '• 이화여자대학교 대학원 산업디자인 전공 졸업',
+      ],
+      experience: [
+        '• 삼성전자 디자인센터 수석 디자이너',
+        '• 현대자동차 UX 연구원',
+        '• 카카오톡 플랫폼 디자인팀 리더',
+      ],
+    },
+    profileImage: '/images/people/na-youmi.png',
+  },
+};
+
+export default function ProfessorDetailPage() {
+  const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
+  const professor = professorsData[id];
+
+  if (!professor) {
+    return (
+      <div>
+        <Header />
+        <div style={{ padding: '60px 40px', textAlign: 'center' }}>
+          <h1>교수 정보를 찾을 수 없습니다.</h1>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <Header />
+
+      {/* Tab Header Section */}
+      <div
+        style={{
+          width: '100%',
+          paddingTop: '60px',
+          paddingBottom: '0px',
+          paddingLeft: '40px',
+          paddingRight: '40px',
+          backgroundColor: '#ffffffff',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+          }}
+        >
+          {/* Tab Buttons */}
+          <div
+            style={{
+              display: 'flex',
+              gap: '40px',
+              borderBottom: '1px solid #141414ff',
+              paddingBottom: '10px',
+            }}
+          >
+            <button
+              onClick={() => router.push('/about')}
+              style={{
+                backgroundColor: 'transparent',
+                border: 'none',
+                fontSize: '24px',
+                fontWeight: '400',
+                color: '#141414ff',
+                fontFamily: 'Inter',
+                cursor: 'pointer',
+                padding: '0',
+                transition: 'all 0.2s ease',
+                paddingBottom: '10px',
+                marginBottom: '-10px',
+              }}
+            >
+              About Major
+            </button>
+            <button
+              onClick={() => router.push('/about?tab=people')}
+              style={{
+                backgroundColor: 'transparent',
+                border: 'none',
+                fontSize: '24px',
+                fontWeight: '700',
+                color: '#141414ff',
+                fontFamily: 'Inter',
+                cursor: 'pointer',
+                padding: '0',
+                transition: 'all 0.2s ease',
+                borderBottom: '2px solid #141414ff',
+                paddingBottom: '10px',
+                marginBottom: '-10px',
+              }}
+            >
+              Our People
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div
+        style={{
+          width: '100%',
+          paddingTop: '0px',
+          paddingBottom: '100px',
+          paddingLeft: '95.5px',
+          paddingRight: '95.5px',
+          backgroundColor: '#ffffffff',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1360px',
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '40px',
+            alignItems: 'flex-start',
+          }}
+        >
+          {/* Left Panel - Professor Image & Badge */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '333px',
+              flexShrink: 0,
+            }}
+          >
+            {/* Image */}
+            <div
+              style={{
+                position: 'relative',
+                width: '333px',
+                height: '468px',
+                backgroundColor: '#f3f4f6ff',
+                marginBottom: '0px',
+              }}
+            >
+              <Image
+                src={professor.profileImage}
+                alt={professor.name}
+                fill
+                style={{
+                  objectFit: 'cover',
+                }}
+                priority
+              />
+            </div>
+
+            {/* Badge */}
+            <div
+              style={{
+                backgroundColor: '#141414ff',
+                padding: '12px 0',
+                textAlign: 'center',
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '18px',
+                  fontWeight: 'normal',
+                  color: '#ffffffff',
+                  fontFamily: 'Helvetica',
+                  letterSpacing: '-0.27px',
+                }}
+              >
+                {professor.badge}
+              </span>
+            </div>
+          </div>
+
+          {/* Right Panel - Details */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '30px',
+              flex: 1,
+              paddingTop: '100px',
+            }}
+          >
+            {/* Name */}
+            <div
+              style={{
+                height: '66px',
+                display: 'flex',
+                alignItems: 'flex-end',
+              }}
+            >
+              <h1
+                style={{
+                  fontSize: '60px',
+                  fontWeight: 'normal',
+                  color: '#0a0a0aff',
+                  fontFamily: 'Helvetica',
+                  margin: '0',
+                  letterSpacing: '-0.6px',
+                  lineHeight: 1.1,
+                }}
+              >
+                {professor.name}
+              </h1>
+            </div>
+
+            {/* Office */}
+            <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+              <div
+                style={{
+                  backgroundColor: '#ebecf0ff',
+                  padding: '0 12px',
+                  borderRadius: '0px',
+                  width: '80px',
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minHeight: '28px',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 'normal',
+                    color: '#141414ff',
+                    fontFamily: 'Helvetica',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  연구실
+                </span>
+              </div>
+              <p
+                style={{
+                  fontSize: '18px',
+                  fontWeight: 'normal',
+                  color: '#141414ff',
+                  fontFamily: 'Inter',
+                  margin: '0',
+                  letterSpacing: '-0.44px',
+                  lineHeight: 1.5,
+                }}
+              >
+                {professor.office}
+              </p>
+            </div>
+
+            {/* Email */}
+            <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+              <div
+                style={{
+                  backgroundColor: '#ebecf0ff',
+                  padding: '0 12px',
+                  borderRadius: '0px',
+                  width: '80px',
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minHeight: '28px',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 'normal',
+                    color: '#141414ff',
+                    fontFamily: 'Helvetica',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  이메일
+                </span>
+              </div>
+              <p
+                style={{
+                  fontSize: '18px',
+                  fontWeight: 'normal',
+                  color: '#141414ff',
+                  fontFamily: 'Inter',
+                  margin: '0',
+                  letterSpacing: '-0.44px',
+                  lineHeight: 1.5,
+                }}
+              >
+                {professor.email.join(' ')}
+              </p>
+            </div>
+
+            {/* Phone */}
+            <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+              <div
+                style={{
+                  backgroundColor: '#ebecf0ff',
+                  padding: '0 12px',
+                  borderRadius: '0px',
+                  width: '80px',
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minHeight: '28px',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 'normal',
+                    color: '#141414ff',
+                    fontFamily: 'Helvetica',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  연락처
+                </span>
+              </div>
+              <p
+                style={{
+                  fontSize: '18px',
+                  fontWeight: 'normal',
+                  color: '#141414ff',
+                  fontFamily: 'Inter',
+                  margin: '0',
+                  letterSpacing: '-0.44px',
+                  lineHeight: 1.5,
+                }}
+              >
+                {professor.phone}
+              </p>
+            </div>
+
+            {/* Courses */}
+            <div style={{ display: 'flex', gap: '30px', alignItems: 'flex-start' }}>
+              <div
+                style={{
+                  backgroundColor: '#ebecf0ff',
+                  padding: '0 12px',
+                  borderRadius: '0px',
+                  width: '90px',
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minHeight: '28px',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 'normal',
+                    color: '#141414ff',
+                    fontFamily: 'Helvetica',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  담당과목
+                </span>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                }}
+              >
+                {/* Undergraduate */}
+                <div>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 'normal',
+                      color: '#353030ff',
+                      fontFamily: 'Inter',
+                      margin: '0 0 8px 0',
+                      letterSpacing: '-0.44px',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    학사
+                  </p>
+                  {professor.courses.undergraduate.map((course, idx) => (
+                    <p
+                      key={idx}
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: 'normal',
+                        color: '#141414ff',
+                        fontFamily: 'Inter',
+                        margin: '0',
+                        letterSpacing: '-0.44px',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {course}
+                    </p>
+                  ))}
+                </div>
+
+                {/* Graduate */}
+                <div>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 'normal',
+                      color: '#353030ff',
+                      fontFamily: 'Inter',
+                      margin: '10px 0 8px 0',
+                      letterSpacing: '-0.44px',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    석사
+                  </p>
+                  {professor.courses.graduate.map((course, idx) => (
+                    <p
+                      key={idx}
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: 'normal',
+                        color: '#141414ff',
+                        fontFamily: 'Inter',
+                        margin: '0',
+                        letterSpacing: '-0.44px',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {course}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Biography */}
+            <div style={{ display: 'flex', gap: '30px', alignItems: 'flex-start' }}>
+              <div
+                style={{
+                  backgroundColor: '#ebecf0ff',
+                  padding: '0 12px',
+                  borderRadius: '0px',
+                  width: '70px',
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minHeight: '28px',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 'normal',
+                    color: '#141414ff',
+                    fontFamily: 'Helvetica',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  약력
+                </span>
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
+                {/* CV Download */}
+                <a
+                  href="#"
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: 'normal',
+                    color: '#141414ff',
+                    fontFamily: 'Inter',
+                    margin: '0',
+                    letterSpacing: '-0.44px',
+                    lineHeight: 1.5,
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {professor.biography.cvText}
+                </a>
+
+                {/* Position */}
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: 'normal',
+                    color: '#141414ff',
+                    fontFamily: 'Inter',
+                    margin: '0',
+                    letterSpacing: '-0.44px',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {professor.biography.position}
+                </p>
+
+                {/* Education */}
+                <div>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 'normal',
+                      color: '#353030ff',
+                      fontFamily: 'Inter',
+                      margin: '0 0 8px 0',
+                      letterSpacing: '-0.44px',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    학력
+                  </p>
+                  {professor.biography.education.map((edu, idx) => (
+                    <p
+                      key={idx}
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: 'normal',
+                        color: '#141414ff',
+                        fontFamily: 'Inter',
+                        margin: '0',
+                        letterSpacing: '-0.44px',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {edu}
+                    </p>
+                  ))}
+                </div>
+
+                {/* Experience */}
+                <div>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 'normal',
+                      color: '#353030ff',
+                      fontFamily: 'Inter',
+                      margin: '10px 0 8px 0',
+                      letterSpacing: '-0.44px',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    경력
+                  </p>
+                  {professor.biography.experience.map((exp, idx) => (
+                    <p
+                      key={idx}
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: 'normal',
+                        color: '#141414ff',
+                        fontFamily: 'Inter',
+                        margin: '0',
+                        letterSpacing: '-0.44px',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {exp}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+    </div>
+  );
+}

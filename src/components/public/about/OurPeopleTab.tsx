@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 interface Professor {
@@ -92,9 +92,11 @@ const instructors = [
 ];
 
 export default function OurPeopleTab() {
-  const [selectedProfessor, setSelectedProfessor] = useState<Professor | null>(
-    professors[0]
-  );
+  const router = useRouter();
+
+  const handleProfessorClick = (profId: string) => {
+    router.push(`/professor/${profId}`);
+  };
 
   return (
     <div
@@ -143,7 +145,7 @@ export default function OurPeopleTab() {
           {professors.map((prof) => (
             <div
               key={prof.id}
-              onClick={() => setSelectedProfessor(prof)}
+              onClick={() => handleProfessorClick(prof.id)}
               style={{
                 cursor: 'pointer',
                 display: 'flex',
@@ -151,6 +153,15 @@ export default function OurPeopleTab() {
                 gap: '0px',
                 width: '236px',
                 flexShrink: 0,
+                transition: 'transform 0.2s ease, opacity 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.opacity = '0.8';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.opacity = '1';
               }}
             >
               {/* Image Container */}
@@ -173,7 +184,7 @@ export default function OurPeopleTab() {
                   style={{
                     objectFit: 'cover',
                   }}
-                  priority={selectedProfessor?.id === prof.id}
+                  priority={false}
                 />
               </div>
 
