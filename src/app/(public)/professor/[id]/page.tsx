@@ -259,6 +259,7 @@ export default function ProfessorDetailPage() {
               flexDirection: 'column',
               width: '333px',
               flexShrink: 0,
+              paddingTop: '100px',
             }}
           >
             {/* Image */}
