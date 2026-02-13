@@ -244,10 +244,12 @@ export default function ProfessorDetailPage() {
         <div
           style={{
             maxWidth: '1360px',
+            margin: '0 auto',
             display: 'flex',
             flexDirection: 'row',
             gap: '40px',
             alignItems: 'flex-start',
+            width: '100%',
           }}
         >
           {/* Left Panel - Professor Image & Badge */}
