@@ -1,4 +1,6 @@
-import { prisma } from '@/lib/db';
+'use client';
+
+import { useState } from 'react';
 import {
   Header,
   Footer,
@@ -7,181 +9,121 @@ import {
   AboutPageIntro,
   AboutPageVision,
   AboutPageHistory,
+  OurPeopleTab,
 } from '@/components/public/about';
 
-export const metadata = {
-  title: 'About SMVD | 숙명여자대학교 시각영상디자인과',
-  description: '숙명여자대학교 시각영상디자인과에 대해 알아보세요',
-};
+export default function AboutPage() {
+  const [activeTab, setActiveTab] = useState<'major' | 'people'>('major');
+  return (
+    <div>
+      {/* Header */}
+      <Header />
 
-export default async function AboutPage() {
-  try {
-    const page = await prisma.page.findUnique({
-      where: { slug: 'about' },
-      include: {
-        sections: {
-          orderBy: { order: 'asc' },
-        },
-      },
-    });
-
-    return (
-      <div>
-        {/* Header */}
-        <Header />
-
-        {/* About Major Header Section */}
+      {/* Tab Header Section */}
+      <div
+        style={{
+          width: '100%',
+          paddingTop: '60px',
+          paddingBottom: '0px',
+          paddingLeft: '40px',
+          paddingRight: '40px',
+          backgroundColor: '#ffffffff',
+        }}
+      >
         <div
           style={{
-            width: '100%',
-            paddingTop: '60px',
-            paddingBottom: '0px',
-            paddingLeft: '40px',
-            paddingRight: '40px',
-            backgroundColor: '#ffffffff',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
           }}
         >
+          {/* Tab Buttons */}
           <div
             style={{
               display: 'flex',
-              flexDirection: 'column',
-              gap: '20px',
+              gap: '40px',
+              borderBottom: '1px solid #141414ff',
+              paddingBottom: '10px',
             }}
           >
-            <h1
+            <button
+              onClick={() => setActiveTab('major')}
               style={{
+                backgroundColor: 'transparent',
+                border: 'none',
                 fontSize: '24px',
-                fontWeight: '700',
+                fontWeight: activeTab === 'major' ? '700' : '400',
                 color: '#141414ff',
                 fontFamily: 'Inter',
-                margin: '0',
-                letterSpacing: '0.0703125px',
-                lineHeight: 1.5,
+                cursor: 'pointer',
+                padding: '0',
+                transition: 'all 0.2s ease',
+                borderBottom: activeTab === 'major' ? '2px solid #141414ff' : 'none',
+                paddingBottom: '10px',
+                marginBottom: '-10px',
               }}
             >
               About Major
-            </h1>
-            <div
+            </button>
+            <button
+              onClick={() => setActiveTab('people')}
               style={{
-                height: '1px',
-                backgroundColor: '#141414ff',
-                width: '100%',
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Main Content Container */}
-        <div
-          style={{
-            width: '100%',
-            paddingTop: '80px',
-            paddingBottom: '61px',
-            paddingLeft: '40px',
-            paddingRight: '40px',
-            backgroundColor: '#ffffffff',
-          }}
-        >
-          <div
-            style={{
-              maxWidth: '1440px',
-              margin: '0 auto',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '100px',
-            }}
-          >
-            {/* Intro Section with image 32 */}
-            <AboutPageIntro />
-
-            {/* Vision Section */}
-            <AboutPageVision />
-
-            {/* History Section */}
-            <AboutPageHistory />
-          </div>
-        </div>
-
-        {/* Footer */}
-        <Footer />
-      </div>
-    );
-  } catch (error) {
-    console.error('About page load error:', error);
-
-    return (
-      <div>
-        <Header />
-
-        {/* About Major Header Section */}
-        <div
-          style={{
-            width: '100%',
-            paddingTop: '60px',
-            paddingBottom: '0px',
-            paddingLeft: '40px',
-            paddingRight: '40px',
-            backgroundColor: '#ffffffff',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '20px',
-            }}
-          >
-            <h1
-              style={{
+                backgroundColor: 'transparent',
+                border: 'none',
                 fontSize: '24px',
-                fontWeight: '700',
+                fontWeight: activeTab === 'people' ? '700' : '400',
                 color: '#141414ff',
                 fontFamily: 'Inter',
-                margin: '0',
-                letterSpacing: '0.0703125px',
-                lineHeight: 1.5,
+                cursor: 'pointer',
+                padding: '0',
+                transition: 'all 0.2s ease',
+                borderBottom: activeTab === 'people' ? '2px solid #141414ff' : 'none',
+                paddingBottom: '10px',
+                marginBottom: '-10px',
               }}
             >
-              About Major
-            </h1>
-            <div
-              style={{
-                height: '1px',
-                backgroundColor: '#141414ff',
-                width: '100%',
-              }}
-            />
+              Our People
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* Main Content Container */}
+      {/* Main Content Container */}
+      <div
+        style={{
+          width: '100%',
+          paddingTop: '80px',
+          paddingBottom: '61px',
+          paddingLeft: '40px',
+          paddingRight: '40px',
+          backgroundColor: '#ffffffff',
+        }}
+      >
         <div
           style={{
-            width: '100%',
-            paddingTop: '80px',
-            paddingBottom: '61px',
-            paddingLeft: '40px',
-            paddingRight: '40px',
-            backgroundColor: '#ffffffff',
+            maxWidth: '1440px',
+            margin: '0 auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '100px',
           }}
         >
-          <div
-            style={{
-              maxWidth: '1440px',
-              margin: '0 auto',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '100px',
-            }}
-          >
-            <AboutPageIntro />
-            <AboutPageVision />
-            <AboutPageHistory />
-          </div>
-        </div>
+          {/* About Major Tab */}
+          {activeTab === 'major' && (
+            <>
+              <AboutPageIntro />
+              <AboutPageVision />
+              <AboutPageHistory />
+            </>
+          )}
 
-        <Footer />
+          {/* Our People Tab */}
+          {activeTab === 'people' && <OurPeopleTab />}
+        </div>
       </div>
-    );
-  }
+
+      {/* Footer */}
+      <Footer />
+    </div>
+  );
 }
