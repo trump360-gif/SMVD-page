@@ -16,16 +16,16 @@ interface WorkSectionProps {
 }
 
 const workItems: WorkItem[] = [
-  { src: '/images/work/Rectangle_240652487-6.png', alt: 'Vora', title: 'Vora', category: 'Motion' },
-  { src: '/images/work/Rectangle_240652487-8.png', alt: 'BICHAE', title: 'BICHAE', category: 'Branding' },
-  { src: '/images/work/Rectangle_240652487-7.png', alt: 'StarNew Valley', title: 'StarNew Valley', category: 'Game' },
-  { src: '/images/work/Rectangle_240652487-5.png', alt: 'Pave', title: 'Pave', category: 'UX/UI' },
-  { src: '/images/work/Rectangle_240652487-3.png', alt: 'Bolio', title: 'Bolio', category: 'UX/UI' },
-  { src: '/images/work/Rectangle_240652487-2.png', alt: 'Morae', title: 'Morae', category: 'UX/UI' },
-  { src: '/images/work/Rectangle_240652487-1.png', alt: 'MIST AWAY', title: 'MIST AWAY', category: 'Branding' },
-  { src: '/images/work/Rectangle_240652487-4.png', alt: 'Nightmare in Neverland', title: 'Nightmare in Neverland', category: 'Motion' },
-  { src: '/images/work/Rectangle_240652487-9.png', alt: '고군분쿠', title: '고군분쿠', category: 'Game' },
-  { src: '/images/work/Rectangle_240652487.png', alt: '시도', title: '시도', category: 'Graphic' },
+  { src: '/images/mainpage-work/vora.png', alt: 'Vora', title: 'Vora', category: 'Motion' },
+  { src: '/images/mainpage-work/bichae.png', alt: 'BICHAE', title: 'BICHAE', category: 'Branding' },
+  { src: '/images/mainpage-work/starnew valley.png', alt: 'StarNew Valley', title: 'StarNew Valley', category: 'Game' },
+  { src: '/images/mainpage-work/pave.png', alt: 'Pave', title: 'Pave', category: 'UX/UI' },
+  { src: '/images/mainpage-work/bolio.png', alt: 'Bolio', title: 'Bolio', category: 'UX/UI' },
+  { src: '/images/mainpage-work/morae.png', alt: 'Morae', title: 'Morae', category: 'UX/UI' },
+  { src: '/images/mainpage-work/mist away.png', alt: 'MIST AWAY', title: 'MIST AWAY', category: 'Branding' },
+  { src: '/images/mainpage-work/nightmare in neverland.png', alt: 'Nightmare in Neverland', title: 'Nightmare in Neverland', category: 'Motion' },
+  { src: '/images/mainpage-work/고군분투.png', alt: '고군분쿠', title: '고군분쿠', category: 'Game' },
+  { src: '/images/mainpage-work/시도.png', alt: '시도', title: '시도', category: 'Graphic' },
 ];
 
 const categories = ['All', 'UX/UI', 'Motion', 'Branding', 'Game design', 'Graphic'];
