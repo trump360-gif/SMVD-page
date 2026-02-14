@@ -1,5 +1,35 @@
 # SMVD 웹사이트 CMS - CLAUDE.md
 
+---
+
+## 🚀 **새 세션 시작할 때 자동 실행 규칙** (★ 필수)
+
+**Claude가 새 세션을 시작할 때마다 반드시 다음을 자동으로 수행:**
+
+```
+1️⃣ 이 파일(CLAUDE.md)을 읽어서 프로젝트 상황 파악 ✅
+2️⃣ MEMORY.md 확인 → 이전 세션의 작업 상태 파악 ✅
+3️⃣ SESSION_CHECKLIST.md 열기 & "작업 전 5분 점검" 항목 확인 ✅
+4️⃣ 사용자의 요청에 따라 필요한 문서 참고 ✅
+```
+
+**핵심 원칙:**
+- ✅ 세션 시작 = CLAUDE.md + MEMORY.md 자동 로드
+- ✅ 사용자의 첫 요청 = SESSION_CHECKLIST.md 체크리스트 확인
+- ✅ 코드 작성 = API_SPECIFICATION.md / TYPES_REFERENCE.md 참고
+- ✅ 에러 발생 = PITFALLS.md 검색
+
+**예시:**
+```
+Claude: "안녕하세요! 새 세션이 시작되었습니다.
+SMVD CMS 프로젝트를 확인했습니다.
+(CLAUDE.md + MEMORY.md 읽음)
+
+📋 SESSION_CHECKLIST.md의 '작업 전 5분 점검'을 시작하시겠습니까?"
+```
+
+---
+
 ## 프로젝트 정보
 
 | 항목 | 값 |
@@ -8,6 +38,44 @@
 | **Tech Stack** | Next.js 15 + React 19 + TypeScript + PostgreSQL + NextAuth |
 | **생성일** | 2026-02-12 |
 | **타입** | Full-stack CMS (공개 사이트 + 관리자 페이지) |
+
+---
+
+## 📚 필수 참고 문서 (2026-02-14 추가 - 자동 추적용)
+
+**새 세션 시작 시 꼭 읽을 것:**
+
+| 문서 | 용도 | 언제 봐야 할까? |
+|------|------|-----------------|
+| **SESSION_CHECKLIST.md** | 5분 체크리스트 | 세션 시작할 때 (가장 먼저!) |
+| **PITFALLS.md** | 자주하는 실수 & 해결책 | 에러 발생했을 때 |
+| **API_SPECIFICATION.md** | 27개 API 명세 | API 호출/작성 시 |
+| **TYPES_REFERENCE.md** | 타입 정의 전체 | 코드 작성 전 |
+| **ARCHITECTURE_GUIDE.md** | 시스템 구조 & 규칙 | 새 기능 추가 시 |
+
+**자동 체크 방법:**
+```bash
+# 1. 새 세션 시작
+→ SESSION_CHECKLIST.md의 "작업 전 5분 점검" 실행
+
+# 2. 코드 작성
+→ 해당 영역의 문서 참고:
+  - API 작성 → API_SPECIFICATION.md
+  - 타입 사용 → TYPES_REFERENCE.md
+  - 구조 변경 → ARCHITECTURE_GUIDE.md
+
+# 3. 에러 발생
+→ PITFALLS.md에서 증상 검색
+  Ctrl+F로 "이미지", "API", "TypeScript" 등 검색
+
+# 4. 작업 후
+→ SESSION_CHECKLIST의 "매 작업 후 필수 확인" 실행
+```
+
+**핵심 원칙:**
+- ✅ SESSION_CHECKLIST는 **의무** (매번 체크리스트 실행)
+- ✅ PITFALLS는 **필독** (문제 해결용)
+- ✅ 나머지는 **필요시 참고** (문맥에 따라)
 
 ---
 
