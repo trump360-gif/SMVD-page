@@ -3,7 +3,6 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { prisma } from '@/lib/db';
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
@@ -103,7 +102,17 @@ export default function DashboardPage() {
         {/* Quick Actions */}
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">빠른 메뉴</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <a
+              href="/admin/dashboard/home"
+              className="block p-4 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-200"
+            >
+              <p className="font-semibold text-red-900">🏠 Home 페이지</p>
+              <p className="text-xs text-red-700 mt-1">
+                메인 페이지 섹션 및 아이템 관리
+              </p>
+            </a>
+
             <a
               href="/admin/pages"
               className="block p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"

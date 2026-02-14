@@ -67,13 +67,14 @@ async function main() {
       where: { slug: page.slug },
       update: {},
       create: {
+        id: page.slug === 'home' ? 'page-001' : undefined,
         slug: page.slug,
         title: page.title,
         description: page.description,
         order: page.order,
       },
     });
-    console.log(`✅ Page created: ${createdPage.slug}`);
+    console.log(`✅ Page created: ${createdPage.slug} (id: ${createdPage.id})`);
   }
 
   // Create navigation items
@@ -115,6 +116,200 @@ async function main() {
     },
   });
   console.log(`✅ Footer created`);
+
+  // Create initial sections for home page
+  const homePage = await prisma.page.findUnique({
+    where: { slug: "home" },
+  });
+
+  if (homePage) {
+    const sections = [
+      {
+        type: "HOME_HERO",
+        title: "홈 페이지 히어로",
+        content: {
+          mainTitle: "Sookmyung Visual & Media Design",
+          subtitle: "창의적 시각 표현의 미래",
+          backgroundImage: "/images/home/hero-bg.webp",
+        },
+        order: 0,
+      },
+      {
+        type: "EXHIBITION_SECTION",
+        title: "졸업전시회",
+        content: {
+          description: "졸업생들의 창의적 작품 전시",
+        },
+        order: 1,
+      },
+      {
+        type: "HOME_ABOUT",
+        title: "학과 소개",
+        content: {
+          description: "시각영상디자인과는 창의적인 시각 표현을 통해 미래를 열어가는 학과입니다.",
+          imageFilename: "about-intro.webp",
+        },
+        order: 2,
+      },
+      {
+        type: "WORK_PORTFOLIO",
+        title: "포트폴리오",
+        content: {
+          description: "학생들의 뛰어난 작품들을 감상해보세요",
+        },
+        order: 3,
+      },
+    ];
+
+    for (const section of sections) {
+      await prisma.section.upsert({
+        where: {
+          id: `home-section-${section.type.toLowerCase()}`,
+        },
+        update: {},
+        create: {
+          id: `home-section-${section.type.toLowerCase()}`,
+          pageId: homePage.id,
+          type: section.type as any,
+          title: section.title,
+          content: section.content,
+          order: section.order,
+        },
+      });
+      console.log(`✅ Section created: ${section.type}`);
+    }
+
+    // Create Media records for Exhibition
+    const exhibitionMediaFiles = [
+      { filename: "exhibition-2025.png", year: "2025" },
+      { filename: "exhibition-2024.png", year: "2024" },
+      { filename: "exhibition-2023.png", year: "2023" },
+    ];
+    const exhibitionMediaIds: string[] = [];
+
+    for (const { filename, year } of exhibitionMediaFiles) {
+      const media = await prisma.media.upsert({
+        where: { id: `media-exhibition-${year}` },
+        update: {},
+        create: {
+          id: `media-exhibition-${year}`,
+          filename,
+          filepath: `/images/home/${filename}`,
+          mimeType: "image/png",
+          size: 0,
+          altText: `졸업전시회 ${year}`,
+        },
+      });
+      exhibitionMediaIds.push(media.id);
+      console.log(`✅ Media created: ${filename}`);
+    }
+
+    // Create ExhibitionItems
+    const exhibitionSection = await prisma.section.findUnique({
+      where: { id: "home-section-exhibition_section" },
+    });
+
+    if (exhibitionSection && exhibitionMediaIds.length > 0) {
+      const exhibitionYears = ["2025", "2024", "2023"];
+      for (let i = 0; i < exhibitionYears.length && i < exhibitionMediaIds.length; i++) {
+        await prisma.exhibitionItem.upsert({
+          where: {
+            id: `exhibition-item-${exhibitionYears[i]}`,
+          },
+          update: {},
+          create: {
+            id: `exhibition-item-${exhibitionYears[i]}`,
+            sectionId: exhibitionSection.id,
+            year: exhibitionYears[i],
+            mediaId: exhibitionMediaIds[i],
+            order: i,
+          },
+        });
+        console.log(`✅ ExhibitionItem created: ${exhibitionYears[i]}`);
+      }
+    }
+
+    // Create Media records for Work Portfolio
+    // 파일명과 이미지 제목 매핑
+    const fileToTitleMap: { [key: string]: string } = {
+      "portfolio-1.png": "고군분투",
+      "portfolio-2.png": "Nightmare in Neverland",
+      "portfolio-3.png": "StarNew Valley",
+      "portfolio-4.png": "Pave",
+      "portfolio-5.png": "Bolio",
+      "portfolio-6.png": "Morae",
+      "portfolio-7.png": "MIST AWAY",
+      "portfolio-8.png": "Vora",
+      "portfolio-9.png": "BICHAE",
+      "portfolio-10.png": "신도",
+    };
+
+    const portfolioItems = [
+      { title: "Vora", filename: "portfolio-8.png" },
+      { title: "BICHAE", filename: "portfolio-9.png" },
+      { title: "StarNew Valley", filename: "portfolio-3.png" },
+      { title: "Pave", filename: "portfolio-4.png" },
+      { title: "Bolio", filename: "portfolio-5.png" },
+      { title: "Morae", filename: "portfolio-6.png" },
+      { title: "MIST AWAY", filename: "portfolio-7.png" },
+      { title: "Nightmare in Neverland", filename: "portfolio-2.png" },
+      { title: "고군분투", filename: "portfolio-1.png" },
+      { title: "신도", filename: "portfolio-10.png" },
+    ];
+    const portfolioMediaIds: string[] = [];
+
+    for (const { title, filename } of portfolioItems) {
+      const fileTitle = fileToTitleMap[filename] || title;
+      const media = await prisma.media.upsert({
+        where: { id: `media-portfolio-${title}` },
+        update: {
+          filename,
+          filepath: `/images/work/${filename}`,
+          altText: `포트폴리오 - ${fileTitle}`,
+        },
+        create: {
+          id: `media-portfolio-${title}`,
+          filename,
+          filepath: `/images/work/${filename}`,
+          mimeType: "image/png",
+          size: 0,
+          altText: `포트폴리오 - ${fileTitle}`,
+        },
+      });
+      portfolioMediaIds.push(media.id);
+      console.log(`✅ Portfolio Media created: ${title} (${filename})`);
+    }
+
+    // Create WorkPortfolios
+    const workSection = await prisma.section.findUnique({
+      where: { id: "home-section-work_portfolio" },
+    });
+
+    if (workSection && portfolioMediaIds.length > 0) {
+      for (let i = 0; i < portfolioItems.length && i < portfolioMediaIds.length; i++) {
+        await prisma.workPortfolio.upsert({
+          where: {
+            id: `work-portfolio-${i}`,
+          },
+          update: {
+            title: portfolioItems[i].title,
+            mediaId: portfolioMediaIds[i],
+            category: "학생 작품",
+            order: i,
+          },
+          create: {
+            id: `work-portfolio-${i}`,
+            sectionId: workSection.id,
+            title: portfolioItems[i].title,
+            category: "학생 작품",
+            mediaId: portfolioMediaIds[i],
+            order: i,
+          },
+        });
+        console.log(`✅ WorkPortfolio created: ${portfolioItems[i].title}`);
+      }
+    }
+  }
 
   console.log("🎉 Seeding completed successfully!");
 }

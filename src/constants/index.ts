@@ -6,6 +6,7 @@
 export * from './colors';
 export * from './typography';
 export * from './spacing';
+export * from './assets';
 
 // Re-export commonly used items
 export { colors } from './colors';

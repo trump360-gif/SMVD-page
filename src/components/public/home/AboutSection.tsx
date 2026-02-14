@@ -1,12 +1,26 @@
 'use client';
 
-interface AboutSectionProps {
+interface AboutSectionContent {
   title?: string;
+  visionLines?: string[];
+}
+
+interface AboutSectionProps {
+  content?: AboutSectionContent;
 }
 
 export default function AboutSection({
-  title = 'About SMVD',
+  content = {
+    title: 'About SMVD',
+    visionLines: [
+      'FROM VISUAL DELIVERY',
+      'TO SYSTEMIC SOLUTIONS',
+      'SOLVING PROBLEMS,',
+      'SHAPING THE FUTURE OF VISUALS',
+    ],
+  },
 }: AboutSectionProps) {
+  const { title = 'About SMVD', visionLines = [] } = content;
   return (
     <section
       style={{
@@ -82,7 +96,7 @@ export default function AboutSection({
               fontFamily: 'Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
             }}
           >
-            FROM VISUAL DELIVERY
+            {visionLines[0] || 'FROM VISUAL DELIVERY'}
             <svg
               width="36"
               height="36"
@@ -125,7 +139,7 @@ export default function AboutSection({
                 fill="#141414ff"
               />
             </svg>
-            TO SYSTEMIC SOLUTIONS
+            {visionLines[1] || 'TO SYSTEMIC SOLUTIONS'}
           </div>
 
           {/* Line 3: SOLVING + icon + PROBLEMS, */}
@@ -142,7 +156,7 @@ export default function AboutSection({
               fontFamily: 'Satoshi, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
             }}
           >
-            SOLVING
+            {visionLines[2] || 'SOLVING PROBLEMS,'}
             <svg
               width="36"
               height="36"
@@ -156,7 +170,6 @@ export default function AboutSection({
                 fill="#141414ff"
               />
             </svg>
-            PROBLEMS,
           </div>
 
           {/* Line 4: SHAPING THE FUTURE OF VISUALS */}
@@ -170,7 +183,7 @@ export default function AboutSection({
               margin: '0',
             }}
           >
-            SHAPING THE FUTURE OF VISUALS
+            {visionLines[3] || 'SHAPING THE FUTURE OF VISUALS'}
           </div>
         </div>
       </div>

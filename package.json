@@ -10,7 +10,14 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "node --loader ts-node/esm prisma/seed.ts",
     "db:push": "prisma db push",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -23,6 +30,7 @@
     "@prisma/client": "^5.21.0",
     "@tanstack/react-query": "^5.90.21",
     "bcrypt": "^6.0.0",
+    "lucide-react": "^0.564.0",
     "next": "16.1.6",
     "next-auth": "^4.24.13",
     "react": "19.2.3",
@@ -32,16 +40,30 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^5.0.1",
+    "@playwright/test": "^1.58.2",
+    "@storybook/addon-a11y": "^10.2.8",
+    "@storybook/addon-docs": "^10.2.8",
+    "@storybook/addon-onboarding": "^10.2.8",
+    "@storybook/addon-vitest": "^10.2.8",
+    "@storybook/nextjs-vite": "^10.2.8",
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/browser-playwright": "^4.0.18",
+    "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "eslint-plugin-storybook": "^10.2.8",
+    "playwright": "^1.58.2",
     "prisma": "^5.21.0",
+    "storybook": "^10.2.8",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
   }
 }

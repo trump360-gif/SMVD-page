@@ -1,93 +1,95 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/db";
-import { checkAdminAuth } from "@/lib/auth-check";
-import {
-  successResponse,
-  errorResponse,
-  validationErrorResponse,
-  notFoundResponse,
-} from "@/lib/api-response";
-import { SectionReorderSchema } from "@/types/schemas";
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/db';
+import { checkAdminAuth } from '@/lib/auth-check';
+import { successResponse, errorResponse } from '@/lib/api-response';
 
-/**
- * PUT /api/admin/sections/reorder
- * 섹션 순서 변경 (드래그 앤 드롭) - 트랜잭션으로 원자적 처리
- */
-export async function PUT(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const authResult = await checkAdminAuth();
     if (!authResult.authenticated) return authResult.error;
 
     const body = await request.json();
+    const { sectionId, direction } = body;
 
-    // Zod 검증
-    const validation = SectionReorderSchema.safeParse(body);
-    if (!validation.success) {
-      const errors = validation.error.flatten().fieldErrors;
-      return validationErrorResponse(
-        Object.fromEntries(
-          Object.entries(errors).map(([key, messages]) => [
-            key,
-            (messages as string[])?.[0] || "검증 실패",
-          ])
-        )
-      );
+    if (!sectionId || !['up', 'down'].includes(direction)) {
+      return errorResponse('섹션 ID와 방향(up/down)이 필요합니다', 'INVALID_PARAMS', 400);
     }
 
-    const { pageId, sections } = validation.data;
-
-    // 페이지 존재 확인
-    const page = await prisma.page.findUnique({ where: { id: pageId } });
-    if (!page) {
-      return notFoundResponse("페이지");
-    }
-
-    // 모든 섹션이 해당 페이지에 속하는지 확인
-    const existingSections = await prisma.section.findMany({
-      where: { pageId },
-      select: { id: true },
+    const section = await prisma.section.findUnique({
+      where: { id: sectionId },
     });
 
-    const existingIds = new Set(existingSections.map((s: { id: string }) => s.id));
-    const requestedIds = new Set(sections.map((s) => s.id));
+    if (!section) {
+      return errorResponse('섹션을 찾을 수 없습니다', 'NOT_FOUND', 404);
+    }
 
-    for (const id of requestedIds) {
-      if (!existingIds.has(id)) {
-        return errorResponse(
-          `섹션 ${id}는 이 페이지에 속하지 않습니다`,
-          "INVALID_SECTION",
-          400
-        );
+    const pageId = section.pageId;
+
+    if (direction === 'up') {
+      // 현재 섹션보다 order가 작은 섹션 중 가장 큰 값을 찾음
+      const prevSection = await prisma.section.findFirst({
+        where: {
+          pageId,
+          order: { lt: section.order },
+        },
+        orderBy: { order: 'desc' },
+      });
+
+      if (prevSection) {
+        // 두 섹션의 order 값을 교환
+        await prisma.section.update({
+          where: { id: section.id },
+          data: { order: prevSection.order },
+        });
+
+        await prisma.section.update({
+          where: { id: prevSection.id },
+          data: { order: section.order },
+        });
+      }
+    } else if (direction === 'down') {
+      // 현재 섹션보다 order가 큰 섹션 중 가장 작은 값을 찾음
+      const nextSection = await prisma.section.findFirst({
+        where: {
+          pageId,
+          order: { gt: section.order },
+        },
+        orderBy: { order: 'asc' },
+      });
+
+      if (nextSection) {
+        // 두 섹션의 order 값을 교환
+        await prisma.section.update({
+          where: { id: section.id },
+          data: { order: nextSection.order },
+        });
+
+        await prisma.section.update({
+          where: { id: nextSection.id },
+          data: { order: section.order },
+        });
       }
     }
 
-    // 트랜잭션으로 모든 섹션의 order 업데이트
-    const updatePromises = sections.map((section) =>
-      prisma.section.update({
-        where: { id: section.id },
-        data: { order: section.order },
-        select: {
-          id: true,
-          pageId: true,
-          type: true,
-          title: true,
-          order: true,
+    // 업데이트된 섹션 목록 반환
+    const updatedSections = await prisma.section.findMany({
+      where: { pageId },
+      orderBy: { order: 'asc' },
+      include: {
+        exhibitionItems: {
+          orderBy: { order: 'asc' },
+          include: { media: true },
         },
-      })
-    );
+        workPortfolios: {
+          orderBy: { order: 'asc' },
+          include: { media: true },
+        },
+      },
+    });
 
-    const updated = await prisma.$transaction(updatePromises);
-
-    return successResponse(
-      updated,
-      "섹션 순서가 변경되었습니다"
-    );
+    return successResponse(updatedSections, '섹션 순서가 변경되었습니다');
   } catch (error) {
-    console.error("섹션 순서 변경 오류:", error);
-    return errorResponse(
-      "섹션 순서를 변경하는 중 오류가 발생했습니다",
-      "REORDER_ERROR",
-      500
-    );
+    console.error('섹션 순서 변경 오류:', error);
+    return errorResponse('섹션 순서 변경 실패', 'UPDATE_ERROR', 500);
   }
 }

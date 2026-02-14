@@ -13,32 +13,40 @@ interface WorkItem {
 interface WorkSectionProps {
   title?: string;
   items?: WorkItem[];
+  categories?: string[];
 }
 
-const workItems: WorkItem[] = [
-  { src: '/images/work/Rectangle_240652487-6.png', alt: 'Vora', title: 'Vora', category: 'Motion' },
-  { src: '/images/work/Rectangle_240652487-8.png', alt: 'BICHAE', title: 'BICHAE', category: 'Branding' },
-  { src: '/images/work/Rectangle_240652487-7.png', alt: 'StarNew Valley', title: 'StarNew Valley', category: 'Game' },
-  { src: '/images/work/Rectangle_240652487-5.png', alt: 'Pave', title: 'Pave', category: 'UX/UI' },
-  { src: '/images/work/Rectangle_240652487-3.png', alt: 'Bolio', title: 'Bolio', category: 'UX/UI' },
-  { src: '/images/work/Rectangle_240652487-2.png', alt: 'Morae', title: 'Morae', category: 'UX/UI' },
-  { src: '/images/work/Rectangle_240652487-1.png', alt: 'MIST AWAY', title: 'MIST AWAY', category: 'Branding' },
-  { src: '/images/work/Rectangle_240652487-4.png', alt: 'Nightmare in Neverland', title: 'Nightmare in Neverland', category: 'Motion' },
-  { src: '/images/work/Rectangle_240652487-9.png', alt: '고군분쿠', title: '고군분쿠', category: 'Game' },
-  { src: '/images/work/Rectangle_240652487.png', alt: '시도', title: '시도', category: 'Graphic' },
+// 기본값: DB에서 데이터를 받지 못했을 때 사용
+const DEFAULT_ITEMS: WorkItem[] = [
+  { src: '/images/mainpage-work/vora.png', alt: 'Vora', title: 'Vora', category: 'UX/UI' },
+  { src: '/images/mainpage-work/bichae.png', alt: 'BICHAE', title: 'BICHAE', category: 'Branding' },
+  { src: '/images/mainpage-work/starnew valley.png', alt: 'StarNew Valley', title: 'StarNew Valley', category: 'Game design' },
+  { src: '/images/mainpage-work/pave.png', alt: 'Pave', title: 'Pave', category: 'UX/UI' },
+  { src: '/images/mainpage-work/bolio.png', alt: 'Bolio', title: 'Bolio', category: 'UX/UI' },
+  { src: '/images/mainpage-work/morae.png', alt: 'Morae', title: 'Morae', category: 'UX/UI' },
+  { src: '/images/mainpage-work/mist away.png', alt: 'MIST AWAY', title: 'MIST AWAY', category: 'Branding' },
+  { src: '/images/mainpage-work/nightmare in neverland.png', alt: 'Nightmare in Neverland', title: 'Nightmare in Neverland', category: 'Motion' },
+  { src: '/images/mainpage-work/고군분투.png', alt: '고군분투', title: '고군분투', category: 'Game design' },
+  { src: '/images/mainpage-work/시도.png', alt: '시도', title: '시도', category: 'Graphic' },
 ];
 
-const categories = ['All', 'UX/UI', 'Motion', 'Branding', 'Game design', 'Graphic'];
+const DEFAULT_CATEGORIES = ['All', 'UX/UI', 'Motion', 'Branding', 'Game design', 'Graphic'];
 
 export default function WorkSection({
   title = 'Work',
-  items = workItems,
+  items = DEFAULT_ITEMS,
+  categories = DEFAULT_CATEGORIES,
 }: WorkSectionProps) {
   const [activeCategory, setActiveCategory] = useState('All');
 
+  // items에서 고유 카테고리 추출 또는 prop에서 받은 카테고리 사용
+  const displayCategories = categories.length > 1
+    ? categories
+    : ['All', ...Array.from(new Set(items.map(item => item.category)))];
+
   const filteredItems = activeCategory === 'All'
     ? items
-    : items.filter(item => item.category === activeCategory || item.category === (activeCategory === 'Game design' ? 'Game' : activeCategory));
+    : items.filter(item => item.category === activeCategory);
 
   return (
     <section
@@ -130,7 +138,7 @@ export default function WorkSection({
             gap: '20px',
           }}
         >
-          {categories.map((category) => (
+          {displayCategories.map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
@@ -191,7 +199,7 @@ export default function WorkSection({
                 style={{
                   position: 'relative',
                   width: '100%',
-                  aspectRatio: '530 / 286',
+                  aspectRatio: '332 / 240',
                   backgroundColor: '#e1e1e1ff',
                   overflow: 'hidden',
                   marginBottom: '16px',

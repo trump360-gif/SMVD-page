@@ -60,20 +60,25 @@ enum SectionType {
   CONTACT_FORM
   MAP
   CUSTOM_HTML
+  HOME_HERO
+  EXHIBITION_SECTION
+  HOME_ABOUT
 }
 
 // Sections with flexible content
 model Section {
-  id        String      @id @default(cuid())
-  pageId    String      @map("page_id")
-  page      Page        @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  type      SectionType
-  title     String?
-  content   Json?
-  mediaIds  Json?       @map("media_ids")
-  order     Int         @default(0)
-  createdAt DateTime    @default(now()) @map("created_at")
-  updatedAt DateTime    @updatedAt @map("updated_at")
+  id                String             @id @default(cuid())
+  pageId            String             @map("page_id")
+  page              Page               @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type              SectionType
+  title             String?
+  content           Json?
+  mediaIds          Json?              @map("media_ids")
+  order             Int                @default(0)
+  exhibitionItems   ExhibitionItem[]
+  workPortfolios    WorkPortfolio[]
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
 
   @@map("sections")
   @@index([pageId])
@@ -81,16 +86,18 @@ model Section {
 
 // Media management (images, videos, etc.)
 model Media {
-  id          String    @id @default(cuid())
-  filename    String
-  filepath    String    @map("file_path")
-  mimeType    String    @map("mime_type")
-  size        Int
-  formats     Json?     // { webp: { path, size }, thumbnail: { path, size } }
-  width       Int?
-  height      Int?
-  altText     String?   @map("alt_text")
-  uploadedAt  DateTime  @default(now()) @map("uploaded_at")
+  id                String             @id @default(cuid())
+  filename          String
+  filepath          String             @map("file_path")
+  mimeType          String             @map("mime_type")
+  size              Int
+  formats           Json?              // { webp: { path, size }, thumbnail: { path, size } }
+  width             Int?
+  height            Int?
+  altText           String?            @map("alt_text")
+  uploadedAt        DateTime           @default(now()) @map("uploaded_at")
+  exhibitionItems   ExhibitionItem[]
+  workPortfolios    WorkPortfolio[]
 
   @@map("media")
 }
@@ -171,4 +178,41 @@ model People {
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
   @@map("people")
+}
+
+// Exhibition items (for Home page)
+model ExhibitionItem {
+  id          String    @id @default(cuid())
+  sectionId   String    @map("section_id")
+  section     Section   @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  year        String
+  mediaId     String    @map("media_id")
+  media       Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@unique([sectionId, order])
+  @@map("exhibition_items")
+  @@index([sectionId])
+  @@index([mediaId])
+}
+
+// Work portfolio items (for Home page)
+model WorkPortfolio {
+  id          String    @id @default(cuid())
+  sectionId   String    @map("section_id")
+  section     Section   @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  title       String
+  category    String
+  mediaId     String    @map("media_id")
+  media       Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@unique([sectionId, order])
+  @@map("work_portfolios")
+  @@index([sectionId])
+  @@index([mediaId])
 }

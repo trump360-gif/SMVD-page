@@ -12,6 +12,9 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+/playwright/.cache/
 
 # next.js
 /.next/
@@ -51,3 +54,6 @@ next-env.d.ts
 dist/
 Thumbs.db
 .playwright-mcp/
+
+*storybook.log
+storybook-static

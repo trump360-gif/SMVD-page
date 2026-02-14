@@ -12,24 +12,27 @@ interface ExhibitionSectionProps {
   items?: ExhibitionItem[];
 }
 
+// 기본값: DB에서 데이터를 받지 못했을 때 사용
+const DEFAULT_ITEMS: ExhibitionItem[] = [
+  {
+    year: '2025',
+    src: '/images/home/exhibition-2025.png',
+    alt: '졸업전시회 2025',
+  },
+  {
+    year: '2024',
+    src: '/images/home/exhibition-2024.png',
+    alt: '졸업전시회 2024',
+  },
+  {
+    year: '2023',
+    src: '/images/home/exhibition-2023.png',
+    alt: '졸업전시회 2023',
+  },
+];
+
 export default function ExhibitionSection({
-  items = [
-    {
-      year: '2025',
-      src: '/images/home/exhibition-2025.png',
-      alt: 'SMVD Grad Exhibition 2025',
-    },
-    {
-      year: '2024',
-      src: '/images/home/exhibition-2024.png',
-      alt: 'Visual Media Design Graduation Show 2024',
-    },
-    {
-      year: '2023',
-      src: '/images/home/exhibition-2023.png',
-      alt: 'Kickoff 2023',
-    },
-  ],
+  items = DEFAULT_ITEMS,
 }: ExhibitionSectionProps) {
   return (
     <section
