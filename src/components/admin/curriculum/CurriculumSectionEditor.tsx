@@ -86,7 +86,7 @@ function EditableCourseRow({ course, index, onUpdate, onDelete, isSaving }: Edit
                 onClick={handleSave}
                 disabled={isSaving}
                 className="p-1.5 text-green-600 hover:text-green-800 transition-colors"
-                title="Save"
+                title="저장"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -95,7 +95,7 @@ function EditableCourseRow({ course, index, onUpdate, onDelete, isSaving }: Edit
               <button
                 onClick={handleCancel}
                 className="p-1.5 text-gray-400 hover:text-gray-600 transition-colors"
-                title="Cancel"
+                title="취소"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -108,7 +108,7 @@ function EditableCourseRow({ course, index, onUpdate, onDelete, isSaving }: Edit
                 onClick={() => setIsEditing(true)}
                 disabled={isSaving}
                 className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors"
-                title="Edit"
+                title="수정"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -122,7 +122,7 @@ function EditableCourseRow({ course, index, onUpdate, onDelete, isSaving }: Edit
                 }}
                 disabled={isSaving}
                 className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"
-                title="Delete"
+                title="삭제"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -161,13 +161,13 @@ function CourseColumnTable({
     <div className="flex-1 min-w-0">
       <div className="flex items-center justify-between mb-3">
         <h4 className="text-sm font-semibold text-gray-700">{label}</h4>
-        <span className="text-xs text-gray-400">{courses.length} courses</span>
+        <span className="text-xs text-gray-400">{courses.length}개 과목</span>
       </div>
 
       <div className="border border-gray-200 rounded-lg overflow-hidden">
         {courses.length === 0 ? (
           <div className="px-4 py-6 text-center text-sm text-gray-400">
-            No courses added yet.
+            추가된 과목이 없습니다.
           </div>
         ) : (
           <table className="w-full">
@@ -177,7 +177,7 @@ function CourseColumnTable({
                   #
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase">
-                  Course Name
+                  과목명
                 </th>
                 <th className="px-3 py-2 w-24" />
               </tr>
@@ -322,7 +322,7 @@ export default function CurriculumSectionEditor({
               : 'bg-gray-200 text-gray-400 cursor-not-allowed'
           }`}
         >
-          {isSaving ? 'Saving...' : 'Save Changes'}
+          {isSaving ? '저장 중...' : '변경 저장'}
         </button>
       </div>
     </div>

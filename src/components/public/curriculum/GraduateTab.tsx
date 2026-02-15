@@ -239,8 +239,12 @@ export default function GraduateTab({ content }: GraduateTabProps) {
           width: '100%',
         }}
       >
-        <CurriculumSectionComponent section={displayMaster} />
-        <CurriculumSectionComponent section={displayDoctor} />
+        <div id="section-master">
+          <CurriculumSectionComponent section={displayMaster} />
+        </div>
+        <div id="section-doctor">
+          <CurriculumSectionComponent section={displayDoctor} />
+        </div>
       </div>
 
       {/* Footer Note - Right aligned */}
@@ -281,6 +285,7 @@ export default function GraduateTab({ content }: GraduateTabProps) {
 
       {/* SECTION 2: Graduation Thesis Cards */}
       <div
+        id="section-thesis"
         style={{
           display: 'flex',
           flexDirection: 'column',

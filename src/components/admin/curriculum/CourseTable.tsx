@@ -101,7 +101,7 @@ function SortableCourseRow({
               : 'bg-blue-100 text-blue-700'
           }`}
         >
-          {course.classification === 'required' ? 'Required' : 'Elective'}
+          {course.classification === 'required' ? '필수' : '선택'}
         </span>
       </td>
 
@@ -111,7 +111,7 @@ function SortableCourseRow({
           <button
             onClick={onEdit}
             className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors"
-            title="Edit"
+            title="수정"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -120,7 +120,7 @@ function SortableCourseRow({
           <button
             onClick={onDelete}
             className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"
-            title="Delete"
+            title="삭제"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -235,7 +235,7 @@ export default function CourseTable({
       {/* Filters */}
       <div className="flex items-center gap-4 flex-wrap">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700">Year:</span>
+          <span className="text-sm font-medium text-gray-700">학년:</span>
           <div className="flex gap-1">
             <button
               onClick={() => setFilterYear(null)}
@@ -245,7 +245,7 @@ export default function CourseTable({
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              All
+              전체
             </button>
             {[1, 2, 3, 4].map((y) => (
               <button
@@ -264,7 +264,7 @@ export default function CourseTable({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700">Semester:</span>
+          <span className="text-sm font-medium text-gray-700">학기:</span>
           <div className="flex gap-1">
             <button
               onClick={() => setFilterTerm(null)}
@@ -274,7 +274,7 @@ export default function CourseTable({
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              All
+              전체
             </button>
             {[1, 2].map((t) => (
               <button
@@ -293,7 +293,7 @@ export default function CourseTable({
         </div>
 
         <div className="ml-auto text-sm text-gray-500">
-          Total {semesters.reduce((sum, s) => sum + s.courses.length, 0)} courses
+          총 {semesters.reduce((sum, s) => sum + s.courses.length, 0)}개 과목
         </div>
       </div>
 
@@ -309,9 +309,9 @@ export default function CourseTable({
             {/* Semester Header */}
             <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
               <h3 className="text-sm font-bold text-gray-900">
-                {semester.year} year - {semester.term} semester
+                {semester.year}학년 - {semester.term}학기
                 <span className="ml-2 text-xs font-normal text-gray-500">
-                  ({semester.courses.length} courses)
+                  ({semester.courses.length}개)
                 </span>
               </h3>
               <button
@@ -319,14 +319,14 @@ export default function CourseTable({
                 disabled={isSaving}
                 className="px-3 py-1 text-xs bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg transition-colors font-medium"
               >
-                + Add Course
+                + 과목 추가
               </button>
             </div>
 
             {/* Courses Table */}
             {semester.courses.length === 0 ? (
               <div className="px-4 py-8 text-center text-sm text-gray-400">
-                No courses in this semester.
+                이 학기에는 과목이 없습니다.
               </div>
             ) : (
               <DndContext
@@ -343,13 +343,13 @@ export default function CourseTable({
                       <tr className="border-b border-gray-200 bg-gray-50/50">
                         <th className="px-3 py-2 w-10" />
                         <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase w-12">
-                          Color
+                          색상
                         </th>
                         <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase">
-                          Course Name
+                          과목명
                         </th>
                         <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase w-24">
-                          Type
+                          분류
                         </th>
                         <th className="px-3 py-2 w-24" />
                       </tr>
@@ -372,7 +372,7 @@ export default function CourseTable({
                             )
                           }
                           onDelete={() => {
-                            if (confirm(`Delete "${course.name}"?`)) {
+                            if (confirm(`"${course.name}"을(를) 삭제하시겠습니까?`)) {
                               onDeleteCourse(semester.originalIndex, courseIndex);
                             }
                           }}
@@ -389,7 +389,7 @@ export default function CourseTable({
 
       {filteredSemesters.length === 0 && (
         <div className="text-center py-12 text-gray-400 text-sm">
-          No semesters match the selected filters.
+          선택한 필터와 일치하는 학기가 없습니다.
         </div>
       )}
 

@@ -19,15 +19,15 @@ const DEFAULT_COLORS = [
 ];
 
 const COLOR_NAMES: Record<string, string> = {
-  '#ff5f5aff': 'Red',
-  '#ffcc54ff': 'Yellow',
-  '#a24affff': 'Purple',
-  '#53c9ffff': 'Sky Blue',
-  '#70d970ff': 'Green',
-  '#1e90ffff': 'Blue',
-  '#ff6b9dff': 'Pink',
-  '#32cd32ff': 'Lime',
-  '#20b2aaff': 'Teal',
+  '#ff5f5aff': '빨강',
+  '#ffcc54ff': '노랑',
+  '#a24affff': '보라',
+  '#53c9ffff': '하늘색',
+  '#70d970ff': '초록',
+  '#1e90ffff': '파랑',
+  '#ff6b9dff': '핑크',
+  '#32cd32ff': '라임',
+  '#20b2aaff': '청록',
 };
 
 export default function ColorPicker({ value, onChange, label }: ColorPickerProps) {
@@ -78,7 +78,7 @@ export default function ColorPicker({ value, onChange, label }: ColorPickerProps
           value={value.slice(0, 7)}
           onChange={(e) => onChange(e.target.value + 'ff')}
           className="w-8 h-8 rounded cursor-pointer border border-gray-300"
-          title="Custom color"
+          title="사용자 정의 색상"
         />
       </div>
     </div>

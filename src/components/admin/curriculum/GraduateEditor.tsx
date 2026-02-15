@@ -87,6 +87,7 @@ export interface GraduateEditorProps {
   onAddThesis?: (thesis: ThesisCardData) => Promise<void>;
   onEditThesis?: (index: number, thesis: ThesisCardData) => Promise<void>;
   onDeleteThesis?: (index: number) => Promise<void>;
+  onSubTabChange?: (subTab: 'master' | 'doctor' | 'thesis') => void;
   isSaving?: boolean;
 }
 
@@ -113,9 +114,15 @@ export default function GraduateEditor({
   onAddThesis,
   onEditThesis,
   onDeleteThesis,
+  onSubTabChange,
   isSaving,
 }: GraduateEditorProps) {
   const [activeSubTab, setActiveSubTab] = useState<GradSubTab>('master');
+
+  const handleSubTabChange = (tab: GradSubTab) => {
+    setActiveSubTab(tab);
+    onSubTabChange?.(tab);
+  };
 
   // Use content from props if available, otherwise fall back to defaults
   const masterSection = content?.master ?? DEFAULT_MASTER;
@@ -129,7 +136,7 @@ export default function GraduateEditor({
         {GRAD_SUB_TABS.map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setActiveSubTab(tab.key)}
+            onClick={() => handleSubTabChange(tab.key)}
             className={`flex-1 px-4 py-3 font-medium rounded-lg transition-colors text-sm ${
               activeSubTab === tab.key
                 ? 'bg-blue-600 text-white'

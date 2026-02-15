@@ -180,7 +180,7 @@ export interface UndergraduateEditorProps {
 type SubTab = 'courses' | 'tracks' | 'modules';
 
 const SUB_TABS: { key: SubTab; label: string; icon: string }[] = [
-  { key: 'courses', label: 'Course Management', icon: 'books' },
+  { key: 'courses', label: 'Courses', icon: 'books' },
   { key: 'tracks', label: 'Track Requirements', icon: 'chart' },
   { key: 'modules', label: 'Module Details', icon: 'list' },
 ];
@@ -227,10 +227,10 @@ export default function UndergraduateEditor({
           <div>
             <div className="mb-6">
               <h2 className="text-xl font-bold text-gray-900">
-                Course Management
+                Courses
               </h2>
               <p className="text-sm text-gray-600 mt-1">
-                Manage undergraduate courses by semester. Drag to reorder within a semester.
+                Manage undergraduate courses by semester. Drag to reorder courses within a semester.
               </p>
             </div>
             <CourseTable
@@ -251,7 +251,7 @@ export default function UndergraduateEditor({
                 Track Requirements
               </h2>
               <p className="text-sm text-gray-600 mt-1">
-                Edit track information, courses, and credit requirements inline.
+                Edit track information, courses, and credits inline.
               </p>
             </div>
             <TrackRequirementsTable
@@ -269,7 +269,7 @@ export default function UndergraduateEditor({
                 Module Details
               </h2>
               <p className="text-sm text-gray-600 mt-1">
-                Edit module descriptions and associated courses.
+                Edit module descriptions and related courses.
               </p>
             </div>
             <ModuleDetailsTable

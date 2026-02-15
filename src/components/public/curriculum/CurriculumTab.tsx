@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import UndergraduateTab from './UndergraduateTab';
 import GraduateTab from './GraduateTab';
 import type { UndergraduateContent, GraduateContent } from '@/lib/validation/curriculum';
@@ -15,6 +15,55 @@ export default function CurriculumTab({
   graduateContent,
 }: CurriculumTabProps) {
   const [activeTab, setActiveTab] = useState<'undergraduate' | 'graduate'>('undergraduate');
+  const [activeSubTab, setActiveSubTab] = useState<'master' | 'doctor' | 'thesis'>('master');
+
+  // Handle hash navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1);
+      const [tab, subtab] = hash.split(':');
+
+      if (tab === 'graduate' || tab === 'undergraduate') {
+        setActiveTab(tab as 'undergraduate' | 'graduate');
+      }
+
+      if (tab === 'graduate' && (subtab === 'master' || subtab === 'doctor' || subtab === 'thesis')) {
+        setActiveSubTab(subtab);
+      }
+    };
+
+    // Call on initial mount
+    handleHashChange();
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Scroll to section when activeSubTab changes
+  useEffect(() => {
+    if (activeTab === 'graduate' && activeSubTab) {
+      // Small delay to ensure DOM is ready
+      const timer = setTimeout(() => {
+        const element = document.getElementById(`section-${activeSubTab}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab, activeSubTab]);
+
+  // Update hash when tab changes
+  const handleTabChange = (tab: 'undergraduate' | 'graduate', subtab?: 'master' | 'doctor' | 'thesis') => {
+    setActiveTab(tab);
+    if (subtab) {
+      setActiveSubTab(subtab);
+      window.location.hash = `${tab}:${subtab}`;
+    } else {
+      window.location.hash = tab;
+    }
+  };
 
   return (
     <div
@@ -60,7 +109,7 @@ export default function CurriculumTab({
           }}
         >
           <button
-            onClick={() => setActiveTab('undergraduate')}
+            onClick={() => handleTabChange('undergraduate')}
             style={{
               fontSize: '18px',
               fontWeight: '500',
@@ -77,7 +126,7 @@ export default function CurriculumTab({
             Undergraduate
           </button>
           <button
-            onClick={() => setActiveTab('graduate')}
+            onClick={() => handleTabChange('graduate')}
             style={{
               fontSize: '18px',
               fontWeight: '500',

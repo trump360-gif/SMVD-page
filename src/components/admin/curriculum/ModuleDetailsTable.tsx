@@ -57,8 +57,7 @@ export default function ModuleDetailsTable({
       {/* Info */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-sm text-blue-800">
-          Click the edit button on any row to modify module details.
-          Description supports long text. Courses field supports line breaks.
+          행의 수정 버튼을 클릭하여 모듈 세부사항을 수정합니다. 설명은 긴 텍스트를 지원합니다. 과목 필드는 줄바꿈을 지원합니다.
         </p>
       </div>
 
@@ -90,7 +89,7 @@ export default function ModuleDetailsTable({
                       : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                   }`}
                 >
-                  {isEditing ? 'Close' : 'Edit'}
+                  {isEditing ? '닫기' : '수정'}
                 </button>
               </div>
 
@@ -101,7 +100,7 @@ export default function ModuleDetailsTable({
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Module
+                        모듈
                       </label>
                       <input
                         type="text"
@@ -114,7 +113,7 @@ export default function ModuleDetailsTable({
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Title
+                        제목
                       </label>
                       <input
                         type="text"
@@ -130,7 +129,7 @@ export default function ModuleDetailsTable({
                   {/* Description */}
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">
-                      Description
+                      설명
                     </label>
                     <textarea
                       value={mod.description}
@@ -145,7 +144,7 @@ export default function ModuleDetailsTable({
                   {/* Courses */}
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">
-                      Courses (one per line)
+                      과목 (한 줄에 하나씩)
                     </label>
                     <textarea
                       value={mod.courses}
@@ -163,7 +162,7 @@ export default function ModuleDetailsTable({
                     {/* Module+Title */}
                     <div>
                       <p className="text-xs font-medium text-gray-500 mb-1">
-                        Module
+                        모듈
                       </p>
                       <p className="text-sm text-gray-900">
                         <span className="font-bold">{mod.module}</span>{' '}
@@ -174,7 +173,7 @@ export default function ModuleDetailsTable({
                     {/* Description */}
                     <div>
                       <p className="text-xs font-medium text-gray-500 mb-1">
-                        Description
+                        설명
                       </p>
                       <p className="text-sm text-gray-700 line-clamp-3">
                         {mod.description}
@@ -184,7 +183,7 @@ export default function ModuleDetailsTable({
                     {/* Courses */}
                     <div>
                       <p className="text-xs font-medium text-gray-500 mb-1">
-                        Courses
+                        과목
                       </p>
                       <p className="text-sm text-gray-700 whitespace-pre-wrap">
                         {mod.courses}
@@ -201,10 +200,10 @@ export default function ModuleDetailsTable({
       {/* Actions */}
       <div className="flex items-center justify-between">
         <div className="text-sm text-gray-500">
-          {modules.length} modules
+          {modules.length}개 모듈
           {hasChanges && (
             <span className="ml-2 text-amber-600 font-medium">
-              (unsaved changes)
+              (저장되지 않은 변경사항)
             </span>
           )}
         </div>
@@ -214,7 +213,7 @@ export default function ModuleDetailsTable({
               onClick={handleReset}
               className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
             >
-              Reset
+              초기화
             </button>
           )}
           <button
@@ -222,7 +221,7 @@ export default function ModuleDetailsTable({
             disabled={!hasChanges || isSaving}
             className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition-colors text-sm font-medium"
           >
-            {isSaving ? 'Saving...' : 'Save Modules'}
+            {isSaving ? '저장 중...' : '모듈 저장'}
           </button>
         </div>
       </div>

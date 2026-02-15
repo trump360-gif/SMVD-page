@@ -65,11 +65,11 @@ export default function CourseModal({
     const newErrors: Record<string, string> = {};
 
     if (!name.trim()) {
-      newErrors.name = 'Course name is required';
+      newErrors.name = '과목명을 입력하세요';
     }
 
     if (!color || !/^#[0-9a-fA-F]{6,8}$/.test(color)) {
-      newErrors.color = 'Valid HEX color is required';
+      newErrors.color = '올바른 색상을 선택하세요';
     }
 
     setErrors(newErrors);
@@ -104,7 +104,7 @@ export default function CourseModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-bold text-gray-900">
-            {isEditing ? 'Edit Course' : 'Add Course'}
+            {isEditing ? '과목 수정' : '과목 추가'}
           </h2>
           <button
             onClick={onClose}
@@ -123,7 +123,7 @@ export default function CourseModal({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="course-year" className="block text-sm font-medium text-gray-700 mb-1">
-                Year
+                학년
               </label>
               <select
                 id="course-year"
@@ -134,14 +134,14 @@ export default function CourseModal({
               >
                 {[1, 2, 3, 4].map((y) => (
                   <option key={y} value={y}>
-                    {y} year
+                    {y}학년
                   </option>
                 ))}
               </select>
             </div>
             <div>
               <label htmlFor="course-term" className="block text-sm font-medium text-gray-700 mb-1">
-                Semester
+                학기
               </label>
               <select
                 id="course-term"
@@ -152,7 +152,7 @@ export default function CourseModal({
               >
                 {[1, 2].map((t) => (
                   <option key={t} value={t}>
-                    {t} semester
+                    {t}학기
                   </option>
                 ))}
               </select>
@@ -162,7 +162,7 @@ export default function CourseModal({
           {/* Course Name */}
           <div>
             <label htmlFor="course-name" className="block text-sm font-medium text-gray-700 mb-1">
-              Course Name
+              과목명
             </label>
             <input
               ref={nameInputRef}
@@ -170,7 +170,7 @@ export default function CourseModal({
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Basic Graphic Design I"
+              placeholder="예: 기초 그래픽 디자인 I"
               className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition ${
                 errors.name ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -195,7 +195,7 @@ export default function CourseModal({
           {/* Classification */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Classification
+              분류
             </label>
             <div className="flex gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -207,7 +207,7 @@ export default function CourseModal({
                   onChange={() => setClassification('required')}
                   className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                 />
-                <span className="text-sm text-gray-700 font-medium">Required</span>
+                <span className="text-sm text-gray-700 font-medium">필수</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -218,7 +218,7 @@ export default function CourseModal({
                   onChange={() => setClassification('elective')}
                   className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                 />
-                <span className="text-sm text-gray-700 font-medium">Elective</span>
+                <span className="text-sm text-gray-700 font-medium">선택</span>
               </label>
             </div>
           </div>
@@ -230,13 +230,13 @@ export default function CourseModal({
               onClick={onClose}
               className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
             >
-              Cancel
+              취소
             </button>
             <button
               type="submit"
               className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
             >
-              {isEditing ? 'Save' : 'Add'}
+              {isEditing ? '저장' : '추가'}
             </button>
           </div>
         </form>

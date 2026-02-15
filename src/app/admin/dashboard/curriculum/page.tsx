@@ -15,6 +15,7 @@ export default function CurriculumDashboard() {
   const router = useRouter();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [activeTab, setActiveTab] = useState<ActiveTab>('undergraduate');
+  const [activeSubTab, setActiveSubTab] = useState<'master' | 'doctor' | 'thesis'>('master');
 
   const {
     sections,
@@ -73,6 +74,13 @@ export default function CurriculumDashboard() {
     }
   }, []);
 
+  // Refresh preview when activeSubTab changes (Graduate School tabs)
+  useEffect(() => {
+    if (activeTab === 'graduate') {
+      refreshPreview();
+    }
+  }, [activeSubTab, activeTab, refreshPreview]);
+
   // Get sections for API calls
   const undergradSection = getSection('CURRICULUM_UNDERGRADUATE');
   const undergradContent = getUndergraduateContent();
@@ -95,17 +103,17 @@ export default function CurriculumDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Curriculum Page Management
+                교과과정 페이지 관리
               </h1>
               <p className="text-sm text-gray-600 mt-1">
-                Manage undergraduate and graduate curriculum
+                학부 및 대학원 교과과정을 관리합니다
               </p>
             </div>
             <Link
               href="/admin/dashboard"
               className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-lg transition-colors text-sm font-medium"
             >
-              &#8592; Back
+              &#8592; 돌아가기
             </Link>
           </div>
         </div>
@@ -155,7 +163,7 @@ export default function CurriculumDashboard() {
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              Graduate
+              Graduate School
             </button>
           </div>
 
@@ -207,6 +215,7 @@ export default function CurriculumDashboard() {
           {activeTab === 'graduate' && (
             <GraduateEditor
               content={gradContent}
+              onSubTabChange={setActiveSubTab}
               onSaveMaster={async (courses) => {
                 if (gradSection && gradContent) {
                   const updatedContent: GraduateContent = {
@@ -262,19 +271,19 @@ export default function CurriculumDashboard() {
         <div className="hidden lg:flex lg:w-1/2 bg-white border-l border-gray-200 flex-col overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between shrink-0">
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">Live Preview</h3>
-              <p className="text-xs text-gray-600 mt-1">Changes reflect after save</p>
+              <h3 className="text-sm font-semibold text-gray-900">실시간 미리보기</h3>
+              <p className="text-xs text-gray-600 mt-1">저장 후 변경사항이 반영됩니다</p>
             </div>
             <button
               onClick={() => window.open('/curriculum', '_blank')}
               className="shrink-0 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded transition-colors"
             >
-              Open Page
+              페이지 열기
             </button>
           </div>
           <iframe
             ref={iframeRef}
-            src="/curriculum"
+            src={`/curriculum#${activeTab}${activeTab === 'graduate' ? ':' + activeSubTab : ''}`}
             className="flex-1 border-0 w-full overflow-auto"
             title="Curriculum Page Preview"
           />

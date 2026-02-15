@@ -37,10 +37,10 @@ function InlineEditCell({ value, onChange, multiline, placeholder }: InlineEditC
       <div
         onClick={() => setIsEditing(true)}
         className="cursor-pointer px-2 py-1 rounded hover:bg-blue-50 transition-colors min-h-[24px] text-sm text-gray-800 whitespace-pre-wrap"
-        title="Click to edit"
+        title="클릭하여 수정"
       >
         {value || (
-          <span className="text-gray-400 italic">{placeholder || 'Click to edit'}</span>
+          <span className="text-gray-400 italic">{placeholder || '클릭하여 수정'}</span>
         )}
       </div>
     );
@@ -65,13 +65,13 @@ function InlineEditCell({ value, onChange, multiline, placeholder }: InlineEditC
             onClick={handleCancel}
             className="px-2 py-0.5 text-xs text-gray-500 hover:text-gray-700"
           >
-            Cancel
+            취소
           </button>
           <button
             onClick={handleSave}
             className="px-2 py-0.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-            OK
+            확인
           </button>
         </div>
       </div>
@@ -144,8 +144,8 @@ export default function TrackRequirementsTable({
       {/* Info Section */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-sm text-blue-800">
-          Click on any cell to edit inline. Courses field supports line breaks (use Enter in textarea).
-          The <code className="bg-blue-100 px-1 rounded">\\n</code> in data will be displayed as actual line breaks.
+          셀을 클릭하여 인라인으로 편집합니다. 과목 필드는 줄바꿈을 지원합니다(textarea에서 Enter 사용).
+          데이터의 <code className="bg-blue-100 px-1 rounded">\\n</code>은(는) 실제 줄바꿈으로 표시됩니다.
         </p>
       </div>
 
@@ -155,16 +155,16 @@ export default function TrackRequirementsTable({
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
               <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase w-1/5">
-                Track Name
+                트랙명
               </th>
               <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase w-2/5">
-                Courses
+                과목
               </th>
               <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase w-1/4">
-                Requirements
+                요구사항
               </th>
               <th className="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase w-[100px]">
-                Credits
+                이수학점
               </th>
             </tr>
           </thead>
@@ -189,7 +189,7 @@ export default function TrackRequirementsTable({
                       <InlineEditCell
                         value={track.track}
                         onChange={(val) => updateTrack(index, 'track', val)}
-                        placeholder="Track name"
+                        placeholder="트랙명"
                       />
                     </div>
                   </td>
@@ -204,7 +204,7 @@ export default function TrackRequirementsTable({
                         updateTrack(index, 'courses', stored);
                       }}
                       multiline
-                      placeholder="Course list (one per line)"
+                      placeholder="과목 목록 (한 줄에 하나씩)"
                     />
                   </td>
 
@@ -213,7 +213,7 @@ export default function TrackRequirementsTable({
                     <InlineEditCell
                       value={track.requirements}
                       onChange={(val) => updateTrack(index, 'requirements', val)}
-                      placeholder="Requirements"
+                      placeholder="요구사항"
                     />
                   </td>
 
@@ -222,7 +222,7 @@ export default function TrackRequirementsTable({
                     <InlineEditCell
                       value={track.credits}
                       onChange={(val) => updateTrack(index, 'credits', val)}
-                      placeholder="Credits"
+                      placeholder="이수학점"
                     />
                   </td>
                 </tr>
@@ -235,10 +235,10 @@ export default function TrackRequirementsTable({
       {/* Actions */}
       <div className="flex items-center justify-between">
         <div className="text-sm text-gray-500">
-          {tracks.length} tracks
+          {tracks.length}개 트랙
           {hasChanges && (
             <span className="ml-2 text-amber-600 font-medium">
-              (unsaved changes)
+              (저장되지 않은 변경사항)
             </span>
           )}
         </div>
@@ -248,7 +248,7 @@ export default function TrackRequirementsTable({
               onClick={handleReset}
               className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
             >
-              Reset
+              초기화
             </button>
           )}
           <button
@@ -256,7 +256,7 @@ export default function TrackRequirementsTable({
             disabled={!hasChanges || isSaving}
             className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg transition-colors text-sm font-medium"
           >
-            {isSaving ? 'Saving...' : 'Save Tracks'}
+            {isSaving ? '저장 중...' : '트랙 저장'}
           </button>
         </div>
       </div>
