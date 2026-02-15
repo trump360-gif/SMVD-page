@@ -20,9 +20,50 @@ export default async function HomePage() {
       include: {
         sections: {
           orderBy: { order: 'asc' },
+          include: {
+            exhibitionItems: {
+              orderBy: { order: 'asc' },
+              include: { media: true },
+            },
+            workPortfolios: {
+              orderBy: { order: 'asc' },
+              include: { media: true },
+            },
+          },
         },
       },
     });
+
+    // Extract sections
+    const exhibitionSection = page?.sections.find(
+      (s) => s.type === 'EXHIBITION_SECTION'
+    );
+    const workSection = page?.sections.find(
+      (s) => s.type === 'WORK_PORTFOLIO'
+    );
+    const aboutSection = page?.sections.find(
+      (s) => s.type === 'HOME_ABOUT'
+    );
+
+    // Map exhibition items to component props
+    const exhibitionItems = exhibitionSection?.exhibitionItems?.map((item) => ({
+      year: item.year,
+      src: item.media?.filepath || '',
+      alt: item.media?.filename || `${item.year} exhibition`,
+    })) || [];
+
+    // Map work portfolios to component props
+    const workItems = workSection?.workPortfolios?.map((item) => ({
+      src: item.media?.filepath || '',
+      alt: item.media?.filename || item.title,
+      title: item.title,
+      category: item.category,
+    })) || [];
+
+    // Extract about content
+    const aboutContent = typeof aboutSection?.content === 'object' && aboutSection?.content
+      ? (aboutSection.content as any)?.description || ''
+      : '';
 
     return (
       <div>
@@ -42,14 +83,14 @@ export default async function HomePage() {
           }}
         >
           {/* Exhibition Section */}
-          <ExhibitionSection />
+          <ExhibitionSection items={exhibitionItems} />
         </div>
 
         {/* About Section (Full Width) */}
-        <AboutSection />
+        <AboutSection content={aboutContent} />
 
         {/* Work Section (Full Width) */}
-        <WorkSection />
+        <WorkSection items={workItems} />
 
         {/* Footer */}
         <Footer />
@@ -70,10 +111,10 @@ export default async function HomePage() {
             paddingRight: '40px',
           }}
         >
-          <ExhibitionSection />
+          <ExhibitionSection items={[]} />
         </div>
         <AboutSection />
-        <WorkSection />
+        <WorkSection items={[]} />
         <Footer />
       </div>
     );

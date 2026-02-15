@@ -142,11 +142,30 @@ export default function HomeEditorPage() {
   const refreshPreview = () => {
     console.log('🔄 refreshPreview 호출됨');
     if (iframeRef.current) {
-      // Force iframe reload by resetting src
-      const currentSrc = iframeRef.current.src;
-      console.log('📲 iframe src:', currentSrc);
-      iframeRef.current.src = currentSrc;
-      console.log('✅ iframe 새로고침 완료');
+      try {
+        // contentWindow.location.reload()를 사용해 더 안정적으로 리로드
+        if (iframeRef.current.contentWindow) {
+          iframeRef.current.contentWindow.location.reload();
+          console.log('✅ iframe contentWindow reload 완료');
+        } else {
+          // contentWindow가 없으면 src 재할당으로 폴백
+          const url = iframeRef.current.src;
+          if (url) {
+            const baseUrl = url.split('?')[0];
+            iframeRef.current.src = `${baseUrl}?refresh=${Date.now()}`;
+            console.log('✅ iframe src 재할당 완료');
+          }
+        }
+      } catch (error) {
+        console.warn('⚠️ iframe reload 실패:', error);
+        // 크로스-오리진 에러가 나면 src 재할당으로 폴백
+        const url = iframeRef.current.src;
+        if (url) {
+          const baseUrl = url.split('?')[0];
+          iframeRef.current.src = `${baseUrl}?refresh=${Date.now()}`;
+          console.log('✅ 폴백: iframe src 재할당 완료');
+        }
+      }
     } else {
       console.warn('⚠️ iframeRef.current가 null입니다');
     }
@@ -306,6 +325,7 @@ export default function HomeEditorPage() {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ itemId, newOrder }),
+                    credentials: 'include',
                   }
                 );
                 if (!response.ok) throw new Error('순서 변경 실패');
@@ -314,7 +334,10 @@ export default function HomeEditorPage() {
               onDelete={async (itemId) => {
                 const response = await fetch(
                   `/api/admin/exhibition-items/${itemId}`,
-                  { method: 'DELETE' }
+                  {
+                    method: 'DELETE',
+                    credentials: 'include',
+                  }
                 );
                 if (!response.ok) throw new Error('삭제 실패');
                 refreshPreview();
@@ -357,6 +380,7 @@ export default function HomeEditorPage() {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ itemId, newOrder }),
+                    credentials: 'include',
                   }
                 );
                 if (!response.ok) throw new Error('순서 변경 실패');
@@ -365,7 +389,10 @@ export default function HomeEditorPage() {
               onDelete={async (itemId) => {
                 const response = await fetch(
                   `/api/admin/work-portfolios/${itemId}`,
-                  { method: 'DELETE' }
+                  {
+                    method: 'DELETE',
+                    credentials: 'include',
+                  }
                 );
                 if (!response.ok) throw new Error('삭제 실패');
                 refreshPreview();
@@ -470,8 +497,8 @@ export default function HomeEditorPage() {
         </div>
 
         {/* Right Side - Preview */}
-        <div className="hidden lg:flex lg:w-1/2 bg-white border-l border-gray-200 flex-col">
-          <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+        <div className="hidden lg:flex lg:w-1/2 bg-white border-l border-gray-200 flex-col overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between shrink-0">
             <div>
               <h3 className="text-sm font-semibold text-gray-900">📱 실시간 미리보기</h3>
               <p className="text-xs text-gray-600 mt-1">변경사항이 자동으로 반영됩니다</p>
@@ -485,8 +512,8 @@ export default function HomeEditorPage() {
           </div>
           <iframe
             ref={iframeRef}
-            src="/"
-            className="flex-1 border-0 w-full"
+            src={`/#${activeSection}`}
+            className="flex-1 border-0 w-full overflow-auto"
             title="Home Page Preview"
           />
         </div>

@@ -43,8 +43,26 @@ export default function AboutDashboard() {
 
   const refreshPreview = useCallback(() => {
     if (iframeRef.current) {
-      const currentSrc = iframeRef.current.src;
-      iframeRef.current.src = currentSrc;
+      try {
+        // contentWindow.location.reload()를 사용해 더 안정적으로 리로드
+        if (iframeRef.current.contentWindow) {
+          iframeRef.current.contentWindow.location.reload();
+        } else {
+          // contentWindow가 없으면 src 재할당으로 폴백
+          const url = iframeRef.current.src;
+          if (url) {
+            const baseUrl = url.split('?')[0];
+            iframeRef.current.src = `${baseUrl}?refresh=${Date.now()}`;
+          }
+        }
+      } catch (error) {
+        // 크로스-오리진 에러가 나면 src 재할당으로 폴백
+        const url = iframeRef.current.src;
+        if (url) {
+          const baseUrl = url.split('?')[0];
+          iframeRef.current.src = `${baseUrl}?refresh=${Date.now()}`;
+        }
+      }
     }
   }, []);
 
@@ -178,8 +196,8 @@ export default function AboutDashboard() {
         </div>
 
         {/* Right Side - Preview */}
-        <div className="hidden lg:flex lg:w-1/2 bg-white border-l border-gray-200 flex-col">
-          <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+        <div className="hidden lg:flex lg:w-1/2 bg-white border-l border-gray-200 flex-col overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between shrink-0">
             <div>
               <h3 className="text-sm font-semibold text-gray-900">실시간 미리보기</h3>
               <p className="text-xs text-gray-600 mt-1">변경사항이 저장 후 반영됩니다</p>
@@ -193,8 +211,8 @@ export default function AboutDashboard() {
           </div>
           <iframe
             ref={iframeRef}
-            src="/about"
-            className="flex-1 border-0 w-full"
+            src={`/about#${activeTab}`}
+            className="flex-1 border-0 w-full overflow-auto"
             title="About Page Preview"
           />
         </div>

@@ -33,6 +33,7 @@ export default function ExhibitionSection({
 }: ExhibitionSectionProps) {
   return (
     <section
+      id="exhibition"
       style={{
         display: 'flex',
         flexDirection: 'column',

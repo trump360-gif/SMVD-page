@@ -82,7 +82,9 @@ export function useAboutEditor() {
     try {
       setIsLoading(true);
       setError(null);
-      const res = await fetch('/api/admin/about/sections');
+      const res = await fetch('/api/admin/about/sections', {
+        credentials: 'include',
+      });
       if (!res.ok) throw new Error('Failed to fetch sections');
       const data = await res.json();
       setSections(data.sections || []);
@@ -98,7 +100,9 @@ export function useAboutEditor() {
     try {
       setIsLoading(true);
       setError(null);
-      const res = await fetch('/api/admin/about/people');
+      const res = await fetch('/api/admin/about/people', {
+        credentials: 'include',
+      });
       if (!res.ok) throw new Error('Failed to fetch people');
       const data = await res.json();
       setPeople(data.people || []);
@@ -118,6 +122,7 @@ export function useAboutEditor() {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sectionId, type, title, content }),
+          credentials: 'include',
         });
         if (!res.ok) throw new Error('Failed to update section');
         const data = await res.json();
@@ -142,6 +147,7 @@ export function useAboutEditor() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(personData),
+        credentials: 'include',
       });
       if (!res.ok) throw new Error('Failed to add person');
       const data = await res.json();
@@ -163,6 +169,7 @@ export function useAboutEditor() {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(personData),
+          credentials: 'include',
         });
         if (!res.ok) throw new Error('Failed to update person');
         const data = await res.json();
@@ -185,6 +192,7 @@ export function useAboutEditor() {
       setError(null);
       const res = await fetch(`/api/admin/about/people/${personId}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
       if (!res.ok) throw new Error('Failed to delete person');
       setPeople((prev) => prev.filter((p) => p.id !== personId));
@@ -203,6 +211,7 @@ export function useAboutEditor() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sectionId, newOrder }),
+        credentials: 'include',
       });
       if (!res.ok) throw new Error('Failed to reorder sections');
       const data = await res.json();
@@ -222,6 +231,7 @@ export function useAboutEditor() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ personId, newOrder }),
+        credentials: 'include',
       });
       if (!res.ok) throw new Error('Failed to reorder people');
       const data = await res.json();

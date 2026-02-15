@@ -49,6 +49,7 @@ export function useHomeEditor(initialSections: Section[]) {
       setIsLoading(true);
       const response = await fetch(`/api/admin/sections?pageId=${pageId}`, {
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
       });
       const data = await response.json();
       if (data.success) {
@@ -69,6 +70,7 @@ export function useHomeEditor(initialSections: Section[]) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sectionId, ...data }),
+          credentials: 'include',
         });
 
         const result = await response.json();
@@ -102,6 +104,7 @@ export function useHomeEditor(initialSections: Section[]) {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ itemId: workId, ...data }),
+          credentials: 'include',
         });
 
         const result = await response.json();
@@ -128,6 +131,7 @@ export function useHomeEditor(initialSections: Section[]) {
       const response = await fetch(`/api/admin/work-portfolios?id=${workId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -157,6 +161,7 @@ export function useHomeEditor(initialSections: Section[]) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sectionId, ...data }),
+          credentials: 'include',
         });
 
         const result = await response.json();
@@ -187,6 +192,7 @@ export function useHomeEditor(initialSections: Section[]) {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ itemId, ...data }),
+          credentials: 'include',
         });
 
         const result = await response.json();
@@ -213,6 +219,7 @@ export function useHomeEditor(initialSections: Section[]) {
       const response = await fetch(`/api/admin/exhibition-items?id=${itemId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -263,6 +270,7 @@ export function useHomeEditor(initialSections: Section[]) {
               itemId: currentItem.id,
               newOrder: targetItem.order,
             }),
+            credentials: 'include',
           }
         );
 
@@ -322,6 +330,7 @@ export function useHomeEditor(initialSections: Section[]) {
               itemId: currentItem.id,
               newOrder: targetItem.order,
             }),
+            credentials: 'include',
           }
         );
 
@@ -360,6 +369,7 @@ export function useHomeEditor(initialSections: Section[]) {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ content }),
+          credentials: 'include',
         });
 
         const result = await response.json();

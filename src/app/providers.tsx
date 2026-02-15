@@ -1,7 +1,37 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
+import { useEffect } from "react";
+
+function HashScroller({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1);
+      if (hash) {
+        const element = document.getElementById(hash);
+        if (element) {
+          setTimeout(() => {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
+      }
+    };
+
+    // Handle initial hash on page load
+    handleHashChange();
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  return <>{children}</>;
+}
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  return <SessionProvider>{children}</SessionProvider>;
+  return (
+    <SessionProvider>
+      <HashScroller>{children}</HashScroller>
+    </SessionProvider>
+  );
 }

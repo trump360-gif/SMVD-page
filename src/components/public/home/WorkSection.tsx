@@ -42,6 +42,7 @@ export default function WorkSection({
 
   return (
     <section
+      id="work"
       style={{
         width: '100%',
         backgroundColor: '#ffffffff',

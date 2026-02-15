@@ -4,11 +4,13 @@ import Image from 'next/image';
 
 interface AboutPageIntroProps {
   title?: string;
+  description?: string;
   imageSrc?: string;
 }
 
 export default function AboutPageIntro({
-  title = 'About SMVD',
+  title = 'About',
+  description = '시각·영상디자인과에서는 커뮤니케이션 시대의 다양한 정보, 인간의 의사,\n사물의 이미지를 정확하고 합리적인 방법으로 전달하기 위한 창의적 사고와\n창조 행위를 배웁니다. 사람들의 마음을 움직일 수 있는 시각을 통해\n자신의 생각과 표현력을 효과적으로 전달하는 방법을 탐구하는 학문입니다.',
   imageSrc = '/images/about/image 32.png',
 }: AboutPageIntroProps) {
   return (
@@ -54,9 +56,10 @@ export default function AboutPageIntro({
             lineHeight: 1.5,
             width: '848px',
             wordBreak: 'keep-all',
+            whiteSpace: 'pre-wrap',
           }}
         >
-          {`시각·영상디자인과에서는 커뮤니케이션 시대의 다양한 정보, 인간의 의사,\n사물의 이미지를 정확하고 합리적인 방법으로 전달하기 위한 창의적 사고와\n창조 행위를 배웁니다. 사람들의 마음을 움직일 수 있는 시각을 통해\n자신의 생각과 표현력을 효과적으로 전달하는 방법을 탐구하는 학문입니다.`}
+          {description}
         </div>
       </div>
 

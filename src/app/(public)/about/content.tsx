@@ -9,7 +9,28 @@ import {
   OurPeopleTab,
 } from '@/components/public/about';
 
-export default function AboutContent() {
+interface AboutContentProps {
+  introData?: {
+    title?: string;
+    description?: string;
+    imageSrc?: string;
+  };
+  visionData?: {
+    title?: string;
+    content?: string;
+    chips?: string[];
+  };
+  historyData?: {
+    title?: string;
+    introText?: string;
+  };
+}
+
+export default function AboutContent({
+  introData,
+  visionData,
+  historyData,
+}: AboutContentProps) {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'major' | 'people'>('major');
 
@@ -121,9 +142,20 @@ export default function AboutContent() {
           >
             {activeTab === 'major' && (
               <>
-                <AboutPageIntro />
-                <AboutPageVision />
-                <AboutPageHistory />
+                <AboutPageIntro
+                  title={introData?.title}
+                  description={introData?.description}
+                  imageSrc={introData?.imageSrc}
+                />
+                <AboutPageVision
+                  title={visionData?.title}
+                  content={visionData?.content}
+                  chips={visionData?.chips}
+                />
+                <AboutPageHistory
+                  title={historyData?.title}
+                  introText={historyData?.introText}
+                />
               </>
             )}
           </div>
