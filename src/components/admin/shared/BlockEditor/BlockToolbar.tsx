@@ -13,6 +13,8 @@ import {
   Tag,
   User,
   Layers,
+  Columns3,
+  LayoutGrid,
 } from 'lucide-react';
 import type { BlockType } from './types';
 
@@ -36,12 +38,15 @@ const GENERIC_BLOCK_OPTIONS: BlockOption[] = [
   { type: 'gallery', label: 'Gallery Block', icon: <Grid3X3 size={14} />, group: 'generic' },
   { type: 'spacer', label: 'Spacer', icon: <ArrowDownFromLine size={14} />, group: 'generic' },
   { type: 'divider', label: 'Divider', icon: <Minus size={14} />, group: 'generic' },
+  { type: 'layout-row', label: 'Row Layout (2-3 cols)', icon: <Columns3 size={14} />, group: 'generic' },
+  { type: 'layout-grid', label: 'Grid Layout', icon: <LayoutGrid size={14} />, group: 'generic' },
 ];
 
 const WORK_BLOCK_OPTIONS: BlockOption[] = [
   { type: 'hero-image', label: 'Hero Image (860px)', icon: <Maximize size={14} />, group: 'work' },
   { type: 'work-title', label: 'Work Title + Author', icon: <Tag size={14} />, group: 'work' },
   { type: 'work-metadata', label: 'Author / Email', icon: <User size={14} />, group: 'work' },
+  { type: 'work-layout-config', label: 'Layout Configuration', icon: <Grid3X3 size={14} />, group: 'work' },
   { type: 'work-gallery', label: 'Work Gallery (Stack)', icon: <Layers size={14} />, group: 'work' },
 ];
 
@@ -92,46 +97,49 @@ export default function BlockToolbar({ onAddBlock, showWorkBlocks = false }: Blo
       </button>
 
       {isOpen && (
-        <div className="absolute bottom-full left-0 mb-1 w-52 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1 max-h-80 overflow-y-auto">
-          {/* Generic blocks */}
-          {GENERIC_BLOCK_OPTIONS.map((opt) => (
-            <button
-              key={opt.type}
-              type="button"
-              onClick={() => {
-                onAddBlock(opt.type);
-                setIsOpen(false);
-              }}
-              className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-            >
-              {opt.icon}
-              {opt.label}
-            </button>
-          ))}
+        <div className="absolute bottom-full left-0 mb-1 w-md bg-white border border-gray-200 rounded-lg shadow-lg z-20 p-3 max-h-128 overflow-y-auto">
+          {/* Generic blocks - 3 column grid */}
+          <div className="grid grid-cols-3 gap-2 mb-3">
+            {GENERIC_BLOCK_OPTIONS.map((opt) => (
+              <button
+                key={opt.type}
+                type="button"
+                onClick={() => {
+                  onAddBlock(opt.type);
+                  setIsOpen(false);
+                }}
+                className="flex flex-col items-center gap-1 px-2 py-2 text-[10px] text-gray-700 hover:bg-blue-50 hover:text-blue-900 border border-gray-200 rounded-md transition-colors"
+              >
+                {opt.icon}
+                <span className="text-center line-clamp-2">{opt.label}</span>
+              </button>
+            ))}
+          </div>
 
           {/* Work-specific blocks */}
           {showWorkBlocks && (
             <>
-              <div className="border-t border-gray-100 my-1" />
-              <div className="px-3 py-1">
-                <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">
+              <div className="border-t border-gray-200 my-2 pt-2">
+                <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider block mb-2">
                   Work Detail
                 </span>
+                <div className="grid grid-cols-3 gap-2">
+                  {WORK_BLOCK_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.type}
+                      type="button"
+                      onClick={() => {
+                        onAddBlock(opt.type);
+                        setIsOpen(false);
+                      }}
+                      className="flex flex-col items-center gap-1 px-2 py-2 text-[10px] text-blue-700 hover:bg-blue-50 hover:text-blue-900 border border-blue-200 rounded-md transition-colors"
+                    >
+                      {opt.icon}
+                      <span className="text-center line-clamp-2">{opt.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-              {WORK_BLOCK_OPTIONS.map((opt) => (
-                <button
-                  key={opt.type}
-                  type="button"
-                  onClick={() => {
-                    onAddBlock(opt.type);
-                    setIsOpen(false);
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-xs text-blue-700 hover:bg-blue-50 hover:text-blue-900 transition-colors"
-                >
-                  {opt.icon}
-                  {opt.label}
-                </button>
-              ))}
             </>
           )}
         </div>
