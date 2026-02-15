@@ -24,6 +24,7 @@ const ProfessorUpdateSchema = z.object({
   major: z.string().optional(),
   specialty: z.string().optional(),
   badge: z.string().optional(),
+  profileImage: z.string().optional(), // 프로필 이미지 경로
   courses: z.object({
     undergraduate: z.array(z.string()),
     graduate: z.array(z.string()),

@@ -10,11 +10,19 @@ interface SidebarItem {
   href: string;
   label: string;
   icon: string;
+  category?: string;
 }
 
 const sidebarItems: SidebarItem[] = [
   { href: '/admin/dashboard', label: '대시보드', icon: '📊' },
-  { href: '/admin/pages', label: '페이지 관리', icon: '📄' },
+
+  // 페이지 관리 섹션
+  { href: '/admin/dashboard/home', label: '홈', icon: '🏠', category: '페이지 관리' },
+  { href: '/admin/dashboard/about', label: 'About', icon: '📚', category: '페이지 관리' },
+  { href: '/admin/dashboard/curriculum', label: 'Curriculum', icon: '📖', category: '페이지 관리' },
+  { href: '/admin/dashboard/work', label: 'Work', icon: '🎨', category: '페이지 관리' },
+  { href: '/admin/dashboard/news', label: 'News&Event', icon: '📰', category: '페이지 관리' },
+
   { href: '/admin/navigation', label: '네비게이션', icon: '🔗' },
   { href: '/admin/footer', label: '푸터', icon: '📌' },
   { href: '/admin/media', label: '미디어', icon: '🖼️' },
@@ -58,20 +66,30 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
         {/* Navigation */}
         <nav className="flex-grow overflow-y-auto py-4">
-          {sidebarItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`px-6 py-3 flex items-center gap-3 transition-colors ${
-                isActive(item.href)
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-              }`}
-            >
-              <span className="text-xl flex-shrink-0">{item.icon}</span>
-              {sidebarOpen && <span className="text-sm font-medium">{item.label}</span>}
-            </Link>
-          ))}
+          {sidebarItems.map((item, idx) => {
+            const showCategory = item.category && (!sidebarItems[idx - 1]?.category || sidebarItems[idx - 1].category !== item.category);
+
+            return (
+              <div key={`${item.href}-wrapper`}>
+                {showCategory && sidebarOpen && (
+                  <div className="px-6 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    {item.category}
+                  </div>
+                )}
+                <Link
+                  href={item.href}
+                  className={`px-6 py-3 flex items-center gap-3 transition-colors ${
+                    isActive(item.href)
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                  }`}
+                >
+                  <span className="text-xl flex-shrink-0">{item.icon}</span>
+                  {sidebarOpen && <span className="text-sm font-medium">{item.label}</span>}
+                </Link>
+              </div>
+            );
+          })}
         </nav>
 
         {/* User Info */}

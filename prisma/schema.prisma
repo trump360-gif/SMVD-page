@@ -211,26 +211,27 @@ model NewsEvent {
 
 // Faculty & Staff (Enhanced for About page - 2026-02-15)
 model People {
-  id          String    @id @default(cuid())
-  name        String
-  title       String
-  role        String?   // "professor" | "instructor"
-  office      String?   // 연구실 위치
-  email       String[]  // 여러 이메일 지원
-  phone       String?
-  homepage    String?   // 홈페이지 URL
-  major       String?   // 전공
-  specialty   String?   // 전문분야
-  badge       String?   // 뱃지 ("Research & Mentoring", "User Experience" 등)
-  courses     Json?     // { undergraduate: string[], graduate: string[] }
-  biography   Json?     // { cvText, position, education[], experience[] }
-  mediaId     String?   @map("media_id")
-  media       Media?    @relation(fields: [mediaId], references: [id], onDelete: SetNull)
-  order       Int       @default(0)
-  published   Boolean   @default(true)
-  archivedAt  DateTime? @map("archived_at") // Soft delete
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id            String    @id @default(cuid())
+  name          String
+  title         String
+  role          String?   // "professor" | "instructor"
+  office        String?   // 연구실 위치
+  email         String[]  // 여러 이메일 지원
+  phone         String?
+  homepage      String?   // 홈페이지 URL
+  major         String?   // 전공
+  specialty     String?   // 전문분야
+  badge         String?   // 뱃지 ("Research & Mentoring", "User Experience" 등)
+  profileImage  String?   @map("profile_image") // 프로필 이미지 경로
+  courses       Json?     // { undergraduate: string[], graduate: string[] }
+  biography     Json?     // { cvText, position, education[], experience[] }
+  mediaId       String?   @map("media_id")
+  media         Media?    @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+  order         Int       @default(0)
+  published     Boolean   @default(true)
+  archivedAt    DateTime? @map("archived_at") // Soft delete
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
 
   @@map("people")
 }

@@ -9,6 +9,25 @@ import {
   OurPeopleTab,
 } from '@/components/public/about';
 
+interface Professor {
+  id: string;
+  name: string;
+  title: string;
+  office?: string;
+  email: string[];
+  phone?: string;
+  badge?: string;
+  courses?: {
+    undergraduate: string[];
+    graduate: string[];
+  };
+}
+
+interface Instructor {
+  name: string;
+  specialty: string;
+}
+
 interface AboutContentProps {
   introData?: {
     title?: string;
@@ -25,12 +44,17 @@ interface AboutContentProps {
     introText?: string;
     timelineItems?: Array<{ year: string; description: string }>;
   };
+  peopleData?: {
+    professors?: Professor[];
+    instructors?: Instructor[];
+  };
 }
 
 export default function AboutContent({
   introData,
   visionData,
   historyData,
+  peopleData,
 }: AboutContentProps) {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'major' | 'people'>('major');
@@ -164,7 +188,12 @@ export default function AboutContent({
 
           {/* Our People Tab */}
           <div id="people">
-            {activeTab === 'people' && <OurPeopleTab />}
+            {activeTab === 'people' && (
+              <OurPeopleTab
+                professors={peopleData?.professors}
+                instructors={peopleData?.instructors}
+              />
+            )}
           </div>
         </div>
       </div>

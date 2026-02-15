@@ -22,11 +22,15 @@ export default async function AboutPage() {
   const historySection = page?.sections.find(
     (s) => s.type === 'ABOUT_HISTORY'
   );
+  const peopleSection = page?.sections.find(
+    (s) => s.type === 'ABOUT_PEOPLE'
+  );
 
   // Extract data from sections
   const introData = introSection?.content as any;
   const visionData = visionSection?.content as any;
   const historyData = historySection?.content as any;
+  const peopleData = peopleSection?.content as any;
 
   return (
     <div>
@@ -39,6 +43,7 @@ export default async function AboutPage() {
           introData={introData}
           visionData={visionData}
           historyData={historyData}
+          peopleData={peopleData}
         />
       </Suspense>
 

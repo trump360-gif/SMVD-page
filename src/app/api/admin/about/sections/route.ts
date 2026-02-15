@@ -31,7 +31,7 @@ const AboutHistorySchema = z.object({
   introText: z.string(),
   timelineItems: z.array(z.object({
     year: z.string(),
-    text: z.string(),
+    description: z.string(),
   })),
 });
 

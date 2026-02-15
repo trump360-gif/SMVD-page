@@ -23,15 +23,32 @@ export default function PeopleManager({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPerson, setEditingPerson] = useState<AboutPerson | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [newPersonRole, setNewPersonRole] = useState<
+    'professor' | 'instructor' | null
+  >(null);
 
   const handleEdit = (person: AboutPerson) => {
     setEditingPerson(person);
+    setNewPersonRole(null);
     setIsModalOpen(true);
   };
 
-  const handleAdd = () => {
+  const handleAddProfessor = () => {
+    setNewPersonRole('professor');
     setEditingPerson(null);
     setIsModalOpen(true);
+  };
+
+  const handleAddInstructor = () => {
+    setNewPersonRole('instructor');
+    setEditingPerson(null);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setEditingPerson(null);
+    setNewPersonRole(null);
   };
 
   const handleDelete = async (person: AboutPerson) => {
@@ -76,12 +93,20 @@ export default function PeopleManager({
         <h2 className="text-xl font-bold text-gray-900">
           교수/강사 관리
         </h2>
-        <button
-          onClick={handleAdd}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
-        >
-          + 새로운 교수/강사 추가
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleAddProfessor}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
+          >
+            + 교수 추가
+          </button>
+          <button
+            onClick={handleAddInstructor}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium"
+          >
+            + 강사 추가
+          </button>
+        </div>
       </div>
 
       {/* Professors */}
@@ -150,10 +175,8 @@ export default function PeopleManager({
       <PersonFormModal
         isOpen={isModalOpen}
         person={editingPerson}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingPerson(null);
-        }}
+        role={editingPerson?.role === 'instructor' ? 'instructor' : newPersonRole || 'professor'}
+        onClose={handleModalClose}
         onSubmit={handleSubmit}
       />
     </div>

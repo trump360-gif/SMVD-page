@@ -24,6 +24,7 @@ const ProfessorSchema = z.object({
   major: z.string().optional(),
   specialty: z.string().optional(),
   badge: z.string().optional(),
+  profileImage: z.string().optional(), // 프로필 이미지 경로
   courses: z.object({
     undergraduate: z.array(z.string()),
     graduate: z.array(z.string()),
@@ -57,6 +58,7 @@ export async function GET(request: NextRequest) {
         major: true,
         specialty: true,
         badge: true,
+        profileImage: true,
         courses: true,
         biography: true,
         order: true,
@@ -103,6 +105,7 @@ export async function POST(request: NextRequest) {
         major: validatedData.major,
         specialty: validatedData.specialty,
         badge: validatedData.badge,
+        profileImage: validatedData.profileImage,
         courses: validatedData.courses ?? undefined,
         biography: validatedData.biography ?? undefined,
         order: nextOrder,

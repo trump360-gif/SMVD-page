@@ -301,7 +301,7 @@ function VisionEditor({
 
 interface TimelineItem {
   year: string;
-  text: string;
+  description: string;
 }
 
 function HistoryEditor({
@@ -336,7 +336,7 @@ function HistoryEditor({
   };
 
   const addTimelineItem = () => {
-    setTimelineItems((prev) => [...prev, { year: '', text: '' }]);
+    setTimelineItems((prev) => [...prev, { year: '', description: '' }]);
   };
 
   const removeTimelineItem = (idx: number) => {
@@ -366,8 +366,9 @@ function HistoryEditor({
           onChange={(e) => setIntroText(e.target.value)}
           rows={4}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-          placeholder="역사 소개"
+          placeholder="역사 소개 (줄바꿈은 Enter로 입력)"
         />
+        <p className="text-xs text-gray-500 mt-1">💡 Enter를 눌러 줄바꿈하세요</p>
       </div>
       <div>
         <div className="flex justify-between items-center mb-2">
@@ -384,33 +385,35 @@ function HistoryEditor({
         </div>
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {timelineItems.map((item, idx) => (
-            <div key={idx} className="flex gap-2 items-center">
-              <input
-                type="text"
-                value={item.year}
-                onChange={(e) =>
-                  updateTimelineItem(idx, 'year', e.target.value)
-                }
-                placeholder="년도"
-                className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-              />
-              <input
-                type="text"
-                value={item.text}
-                onChange={(e) =>
-                  updateTimelineItem(idx, 'text', e.target.value)
-                }
-                placeholder="내용"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-              />
-              <button
-                type="button"
-                onClick={() => removeTimelineItem(idx)}
-                className="px-2 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                title="삭제"
-              >
-                X
-              </button>
+            <div key={idx} className="space-y-1 pb-2 border-b border-gray-200">
+              <div className="flex gap-2 items-start">
+                <input
+                  type="text"
+                  value={item.year}
+                  onChange={(e) =>
+                    updateTimelineItem(idx, 'year', e.target.value)
+                  }
+                  placeholder="년도"
+                  className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                />
+                <textarea
+                  value={item.description}
+                  onChange={(e) =>
+                    updateTimelineItem(idx, 'description', e.target.value)
+                  }
+                  placeholder="내용 (Enter로 줄바꿈)"
+                  rows={2}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeTimelineItem(idx)}
+                  className="px-2 py-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors text-sm font-medium"
+                  title="삭제"
+                >
+                  삭제
+                </button>
+              </div>
             </div>
           ))}
         </div>

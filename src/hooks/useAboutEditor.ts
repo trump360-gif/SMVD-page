@@ -16,7 +16,7 @@ interface AboutVision {
 
 interface TimelineItem {
   year: string;
-  text: string;
+  description: string;
 }
 
 interface AboutHistory {
@@ -58,6 +58,7 @@ export interface AboutPerson {
   major?: string;
   specialty?: string;
   badge?: string;
+  profileImage?: string;
   courses?: {
     undergraduate: string[];
     graduate: string[];
@@ -152,6 +153,10 @@ export function useAboutEditor() {
       if (!res.ok) throw new Error('Failed to add person');
       const data = await res.json();
       setPeople((prev) => [...prev, data.person]);
+
+      // ABOUT_PEOPLE 섹션도 함께 업데이트
+      await syncPeopleSection();
+
       return data.person;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';
@@ -176,6 +181,10 @@ export function useAboutEditor() {
         setPeople((prev) =>
           prev.map((p) => (p.id === personId ? data.person : p))
         );
+
+        // ABOUT_PEOPLE 섹션도 함께 업데이트
+        await syncPeopleSection();
+
         return data.person;
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Unknown error';
@@ -196,6 +205,9 @@ export function useAboutEditor() {
       });
       if (!res.ok) throw new Error('Failed to delete person');
       setPeople((prev) => prev.filter((p) => p.id !== personId));
+
+      // ABOUT_PEOPLE 섹션도 함께 업데이트
+      await syncPeopleSection();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';
       setError(message);
@@ -236,12 +248,73 @@ export function useAboutEditor() {
       if (!res.ok) throw new Error('Failed to reorder people');
       const data = await res.json();
       setPeople(data.people || []);
+
+      // ABOUT_PEOPLE 섹션도 함께 업데이트
+      await syncPeopleSection();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';
       setError(message);
       throw err;
     }
   }, []);
+
+  // ABOUT_PEOPLE 섹션 동기화 (People 테이블 변경 시 호출)
+  const syncPeopleSection = useCallback(async () => {
+    try {
+      // 최신 people 데이터 조회
+      const peopleRes = await fetch('/api/admin/about/people', {
+        credentials: 'include',
+      });
+      if (!peopleRes.ok) throw new Error('Failed to fetch people');
+      const peopleData = await peopleRes.json();
+      const allPeople = peopleData.people || [];
+
+      // 교수와 강사 분리
+      const professors = allPeople.filter(
+        (p: AboutPerson) => p.role === 'professor' || !p.role
+      );
+      const instructors = allPeople.filter(
+        (p: AboutPerson) => p.role === 'instructor'
+      );
+
+      // ABOUT_PEOPLE 섹션 찾기
+      const peopleSection = sections.find((s) => s.type === 'ABOUT_PEOPLE');
+      if (!peopleSection) return;
+
+      // 섹션 업데이트
+      await fetch('/api/admin/about/sections', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sectionId: peopleSection.id,
+          type: 'ABOUT_PEOPLE',
+          title: null,
+          content: {
+            professors,
+            instructors,
+          },
+        }),
+        credentials: 'include',
+      });
+
+      // 로컬 sections 상태 업데이트
+      setSections((prev) =>
+        prev.map((s) =>
+          s.id === peopleSection.id
+            ? {
+                ...s,
+                content: {
+                  professors,
+                  instructors,
+                },
+              }
+            : s
+        )
+      );
+    } catch (err) {
+      console.error('Failed to sync people section:', err);
+    }
+  }, [sections]);
 
   return {
     sections,

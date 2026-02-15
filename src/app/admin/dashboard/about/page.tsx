@@ -148,12 +148,18 @@ export default function AboutDashboard() {
           {/* Sections Tab */}
           {activeTab === 'sections' && (
             <div className="space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-700 text-sm">
+                💡 교수/강사 정보는 "<strong>교수/강사 관리</strong>" 탭에서 관리하세요.
+              </div>
+
               {sections.length === 0 ? (
                 <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
                   About 페이지 섹션이 아직 없습니다. DB에 섹션을 추가해주세요.
                 </div>
               ) : (
-                sections.map((section) => (
+                sections
+                  .filter((s) => s.type !== 'ABOUT_PEOPLE')
+                  .map((section) => (
                   <SectionEditor
                     key={section.id}
                     section={section}
@@ -211,7 +217,7 @@ export default function AboutDashboard() {
           </div>
           <iframe
             ref={iframeRef}
-            src={`/about#${activeTab}`}
+            src={activeTab === 'people' ? '/about?tab=people' : '/about'}
             className="flex-1 border-0 w-full overflow-auto"
             title="About Page Preview"
           />

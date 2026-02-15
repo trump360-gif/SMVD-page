@@ -7,76 +7,83 @@ interface Professor {
   id: string;
   name: string;
   title: string;
-  email: string;
-  phone: string;
-  major: string;
-  specialty: string;
-  courses: string;
-  badge: string;
-  description: string;
-  profileImage: string;
+  office?: string;
+  email: string[];
+  phone?: string;
+  badge?: string;
+  courses?: {
+    undergraduate: string[];
+    graduate: string[];
+  };
+  profileImage?: string;
 }
 
-const professors: Professor[] = [
+interface Instructor {
+  name: string;
+  specialty: string;
+}
+
+interface OurPeopleTabProps {
+  professors?: Professor[];
+  instructors?: Instructor[];
+}
+
+const defaultProfessors: Professor[] = [
   {
     id: 'yun',
     name: '윤여종',
     title: '정교수',
-    email: 'yyj@sookmyung.ac.kr',
+    email: ['yyj@sookmyung.ac.kr'],
     phone: '+82-2-710-9682',
-    major: '시각영상디자인',
-    specialty: 'UI/UX 디자인',
-    courses: '브랜드디자인\n졸업프로젝트스튜디오 I/II',
     badge: 'Research & Mentoring',
-    description:
-      '윤여종 교수는 UI/UX 디자인의 선구자로, 사용자 중심 설계와 인터페이스 혁신을 통해 디지털 커뮤니케이션의 미래를 개척하고 있습니다.\n\n주요 연구 분야:\n• UI/UX 디자인 및 사용자 경험 연구\n• 인터랙티브 미디어 개발\n• 디지털 인터페이스 설계 방법론\n• 사용자 연구 및 인지심리학',
+    courses: {
+      undergraduate: ['브랜드디자인'],
+      graduate: ['졸업프로젝트스튜디오 I/II'],
+    },
     profileImage: '/images/people/yun-yeojong.png',
   },
   {
     id: 'kim',
     name: '김기영',
     title: '정교수',
-    email: 'kiyoungkim@sookmyung.ac.kr',
+    email: ['kiyoungkim@sookmyung.ac.kr'],
     phone: '+82-2-710-9683',
-    major: '시각영상디자인',
-    specialty: '그래픽 디자인',
-    courses: '마케팅디자인\n졸업프로젝트스튜디오 I/II',
     badge: 'Vision & Marketing',
-    description:
-      '김기영 교수는 브랜드 비전과 시각 전략을 통해 기업의 정체성을 재정의하는 전문가입니다. 마케팅과 디자인의 융합을 추구합니다.\n\n주요 연구 분야:\n• 브랜드 아이덴티티 개발\n• 마케팅 커뮤니케이션 디자인\n• 비주얼 스토리텔링\n• 기업 이미지 전략',
+    courses: {
+      undergraduate: ['마케팅디자인'],
+      graduate: ['졸업프로젝트스튜디오 I/II'],
+    },
     profileImage: '/images/people/kim-kiyoung.png',
   },
   {
     id: 'lee',
     name: '이지선',
     title: '정교수',
-    email: 'jisun.lee@sookmyung.ac.kr',
+    email: ['jisun.lee@sookmyung.ac.kr'],
     phone: '+82-2-710-9684',
-    major: '시각영상디자인',
-    specialty: '사용자 경험',
-    courses: '사용자경험디자인\n졸업프로젝트스튜디오 I/II',
     badge: 'User Experience',
-    description:
-      '이지선 교수는 사용자 중심의 디자인 철학으로 다양한 디지털 경험을 창출하고 있습니다. 사용성과 미학의 조화를 추구합니다.\n\n주요 연구 분야:\n• 사용자 경험(UX) 설계\n• 웹 및 모바일 인터페이스\n• 접근성 있는 디자인\n• 사용자 테스트 및 평가',
+    courses: {
+      undergraduate: ['사용자경험디자인'],
+      graduate: ['졸업프로젝트스튜디오 I/II'],
+    },
     profileImage: '/images/people/lee-jisun.png',
   },
   {
     id: 'na',
     name: '나유미',
     title: '정교수',
-    email: 'youmi.na@sookmyung.ac.kr',
+    email: ['youmi.na@sookmyung.ac.kr'],
     phone: '+82-2-710-9685',
-    major: '시각영상디자인',
-    specialty: '디지털 미디어',
-    courses: '사용자경험디자인\n졸업프로젝트스튜디오 I/II',
     badge: 'User Experience',
-    description:
-      '나유미 교수는 멀티미디어 콘텐츠 설계와 디지털 경험 개발의 전문가로, 기술과 예술의 경계를 넘어 새로운 창의성을 추구합니다.\n\n주요 연구 분야:\n• 멀티미디어 콘텐츠 제작\n• 인터랙티브 영상 디자인\n• 디지털 미디어 전략\n• 콘텐츠 기획 및 실행',
+    courses: {
+      undergraduate: ['사용자경험디자인'],
+      graduate: ['졸업프로젝트스튜디오 I/II'],
+    },
     profileImage: '/images/people/na-youmi.png',
   },
 ];
 
-const instructors = [
+const defaultInstructors: Instructor[] = [
   { name: '김아영', specialty: '기초그래픽디자인I' },
   { name: '신지영', specialty: '일러스트레이션과스토리텔링디자인 I/II' },
   { name: '최한솔', specialty: '기초그래픽디자인 I/II, 일러스트레이션과스토리텔링디자인 I/II' },
@@ -91,7 +98,10 @@ const instructors = [
   { name: '장다윤', specialty: '모션디자인 I/II' },
 ];
 
-export default function OurPeopleTab() {
+export default function OurPeopleTab({
+  professors = defaultProfessors,
+  instructors = defaultInstructors,
+}: OurPeopleTabProps) {
   const router = useRouter();
 
   const handleProfessorClick = (profId: string) => {
@@ -177,15 +187,31 @@ export default function OurPeopleTab() {
                   border: 'none',
                 }}
               >
-                <Image
-                  src={prof.profileImage}
-                  alt={prof.name}
-                  fill
-                  style={{
-                    objectFit: 'cover',
-                  }}
-                  priority={false}
-                />
+                {prof.profileImage ? (
+                  <Image
+                    src={prof.profileImage}
+                    alt={prof.name}
+                    fill
+                    style={{
+                      objectFit: 'cover',
+                    }}
+                    priority={false}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: '#e5e5e5',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#999',
+                    }}
+                  >
+                    No Image
+                  </div>
+                )}
               </div>
 
               {/* Info Container */}
@@ -213,20 +239,24 @@ export default function OurPeopleTab() {
                 >
                   {prof.name}
                 </h3>
-                <p
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '400',
-                    color: '#353030ff',
-                    fontFamily: 'Helvetica',
-                    margin: '20px 0 0 0',
-                    lineHeight: 1.4,
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'keep-all',
-                  }}
-                >
-                  {prof.courses}
-                </p>
+                {prof.courses && (
+                  <p
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '400',
+                      color: '#353030ff',
+                      fontFamily: 'Helvetica',
+                      margin: '20px 0 0 0',
+                      lineHeight: 1.4,
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'keep-all',
+                    }}
+                  >
+                    {prof.courses.undergraduate?.join('\n') ||
+                      prof.courses.graduate?.join('\n') ||
+                      ''}
+                  </p>
+                )}
               </div>
             </div>
           ))}
