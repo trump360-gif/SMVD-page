@@ -4,26 +4,40 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { UndergraduateEditor, GraduateEditor } from '@/components/admin/curriculum';
+import type { UndergraduateContent, GraduateContent } from '@/lib/validation/curriculum';
+import { useCurriculumEditor } from '@/hooks/useCurriculumEditor';
 
-interface Section {
-  id: string;
-  pageId: string;
-  type: string;
-  title: string | null;
-  content: any;
-  order: number;
-  createdAt: string;
-  updatedAt: string;
-}
+type ActiveTab = 'undergraduate' | 'graduate';
 
 export default function CurriculumDashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [sections, setSections] = useState<Section[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<ActiveTab>('undergraduate');
+
+  const {
+    sections,
+    isLoading,
+    isSaving,
+    error,
+    successMessage,
+    getUndergraduateContent,
+    getGraduateContent,
+    getSection,
+    fetchSections,
+    updateSection,
+    addCourse,
+    updateCourse,
+    deleteCourse,
+    reorderCourses,
+    updateTracks,
+    updateModules,
+    addThesis,
+    updateThesis,
+    deleteThesis,
+    clearError,
+  } = useCurriculumEditor();
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -35,24 +49,7 @@ export default function CurriculumDashboard() {
     if (status === 'authenticated') {
       fetchSections();
     }
-  }, [status]);
-
-  const fetchSections = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await fetch('/api/admin/sections?pageId=curriculum', {
-        credentials: 'include',
-      });
-      if (!res.ok) throw new Error('Failed to fetch sections');
-      const data = await res.json();
-      setSections(data.sections || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [status, fetchSections]);
 
   const refreshPreview = useCallback(() => {
     if (iframeRef.current) {
@@ -66,7 +63,7 @@ export default function CurriculumDashboard() {
             iframeRef.current.src = `${baseUrl}?refresh=${Date.now()}`;
           }
         }
-      } catch (error) {
+      } catch {
         const url = iframeRef.current.src;
         if (url) {
           const baseUrl = url.split('?')[0];
@@ -76,12 +73,13 @@ export default function CurriculumDashboard() {
     }
   }, []);
 
-  const showSuccess = useCallback((msg: string) => {
-    setSuccessMessage(msg);
-    setTimeout(() => setSuccessMessage(null), 3000);
-  }, []);
+  // Get sections for API calls
+  const undergradSection = getSection('CURRICULUM_UNDERGRADUATE');
+  const undergradContent = getUndergraduateContent();
+  const gradSection = getSection('CURRICULUM_GRADUATE');
+  const gradContent = getGraduateContent();
 
-  if (status === 'loading' || loading) {
+  if (status === 'loading' || isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -97,17 +95,17 @@ export default function CurriculumDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Curriculum 페이지 관리
+                Curriculum Page Management
               </h1>
               <p className="text-sm text-gray-600 mt-1">
-                교과과정 정보를 관리합니다
+                Manage undergraduate and graduate curriculum
               </p>
             </div>
             <Link
               href="/admin/dashboard"
               className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-lg transition-colors text-sm font-medium"
             >
-              &#8592; 돌아가기
+              &#8592; Back
             </Link>
           </div>
         </div>
@@ -126,43 +124,137 @@ export default function CurriculumDashboard() {
 
           {/* Error message */}
           {error && (
-            <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-              {error}
+            <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center justify-between">
+              <span>{error}</span>
+              <button
+                onClick={clearError}
+                className="text-red-700 hover:text-red-900 font-bold ml-4"
+              >
+                X
+              </button>
             </div>
           )}
 
-          {sections.length === 0 ? (
-            <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
-              <p>Curriculum 페이지 섹션이 아직 없습니다.</p>
-              <p className="text-sm mt-2">DB에 섹션을 추가해주세요.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="text-sm text-gray-600 mb-4">
-                총 {sections.length}개의 섹션
-              </div>
-              {sections.map((section) => (
-                <div
-                  key={section.id}
-                  className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {section.title || section.type}
-                      </h3>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Type: {section.type} | Order: {section.order}
-                      </p>
-                    </div>
-                    <div className="text-right text-xs text-gray-400">
-                      <p>수정됨:</p>
-                      <p>{new Date(section.updatedAt).toLocaleDateString('ko-KR')}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          {/* Tab Navigation: Undergraduate / Graduate */}
+          <div className="flex gap-2 mb-6 bg-white rounded-lg shadow p-1">
+            <button
+              onClick={() => setActiveTab('undergraduate')}
+              className={`flex-1 px-4 py-3 font-medium rounded-lg transition-colors ${
+                activeTab === 'undergraduate'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              Undergraduate
+            </button>
+            <button
+              onClick={() => setActiveTab('graduate')}
+              className={`flex-1 px-4 py-3 font-medium rounded-lg transition-colors ${
+                activeTab === 'graduate'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              Graduate
+            </button>
+          </div>
+
+          {/* Undergraduate Editor */}
+          {activeTab === 'undergraduate' && (
+            <UndergraduateEditor
+              content={undergradContent}
+              onSaveCourse={async (semIdx, course) => {
+                if (undergradSection) {
+                  const ok = await addCourse(undergradSection.id, semIdx, course);
+                  if (ok) refreshPreview();
+                }
+              }}
+              onEditCourse={async (semIdx, cIdx, course) => {
+                if (undergradSection) {
+                  const ok = await updateCourse(undergradSection.id, semIdx, cIdx, course);
+                  if (ok) refreshPreview();
+                }
+              }}
+              onDeleteCourse={async (semIdx, cIdx) => {
+                if (undergradSection) {
+                  const ok = await deleteCourse(undergradSection.id, semIdx, cIdx);
+                  if (ok) refreshPreview();
+                }
+              }}
+              onReorderCourses={async (semIdx, courses) => {
+                if (undergradSection) {
+                  const ok = await reorderCourses(undergradSection.id, semIdx, courses);
+                  if (ok) refreshPreview();
+                }
+              }}
+              onSaveTracks={async (tracks) => {
+                if (undergradSection) {
+                  const ok = await updateTracks(undergradSection.id, tracks);
+                  if (ok) refreshPreview();
+                }
+              }}
+              onSaveModules={async (modules) => {
+                if (undergradSection) {
+                  const ok = await updateModules(undergradSection.id, modules);
+                  if (ok) refreshPreview();
+                }
+              }}
+              isSaving={isSaving}
+            />
+          )}
+
+          {/* Graduate Editor */}
+          {activeTab === 'graduate' && (
+            <GraduateEditor
+              content={gradContent}
+              onSaveMaster={async (courses) => {
+                if (gradSection && gradContent) {
+                  const updatedContent: GraduateContent = {
+                    ...gradContent,
+                    master: {
+                      ...gradContent.master,
+                      leftCourses: courses.leftCourses,
+                      rightCourses: courses.rightCourses,
+                    },
+                  };
+                  const ok = await updateSection(gradSection.id, 'CURRICULUM_GRADUATE', updatedContent);
+                  if (ok) refreshPreview();
+                }
+              }}
+              onSaveDoctor={async (courses) => {
+                if (gradSection && gradContent) {
+                  const updatedContent: GraduateContent = {
+                    ...gradContent,
+                    doctor: {
+                      ...gradContent.doctor,
+                      leftCourses: courses.leftCourses,
+                      rightCourses: courses.rightCourses,
+                    },
+                  };
+                  const ok = await updateSection(gradSection.id, 'CURRICULUM_GRADUATE', updatedContent);
+                  if (ok) refreshPreview();
+                }
+              }}
+              onAddThesis={async (thesis) => {
+                if (gradSection) {
+                  const ok = await addThesis(gradSection.id, thesis);
+                  if (ok) refreshPreview();
+                }
+              }}
+              onEditThesis={async (index, thesis) => {
+                if (gradSection) {
+                  const ok = await updateThesis(gradSection.id, index, thesis);
+                  if (ok) refreshPreview();
+                }
+              }}
+              onDeleteThesis={async (index) => {
+                if (gradSection) {
+                  const ok = await deleteThesis(gradSection.id, index);
+                  if (ok) refreshPreview();
+                }
+              }}
+              isSaving={isSaving}
+            />
           )}
         </div>
 
@@ -170,14 +262,14 @@ export default function CurriculumDashboard() {
         <div className="hidden lg:flex lg:w-1/2 bg-white border-l border-gray-200 flex-col overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between shrink-0">
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">실시간 미리보기</h3>
-              <p className="text-xs text-gray-600 mt-1">변경사항이 저장 후 반영됩니다</p>
+              <h3 className="text-sm font-semibold text-gray-900">Live Preview</h3>
+              <p className="text-xs text-gray-600 mt-1">Changes reflect after save</p>
             </div>
             <button
               onClick={() => window.open('/curriculum', '_blank')}
               className="shrink-0 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded transition-colors"
             >
-              페이지로 이동
+              Open Page
             </button>
           </div>
           <iframe

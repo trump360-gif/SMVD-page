@@ -69,6 +69,9 @@ enum SectionType {
   HOME_HERO             // Home 히어로 섹션
   EXHIBITION_SECTION    // Home 전시 섹션
   HOME_ABOUT            // Home 소개 섹션
+  // Curriculum page section types (NEW - 2026-02-15)
+  CURRICULUM_UNDERGRADUATE  // 학부 교과과정
+  CURRICULUM_GRADUATE       // 대학원 교과과정
 }
 
 // Sections with flexible content

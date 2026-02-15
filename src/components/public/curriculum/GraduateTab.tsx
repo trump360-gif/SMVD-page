@@ -1,5 +1,7 @@
 'use client';
 
+import type { GraduateContent } from '@/lib/validation/curriculum';
+
 interface CourseItem {
   title: string;
 }
@@ -15,6 +17,10 @@ interface ThesisCard {
   category: string;
   title: string;
   date: string;
+}
+
+interface GraduateTabProps {
+  content?: GraduateContent | null;
 }
 
 const masterCurriculum: CurriculumSection = {
@@ -205,7 +211,16 @@ const CurriculumSectionComponent = ({ section }: { section: CurriculumSection })
   </div>
 );
 
-export default function GraduateTab() {
+export default function GraduateTab({ content }: GraduateTabProps) {
+  // Use DB data if available, otherwise fall back to hardcoded defaults
+  const displayMaster: CurriculumSection = content?.master
+    ? { id: content.master.id ?? 'master', title: content.master.title, leftCourses: content.master.leftCourses, rightCourses: content.master.rightCourses }
+    : masterCurriculum;
+  const displayDoctor: CurriculumSection = content?.doctor
+    ? { id: content.doctor.id ?? 'doctor', title: content.doctor.title, leftCourses: content.doctor.leftCourses, rightCourses: content.doctor.rightCourses }
+    : doctorCurriculum;
+  const displayTheses: ThesisCard[] = content?.theses ?? thesisCards;
+
   return (
     <div
       style={{
@@ -224,8 +239,8 @@ export default function GraduateTab() {
           width: '100%',
         }}
       >
-        <CurriculumSectionComponent section={masterCurriculum} />
-        <CurriculumSectionComponent section={doctorCurriculum} />
+        <CurriculumSectionComponent section={displayMaster} />
+        <CurriculumSectionComponent section={displayDoctor} />
       </div>
 
       {/* Footer Note - Right aligned */}
@@ -306,7 +321,7 @@ export default function GraduateTab() {
             width: '100%',
           }}
         >
-          {thesisCards.map((thesis, index) => (
+          {displayTheses.map((thesis, index) => (
             <div
               key={index}
               style={{

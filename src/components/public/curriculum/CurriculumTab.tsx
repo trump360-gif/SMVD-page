@@ -3,8 +3,17 @@
 import { useState } from 'react';
 import UndergraduateTab from './UndergraduateTab';
 import GraduateTab from './GraduateTab';
+import type { UndergraduateContent, GraduateContent } from '@/lib/validation/curriculum';
 
-export default function CurriculumTab() {
+interface CurriculumTabProps {
+  undergraduateContent?: UndergraduateContent | null;
+  graduateContent?: GraduateContent | null;
+}
+
+export default function CurriculumTab({
+  undergraduateContent,
+  graduateContent,
+}: CurriculumTabProps) {
   const [activeTab, setActiveTab] = useState<'undergraduate' | 'graduate'>('undergraduate');
 
   return (
@@ -89,8 +98,8 @@ export default function CurriculumTab() {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'undergraduate' && <UndergraduateTab />}
-      {activeTab === 'graduate' && <GraduateTab />}
+      {activeTab === 'undergraduate' && <UndergraduateTab content={undergraduateContent} />}
+      {activeTab === 'graduate' && <GraduateTab content={graduateContent} />}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import type { UndergraduateContent } from '@/lib/validation/curriculum';
 
 interface Course {
   name: string;
@@ -20,6 +21,10 @@ interface GraduateModule {
   courses: string;
   requirements: string;
   credits: string;
+}
+
+interface UndergraduateTabProps {
+  content?: UndergraduateContent | null;
 }
 
 const semesters: Semester[] = [
@@ -191,8 +196,13 @@ const trackOptions: FilterOption[] = [
   { label: '공통과목', value: 'common', color: '#1abc9cff' },
 ];
 
-export default function UndergraduateTab() {
+export default function UndergraduateTab({ content }: UndergraduateTabProps) {
   const [checkedClassification, setCheckedClassification] = useState<string>('required');
+
+  // Use DB data if available, otherwise fall back to hardcoded defaults
+  const displaySemesters: Semester[] = content?.semesters ?? semesters;
+  const displayModules: GraduateModule[] = content?.tracks ?? undergraduateModules;
+  const displayModuleDetails: ModuleDetail[] = content?.modules ?? moduleDetails;
 
   return (
     <div
@@ -372,7 +382,7 @@ export default function UndergraduateTab() {
             gridAutoRows: '1fr',
           }}
         >
-          {semesters.map((semester, index) => (
+          {displaySemesters.map((semester, index) => (
             <div
               key={index}
               style={{
@@ -632,7 +642,7 @@ export default function UndergraduateTab() {
             gap: '0',
           }}
         >
-          {undergraduateModules.map((module, index) => {
+          {displayModules.map((module, index) => {
             const colors = ['#489bffff', '#ffcc54ff', '#ff5f5aff', '#a24affff'];
             const moduleColor = colors[index % colors.length];
 
@@ -830,7 +840,7 @@ export default function UndergraduateTab() {
             gap: '0',
           }}
         >
-          {moduleDetails.map((detail, index) => (
+          {displayModuleDetails.map((detail, index) => (
             <div
               key={index}
               style={{

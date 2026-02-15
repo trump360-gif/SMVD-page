@@ -57,6 +57,18 @@ export const SectionTypeSchema = z.enum([
   "CONTACT_FORM",
   "MAP",
   "CUSTOM_HTML",
+  // About page types
+  "ABOUT_INTRO",
+  "ABOUT_VISION",
+  "ABOUT_HISTORY",
+  "ABOUT_PEOPLE",
+  // Home page types
+  "HOME_HERO",
+  "EXHIBITION_SECTION",
+  "HOME_ABOUT",
+  // Curriculum page types
+  "CURRICULUM_UNDERGRADUATE",
+  "CURRICULUM_GRADUATE",
 ]);
 
 export const SectionSchema = z.object({
