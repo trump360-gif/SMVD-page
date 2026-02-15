@@ -108,20 +108,30 @@ export default function AboutContent() {
             margin: '0 auto',
             display: 'flex',
             flexDirection: 'column',
-            gap: '100px',
           }}
         >
           {/* About Major Tab */}
-          {activeTab === 'major' && (
-            <>
-              <AboutPageIntro />
-              <AboutPageVision />
-              <AboutPageHistory />
-            </>
-          )}
+          <div
+            id="sections"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '50px',
+            }}
+          >
+            {activeTab === 'major' && (
+              <>
+                <AboutPageIntro />
+                <AboutPageVision />
+                <AboutPageHistory />
+              </>
+            )}
+          </div>
 
           {/* Our People Tab */}
-          {activeTab === 'people' && <OurPeopleTab />}
+          <div id="people">
+            {activeTab === 'people' && <OurPeopleTab />}
+          </div>
         </div>
       </div>
     </>

@@ -17,6 +17,7 @@ export default function AboutPageVision({
         display: 'flex',
         gap: '10px',
         width: '100%',
+        alignItems: 'flex-start',
       }}
     >
       {/* Title */}
