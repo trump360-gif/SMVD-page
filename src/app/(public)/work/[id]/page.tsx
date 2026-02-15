@@ -47,6 +47,7 @@ async function getProjectFromDB(slug: string): Promise<WorkDetail | null> {
       email: project.email,
       heroImage: project.heroImage,
       galleryImages,
+      content: (project.content && typeof project.content === 'object' ? project.content as Record<string, any> : undefined), // BlockEditor content if available
       previousProject: prevProject
         ? { id: prevProject.slug, title: prevProject.title }
         : undefined,

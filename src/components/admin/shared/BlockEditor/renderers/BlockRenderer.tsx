@@ -15,6 +15,9 @@ import type {
   WorkTitleBlock,
   WorkMetadataBlock,
   WorkGalleryBlock,
+  WorkLayoutConfigBlock,
+  LayoutRowBlock,
+  LayoutGridBlock,
 } from '../types';
 import HeadingBlockRenderer from './HeadingBlockRenderer';
 import GalleryBlockRenderer from './GalleryBlockRenderer';
@@ -57,6 +60,37 @@ const IMAGE_ALIGN_CLASSES: Record<ImageBlock['align'], string> = {
   center: 'mx-auto',
   right: 'ml-auto',
 };
+
+// Helper function to calculate row column widths
+function calculateRowWidths(rowBlock: LayoutRowBlock): number[] {
+  if (rowBlock.distribution === 'custom' && rowBlock.customWidths) {
+    return rowBlock.customWidths;
+  }
+
+  const columns = rowBlock.columns;
+  if (rowBlock.distribution === 'golden-left') {
+    // Golden ratio: wider left column
+    return columns === 2 ? [61.8, 38.2] : [50, 25, 25];
+  }
+  if (rowBlock.distribution === 'golden-right') {
+    // Golden ratio: wider right column
+    return columns === 2 ? [38.2, 61.8] : [25, 25, 50];
+  }
+  // Default: equal distribution
+  return Array(columns).fill(100 / columns);
+}
+
+// Helper function to get grid template info
+function getGridTemplateInfo(template: LayoutGridBlock['template']): { rows: number; cols: number } {
+  const templates: Record<string, { rows: number; cols: number }> = {
+    '2x2': { rows: 2, cols: 2 },
+    '3x1': { rows: 3, cols: 1 },
+    '1x3': { rows: 1, cols: 3 },
+    '2x3': { rows: 2, cols: 3 },
+    'auto': { rows: 2, cols: 2 }, // Default fallback
+  };
+  return templates[template] || templates['auto'];
+}
 
 function ImageBlockRenderer({ block }: { block: ImageBlock }) {
   if (!block.url) {
@@ -141,6 +175,57 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
             return <WorkMetadataBlockRenderer key={block.id} block={block as WorkMetadataBlock} />;
           case 'work-gallery':
             return <WorkGalleryBlockRenderer key={block.id} block={block as WorkGalleryBlock} />;
+          case 'work-layout-config':
+            // Layout config block is metadata - doesn't render as visible content
+            return null;
+          case 'layout-row': {
+            const rowBlock = block as LayoutRowBlock;
+            const widths = calculateRowWidths(rowBlock);
+            const gap = rowBlock.columnGap ?? 24;
+            return (
+              <div
+                key={block.id}
+                style={{ display: 'flex', gap: `${gap}px` }}
+                className="layout-row-container"
+              >
+                {rowBlock.children.map((columnBlocks, idx) => (
+                  <div
+                    key={idx}
+                    style={{ flex: `0 0 ${widths[idx]}%` }}
+                    className="layout-row-column"
+                  >
+                    <BlockRenderer blocks={columnBlocks} />
+                  </div>
+                ))}
+              </div>
+            );
+          }
+          case 'layout-grid': {
+            const gridBlock = block as LayoutGridBlock;
+            const gap = gridBlock.gap ?? 16;
+            const { cols } = getGridTemplateInfo(gridBlock.template);
+            return (
+              <div
+                key={block.id}
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: `repeat(${cols}, 1fr)`,
+                  gap: `${gap}px`,
+                }}
+                className="layout-grid-container"
+              >
+                {gridBlock.children.map((cellBlocks, idx) => (
+                  <div
+                    key={idx}
+                    style={{ minHeight: `${gridBlock.minCellHeight ?? 200}px` }}
+                    className="layout-grid-cell"
+                  >
+                    <BlockRenderer blocks={cellBlocks} />
+                  </div>
+                ))}
+              </div>
+            );
+          }
           default: {
             // Exhaustive check: if a new block type is added to BlockType
             // but not handled here, TypeScript will flag it.

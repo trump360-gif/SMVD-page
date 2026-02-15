@@ -175,6 +175,7 @@ export default function WorkBlogModal({
         thumbnailImage: thumbnailImage.trim(),
         galleryImages: [],
         published,
+        content: editorContent, // Store BlockEditor content directly
       };
 
       await onSubmit(data);

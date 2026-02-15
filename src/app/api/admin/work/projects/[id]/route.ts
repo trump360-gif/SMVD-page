@@ -21,6 +21,7 @@ const UpdateProjectSchema = z.object({
   thumbnailImage: z.string().min(1).optional(),
   galleryImages: z.array(z.string()).optional(),
   published: z.boolean().optional(),
+  content: z.unknown().optional(), // BlockEditor content with blocks array
 });
 
 /**
@@ -87,7 +88,7 @@ export async function PUT(
 
     const updated = await prisma.workProject.update({
       where: { id },
-      data: validation.data,
+      data: validation.data as Parameters<typeof prisma.workProject.update>[0]['data'],
     });
 
     return successResponse(updated, '프로젝트가 수정되었습니다');

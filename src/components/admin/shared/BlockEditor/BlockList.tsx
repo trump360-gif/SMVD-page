@@ -31,6 +31,8 @@ import {
   Tag,
   User,
   Layers,
+  Columns3,
+  LayoutGrid,
 } from 'lucide-react';
 import type {
   Block,
@@ -44,6 +46,9 @@ import type {
   WorkTitleBlock,
   WorkMetadataBlock,
   WorkGalleryBlock,
+  WorkLayoutConfigBlock,
+  LayoutRowBlock,
+  LayoutGridBlock,
 } from './types';
 import TextBlockEditor from './blocks/TextBlockEditor';
 import ImageBlockEditor from './blocks/ImageBlockEditor';
@@ -55,6 +60,9 @@ import HeroImageBlockEditor from './blocks/HeroImageBlockEditor';
 import WorkTitleBlockEditor from './blocks/WorkTitleBlockEditor';
 import WorkMetadataBlockEditor from './blocks/WorkMetadataBlockEditor';
 import WorkGalleryBlockEditor from './blocks/WorkGalleryBlockEditor';
+import WorkLayoutConfigBlockEditor from './blocks/WorkLayoutConfigBlockEditor';
+import LayoutRowBlockEditor from './blocks/LayoutRowBlockEditor';
+import LayoutGridBlockEditor from './blocks/LayoutGridBlockEditor';
 
 // ---------------------------------------------------------------------------
 // Block metadata
@@ -71,6 +79,9 @@ const BLOCK_META: Record<string, { label: string; Icon: typeof Type }> = {
   'work-title': { label: 'Work Title', Icon: Tag },
   'work-metadata': { label: 'Author/Email', Icon: User },
   'work-gallery': { label: 'Work Gallery', Icon: Layers },
+  'work-layout-config': { label: 'Layout Config', Icon: Grid3X3 },
+  'layout-row': { label: 'Row Layout', Icon: Columns3 },
+  'layout-grid': { label: 'Grid Layout', Icon: LayoutGrid },
 };
 
 // ---------------------------------------------------------------------------
@@ -235,7 +246,7 @@ const SortableBlockItem = memo(function SortableBlockItem({
         {block.type === 'text' && (
           <TextBlockEditor
             block={block as TextBlock}
-            onChange={(content) => onUpdate(block.id, { content })}
+            onChange={(data) => onUpdate(block.id, data)}
           />
         )}
         {block.type === 'heading' && (
@@ -289,6 +300,24 @@ const SortableBlockItem = memo(function SortableBlockItem({
         {block.type === 'work-gallery' && (
           <WorkGalleryBlockEditor
             block={block as WorkGalleryBlock}
+            onChange={(data) => onUpdate(block.id, data)}
+          />
+        )}
+        {block.type === 'work-layout-config' && (
+          <WorkLayoutConfigBlockEditor
+            block={block as WorkLayoutConfigBlock}
+            onChange={(data) => onUpdate(block.id, data)}
+          />
+        )}
+        {block.type === 'layout-row' && (
+          <LayoutRowBlockEditor
+            block={block as LayoutRowBlock}
+            onChange={(data) => onUpdate(block.id, data)}
+          />
+        )}
+        {block.type === 'layout-grid' && (
+          <LayoutGridBlockEditor
+            block={block as LayoutGridBlock}
             onChange={(data) => onUpdate(block.id, data)}
           />
         )}

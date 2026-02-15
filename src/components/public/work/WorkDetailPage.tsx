@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { WorkDetail } from '@/constants/work-details';
 import WorkHeader from './WorkHeader';
+import WorkDetailPreviewRenderer from '@/components/admin/shared/BlockEditor/renderers/WorkDetailPreviewRenderer';
 
 // ---------------------------------------------------------------------------
 // Block content parsing helpers
@@ -21,6 +22,20 @@ interface ParsedBlockContent {
   };
   /** The first TextBlock after WorkTitleBlock (right column description) */
   mainDescription?: string;
+  /** The TextBlock object with styling properties */
+  mainDescriptionBlock?: {
+    content: string;
+    fontSize?: number;
+    fontWeight?: string;
+    color?: string;
+    lineHeight?: number;
+  };
+  /** Layout configuration block */
+  layoutConfig?: {
+    columnLayout: number;
+    columnGap?: number;
+    textColumnWidth?: string;
+  };
   /** Gallery image URLs from WorkGalleryBlock or GalleryBlock */
   galleryImages: string[];
 }
@@ -60,14 +75,34 @@ function parseBlockContent(description: string): ParsedBlockContent | null {
       } else if (block.type === 'text' && block.content && foundWorkTitle && !foundMainDescription) {
         // First TextBlock after WorkTitleBlock becomes the right-column description
         result.mainDescription = block.content;
+        result.mainDescriptionBlock = {
+          content: block.content,
+          fontSize: block.fontSize,
+          fontWeight: block.fontWeight,
+          color: block.color,
+          lineHeight: block.lineHeight,
+        };
         foundMainDescription = true;
       } else if (block.type === 'text' && block.content && !foundWorkTitle) {
         // TextBlock before any WorkTitleBlock -- treat as mainDescription fallback
         if (!result.mainDescription) {
           result.mainDescription = block.content;
+          result.mainDescriptionBlock = {
+            content: block.content,
+            fontSize: block.fontSize,
+            fontWeight: block.fontWeight,
+            color: block.color,
+            lineHeight: block.lineHeight,
+          };
         } else {
           result.mainDescription += '\n\n' + block.content;
         }
+      } else if (block.type === 'work-layout-config') {
+        result.layoutConfig = {
+          columnLayout: block.columnLayout || 2,
+          columnGap: block.columnGap,
+          textColumnWidth: block.textColumnWidth,
+        };
       } else if (block.type === 'work-gallery' && Array.isArray(block.images)) {
         for (const img of block.images) {
           if (img.url) result.galleryImages.push(img.url);
@@ -125,6 +160,18 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
       ? blockContent.galleryImages
       : project.galleryImages;
 
+  // Extract layout configuration with defaults (force 2-column layout)
+  const columnLayout = 2;
+  console.log('WorkDetailPage - columnLayout:', columnLayout, 'blockContent:', !!blockContent, 'projectContent:', !!project.content);
+  const columnGap = blockContent?.layoutConfig?.columnGap ?? 90;
+  const textColumnWidth = blockContent?.layoutConfig?.textColumnWidth ?? 'auto';
+
+  // Extract text styling from description block with defaults
+  const descFontSize = blockContent?.mainDescriptionBlock?.fontSize ?? 18;
+  const descFontWeight = blockContent?.mainDescriptionBlock?.fontWeight ?? '400';
+  const descColor = blockContent?.mainDescriptionBlock?.color ?? '#1b1d1fff';
+  const descLineHeight = blockContent?.mainDescriptionBlock?.lineHeight ?? 1.8;
+
   return (
     <div
       style={{
@@ -149,7 +196,17 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
           paddingTop: '0px',
         }}
       >
-        {/* Main Content */}
+        {/* Use BlockEditor content if available */}
+        {project.content && (project.content as any).blocks ? (
+          <WorkDetailPreviewRenderer blocks={(project.content as any).blocks} projectContext={{
+            title: displayTitle,
+            author: displayAuthor,
+            email: displayEmail,
+            heroImage: displayHero,
+          }} />
+        ) : (
+          <>
+        {/* Main Content (fixed layout fallback) */}
         <div
           style={{
             display: 'flex',
@@ -181,109 +238,212 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
             </div>
           )}
 
-          {/* Text Section - 2 Column Layout */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '90px',
-              width: '100%',
-            }}
-          >
-            {/* Left Column - Title and Author */}
+          {/* Text Section - 2-Column Layout (columnLayout is always 2) */}
+          {columnLayout === 2 ? (
+            // Two-Column Layout: Title+Author | Description
             <div
               style={{
                 display: 'flex',
-                flexDirection: 'column',
-                gap: '24px',
-                flex: '0 0 auto',
-                minWidth: '400px',
+                gap: `${columnGap}px`,
+                width: '100%',
               }}
             >
-              {/* Title */}
-              <h1
+              {/* Left Column - Title and Author */}
+              <div
                 style={{
-                  fontSize: '60px',
-                  fontWeight: '700',
-                  color: '#1b1d1fff',
-                  fontFamily: 'Satoshi',
-                  margin: '0',
-                  letterSpacing: '-0.6px',
-                  lineHeight: '1.2',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '24px',
+                  flex: '0 0 auto',
+                  minWidth: '400px',
                 }}
               >
-                {displayTitle}
-              </h1>
-
-              {/* Author and Email - Single Line */}
-              <p
-                style={{
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  fontFamily: 'Pretendard',
-                  color: '#1b1d1fff',
-                  margin: '0',
-                }}
-              >
-                {displayAuthor}
-                {displayEmail && ' '}
-                {displayEmail && (
-                  <span
-                    style={{
-                      fontWeight: '400',
-                      color: '#7b828eff',
-                    }}
-                  >
-                    {displayEmail}
-                  </span>
-                )}
-              </p>
-            </div>
-
-            {/* Right Column - Description */}
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '24px',
-                flex: '1',
-              }}
-            >
-              {/* Description - Markdown or plain text */}
-              {hasMarkdownSyntax(displayDescription) ? (
-                <div
+                {/* Title */}
+                <h1
                   style={{
-                    fontSize: '18px',
-                    fontWeight: '400',
-                    fontFamily: 'Pretendard',
+                    fontSize: '60px',
+                    fontWeight: '700',
                     color: '#1b1d1fff',
-                    lineHeight: '1.8',
-                    letterSpacing: '-0.18px',
+                    fontFamily: 'Satoshi',
                     margin: '0',
+                    letterSpacing: '-0.6px',
+                    lineHeight: '1.2',
                   }}
-                  className="prose prose-lg max-w-none"
                 >
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {displayDescription}
-                  </ReactMarkdown>
-                </div>
-              ) : (
+                  {displayTitle}
+                </h1>
+
+                {/* Author and Email - Single Line */}
                 <p
                   style={{
-                    fontSize: '18px',
-                    fontWeight: '400',
+                    fontSize: '14px',
+                    fontWeight: '500',
                     fontFamily: 'Pretendard',
                     color: '#1b1d1fff',
-                    lineHeight: '1.8',
-                    letterSpacing: '-0.18px',
                     margin: '0',
-                    whiteSpace: 'pre-wrap',
                   }}
                 >
-                  {displayDescription}
+                  {displayAuthor}
+                  {displayEmail && ' '}
+                  {displayEmail && (
+                    <span
+                      style={{
+                        fontWeight: '400',
+                        color: '#7b828eff',
+                      }}
+                    >
+                      {displayEmail}
+                    </span>
+                  )}
                 </p>
-              )}
+              </div>
+
+              {/* Right Column - Description */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '24px',
+                  flex: textColumnWidth === 'narrow' ? '0 0 400px' : textColumnWidth === 'wide' ? '0 0 800px' : '1',
+                }}
+              >
+                {/* Description - Markdown or plain text */}
+                {hasMarkdownSyntax(displayDescription) ? (
+                  <div
+                    style={{
+                      fontSize: `${descFontSize}px`,
+                      fontWeight: descFontWeight,
+                      fontFamily: 'Pretendard',
+                      color: descColor,
+                      lineHeight: `${descLineHeight}`,
+                      letterSpacing: '-0.18px',
+                      margin: '0',
+                    }}
+                    className="prose prose-lg max-w-none"
+                  >
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {displayDescription}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  <p
+                    style={{
+                      fontSize: `${descFontSize}px`,
+                      fontWeight: descFontWeight,
+                      fontFamily: 'Pretendard',
+                      color: descColor,
+                      lineHeight: `${descLineHeight}`,
+                      letterSpacing: '-0.18px',
+                      margin: '0',
+                      whiteSpace: 'pre-wrap',
+                    }}
+                  >
+                    {displayDescription}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
+          ) : (
+            // Three-Column Layout
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: `${columnGap}px`,
+                width: '100%',
+              }}
+            >
+              {/* Column 1 - Title */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '24px',
+                }}
+              >
+                <h1
+                  style={{
+                    fontSize: '60px',
+                    fontWeight: '700',
+                    color: '#1b1d1fff',
+                    fontFamily: 'Satoshi',
+                    margin: '0',
+                    letterSpacing: '-0.6px',
+                    lineHeight: '1.2',
+                  }}
+                >
+                  {displayTitle}
+                </h1>
+              </div>
+
+              {/* Column 2 - Author + Description */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '24px',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    fontFamily: 'Pretendard',
+                    color: '#1b1d1fff',
+                    margin: '0',
+                  }}
+                >
+                  {displayAuthor}
+                </p>
+
+                {hasMarkdownSyntax(displayDescription) ? (
+                  <div
+                    style={{
+                      fontSize: `${descFontSize}px`,
+                      fontWeight: descFontWeight,
+                      fontFamily: 'Pretendard',
+                      color: descColor,
+                      lineHeight: `${descLineHeight}`,
+                    }}
+                    className="prose prose-lg max-w-none"
+                  >
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {displayDescription}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  <p
+                    style={{
+                      fontSize: `${descFontSize}px`,
+                      fontWeight: descFontWeight,
+                      fontFamily: 'Pretendard',
+                      color: descColor,
+                      lineHeight: `${descLineHeight}`,
+                      margin: '0',
+                      whiteSpace: 'pre-wrap',
+                    }}
+                  >
+                    {displayDescription}
+                  </p>
+                )}
+              </div>
+
+              {/* Column 3 - Email */}
+              <div>
+                <p
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '400',
+                    fontFamily: 'Pretendard',
+                    color: '#7b828eff',
+                    margin: '0',
+                  }}
+                >
+                  {displayEmail || 'email@example.com'}
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Gallery */}
           {displayGalleryImages.length > 0 && (
@@ -422,6 +582,8 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
             <div></div>
           )}
         </div>
+          </>
+        )}
       </div>
     </div>
   );

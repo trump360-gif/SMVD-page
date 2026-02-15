@@ -97,6 +97,15 @@ export function parseWorkProjectContent(
       title: title || '',
       author: author || '',
       email: email || '',
+      titleFontSize: 60,
+      authorFontSize: 14,
+      gap: 24,
+      titleFontWeight: '700',
+      authorFontWeight: '500',
+      emailFontWeight: '400',
+      titleColor: '#1b1d1f',
+      authorColor: '#1b1d1f',
+      emailColor: '#7b828e',
       order: blocks.length,
     });
   }

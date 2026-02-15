@@ -20,6 +20,7 @@ export interface WorkProjectData {
   galleryImages: string[];
   order: number;
   published: boolean;
+  content?: Record<string, any>; // BlockEditor content with blocks array
   createdAt: string;
   updatedAt: string;
 }
@@ -50,6 +51,7 @@ export interface CreateProjectInput {
   thumbnailImage: string;
   galleryImages: string[];
   published?: boolean;
+  content?: Record<string, any>; // BlockEditor content with blocks array
 }
 
 export interface UpdateProjectInput {
@@ -65,6 +67,7 @@ export interface UpdateProjectInput {
   thumbnailImage?: string;
   galleryImages?: string[];
   published?: boolean;
+  content?: Record<string, any>; // BlockEditor content with blocks array
 }
 
 export interface CreateExhibitionInput {

@@ -137,6 +137,7 @@ const LAYOUT_OPTIONS: { value: NonNullable<GalleryBlock['layout']>; label: strin
  */
 export default function GalleryBlockEditor({ block, onChange }: GalleryBlockEditorProps) {
   const [urlInput, setUrlInput] = useState('');
+  const imageLayout = block.imageLayout ?? 1;
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -228,6 +229,29 @@ export default function GalleryBlockEditor({ block, onChange }: GalleryBlockEdit
             <Plus size={12} />
             Add Image
           </button>
+        </div>
+      </div>
+
+      {/* Image layout selector */}
+      <div>
+        <label className="block text-xs font-medium text-gray-600 mb-1">
+          Image Column Layout
+        </label>
+        <div className="flex gap-2">
+          {[1, 2, 3].map((cols) => (
+            <button
+              key={cols}
+              type="button"
+              onClick={() => onChange({ imageLayout: cols as 1 | 2 | 3 })}
+              className={`flex-1 px-2 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                imageLayout === cols
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {cols} Col{cols !== 1 ? 's' : ''}
+            </button>
+          ))}
         </div>
       </div>
 

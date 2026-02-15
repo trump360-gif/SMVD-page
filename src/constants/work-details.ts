@@ -9,6 +9,7 @@ export interface WorkDetail {
   email: string;
   heroImage: string;
   galleryImages: string[];
+  content?: Record<string, any>; // BlockEditor content with blocks array
   nextProject?: {
     id: string;
     title: string;
@@ -220,7 +221,7 @@ export const workDetails: Record<string, WorkDetail> = {
     tags: ['UX/UI', 'Graphic', 'Editorial', 'Illustration', 'Branding', 'CM/CF', 'Game'],
     author: '노하린',
     email: 'havein6@gmail.com',
-    description: `STUDIO KNOT는 입지 않는 옷에 새로운 쓰임을 더해 반려견 장난감으로 재탄생시키는 업사이클링 터그 토이 브랜드입니다.\n쉽게 버려지는 의류와 빠르게 닳는 반려견 장난감의 순환 구조를 개선하며, 보호자의 체취가 남은 옷으로 만든 토이는\n정서적 가치를 담은 지속가능한 대안을 제시합니다.`,
+    description: `STUDIO KNOT는 입지 않는 옷에 새로운 쓰임을 더해 반려견 장난감으로 재탄생시키는 업사이클링 터그 토이 브랜드입니다. 쉽게 버려지는 의류와 빠르게 닳는 반려견 장난감의 순환 구조를 개선하며, 보호자의 체취가 남은 옷으로 만든 토이는 정서적 가치를 담은 지속가능한 대안을 제시합니다.`,
     heroImage: '/images/work/knot/hero.png',
     galleryImages: [
       '/images/work/knot/text-below.png',

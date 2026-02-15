@@ -21,6 +21,7 @@ const CreateProjectSchema = z.object({
   thumbnailImage: z.string().min(1, '썸네일 이미지는 필수입니다'),
   galleryImages: z.array(z.string()).default([]),
   published: z.boolean().default(true),
+  content: z.unknown().optional(), // BlockEditor content with blocks array
 });
 
 /**
@@ -102,6 +103,7 @@ export async function POST(request: NextRequest) {
         galleryImages: data.galleryImages,
         order: nextOrder,
         published: data.published,
+        content: data.content as any, // BlockEditor content
       },
     });
 

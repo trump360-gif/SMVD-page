@@ -215,6 +215,7 @@ model WorkProject {
   heroImage       String    @map("hero_image")         // 상세 히어로 이미지 경로
   thumbnailImage  String    @map("thumbnail_image")    // 목록 썸네일 경로
   galleryImages   Json      @default("[]") @map("gallery_images")  // 갤러리 이미지 배열
+  content         Json?                                // BlockEditor 컨텐츠 (블록 배열)
   order           Int       @default(0)                // 표시 순서
   published       Boolean   @default(true)             // 공개 여부
   createdAt       DateTime  @default(now()) @map("created_at")

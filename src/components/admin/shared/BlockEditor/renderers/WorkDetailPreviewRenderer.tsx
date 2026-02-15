@@ -11,6 +11,7 @@ import type {
   WorkGalleryBlock,
   GalleryBlock,
   WorkProjectContext,
+  WorkLayoutConfigBlock,
 } from '../types';
 import WorkGalleryBlockRenderer from './WorkGalleryBlockRenderer';
 
@@ -43,7 +44,9 @@ interface ParsedPreviewContent {
   hero?: { url: string; alt: string; id?: string };
   title?: { title: string; author: string; email: string };
   mainDescription?: string;
+  mainDescriptionBlock?: TextBlock;
   galleryBlock?: WorkGalleryBlock | GalleryBlock;
+  layoutConfig?: WorkLayoutConfigBlock;
 }
 
 function parseBlocks(blocks: Block[]): ParsedPreviewContent {
@@ -66,19 +69,24 @@ function parseBlocks(blocks: Block[]): ParsedPreviewContent {
       };
       foundWorkTitle = true;
     } else if (block.type === 'text' && (block as TextBlock).content) {
-      const content = (block as TextBlock).content;
+      const textBlock = block as TextBlock;
       if (foundWorkTitle && !foundMainDescription) {
         // First TextBlock after WorkTitleBlock -> right-column description
-        result.mainDescription = content;
+        result.mainDescription = textBlock.content;
+        result.mainDescriptionBlock = textBlock;
         foundMainDescription = true;
       } else if (!foundWorkTitle) {
         // TextBlock before any WorkTitleBlock -> fallback description
         if (!result.mainDescription) {
-          result.mainDescription = content;
+          result.mainDescription = textBlock.content;
+          result.mainDescriptionBlock = textBlock;
         } else {
-          result.mainDescription += '\n\n' + content;
+          result.mainDescription += '\n\n' + textBlock.content;
         }
       }
+    } else if (block.type === 'work-layout-config') {
+      const b = block as WorkLayoutConfigBlock;
+      result.layoutConfig = b;
     } else if (block.type === 'work-gallery') {
       const b = block as WorkGalleryBlock;
       if (b.images.length > 0) {
@@ -131,6 +139,29 @@ export default function WorkDetailPreviewRenderer({
   const author = parsed.title?.author || projectContext?.author || '';
   const email = parsed.title?.email || projectContext?.email || '';
   const description = parsed.mainDescription || '';
+
+  // Extract styling from work-title block if available
+  const titleBlock = blocks.find((b) => b.type === 'work-title') as any;
+  const titleFontSize = titleBlock?.titleFontSize ?? 60;
+  const authorFontSize = titleBlock?.authorFontSize ?? 14;
+  const gap = titleBlock?.gap ?? 24;
+  const titleFontWeight = titleBlock?.titleFontWeight ?? '700';
+  const authorFontWeight = titleBlock?.authorFontWeight ?? '500';
+  const emailFontWeight = titleBlock?.emailFontWeight ?? '400';
+  const titleColor = titleBlock?.titleColor ?? '#1b1d1f';
+  const authorColor = titleBlock?.authorColor ?? '#1b1d1f';
+  const emailColor = titleBlock?.emailColor ?? '#7b828e';
+
+  // Extract layout configuration (force 2-column layout)
+  const columnLayout = 2;
+  const columnGap = parsed.layoutConfig?.columnGap ?? 90;
+  const textColumnWidth = parsed.layoutConfig?.textColumnWidth ?? 'auto';
+
+  // Extract text styling from description block
+  const descFontSize = parsed.mainDescriptionBlock?.fontSize ?? 18;
+  const descFontWeight = parsed.mainDescriptionBlock?.fontWeight ?? '400';
+  const descColor = parsed.mainDescriptionBlock?.color ?? '#1b1d1f';
+  const descLineHeight = parsed.mainDescriptionBlock?.lineHeight ?? 1.8;
 
   return (
     <div
@@ -189,30 +220,32 @@ export default function WorkDetailPreviewRenderer({
           </div>
         )}
 
-        {/* 2. Two-Column Layout: Title+Author | Description */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '90px',
-            width: '100%',
-          }}
-        >
-          {/* Left Column - Title and Author */}
+        {/* 2. Layout Section - 2-Column Layout (columnLayout is always 2) */}
+        {columnLayout === 2 ? (
+          // Two-Column Layout: Title+Author | Description
           <div
             style={{
               display: 'flex',
-              flexDirection: 'column',
-              gap: '24px',
-              flex: '0 0 auto',
-              minWidth: '400px',
+              gap: `${columnGap}px`,
+              width: '100%',
             }}
           >
+            {/* Left Column - Title and Author */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: `${gap}px`,
+                flex: '0 0 auto',
+                minWidth: '400px',
+              }}
+            >
             {/* Title */}
             <h1
               style={{
-                fontSize: '60px',
-                fontWeight: '700',
-                color: '#1b1d1f',
+                fontSize: `${titleFontSize}px`,
+                fontWeight: titleFontWeight,
+                color: titleColor,
                 fontFamily: 'Satoshi, sans-serif',
                 margin: '0',
                 letterSpacing: '-0.6px',
@@ -225,10 +258,10 @@ export default function WorkDetailPreviewRenderer({
             {/* Author and Email */}
             <p
               style={{
-                fontSize: '14px',
-                fontWeight: '500',
+                fontSize: `${authorFontSize}px`,
+                fontWeight: authorFontWeight,
                 fontFamily: 'Pretendard, sans-serif',
-                color: '#1b1d1f',
+                color: authorColor,
                 margin: '0',
               }}
             >
@@ -237,8 +270,8 @@ export default function WorkDetailPreviewRenderer({
               {email ? (
                 <span
                   style={{
-                    fontWeight: '400',
-                    color: '#7b828e',
+                    fontWeight: emailFontWeight,
+                    color: emailColor,
                   }}
                 >
                   {email}
@@ -246,8 +279,8 @@ export default function WorkDetailPreviewRenderer({
               ) : (
                 <span
                   style={{
-                    fontWeight: '400',
-                    color: '#7b828e',
+                    fontWeight: emailFontWeight,
+                    color: emailColor,
                   }}
                 >
                   email@example.com
@@ -256,63 +289,159 @@ export default function WorkDetailPreviewRenderer({
             </p>
           </div>
 
-          {/* Right Column - Description (first TextBlock after WorkTitleBlock) */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '24px',
-              flex: '1',
-            }}
-          >
-            {description ? (
-              hasMarkdownSyntax(description) ? (
-                <div
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '400',
-                    fontFamily: 'Pretendard, sans-serif',
-                    color: '#1b1d1f',
-                    lineHeight: '1.8',
-                    letterSpacing: '-0.18px',
-                    margin: '0',
-                  }}
-                  className="prose prose-lg max-w-none"
-                >
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {/* Right Column - Description (first TextBlock after WorkTitleBlock) */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '24px',
+                flex: textColumnWidth === 'narrow' ? '0 0 400px' : textColumnWidth === 'wide' ? '0 0 800px' : '1',
+              }}
+            >
+              {description ? (
+                hasMarkdownSyntax(description) ? (
+                  <div
+                    style={{
+                      fontSize: `${descFontSize}px`,
+                      fontWeight: descFontWeight,
+                      fontFamily: 'Pretendard, sans-serif',
+                      color: descColor,
+                      lineHeight: `${descLineHeight}`,
+                      letterSpacing: '-0.18px',
+                      margin: '0',
+                    }}
+                    className="prose prose-lg max-w-none"
+                  >
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {description}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  <p
+                    style={{
+                      fontSize: `${descFontSize}px`,
+                      fontWeight: descFontWeight,
+                      fontFamily: 'Pretendard, sans-serif',
+                      color: descColor,
+                      lineHeight: `${descLineHeight}`,
+                      letterSpacing: '-0.18px',
+                      margin: '0',
+                      whiteSpace: 'pre-wrap',
+                    }}
+                  >
                     {description}
-                  </ReactMarkdown>
-                </div>
+                  </p>
+                )
               ) : (
                 <p
                   style={{
                     fontSize: '18px',
-                    fontWeight: '400',
-                    fontFamily: 'Pretendard, sans-serif',
-                    color: '#1b1d1f',
-                    lineHeight: '1.8',
-                    letterSpacing: '-0.18px',
+                    color: '#999',
+                    fontStyle: 'italic',
                     margin: '0',
-                    whiteSpace: 'pre-wrap',
                   }}
                 >
-                  {description}
+                  Project description will appear here...
                 </p>
-              )
-            ) : (
+              )}
+            </div>
+          </div>
+        ) : (
+          // Three-Column Layout
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: `${columnGap}px`,
+              width: '100%',
+            }}
+          >
+            {/* Column 1 - Title */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: `${gap}px`,
+              }}
+            >
+              <h1
+                style={{
+                  fontSize: `${titleFontSize}px`,
+                  fontWeight: titleFontWeight,
+                  color: titleColor,
+                  fontFamily: 'Satoshi, sans-serif',
+                  margin: '0',
+                  letterSpacing: '-0.6px',
+                  lineHeight: '1.2',
+                }}
+              >
+                {title || 'Project Title'}
+              </h1>
+            </div>
+
+            {/* Column 2 - Author + Description */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: `${gap}px`,
+              }}
+            >
               <p
                 style={{
-                  fontSize: '18px',
-                  color: '#999',
-                  fontStyle: 'italic',
+                  fontSize: `${authorFontSize}px`,
+                  fontWeight: authorFontWeight,
+                  fontFamily: 'Pretendard, sans-serif',
+                  color: authorColor,
                   margin: '0',
                 }}
               >
-                Project description will appear here...
+                {author || 'Author'}
               </p>
-            )}
+
+              <div
+                style={{
+                  fontSize: `${descFontSize}px`,
+                  fontWeight: descFontWeight,
+                  color: descColor,
+                  lineHeight: `${descLineHeight}`,
+                  fontFamily: 'Pretendard, sans-serif',
+                }}
+              >
+                {description ? (
+                  hasMarkdownSyntax(description) ? (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {description}
+                    </ReactMarkdown>
+                  ) : (
+                    <p style={{ margin: '0', whiteSpace: 'pre-wrap' }}>
+                      {description}
+                    </p>
+                  )
+                ) : (
+                  <p style={{ fontSize: '14px', color: '#999', fontStyle: 'italic', margin: '0' }}>
+                    Description here...
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Column 3 - Email */}
+            <div>
+              <p
+                style={{
+                  fontSize: `${authorFontSize}px`,
+                  fontWeight: emailFontWeight,
+                  fontFamily: 'Pretendard, sans-serif',
+                  color: emailColor,
+                  margin: '0',
+                }}
+              >
+                {email || 'email@example.com'}
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* 3. Gallery (vertical stack) */}
         {parsed.galleryBlock && (
