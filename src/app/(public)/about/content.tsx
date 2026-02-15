@@ -23,6 +23,7 @@ interface AboutContentProps {
   historyData?: {
     title?: string;
     introText?: string;
+    timelineItems?: Array<{ year: string; description: string }>;
   };
 }
 
@@ -155,6 +156,7 @@ export default function AboutContent({
                 <AboutPageHistory
                   title={historyData?.title}
                   introText={historyData?.introText}
+                  timelineItems={historyData?.timelineItems}
                 />
               </>
             )}
