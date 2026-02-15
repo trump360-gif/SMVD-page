@@ -2,8 +2,18 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { X } from 'lucide-react';
-import BlockEditor from '@/components/admin/shared/BlockEditor';
-import type { BlogContent, WorkProjectContext, HeroImageBlock } from '@/components/admin/shared/BlockEditor/types';
+import WorkDetailPreviewRenderer from '@/components/admin/shared/BlockEditor/renderers/WorkDetailPreviewRenderer';
+import BlockLayoutVisualizer from '@/components/admin/work/BlockLayoutVisualizer';
+import BlockEditorPanel from '@/components/admin/work/BlockEditorPanel';
+import { useBlockEditor } from '@/components/admin/shared/BlockEditor/useBlockEditor';
+import type {
+  BlogContent,
+  WorkProjectContext,
+  HeroImageBlock,
+  HeroSectionBlock,
+  RowConfig,
+  BlockType,
+} from '@/components/admin/shared/BlockEditor/types';
 import {
   parseWorkProjectContent,
   serializeContent,
@@ -62,6 +72,209 @@ export default function WorkBlogModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Block Editor state (3-panel layout)
+  const {
+    blocks,
+    selectedId,
+    setSelectedId,
+    addBlock,
+    updateBlock,
+    deleteBlock,
+    reorderBlocks,
+  } = useBlockEditor(editorContent.blocks);
+
+  // Row-based layout configuration (replaces single columnLayout)
+  const [rowConfig, setRowConfig] = useState<RowConfig[]>(
+    editorContent.rowConfig || []
+  );
+
+  // Sync blocks + rowConfig state with editorContent
+  useEffect(() => {
+    setEditorContent((prev) => ({ ...prev, blocks, rowConfig }));
+  }, [blocks, rowConfig]);
+
+  // --- Row management callbacks ---
+
+  /** Change the column layout for a specific row */
+  const handleRowLayoutChange = useCallback(
+    (rowIndex: number, newLayout: 1 | 2 | 3) => {
+      setRowConfig((prev) => {
+        const updated = [...prev];
+        if (rowIndex < updated.length) {
+          updated[rowIndex] = { ...updated[rowIndex], layout: newLayout };
+        }
+        return updated;
+      });
+    },
+    []
+  );
+
+  /** Add a new row with a given column layout (default: 1) */
+  const handleAddRow = useCallback((layout: 1 | 2 | 3 = 1) => {
+    setRowConfig((prev) => [...prev, { layout, blockCount: 0 }]);
+  }, []);
+
+  /** Delete a row (blocks stay in the flat array; they get merged into adjacent rows) */
+  const handleDeleteRow = useCallback((rowIndex: number) => {
+    setRowConfig((prev) => {
+      if (prev.length <= 1) return prev; // don't delete last row
+      const updated = [...prev];
+      const removedBlockCount = updated[rowIndex].blockCount;
+      updated.splice(rowIndex, 1);
+      // Merge the removed row's blocks into the previous row (or next if first)
+      if (removedBlockCount > 0) {
+        const mergeTarget = rowIndex > 0 ? rowIndex - 1 : 0;
+        if (updated[mergeTarget]) {
+          updated[mergeTarget] = {
+            ...updated[mergeTarget],
+            blockCount: updated[mergeTarget].blockCount + removedBlockCount,
+          };
+        }
+      }
+      return updated;
+    });
+  }, []);
+
+  /** Add a block to a specific row */
+  const handleAddBlockToRow = useCallback(
+    (type: BlockType, rowIndex: number) => {
+      // Calculate the insertion index in the flat blocks array
+      // = sum of blockCounts for all rows before this one + this row's blockCount
+      setRowConfig((prev) => {
+        const updated = [...prev];
+        if (rowIndex < updated.length) {
+          updated[rowIndex] = {
+            ...updated[rowIndex],
+            blockCount: updated[rowIndex].blockCount + 1,
+          };
+        } else {
+          // Row doesn't exist yet, create it
+          updated.push({ layout: 1, blockCount: 1 });
+        }
+        return updated;
+      });
+
+      // Calculate position: insert after all blocks in previous rows + current row's blocks
+      let blockOffset = 0;
+      for (let i = 0; i < rowIndex; i++) {
+        blockOffset += rowConfig[i]?.blockCount ?? 0;
+      }
+      blockOffset += rowConfig[rowIndex]?.blockCount ?? 0;
+      // Insert at that position (the afterId is the block just before this position)
+      if (blockOffset > 0 && blockOffset <= blocks.length) {
+        const afterBlock = blocks[blockOffset - 1];
+        addBlock(type, afterBlock.id);
+      } else {
+        addBlock(type);
+      }
+    },
+    [addBlock, blocks, rowConfig]
+  );
+
+  /** Handle block deletion with rowConfig sync */
+  const handleDeleteBlock = useCallback(
+    (id: string) => {
+      // Find which row this block belongs to
+      const blockIndex = blocks.findIndex((b) => b.id === id);
+      if (blockIndex === -1) {
+        deleteBlock(id);
+        return;
+      }
+
+      // Determine the row this block belongs to
+      let accum = 0;
+      let targetRow = -1;
+      for (let i = 0; i < rowConfig.length; i++) {
+        accum += rowConfig[i].blockCount;
+        if (blockIndex < accum) {
+          targetRow = i;
+          break;
+        }
+      }
+
+      deleteBlock(id);
+
+      // Decrement the blockCount for the target row
+      if (targetRow >= 0) {
+        setRowConfig((prev) => {
+          const updated = [...prev];
+          if (targetRow < updated.length && updated[targetRow].blockCount > 0) {
+            updated[targetRow] = {
+              ...updated[targetRow],
+              blockCount: updated[targetRow].blockCount - 1,
+            };
+            // Remove row if it becomes empty and there are other rows
+            if (updated[targetRow].blockCount === 0 && updated.length > 1) {
+              updated.splice(targetRow, 1);
+            }
+          }
+          return updated;
+        });
+      }
+    },
+    [blocks, deleteBlock, rowConfig]
+  );
+
+  /** Move a block between rows via drag and drop */
+  const handleMoveBlockToRow = useCallback(
+    (blockId: string, targetRowIndex: number, positionInRow: number) => {
+      const blockIndex = blocks.findIndex((b) => b.id === blockId);
+      if (blockIndex === -1) return;
+
+      // Find source row
+      let accum = 0;
+      let sourceRow = -1;
+      for (let i = 0; i < rowConfig.length; i++) {
+        accum += rowConfig[i].blockCount;
+        if (blockIndex < accum) {
+          sourceRow = i;
+          break;
+        }
+      }
+
+      // Calculate destination index in flat array
+      let destIndex = 0;
+      for (let i = 0; i < targetRowIndex; i++) {
+        destIndex += rowConfig[i]?.blockCount ?? 0;
+      }
+      destIndex += positionInRow;
+
+      // Move block
+      reorderBlocks(blockId, destIndex);
+
+      // Update rowConfig: decrement source, increment destination
+      if (sourceRow >= 0 && sourceRow !== targetRowIndex) {
+        setRowConfig((prev) => {
+          const updated = [...prev];
+          // Decrement source
+          if (sourceRow < updated.length && updated[sourceRow].blockCount > 0) {
+            updated[sourceRow] = {
+              ...updated[sourceRow],
+              blockCount: updated[sourceRow].blockCount - 1,
+            };
+          }
+          // Increment destination
+          if (targetRowIndex < updated.length) {
+            updated[targetRowIndex] = {
+              ...updated[targetRowIndex],
+              blockCount: updated[targetRowIndex].blockCount + 1,
+            };
+          }
+          // Clean up empty source rows (if not the only row)
+          if (
+            sourceRow < updated.length &&
+            updated[sourceRow].blockCount === 0 &&
+            updated.length > 1
+          ) {
+            updated.splice(sourceRow, 1);
+          }
+          return updated;
+        });
+      }
+    },
+    [blocks, reorderBlocks, rowConfig]
+  );
+
   // ---- Reset form ----
   useEffect(() => {
     if (isOpen) {
@@ -76,17 +289,24 @@ export default function WorkBlogModal({
         setThumbnailImage(project.thumbnailImage);
         setPublished(project.published);
 
-        // Convert legacy description (markdown) + galleryImages + heroImage to BlogContent
-        setEditorContent(
-          parseWorkProjectContent(
-            project.description,
-            project.galleryImages as string[] | undefined,
-            project.heroImage,
-            project.title,
-            project.author,
-            project.email
-          )
-        );
+        // Priority: Check if project.content already has blocks (new format)
+        if (project.content && typeof project.content === 'object' && 'blocks' in project.content) {
+          const content = project.content as BlogContent;
+          setEditorContent(content);
+          setRowConfig(content.rowConfig || []);
+        } else {
+          // Fallback: Convert legacy description (markdown) + galleryImages + heroImage to BlogContent
+          setEditorContent(
+            parseWorkProjectContent(
+              project.description,
+              project.galleryImages as string[] | undefined,
+              project.heroImage,
+              project.title,
+              project.author,
+              project.email
+            )
+          );
+        }
       } else {
         setTitle('');
         setSubtitle('');
@@ -98,6 +318,7 @@ export default function WorkBlogModal({
         setThumbnailImage('');
         setPublished(true);
         setEditorContent({ blocks: [], version: '1.0' });
+        setRowConfig([]);
       }
       setError(null);
       setActiveTab('info');
@@ -156,10 +377,10 @@ export default function WorkBlogModal({
         .map((t) => t.trim())
         .filter(Boolean);
 
-      // Extract heroImage from HeroImageBlock in block content
+      // Extract heroImage from HeroImageBlock or HeroSectionBlock in block content
       const heroBlock = editorContent.blocks.find(
-        (b) => b.type === 'hero-image'
-      ) as HeroImageBlock | undefined;
+        (b) => b.type === 'hero-image' || b.type === 'hero-section'
+      ) as (HeroImageBlock | HeroSectionBlock) | undefined;
       const extractedHeroImage = heroBlock?.url ?? '';
 
       const data: CreateProjectInput = {
@@ -200,10 +421,10 @@ export default function WorkBlogModal({
         ref={modalRef}
         className="bg-white rounded-xl shadow-2xl flex flex-col"
         style={{
-          width: 'calc(100vw - 80px)',
-          maxWidth: '1200px',
-          height: 'calc(100vh - 80px)',
-          maxHeight: '900px',
+          width: 'calc(100vw - 60px)',
+          maxWidth: '1600px',
+          height: 'calc(100vh - 60px)',
+          maxHeight: '960px',
         }}
       >
         {/* Header */}
@@ -244,7 +465,7 @@ export default function WorkBlogModal({
         </div>
 
         {/* Content area */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-hidden p-0">
           {/* Error */}
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm flex items-center justify-between">
@@ -261,7 +482,7 @@ export default function WorkBlogModal({
 
           {/* Tab: Basic Info */}
           {activeTab === 'info' && (
-            <div className="space-y-5 max-w-3xl">
+            <div className="space-y-5 max-w-3xl p-6">
               {/* Title + Category */}
               <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2">
@@ -419,27 +640,59 @@ export default function WorkBlogModal({
             </div>
           )}
 
-          {/* Tab: Content (Block Editor) */}
+          {/* Tab: Content (3-Panel Layout) */}
           {activeTab === 'content' && (
-            <div>
-              <p className="text-sm text-gray-500 mb-3">
-                Build the project detail page. Use Text blocks for description and Work Gallery for images.
-                The preview shows the exact layout as it appears on the public page.
-              </p>
-              <BlockEditor
-                value={editorContent}
-                onChange={setEditorContent}
-                enablePreview={true}
-                previewMode="work-detail"
-                showWorkBlocks={true}
-                projectContext={{
-                  title: title,
-                  author: author,
-                  email: email,
-                  heroImage: '',
-                  category: category,
-                } satisfies WorkProjectContext}
-              />
+            <div className="flex h-full w-full">
+              {/* 좌측 25%: Block Layout Visualizer */}
+              <div className="w-[25%] border-r border-gray-200 bg-white overflow-hidden flex flex-col">
+                <BlockLayoutVisualizer
+                  blocks={blocks}
+                  rowConfig={rowConfig}
+                  selectedId={selectedId}
+                  onSelect={setSelectedId}
+                  onReorder={reorderBlocks}
+                  onRowLayoutChange={handleRowLayoutChange}
+                  onAddRow={handleAddRow}
+                  onDeleteRow={handleDeleteRow}
+                  onAddBlockToRow={handleAddBlockToRow}
+                  onDeleteBlock={handleDeleteBlock}
+                  onMoveBlockToRow={handleMoveBlockToRow}
+                />
+              </div>
+
+              {/* 중앙 40%: Block Editor Panel */}
+              <div className="w-[40%] border-r border-gray-200 bg-white overflow-hidden flex flex-col">
+                <div className="flex-1 overflow-y-auto">
+                  <BlockEditorPanel
+                    block={blocks.find((b) => b.id === selectedId) || null}
+                    onChange={updateBlock}
+                    onDelete={handleDeleteBlock}
+                  />
+                </div>
+              </div>
+
+              {/* 우측 35%: Live Preview */}
+              <div className="w-[35%] overflow-y-auto bg-gray-50 px-6 py-6">
+                <div className="sticky top-0 mb-4 bg-gray-50 pb-3">
+                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Live Preview</h4>
+                  <p className="text-[10px] text-gray-400 mt-1">실시간 미리보기</p>
+                </div>
+                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                  <div className="p-6">
+                    <WorkDetailPreviewRenderer
+                      blocks={blocks}
+                      rowConfig={rowConfig}
+                      projectContext={{
+                        title: title,
+                        author: author,
+                        email: email,
+                        heroImage: '',
+                        category: category,
+                      } satisfies WorkProjectContext}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>

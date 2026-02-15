@@ -242,6 +242,7 @@ export type {
   Block,
   BlockType,
   BlogContent,
+  RowConfig,
   TextBlock,
   HeadingBlock,
   ImageBlock,
@@ -260,4 +261,6 @@ export {
   createEmptyBlogContent,
   createDefaultBlock,
   generateBlockId,
+  groupBlocksByRows,
+  generateRowConfig,
 } from './types';

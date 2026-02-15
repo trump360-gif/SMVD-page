@@ -10,6 +10,7 @@ export type BlockType =
   | 'spacer'
   | 'divider'
   | 'hero-image'
+  | 'hero-section'
   | 'work-title'
   | 'work-metadata'
   | 'work-gallery'
@@ -93,6 +94,32 @@ export interface HeroImageBlock extends ContentBlock {
   type: 'hero-image';
   url: string;
   alt: string;
+}
+
+/** Hero section block - unified image + title/author/email with overlay styling */
+export interface HeroSectionBlock extends ContentBlock {
+  type: 'hero-section';
+  // Image properties
+  url: string;
+  alt: string;
+  // Title properties
+  title: string;
+  author: string;
+  email: string;
+  // Title styling
+  titleFontSize?: number;
+  authorFontSize?: number;
+  gap?: number;
+  titleFontWeight?: '400' | '500' | '700';
+  authorFontWeight?: '400' | '500' | '700';
+  emailFontWeight?: '400' | '500' | '700';
+  titleColor?: string;
+  authorColor?: string;
+  emailColor?: string;
+  // Overlay styling
+  overlayPosition?: 'bottom-left' | 'bottom-right' | 'center' | 'none';
+  overlayOpacity?: number;
+  overlayBackground?: string;
 }
 
 /** Work title block - 60px Satoshi bold, matching WorkDetailPage h1 */
@@ -191,6 +218,7 @@ export type Block =
   | SpacerBlock
   | DividerBlock
   | HeroImageBlock
+  | HeroSectionBlock
   | WorkTitleBlock
   | WorkMetadataBlock
   | WorkGalleryBlock
@@ -198,10 +226,42 @@ export type Block =
   | LayoutRowBlock
   | LayoutGridBlock;
 
+// ---------------------------------------------------------------------------
+// Row-based layout configuration
+// ---------------------------------------------------------------------------
+
+/**
+ * Configuration for a single row in the row-based layout system.
+ * Each row specifies how many columns it has and how many blocks it contains.
+ *
+ * The `layout` field determines the number of columns rendered for this row.
+ * The `blockCount` field determines how many blocks from the flat `blocks[]`
+ * array belong to this row (consumed sequentially).
+ *
+ * @example
+ * // A row that renders 3 columns containing 3 blocks
+ * { layout: 3, blockCount: 3 }
+ *
+ * // A full-width row containing 1 block
+ * { layout: 1, blockCount: 1 }
+ */
+export interface RowConfig {
+  /** Number of columns for this row (1 = full width, 2 = two columns, 3 = three columns) */
+  layout: 1 | 2 | 3;
+  /** Number of blocks consumed from the flat blocks array for this row */
+  blockCount: number;
+}
+
 /** Top-level blog content structure */
 export interface BlogContent {
   blocks: Block[];
   version: string;
+  /**
+   * Optional row-based layout configuration.
+   * When present, blocks are split into rows according to this config.
+   * When absent, all blocks are rendered in a single column (backward compatible).
+   */
+  rowConfig?: RowConfig[];
 }
 
 /**
@@ -267,6 +327,28 @@ export function createDefaultBlock(type: BlockType, order: number): Block {
       return { ...base, type: 'divider', style: 'solid' };
     case 'hero-image':
       return { ...base, type: 'hero-image', url: '', alt: '' };
+    case 'hero-section':
+      return {
+        ...base,
+        type: 'hero-section',
+        url: '',
+        alt: '',
+        title: '',
+        author: '',
+        email: '',
+        titleFontSize: 60,
+        authorFontSize: 14,
+        gap: 24,
+        titleFontWeight: '700',
+        authorFontWeight: '500',
+        emailFontWeight: '400',
+        titleColor: '#1b1d1f',
+        authorColor: '#1b1d1f',
+        emailColor: '#7b828e',
+        overlayPosition: 'bottom-left',
+        overlayOpacity: 0.8,
+        overlayBackground: 'rgba(0, 0, 0, 0.3)',
+      };
     case 'work-title':
       return { ...base, type: 'work-title', title: '', author: '', email: '' };
     case 'work-metadata':
@@ -367,4 +449,106 @@ export function validateBlockTree(
   }
 
   return { valid: true };
+}
+
+// ---------------------------------------------------------------------------
+// Row-based layout utility functions
+// ---------------------------------------------------------------------------
+
+/**
+ * Split a flat block array into rows based on the provided RowConfig.
+ *
+ * Blocks are consumed sequentially: the first row takes the first
+ * `rowConfig[0].blockCount` blocks, the second row takes the next
+ * `rowConfig[1].blockCount` blocks, and so on.
+ *
+ * If `rowConfig` is missing or empty, returns all blocks in a single row
+ * (backward compatible behavior).
+ *
+ * Any blocks remaining after all rowConfig entries are exhausted are
+ * appended as an additional single-column row to prevent data loss.
+ *
+ * @param blocks - Flat array of all blocks
+ * @param rowConfig - Optional row configuration array
+ * @returns Array of block arrays, one per row
+ *
+ * @example
+ * const blocks = [B1, B2, B3, B4, B5, B6];
+ * const config = [
+ *   { layout: 1, blockCount: 1 },
+ *   { layout: 3, blockCount: 3 },
+ *   { layout: 2, blockCount: 2 },
+ * ];
+ * groupBlocksByRows(blocks, config);
+ * // => [[B1], [B2, B3, B4], [B5, B6]]
+ */
+export function groupBlocksByRows(
+  blocks: Block[],
+  rowConfig?: RowConfig[]
+): Block[][] {
+  if (!rowConfig || rowConfig.length === 0) {
+    return [blocks];
+  }
+
+  const rows: Block[][] = [];
+  let blockIndex = 0;
+
+  for (const row of rowConfig) {
+    const count = Math.max(0, row.blockCount);
+    const rowBlocks = blocks.slice(blockIndex, blockIndex + count);
+    rows.push(rowBlocks);
+    blockIndex += count;
+  }
+
+  // Append any remaining blocks as a fallback row (prevents data loss)
+  if (blockIndex < blocks.length) {
+    rows.push(blocks.slice(blockIndex));
+  }
+
+  return rows;
+}
+
+/**
+ * Generate a RowConfig array from a list of desired layouts.
+ *
+ * Each entry in `layouts` becomes a row whose `blockCount` equals its
+ * `layout` value (i.e., a 3-column row consumes 3 blocks). If there are
+ * fewer remaining blocks than the layout requests, the row's `blockCount`
+ * is clamped to whatever is left.
+ *
+ * @param blockCount - Total number of blocks to distribute
+ * @param layouts - Array of column counts for each row (1, 2, or 3)
+ * @returns RowConfig array
+ *
+ * @example
+ * generateRowConfig(6, [1, 3, 2]);
+ * // => [
+ * //   { layout: 1, blockCount: 1 },
+ * //   { layout: 3, blockCount: 3 },
+ * //   { layout: 2, blockCount: 2 },
+ * // ]
+ *
+ * @example
+ * // When blocks run out before layouts are exhausted:
+ * generateRowConfig(2, [1, 3]);
+ * // => [
+ * //   { layout: 1, blockCount: 1 },
+ * //   { layout: 3, blockCount: 1 },
+ * // ]
+ */
+export function generateRowConfig(
+  blockCount: number,
+  layouts: (1 | 2 | 3)[]
+): RowConfig[] {
+  let remaining = blockCount;
+  const result: RowConfig[] = [];
+
+  for (const layout of layouts) {
+    if (remaining <= 0) break;
+    const count = Math.min(layout, remaining);
+    result.push({ layout, blockCount: count });
+    remaining -= count;
+  }
+
+  return result;
 }

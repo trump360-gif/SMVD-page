@@ -160,9 +160,8 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
       ? blockContent.galleryImages
       : project.galleryImages;
 
-  // Extract layout configuration with defaults (force 2-column layout)
-  const columnLayout = 2;
-  console.log('WorkDetailPage - columnLayout:', columnLayout, 'blockContent:', !!blockContent, 'projectContent:', !!project.content);
+  // Extract layout configuration with defaults from blockContent
+  const columnLayout = blockContent?.layoutConfig?.columnLayout ?? 2;
   const columnGap = blockContent?.layoutConfig?.columnGap ?? 90;
   const textColumnWidth = blockContent?.layoutConfig?.textColumnWidth ?? 'auto';
 
@@ -198,12 +197,16 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
       >
         {/* Use BlockEditor content if available */}
         {project.content && (project.content as any).blocks ? (
-          <WorkDetailPreviewRenderer blocks={(project.content as any).blocks} projectContext={{
-            title: displayTitle,
-            author: displayAuthor,
-            email: displayEmail,
-            heroImage: displayHero,
-          }} />
+          <WorkDetailPreviewRenderer
+            blocks={(project.content as any).blocks}
+            rowConfig={(project.content as any).rowConfig}
+            projectContext={{
+              title: displayTitle,
+              author: displayAuthor,
+              email: displayEmail,
+              heroImage: displayHero,
+            }}
+          />
         ) : (
           <>
         {/* Main Content (fixed layout fallback) */}
@@ -277,21 +280,18 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                 <p
                   style={{
                     fontSize: '14px',
-                    fontWeight: '500',
                     fontFamily: 'Pretendard',
                     color: '#1b1d1fff',
                     margin: '0',
+                    whiteSpace: 'nowrap',
                   }}
                 >
-                  {displayAuthor}
-                  {displayEmail && ' '}
+                  <span style={{ fontWeight: '500' }}>
+                    {displayAuthor}
+                  </span>
                   {displayEmail && (
-                    <span
-                      style={{
-                        fontWeight: '400',
-                        color: '#7b828eff',
-                      }}
-                    >
+                    <span style={{ fontWeight: '400', color: '#7b828eff' }}>
+                      {' '}
                       {displayEmail}
                     </span>
                   )}
@@ -344,23 +344,25 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
               </div>
             </div>
           ) : (
-            // Three-Column Layout
+            // Two-Column Layout (refactored from 3-column)
             <div
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
+                display: 'flex',
                 gap: `${columnGap}px`,
                 width: '100%',
               }}
             >
-              {/* Column 1 - Title */}
+              {/* Left Column - Title and Author/Email */}
               <div
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '24px',
+                  flex: '0 0 auto',
+                  minWidth: '400px',
                 }}
               >
+                {/* Title */}
                 <h1
                   style={{
                     fontSize: '60px',
@@ -374,28 +376,38 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                 >
                   {displayTitle}
                 </h1>
+
+                {/* Author and Email - Single Line */}
+                <p
+                  style={{
+                    fontSize: '14px',
+                    fontFamily: 'Pretendard',
+                    color: '#1b1d1fff',
+                    margin: '0',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <span style={{ fontWeight: '500' }}>
+                    {displayAuthor}
+                  </span>
+                  {displayEmail && (
+                    <span style={{ fontWeight: '400', color: '#7b828eff' }}>
+                      {' '}
+                      {displayEmail}
+                    </span>
+                  )}
+                </p>
               </div>
 
-              {/* Column 2 - Author + Description */}
+              {/* Right Column - Description */}
               <div
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '24px',
+                  flex: textColumnWidth === 'narrow' ? '0 0 400px' : textColumnWidth === 'wide' ? '0 0 800px' : '1',
                 }}
               >
-                <p
-                  style={{
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    fontFamily: 'Pretendard',
-                    color: '#1b1d1fff',
-                    margin: '0',
-                  }}
-                >
-                  {displayAuthor}
-                </p>
-
                 {hasMarkdownSyntax(displayDescription) ? (
                   <div
                     style={{
@@ -404,6 +416,8 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                       fontFamily: 'Pretendard',
                       color: descColor,
                       lineHeight: `${descLineHeight}`,
+                      letterSpacing: '-0.18px',
+                      margin: '0',
                     }}
                     className="prose prose-lg max-w-none"
                   >
@@ -419,6 +433,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                       fontFamily: 'Pretendard',
                       color: descColor,
                       lineHeight: `${descLineHeight}`,
+                      letterSpacing: '-0.18px',
                       margin: '0',
                       whiteSpace: 'pre-wrap',
                     }}
@@ -426,21 +441,6 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                     {displayDescription}
                   </p>
                 )}
-              </div>
-
-              {/* Column 3 - Email */}
-              <div>
-                <p
-                  style={{
-                    fontSize: '14px',
-                    fontWeight: '400',
-                    fontFamily: 'Pretendard',
-                    color: '#7b828eff',
-                    margin: '0',
-                  }}
-                >
-                  {displayEmail || 'email@example.com'}
-                </p>
               </div>
             </div>
           )}
