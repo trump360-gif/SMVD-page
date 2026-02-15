@@ -60,20 +60,31 @@ enum SectionType {
   CONTACT_FORM
   MAP
   CUSTOM_HTML
+  // About page section types (NEW - 2026-02-15)
+  ABOUT_INTRO           // About 소개 섹션
+  ABOUT_VISION          // About 비전 섹션
+  ABOUT_HISTORY         // About 역사 섹션
+  ABOUT_PEOPLE          // About 교수/강사 섹션
+  // Home page section types (NEW - 2026-02-15)
+  HOME_HERO             // Home 히어로 섹션
+  EXHIBITION_SECTION    // Home 전시 섹션
+  HOME_ABOUT            // Home 소개 섹션
 }
 
 // Sections with flexible content
 model Section {
-  id        String      @id @default(cuid())
-  pageId    String      @map("page_id")
-  page      Page        @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  type      SectionType
-  title     String?
-  content   Json?
-  mediaIds  Json?       @map("media_ids")
-  order     Int         @default(0)
-  createdAt DateTime    @default(now()) @map("created_at")
-  updatedAt DateTime    @updatedAt @map("updated_at")
+  id                String             @id @default(cuid())
+  pageId            String             @map("page_id")
+  page              Page               @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type              SectionType
+  title             String?
+  content           Json?
+  mediaIds          Json?              @map("media_ids")
+  order             Int                @default(0)
+  exhibitionItems   ExhibitionItem[]   // Home page exhibition items
+  workPortfolios    WorkPortfolio[]    // Home page work portfolio items
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
 
   @@map("sections")
   @@index([pageId])
@@ -81,18 +92,60 @@ model Section {
 
 // Media management (images, videos, etc.)
 model Media {
-  id          String    @id @default(cuid())
-  filename    String
-  filepath    String    @map("file_path")
-  mimeType    String    @map("mime_type")
-  size        Int
-  formats     Json?     // { webp: { path, size }, thumbnail: { path, size } }
-  width       Int?
-  height      Int?
-  altText     String?   @map("alt_text")
-  uploadedAt  DateTime  @default(now()) @map("uploaded_at")
+  id                String             @id @default(cuid())
+  filename          String
+  filepath          String             @map("file_path")
+  mimeType          String             @map("mime_type")
+  size              Int
+  formats           Json?              // { webp: { path, size }, thumbnail: { path, size } }
+  width             Int?
+  height            Int?
+  altText           String?            @map("alt_text")
+  uploadedAt        DateTime           @default(now()) @map("uploaded_at")
+
+  // Relations
+  people            People[]           // Faculty & Staff profile images
+  exhibitionItems   ExhibitionItem[]   // Home page exhibition items
+  workPortfolios    WorkPortfolio[]    // Home page work portfolio items
 
   @@map("media")
+}
+
+// Exhibition items (for Home page)
+model ExhibitionItem {
+  id          String    @id @default(cuid())
+  sectionId   String    @map("section_id")
+  section     Section   @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  year        String
+  mediaId     String    @map("media_id")
+  media       Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@unique([sectionId, order])
+  @@map("exhibition_items")
+  @@index([sectionId])
+  @@index([mediaId])
+}
+
+// Work portfolio items (for Home page)
+model WorkPortfolio {
+  id          String    @id @default(cuid())
+  sectionId   String    @map("section_id")
+  section     Section   @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  title       String
+  category    String
+  mediaId     String    @map("media_id")
+  media       Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@unique([sectionId, order])
+  @@map("work_portfolios")
+  @@index([sectionId])
+  @@index([mediaId])
 }
 
 // Navigation menu items
@@ -156,17 +209,26 @@ model NewsEvent {
   @@map("news_events")
 }
 
-// Faculty & Staff
+// Faculty & Staff (Enhanced for About page - 2026-02-15)
 model People {
   id          String    @id @default(cuid())
   name        String
   title       String
-  bio         String?
-  email       String?
+  role        String?   // "professor" | "instructor"
+  office      String?   // 연구실 위치
+  email       String[]  // 여러 이메일 지원
   phone       String?
+  homepage    String?   // 홈페이지 URL
+  major       String?   // 전공
+  specialty   String?   // 전문분야
+  badge       String?   // 뱃지 ("Research & Mentoring", "User Experience" 등)
+  courses     Json?     // { undergraduate: string[], graduate: string[] }
+  biography   Json?     // { cvText, position, education[], experience[] }
   mediaId     String?   @map("media_id")
+  media       Media?    @relation(fields: [mediaId], references: [id], onDelete: SetNull)
   order       Int       @default(0)
   published   Boolean   @default(true)
+  archivedAt  DateTime? @map("archived_at") // Soft delete
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
 

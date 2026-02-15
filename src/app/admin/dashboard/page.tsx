@@ -103,14 +103,24 @@ export default function DashboardPage() {
         {/* Quick Actions */}
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">빠른 메뉴</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <a
-              href="/admin/pages"
+              href="/admin/dashboard/home"
               className="block p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"
             >
-              <p className="font-semibold text-blue-900">📄 페이지 관리</p>
+              <p className="font-semibold text-blue-900">🏠 Home 페이지</p>
               <p className="text-xs text-blue-700 mt-1">
-                페이지 내용 편집 및 섹션 관리
+                전시 및 포트폴리오 관리
+              </p>
+            </a>
+
+            <a
+              href="/admin/dashboard/about"
+              className="block p-4 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors border border-indigo-200"
+            >
+              <p className="font-semibold text-indigo-900">📚 About 페이지</p>
+              <p className="text-xs text-indigo-700 mt-1">
+                학과 소개 및 교수 관리
               </p>
             </a>
 
@@ -141,6 +151,16 @@ export default function DashboardPage() {
               <p className="font-semibold text-orange-900">🖼️ 미디어</p>
               <p className="text-xs text-orange-700 mt-1">
                 업로드된 이미지 및 파일 관리
+              </p>
+            </a>
+
+            <a
+              href="/admin/pages"
+              className="block p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors border border-yellow-200"
+            >
+              <p className="font-semibold text-yellow-900">📄 페이지 관리</p>
+              <p className="text-xs text-yellow-700 mt-1">
+                페이지 정보 편집
               </p>
             </a>
           </div>

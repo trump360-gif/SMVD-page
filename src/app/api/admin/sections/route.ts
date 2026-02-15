@@ -34,6 +34,16 @@ export async function GET(request: NextRequest) {
     const sections = await prisma.section.findMany({
       where: { pageId },
       orderBy: { order: "asc" },
+      include: {
+        exhibitionItems: {
+          include: { media: true },
+          orderBy: { order: "asc" },
+        },
+        workPortfolios: {
+          include: { media: true },
+          orderBy: { order: "asc" },
+        },
+      },
     });
 
     return successResponse(sections, "섹션 목록을 조회했습니다");

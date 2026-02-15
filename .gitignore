@@ -51,3 +51,6 @@ next-env.d.ts
 dist/
 Thumbs.db
 .playwright-mcp/
+
+# Legacy CMS (integrated into main project)
+smvd-cms/
