@@ -5,6 +5,10 @@ import { X } from 'lucide-react';
 import BlockEditor from '@/components/admin/shared/BlockEditor';
 import type { BlogContent } from '@/components/admin/shared/BlockEditor/types';
 import { parseNewsContent, type NewsContentShape } from '@/lib/content-parser';
+import {
+  newsArticleInputSchema,
+  formatValidationError,
+} from '@/lib/validation/blog-schemas';
 import type {
   NewsArticleData,
   CreateArticleInput,
@@ -106,8 +110,20 @@ export default function NewsBlogModal({
   const handleSubmit = async () => {
     setError(null);
 
-    if (!title.trim()) { setError('Title is required'); setActiveTab('info'); return; }
-    if (!category) { setError('Category is required'); setActiveTab('info'); return; }
+    // Validate all basic info fields via Zod schema
+    const result = newsArticleInputSchema.safeParse({
+      title: title.trim(),
+      category,
+      excerpt: excerpt.trim() || undefined,
+      publishedAt: publishedAt || undefined,
+      thumbnailImage: thumbnailImage || undefined,
+    });
+
+    if (!result.success) {
+      setError(formatValidationError(result.error));
+      setActiveTab('info');
+      return;
+    }
 
     setIsSubmitting(true);
 

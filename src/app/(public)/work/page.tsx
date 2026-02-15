@@ -1,12 +1,55 @@
-'use client';
-
 import {
   Header,
   Footer,
 } from '@/components/public/home';
 import { WorkArchive } from '@/components/public/work';
+import { prisma } from '@/lib/db';
 
-export default function WorkPage() {
+// Fetch work data from DB with fallback to hardcoded
+async function getWorkData() {
+  try {
+    const [projects, exhibitions] = await Promise.all([
+      prisma.workProject.findMany({
+        where: { published: true },
+        orderBy: { order: 'asc' },
+      }),
+      prisma.workExhibition.findMany({
+        where: { published: true },
+        orderBy: { order: 'asc' },
+      }),
+    ]);
+
+    // Only return DB data if there are records
+    if (projects.length > 0 || exhibitions.length > 0) {
+      return {
+        projects: projects.map((p) => ({
+          id: p.slug,
+          category: p.category,
+          title: p.title,
+          date: p.year,
+          image: p.thumbnailImage,
+          subtitle: p.subtitle,
+        })),
+        exhibitions: exhibitions.map((e) => ({
+          id: e.id,
+          title: e.title,
+          date: e.subtitle,
+          image: e.image,
+          artist: e.artist,
+        })),
+      };
+    }
+  } catch (error) {
+    console.error('Work data fetch error:', error);
+  }
+
+  // Fallback: return null to use hardcoded data
+  return null;
+}
+
+export default async function WorkPage() {
+  const workData = await getWorkData();
+
   return (
     <div>
       {/* Header */}
@@ -33,7 +76,10 @@ export default function WorkPage() {
           }}
         >
           {/* Work Archive Component */}
-          <WorkArchive />
+          <WorkArchive
+            portfolioItemsFromDB={workData?.projects}
+            exhibitionItemsFromDB={workData?.exhibitions}
+          />
         </div>
       </div>
 

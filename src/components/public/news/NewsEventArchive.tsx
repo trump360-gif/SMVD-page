@@ -12,7 +12,8 @@ interface NewsItem {
   image: string;
 }
 
-const newsItems: NewsItem[] = [
+// Hardcoded fallback data
+const defaultNewsItems: NewsItem[] = [
   {
     id: '1',
     category: 'Notice',
@@ -49,7 +50,7 @@ const newsItems: NewsItem[] = [
     id: '5',
     category: 'Event',
     date: '2025-01-05',
-    title: '2024 시각·영상디자인과 졸업전시회',
+    title: '2024 시각\u00b7영상디자인과 졸업전시회',
     description: '이번 전시 주제인 "Ready, Set, Go!" KICK OFF는 들을 제기 한전을 넘어 새로운 도약을 준비하는 결심을 담고 있습니다...',
     image: '/images/news/Image-1.png',
   },
@@ -57,8 +58,8 @@ const newsItems: NewsItem[] = [
     id: '6',
     category: 'Event',
     date: '2025-01-05',
-    title: '2024 시각·영상디자인과 동문의 밤',
-    description: '2024년 10월 28일, 백주년기념관 한상은 라운지에서 2024 시각·영상디자인과 동문의 밤 행사를 진행했습니다. 1부에는 동문 특강을, 2부에는 황순선 교수님의 서프라이즈 퇴임식을 진행했습니다...',
+    title: '2024 시각\u00b7영상디자인과 동문의 밤',
+    description: '2024년 10월 28일, 백주년기념관 한상은 라운지에서 2024 시각\u00b7영상디자인과 동문의 밤 행사를 진행했습니다. 1부에는 동문 특강을, 2부에는 황순선 교수님의 서프라이즈 퇴임식을 진행했습니다...',
     image: '/images/news/Image.png',
   },
   {
@@ -97,8 +98,14 @@ const newsItems: NewsItem[] = [
 
 const categories = ['ALL', 'Notice', 'Event', 'Awards', 'Recruiting'];
 
-export default function NewsEventArchive() {
+interface NewsEventArchiveProps {
+  items?: NewsItem[] | null;
+}
+
+export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+
+  const newsItems = items ?? defaultNewsItems;
 
   // Filter items based on selected category
   const displayedItems =

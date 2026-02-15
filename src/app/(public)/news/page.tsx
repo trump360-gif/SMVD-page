@@ -1,12 +1,40 @@
-'use client';
-
 import {
   Header,
   Footer,
 } from '@/components/public/home';
 import { NewsEventArchive } from '@/components/public/news';
+import { prisma } from '@/lib/db';
 
-export default function NewsPage() {
+async function getNewsItems() {
+  try {
+    const articles = await prisma.newsEvent.findMany({
+      where: { published: true },
+      orderBy: { order: 'asc' },
+    });
+
+    if (articles.length > 0) {
+      return articles.map((article) => ({
+        id: article.slug,
+        category: article.category,
+        date: article.publishedAt
+          ? new Date(article.publishedAt).toISOString().split('T')[0]
+          : '2025-01-05',
+        title: article.title,
+        description: article.excerpt || '',
+        image: article.thumbnailImage,
+      }));
+    }
+  } catch (error) {
+    console.error('Failed to fetch news from DB:', error);
+  }
+
+  // Fallback to null (component will use hardcoded data)
+  return null;
+}
+
+export default async function NewsPage() {
+  const newsItems = await getNewsItems();
+
   return (
     <div>
       {/* Header */}
@@ -33,7 +61,7 @@ export default function NewsPage() {
           }}
         >
           {/* News&Event Archive Component */}
-          <NewsEventArchive />
+          <NewsEventArchive items={newsItems} />
         </div>
       </div>
 

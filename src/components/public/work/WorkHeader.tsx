@@ -1,11 +1,16 @@
 interface WorkHeaderProps {
   currentCategory?: string;
   onCategoryChange?: (category: string) => void;
+  categories?: string[];
 }
 
-export default function WorkHeader({ currentCategory, onCategoryChange }: WorkHeaderProps) {
-  const categories = ['All', 'UX/UI', 'Motion', 'Branding', 'Game', 'Graphics'];
+const defaultCategories = ['All', 'UX/UI', 'Motion', 'Branding', 'Game', 'Graphics'];
 
+export default function WorkHeader({
+  currentCategory,
+  onCategoryChange,
+  categories = defaultCategories,
+}: WorkHeaderProps) {
   return (
     <div
       style={{

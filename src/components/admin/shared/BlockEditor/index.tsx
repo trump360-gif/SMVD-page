@@ -13,6 +13,22 @@ import { BLOG_CONTENT_VERSION } from './types';
 // Debounce utility (avoids lodash dependency)
 // ---------------------------------------------------------------------------
 
+/**
+ * Simple debounce utility function.
+ * Delays function execution, canceling previous calls if new ones arrive
+ * within the delay window.
+ *
+ * @template Args - Function argument types
+ * @param fn - Function to debounce
+ * @param delay - Delay in milliseconds
+ * @returns Debounced function with a `.cancel()` method to flush pending calls
+ *
+ * @example
+ * const debouncedSave = debounce((content: string) => api.save(content), 300);
+ * debouncedSave('new content');
+ * // Cancel any pending invocation:
+ * debouncedSave.cancel();
+ */
 function debounce<Args extends any[]>(
   fn: (...args: Args) => void,
   delay: number

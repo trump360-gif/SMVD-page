@@ -25,7 +25,8 @@ interface CategoryCount {
   [key: string]: number;
 }
 
-const portfolioItems: PortfolioItem[] = [
+// Default hardcoded data (fallback when DB is empty)
+const defaultPortfolioItems: PortfolioItem[] = [
   {
     id: '1',
     category: 'UX/UI',
@@ -101,7 +102,7 @@ const portfolioItems: PortfolioItem[] = [
   {
     id: '10',
     category: 'Branding',
-    title: 'BLOMÉ',
+    title: 'BLOME',
     date: '2025',
     subtitle: '김진아 외 1명, 2025',
     image: '/images/work/portfolio-8.png',
@@ -124,7 +125,7 @@ const portfolioItems: PortfolioItem[] = [
   },
 ];
 
-const exhibitionItems: ExhibitionItem[] = [
+const defaultExhibitionItems: ExhibitionItem[] = [
   {
     id: '1',
     title: 'Vora',
@@ -170,12 +171,25 @@ const exhibitionItems: ExhibitionItem[] = [
 ];
 
 const ITEMS_PER_PAGE = 12;
-const categories = ['All', 'UX/UI', 'Motion', 'Branding', 'Game', 'Graphics'];
 
-export default function WorkArchive() {
+interface WorkArchiveProps {
+  portfolioItemsFromDB?: PortfolioItem[];
+  exhibitionItemsFromDB?: ExhibitionItem[];
+}
+
+export default function WorkArchive({
+  portfolioItemsFromDB,
+  exhibitionItemsFromDB,
+}: WorkArchiveProps = {}) {
+  const portfolioItems = portfolioItemsFromDB ?? defaultPortfolioItems;
+  const exhibitionItems = exhibitionItemsFromDB ?? defaultExhibitionItems;
+
   const [activeTab, setActiveTab] = useState<'achieve' | 'exhibition'>('achieve');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [currentPage, setCurrentPage] = useState<number>(1);
+
+  // Dynamic categories from actual data
+  const dynamicCategories = ['All', ...Array.from(new Set(portfolioItems.map((item) => item.category)))];
 
   // Filter items based on selected category
   const filteredItems =
@@ -195,7 +209,7 @@ export default function WorkArchive() {
   const categoryCounts: CategoryCount = {
     All: portfolioItems.length,
   };
-  categories.slice(1).forEach((cat) => {
+  dynamicCategories.slice(1).forEach((cat) => {
     categoryCounts[cat] = portfolioItems.filter(
       (item) => item.category === cat
     ).length;
@@ -273,6 +287,7 @@ export default function WorkArchive() {
         <WorkHeader
           currentCategory={selectedCategory}
           onCategoryChange={handleCategoryChange}
+          categories={dynamicCategories}
         />
       )}
 

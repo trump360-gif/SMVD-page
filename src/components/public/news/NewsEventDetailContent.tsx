@@ -1,33 +1,50 @@
 'use client';
 
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
+/**
+ * Check if text contains markdown syntax.
+ */
+function hasMarkdownSyntax(text: string): boolean {
+  if (!text) return false;
+  return /[#*_~`\[\]!>-]/.test(text) && (
+    /^#{1,6}\s/m.test(text) ||
+    /\*\*.+?\*\*/m.test(text) ||
+    /\[.+?\]\(.+?\)/m.test(text) ||
+    /^[-*]\s/m.test(text) ||
+    /^\d+\.\s/m.test(text) ||
+    /^>/m.test(text)
+  );
+}
+
+interface NewsDetailImages {
+  main: string;
+  centerLeft: string;
+  centerRight: string;
+  bottomLeft: string;
+  bottomCenter: string;
+  bottomRight: string;
+}
 
 interface NewsDetailItem {
   id: string;
   category: string;
   date: string;
   title: string;
-  description: string;
-  images: {
-    main: string;
-    centerLeft: string;
-    centerRight: string;
-    bottomLeft: string;
-    bottomCenter: string;
-    bottomRight: string;
-  };
   introTitle?: string;
   introText?: string;
+  images?: NewsDetailImages;
 }
 
-// 졸업전시회 상세 데이터
-const newsDetailData: { [key: string]: NewsDetailItem } = {
+// Hardcoded fallback data
+const fallbackDetailData: { [key: string]: NewsDetailItem } = {
   '5': {
     id: '5',
     category: 'Event',
     date: '2025-01-05',
-    title: '2024 시각·영상디자인과 졸업전시회',
-    description: '',
+    title: '2024 시각\u00b7영상디자인과 졸업전시회',
     introTitle: '2024 시각영상디자인과 졸업전시회',
     introText:
       `이번 전시 주제인 'Ready, Set, Go!' KICK OFF는 틀을 깨고 한계를 넘어 새로운 도약을 준비하는 결심을 담아 진행되었습니다.\n필드를 넘어서 더 넓은 세계로 나아가는 여정을 함께해주신 교수님들과 관객 분들께 감사 인사를 전합니다.`,
@@ -44,9 +61,16 @@ const newsDetailData: { [key: string]: NewsDetailItem } = {
 
 const categories = ['ALL', 'Notice', 'Event', 'Awards', 'Recruiting'];
 
-export default function NewsEventDetailContent({ itemId }: { itemId: string }) {
+interface NewsEventDetailContentProps {
+  itemId: string;
+  dbData?: NewsDetailItem | null;
+}
+
+export default function NewsEventDetailContent({ itemId, dbData }: NewsEventDetailContentProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
-  const item = newsDetailData[itemId];
+
+  // Use DB data if available, else fallback to hardcoded
+  const item = dbData ?? fallbackDetailData[itemId];
 
   if (!item) {
     return (
@@ -62,6 +86,8 @@ export default function NewsEventDetailContent({ itemId }: { itemId: string }) {
       </div>
     );
   }
+
+  const hasGallery = item.images && Object.values(item.images).some((v) => v);
 
   return (
     <div
@@ -202,180 +228,220 @@ export default function NewsEventDetailContent({ itemId }: { itemId: string }) {
         </div>
 
         {/* Description Text */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '181px',
-            width: '100%',
-          }}
-        >
-          <p
+        {item.introText && (
+          <div
             style={{
-              fontSize: '18px',
-              fontWeight: '500',
-              fontFamily: 'Pretendard',
-              color: '#1b1d1fff',
-              margin: '0',
-              lineHeight: '1.5',
-              letterSpacing: '-0.18px',
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'keep-all',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '181px',
+              width: '100%',
             }}
           >
-            {item.introText}
-          </p>
-        </div>
+            {hasMarkdownSyntax(item.introText) ? (
+              <div
+                style={{
+                  fontSize: '18px',
+                  fontWeight: '500',
+                  fontFamily: 'Pretendard',
+                  color: '#1b1d1fff',
+                  margin: '0',
+                  lineHeight: '1.5',
+                  letterSpacing: '-0.18px',
+                  wordBreak: 'keep-all',
+                }}
+                className="prose prose-lg max-w-none"
+              >
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {item.introText}
+                </ReactMarkdown>
+              </div>
+            ) : (
+              <p
+                style={{
+                  fontSize: '18px',
+                  fontWeight: '500',
+                  fontFamily: 'Pretendard',
+                  color: '#1b1d1fff',
+                  margin: '0',
+                  lineHeight: '1.5',
+                  letterSpacing: '-0.18px',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'keep-all',
+                }}
+              >
+                {item.introText}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Image Gallery */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '40px',
-            width: '100%',
-          }}
-        >
-          {/* Main Image */}
-          <div
-            style={{
-              width: '100%',
-              height: '765px',
-              backgroundColor: '#f0f0f0ff',
-              borderRadius: '4px',
-              overflow: 'hidden',
-            }}
-          >
-            <img
-              src={item.images.main}
-              alt="Main gallery image"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-              }}
-            />
-          </div>
-
-          {/* Center Two Images */}
+        {hasGallery && item.images && (
           <div
             style={{
               display: 'flex',
-              gap: '20px',
+              flexDirection: 'column',
+              gap: '40px',
               width: '100%',
-              alignItems: 'center',
-              justifyContent: 'space-between',
             }}
           >
-            <div
-              style={{
-                width: '670px',
-                height: '670px',
-                backgroundColor: '#f0f0f0ff',
-                borderRadius: '4px',
-                overflow: 'hidden',
-              }}
-            >
-              <img
-                src={item.images.centerLeft}
-                alt="Center left gallery image"
+            {/* Main Image */}
+            {item.images.main && (
+              <div
                 style={{
                   width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
+                  height: '765px',
+                  backgroundColor: '#f0f0f0ff',
+                  borderRadius: '4px',
+                  overflow: 'hidden',
                 }}
-              />
-            </div>
-            <div
-              style={{
-                width: '670px',
-                height: '670px',
-                backgroundColor: '#f0f0f0ff',
-                borderRadius: '4px',
-                overflow: 'hidden',
-              }}
-            >
-              <img
-                src={item.images.centerRight}
-                alt="Center right gallery image"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
-            </div>
-          </div>
+              >
+                <img
+                  src={item.images.main}
+                  alt="Main gallery image"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </div>
+            )}
 
-          {/* Bottom Three Images */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '20px',
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div
-              style={{
-                width: '440px',
-                height: '440px',
-                backgroundColor: '#f0f0f0ff',
-                borderRadius: '4px',
-                overflow: 'hidden',
-              }}
-            >
-              <img
-                src={item.images.bottomLeft}
-                alt="Bottom left gallery image"
+            {/* Center Two Images */}
+            {(item.images.centerLeft || item.images.centerRight) && (
+              <div
                 style={{
+                  display: 'flex',
+                  gap: '20px',
                   width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                 }}
-              />
-            </div>
-            <div
-              style={{
-                width: '440px',
-                height: '440px',
-                backgroundColor: '#f0f0f0ff',
-                borderRadius: '4px',
-                overflow: 'hidden',
-              }}
-            >
-              <img
-                src={item.images.bottomCenter}
-                alt="Bottom center gallery image"
+              >
+                {item.images.centerLeft && (
+                  <div
+                    style={{
+                      width: '670px',
+                      height: '670px',
+                      backgroundColor: '#f0f0f0ff',
+                      borderRadius: '4px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <img
+                      src={item.images.centerLeft}
+                      alt="Center left gallery image"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </div>
+                )}
+                {item.images.centerRight && (
+                  <div
+                    style={{
+                      width: '670px',
+                      height: '670px',
+                      backgroundColor: '#f0f0f0ff',
+                      borderRadius: '4px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <img
+                      src={item.images.centerRight}
+                      alt="Center right gallery image"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Bottom Three Images */}
+            {(item.images.bottomLeft || item.images.bottomCenter || item.images.bottomRight) && (
+              <div
                 style={{
+                  display: 'flex',
+                  gap: '20px',
                   width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                 }}
-              />
-            </div>
-            <div
-              style={{
-                width: '440px',
-                height: '440px',
-                backgroundColor: '#f0f0f0ff',
-                borderRadius: '4px',
-                overflow: 'hidden',
-              }}
-            >
-              <img
-                src={item.images.bottomRight}
-                alt="Bottom right gallery image"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
-            </div>
+              >
+                {item.images.bottomLeft && (
+                  <div
+                    style={{
+                      width: '440px',
+                      height: '440px',
+                      backgroundColor: '#f0f0f0ff',
+                      borderRadius: '4px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <img
+                      src={item.images.bottomLeft}
+                      alt="Bottom left gallery image"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </div>
+                )}
+                {item.images.bottomCenter && (
+                  <div
+                    style={{
+                      width: '440px',
+                      height: '440px',
+                      backgroundColor: '#f0f0f0ff',
+                      borderRadius: '4px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <img
+                      src={item.images.bottomCenter}
+                      alt="Bottom center gallery image"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </div>
+                )}
+                {item.images.bottomRight && (
+                  <div
+                    style={{
+                      width: '440px',
+                      height: '440px',
+                      backgroundColor: '#f0f0f0ff',
+                      borderRadius: '4px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <img
+                      src={item.images.bottomRight}
+                      alt="Bottom right gallery image"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

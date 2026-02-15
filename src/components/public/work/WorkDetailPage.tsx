@@ -1,14 +1,130 @@
 'use client';
 
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { WorkDetail } from '@/constants/work-details';
 import WorkHeader from './WorkHeader';
+
+// ---------------------------------------------------------------------------
+// Block content parsing helpers
+// ---------------------------------------------------------------------------
+
+interface ParsedBlockContent {
+  /** Hero image URL from HeroImageBlock */
+  hero?: string;
+  /** Title/Author/Email from WorkTitleBlock */
+  title?: {
+    title: string;
+    author: string;
+    email: string;
+  };
+  /** The first TextBlock after WorkTitleBlock (right column description) */
+  mainDescription?: string;
+  /** Gallery image URLs from WorkGalleryBlock or GalleryBlock */
+  galleryImages: string[];
+}
+
+/**
+ * Parse description as JSON block content with position-aware extraction.
+ *
+ * Block extraction rules:
+ * - hero-image block -> hero URL
+ * - work-title block -> title, author, email (left column)
+ * - First text block after work-title -> mainDescription (right column)
+ * - work-gallery / gallery blocks -> galleryImages
+ *
+ * Returns null if not valid block JSON (i.e. legacy plain text description).
+ */
+function parseBlockContent(description: string): ParsedBlockContent | null {
+  try {
+    const parsed = JSON.parse(description);
+    if (!parsed.blocks || !Array.isArray(parsed.blocks) || !parsed.version) {
+      return null;
+    }
+
+    const result: ParsedBlockContent = { galleryImages: [] };
+    let foundWorkTitle = false;
+    let foundMainDescription = false;
+
+    for (const block of parsed.blocks) {
+      if (block.type === 'hero-image' && block.url) {
+        result.hero = block.url;
+      } else if (block.type === 'work-title') {
+        result.title = {
+          title: block.title || '',
+          author: block.author || '',
+          email: block.email || '',
+        };
+        foundWorkTitle = true;
+      } else if (block.type === 'text' && block.content && foundWorkTitle && !foundMainDescription) {
+        // First TextBlock after WorkTitleBlock becomes the right-column description
+        result.mainDescription = block.content;
+        foundMainDescription = true;
+      } else if (block.type === 'text' && block.content && !foundWorkTitle) {
+        // TextBlock before any WorkTitleBlock -- treat as mainDescription fallback
+        if (!result.mainDescription) {
+          result.mainDescription = block.content;
+        } else {
+          result.mainDescription += '\n\n' + block.content;
+        }
+      } else if (block.type === 'work-gallery' && Array.isArray(block.images)) {
+        for (const img of block.images) {
+          if (img.url) result.galleryImages.push(img.url);
+        }
+      } else if (block.type === 'gallery' && Array.isArray(block.images)) {
+        // Legacy gallery block support
+        for (const img of block.images) {
+          if (img.url) result.galleryImages.push(img.url);
+        }
+      }
+    }
+
+    return result;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Check if text contains markdown syntax.
+ * Used to decide between plain text and markdown rendering.
+ */
+function hasMarkdownSyntax(text: string): boolean {
+  if (!text) return false;
+  return /[#*_~`\[\]!>-]/.test(text) && (
+    /^#{1,6}\s/m.test(text) ||
+    /\*\*.+?\*\*/m.test(text) ||
+    /\[.+?\]\(.+?\)/m.test(text) ||
+    /^[-*]\s/m.test(text) ||
+    /^\d+\.\s/m.test(text) ||
+    /^>/m.test(text)
+  );
+}
+
+// ---------------------------------------------------------------------------
+// WorkDetailPage
+// ---------------------------------------------------------------------------
 
 interface WorkDetailPageProps {
   project: WorkDetail;
 }
 
 export default function WorkDetailPage({ project }: WorkDetailPageProps) {
+  // Try to parse block-based content from description
+  const blockContent = parseBlockContent(project.description);
+
+  // Resolve display values with fallbacks to legacy hardcoded data
+  const displayHero = blockContent?.hero || project.heroImage;
+  const displayTitle = blockContent?.title?.title || project.title;
+  const displayAuthor = blockContent?.title?.author || project.author;
+  const displayEmail = blockContent?.title?.email || project.email;
+  const displayDescription = blockContent?.mainDescription || project.description;
+  const displayGalleryImages =
+    blockContent?.galleryImages && blockContent.galleryImages.length > 0
+      ? blockContent.galleryImages
+      : project.galleryImages;
+
   return (
     <div
       style={{
@@ -43,25 +159,27 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
           }}
         >
           {/* Hero Image */}
-          <div
-            style={{
-              width: '100%',
-              height: '860px',
-              backgroundColor: '#d9d9d9ff',
-              borderRadius: '0px',
-              overflow: 'hidden',
-            }}
-          >
-            <img
-              src={project.heroImage}
-              alt={project.title}
+          {displayHero && (
+            <div
               style={{
                 width: '100%',
-                height: '100%',
-                objectFit: 'cover',
+                height: '860px',
+                backgroundColor: '#d9d9d9ff',
+                borderRadius: '0px',
+                overflow: 'hidden',
               }}
-            />
-          </div>
+            >
+              <img
+                src={displayHero}
+                alt={displayTitle}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
+              />
+            </div>
+          )}
 
           {/* Text Section - 2 Column Layout */}
           <div
@@ -93,7 +211,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                   lineHeight: '1.2',
                 }}
               >
-                {project.title}
+                {displayTitle}
               </h1>
 
               {/* Author and Email - Single Line */}
@@ -106,16 +224,18 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                   margin: '0',
                 }}
               >
-                {project.author}
-                <span
-                  style={{
-                    fontWeight: '400',
-                    color: '#7b828eff',
-                    marginLeft: '16px',
-                  }}
-                >
-                  {project.email}
-                </span>
+                {displayAuthor}
+                {displayEmail && ' '}
+                {displayEmail && (
+                  <span
+                    style={{
+                      fontWeight: '400',
+                      color: '#7b828eff',
+                    }}
+                  >
+                    {displayEmail}
+                  </span>
+                )}
               </p>
             </div>
 
@@ -128,65 +248,82 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                 flex: '1',
               }}
             >
-              {/* Description - 3 Lines */}
-              <p
-                style={{
-                  fontSize: '18px',
-                  fontWeight: '400',
-                  fontFamily: 'Pretendard',
-                  color: '#1b1d1fff',
-                  lineHeight: '1.8',
-                  letterSpacing: '-0.18px',
-                  margin: '0',
-                  overflow: 'hidden',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 3,
-                  WebkitBoxOrient: 'vertical',
-                  whiteSpace: 'pre-wrap',
-                }}
-              >
-                {project.description}
-              </p>
+              {/* Description - Markdown or plain text */}
+              {hasMarkdownSyntax(displayDescription) ? (
+                <div
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '400',
+                    fontFamily: 'Pretendard',
+                    color: '#1b1d1fff',
+                    lineHeight: '1.8',
+                    letterSpacing: '-0.18px',
+                    margin: '0',
+                  }}
+                  className="prose prose-lg max-w-none"
+                >
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {displayDescription}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <p
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '400',
+                    fontFamily: 'Pretendard',
+                    color: '#1b1d1fff',
+                    lineHeight: '1.8',
+                    letterSpacing: '-0.18px',
+                    margin: '0',
+                    whiteSpace: 'pre-wrap',
+                  }}
+                >
+                  {displayDescription}
+                </p>
+              )}
             </div>
           </div>
 
           {/* Gallery */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0',
-              width: '100%',
-            }}
-          >
-            {project.galleryImages.map((image, index) => (
-              <div
-                key={index}
-                style={{
-                  width: '100%',
-                  backgroundColor: '#f0f0f0ff',
-                  borderRadius: '0px',
-                  overflow: 'hidden',
-                  lineHeight: '0',
-                  margin: index > 0 ? '-1px 0 0 0' : '0',
-                  padding: '0',
-                  fontSize: '0',
-                }}
-              >
-                <img
-                  src={image}
-                  alt={`${project.title} gallery ${index + 1}`}
+          {displayGalleryImages.length > 0 && (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0',
+                width: '100%',
+              }}
+            >
+              {displayGalleryImages.map((image, index) => (
+                <div
+                  key={index}
                   style={{
                     width: '100%',
-                    height: 'auto',
-                    display: 'block',
-                    margin: '0',
+                    backgroundColor: '#f0f0f0ff',
+                    borderRadius: '0px',
+                    overflow: 'hidden',
+                    lineHeight: '0',
+                    margin: index > 0 ? '-1px 0 0 0' : '0',
                     padding: '0',
+                    fontSize: '0',
                   }}
-                />
-              </div>
-            ))}
-          </div>
+                >
+                  <img
+                    src={image}
+                    alt={`${project.title} gallery ${index + 1}`}
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      display: 'block',
+                      margin: '0',
+                      padding: '0',
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Navigation */}

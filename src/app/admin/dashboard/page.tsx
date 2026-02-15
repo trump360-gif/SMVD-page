@@ -125,6 +125,16 @@ export default function DashboardPage() {
             </a>
 
             <a
+              href="/admin/dashboard/work"
+              className="block p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors border border-purple-200"
+            >
+              <p className="font-semibold text-purple-900">🎨 Work 페이지</p>
+              <p className="text-xs text-purple-700 mt-1">
+                포트폴리오 프로젝트 및 전시 관리
+              </p>
+            </a>
+
+            <a
               href="/admin/navigation"
               className="block p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors border border-green-200"
             >

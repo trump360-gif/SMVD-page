@@ -10,7 +10,9 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "node --loader ts-node/esm prisma/seed.ts",
     "db:push": "prisma db push",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "migrate:blocks": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/migrate-to-blocks.ts",
+    "migrate:blocks:dry": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/migrate-to-blocks.ts --dry-run"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -21,6 +23,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@hello-pangea/dnd": "^18.0.1",
     "@prisma/client": "^5.21.0",
+    "@tailwindcss/typography": "^0.5.19",
     "@tanstack/react-query": "^5.90.21",
     "bcrypt": "^6.0.0",
     "lucide-react": "^0.564.0",
@@ -29,6 +32,8 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.1",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "sharp": "^0.34.5",
     "zod": "^4.3.6"
   },

@@ -8,6 +8,10 @@ import {
   parseWorkProjectContent,
   serializeContent,
 } from '@/lib/content-parser';
+import {
+  workBlogInputSchema,
+  formatValidationError,
+} from '@/lib/validation/blog-schemas';
 import type {
   WorkProjectData,
   CreateProjectInput,
@@ -123,11 +127,22 @@ export default function WorkBlogModal({
   const handleSubmit = async () => {
     setError(null);
 
-    if (!title.trim()) { setError('Title is required'); setActiveTab('info'); return; }
-    if (!subtitle.trim()) { setError('Subtitle is required'); setActiveTab('info'); return; }
-    if (!category) { setError('Category is required'); setActiveTab('info'); return; }
-    if (!author.trim()) { setError('Author is required'); setActiveTab('info'); return; }
-    if (!email.trim()) { setError('Email is required'); setActiveTab('info'); return; }
+    // Validate all basic info fields via Zod schema
+    const result = workBlogInputSchema.safeParse({
+      title: title.trim(),
+      subtitle: subtitle.trim(),
+      category,
+      author: author.trim(),
+      email: email.trim(),
+      year,
+      thumbnailImage: thumbnailImage.trim() || undefined,
+    });
+
+    if (!result.success) {
+      setError(formatValidationError(result.error));
+      setActiveTab('info');
+      return;
+    }
 
     if (!isEditing) {
       if (!thumbnailImage.trim()) { setError('Thumbnail image is required'); setActiveTab('info'); return; }
