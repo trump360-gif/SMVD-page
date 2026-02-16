@@ -282,6 +282,53 @@ export default function WorkBlogModal({
     [blocks, reorderBlocks, rowConfig]
   );
 
+  /** Reorder rows themselves (not blocks within rows) */
+  const handleReorderRows = useCallback(
+    (sourceRowIndex: number, destinationRowIndex: number) => {
+      console.log('[WorkBlogModal] handleReorderRows called:', {
+        sourceRowIndex,
+        destinationRowIndex,
+        rowConfigLength: rowConfig.length,
+      });
+
+      setRowConfig((prev) => {
+        console.log('[WorkBlogModal] setRowConfig callback:', {
+          prev_length: prev.length,
+          sourceRowIndex,
+          destinationRowIndex,
+          prev_data: JSON.stringify(prev),
+        });
+
+        // Validate indices
+        if (
+          sourceRowIndex < 0 || sourceRowIndex >= prev.length ||
+          destinationRowIndex < 0 || destinationRowIndex >= prev.length ||
+          sourceRowIndex === destinationRowIndex
+        ) {
+          console.log('[WorkBlogModal] ❌ Validation failed:', {
+            check_sourceRowIndex_negative: sourceRowIndex < 0,
+            check_sourceRowIndex_outOfBounds: sourceRowIndex >= prev.length,
+            check_destinationRowIndex_negative: destinationRowIndex < 0,
+            check_destinationRowIndex_outOfBounds: destinationRowIndex >= prev.length,
+            check_sameIndex: sourceRowIndex === destinationRowIndex,
+          });
+          return prev;
+        }
+
+        const updated = [...prev];
+        const [movedRow] = updated.splice(sourceRowIndex, 1);
+        updated.splice(destinationRowIndex, 0, movedRow);
+        console.log('[WorkBlogModal] ✅ Reordered rowConfig:', {
+          oldIndex: sourceRowIndex,
+          newIndex: destinationRowIndex,
+          newLength: updated.length,
+        });
+        return updated;
+      });
+    },
+    [rowConfig.length]
+  );
+
   // ---- Reset form ----
   useEffect(() => {
     if (isOpen) {
@@ -320,7 +367,14 @@ export default function WorkBlogModal({
         if (parsedProjectContent && parsedProjectContent.blocks && parsedProjectContent.blocks.length > 0) {
           console.log('[WorkBlogModal] Using project.content with blocks:', parsedProjectContent.blocks.length);
           setEditorContent(parsedProjectContent);
-          setRowConfig(parsedProjectContent.rowConfig || []);
+          // ✅ Ensure rowConfig is valid - if missing, create default from blockCount
+          const rowCfg = parsedProjectContent.rowConfig || [];
+          if (rowCfg.length === 0 && parsedProjectContent.blocks.length > 0) {
+            // Auto-generate: 1 row with all blocks
+            setRowConfig([{ layout: 1, blockCount: parsedProjectContent.blocks.length }]);
+          } else {
+            setRowConfig(rowCfg);
+          }
           // ✅ Immediately sync with useBlockEditor
           console.log('[WorkBlogModal] Resetting blocks:', parsedProjectContent.blocks.length);
           resetBlocks(parsedProjectContent.blocks);
@@ -337,10 +391,13 @@ export default function WorkBlogModal({
           );
           console.log('[WorkBlogModal] Parsed content blocks:', parsedContent.blocks?.length);
           setEditorContent(parsedContent);
-          // ✅ Also sync fallback blocks with useBlockEditor
+          // ✅ Auto-generate rowConfig for fallback content too
           if (parsedContent.blocks && parsedContent.blocks.length > 0) {
             console.log('[WorkBlogModal] Resetting fallback blocks:', parsedContent.blocks.length);
+            setRowConfig([{ layout: 1, blockCount: parsedContent.blocks.length }]);
             resetBlocks(parsedContent.blocks);
+          } else {
+            setRowConfig([]);
           }
         }
       } else {
@@ -727,6 +784,7 @@ export default function WorkBlogModal({
                   onRowLayoutChange={handleRowLayoutChange}
                   onAddRow={handleAddRow}
                   onDeleteRow={handleDeleteRow}
+                  onReorderRows={handleReorderRows}
                   onAddBlockToRow={handleAddBlockToRow}
                   onDeleteBlock={handleDeleteBlock}
                   onMoveBlockToRow={handleMoveBlockToRow}

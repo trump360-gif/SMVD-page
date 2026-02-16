@@ -555,7 +555,8 @@ export function groupBlocksByRows(
   let blockIndex = 0;
 
   for (const row of rowConfig) {
-    const count = Math.max(0, row.blockCount);
+    // Defensive: handle rows without blockCount
+    const count = row?.blockCount ? Math.max(0, row.blockCount) : 0;
     const rowBlocks = blocks.slice(blockIndex, blockIndex + count);
     rows.push(rowBlocks);
     blockIndex += count;

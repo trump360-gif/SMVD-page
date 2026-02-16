@@ -99,7 +99,7 @@ export default function BlockToolbar({ onAddBlock, showWorkBlocks = false }: Blo
       </button>
 
       {isOpen && (
-        <div className="absolute bottom-full left-0 mb-1 w-md bg-white border border-gray-200 rounded-lg shadow-lg z-20 p-3 max-h-128 overflow-y-auto">
+        <div className="absolute top-full left-0 mt-1 w-96 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-3 max-h-96 overflow-y-auto">
           {/* Generic blocks - 3 column grid */}
           <div className="grid grid-cols-3 gap-2 mb-3">
             {GENERIC_BLOCK_OPTIONS.map((opt) => (

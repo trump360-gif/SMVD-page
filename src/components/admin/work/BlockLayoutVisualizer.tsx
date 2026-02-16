@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -54,6 +54,7 @@ interface BlockLayoutVisualizerProps {
   onRowLayoutChange: (rowIndex: number, layout: 1 | 2 | 3) => void;
   onAddRow: (layout?: 1 | 2 | 3) => void;
   onDeleteRow: (rowIndex: number) => void;
+  onReorderRows?: (sourceRowIndex: number, destinationRowIndex: number) => void;
   onAddBlockToRow: (type: BlockType, rowIndex: number) => void;
   onDeleteBlock: (id: string) => void;
   onMoveBlockToRow: (
@@ -274,6 +275,74 @@ const SortableBlockVisualCard = memo(function SortableBlockVisualCard({
 });
 
 // ---------------------------------------------------------------------------
+// SortableRowSection - wraps RowSection with drag-and-drop
+// ---------------------------------------------------------------------------
+
+interface SortableRowSectionProps extends RowSectionProps {
+  rowIndex: number;
+}
+
+const SortableRowSection = memo(function SortableRowSection({
+  rowIndex,
+  layout,
+  rowBlocks,
+  totalRows,
+  selectedId,
+  onSelect,
+  onLayoutChange,
+  onDeleteRow,
+  onAddBlock,
+  onReorder,
+  onDeleteBlock,
+}: SortableRowSectionProps) {
+  const rowId = `row-${rowIndex}`;
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: rowId });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        zIndex: isDragging ? 10 : 1,
+      }}
+    >
+      <div
+        className="group relative"
+        {...attributes}
+        {...listeners}
+      >
+        <RowSection
+          rowIndex={rowIndex}
+          layout={layout}
+          rowBlocks={rowBlocks}
+          totalRows={totalRows}
+          selectedId={selectedId}
+          onSelect={onSelect}
+          onLayoutChange={onLayoutChange}
+          onDeleteRow={onDeleteRow}
+          onAddBlock={onAddBlock}
+          onReorder={onReorder}
+          onDeleteBlock={onDeleteBlock}
+        />
+        <div
+          className="absolute left-0 top-0 w-1 h-full bg-blue-400 rounded-l opacity-0 group-hover:opacity-100 transition-opacity"
+          title="Drag to reorder"
+        />
+      </div>
+    </div>
+  );
+});
+
+// ---------------------------------------------------------------------------
 // RowSection - renders a single row with its blocks and controls
 // ---------------------------------------------------------------------------
 
@@ -456,6 +525,7 @@ export default function BlockLayoutVisualizer({
   onRowLayoutChange,
   onAddRow,
   onDeleteRow,
+  onReorderRows,
   onAddBlockToRow,
   onDeleteBlock,
   onMoveBlockToRow,
@@ -473,6 +543,51 @@ export default function BlockLayoutVisualizer({
 
   const [showAddRowMenu, setShowAddRowMenu] = React.useState(false);
 
+  // Sensors for row drag-and-drop
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleRowDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      console.log('[BlockLayoutVisualizer] Row drag end:', {
+        activeId: active.id,
+        overId: over?.id,
+        effectiveRowConfigLength: effectiveRowConfig.length,
+        rowConfigLength: rowConfig.length,
+        hasOnReorderRows: !!onReorderRows,
+      });
+
+      if (over && active.id !== over.id && onReorderRows) {
+        // Extract row indices from drag IDs
+        // IDs are formatted as "row-{index}"
+        const activeMatch = String(active.id).match(/^row-(\d+)$/);
+        const overMatch = String(over.id).match(/^row-(\d+)$/);
+
+        console.log('[BlockLayoutVisualizer] Regex match:', {
+          activeMatch: activeMatch ? [activeMatch[0], activeMatch[1]] : null,
+          overMatch: overMatch ? [overMatch[0], overMatch[1]] : null,
+        });
+
+        if (activeMatch && overMatch) {
+          const oldIndex = parseInt(activeMatch[1], 10);
+          const newIndex = parseInt(overMatch[1], 10);
+          if (!isNaN(oldIndex) && !isNaN(newIndex)) {
+            console.log(`[BlockLayoutVisualizer] ✅ Reordering rows: ${oldIndex} → ${newIndex}`);
+            console.log('[BlockLayoutVisualizer] effectiveRowConfig:', JSON.stringify(effectiveRowConfig));
+            console.log('[BlockLayoutVisualizer] rowConfig:', JSON.stringify(rowConfig));
+            onReorderRows(oldIndex, newIndex);
+          }
+        }
+      }
+    },
+    [onReorderRows, effectiveRowConfig, rowConfig]
+  );
+
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Header */}
@@ -486,7 +601,7 @@ export default function BlockLayoutVisualizer({
       </div>
 
       {/* Rows list */}
-      <div className="flex-1 overflow-y-auto min-h-0 p-2 space-y-2">
+      <div className="flex-1 overflow-y-auto min-h-0 p-2">
         {effectiveRowConfig.length === 0 && blocks.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-6 text-center h-full">
             <FileText size={40} className="text-gray-300 mb-3" />
@@ -506,28 +621,41 @@ export default function BlockLayoutVisualizer({
             </button>
           </div>
         ) : (
-          groupedRows.map((rowBlocks, idx) => {
-            const config = effectiveRowConfig[idx] || {
-              layout: 1 as const,
-              blockCount: rowBlocks.length,
-            };
-            return (
-              <RowSection
-                key={`row-${idx}`}
-                rowIndex={idx}
-                layout={config.layout}
-                rowBlocks={rowBlocks}
-                totalRows={effectiveRowConfig.length}
-                selectedId={selectedId}
-                onSelect={onSelect}
-                onLayoutChange={(layout) => onRowLayoutChange(idx, layout)}
-                onDeleteRow={() => onDeleteRow(idx)}
-                onAddBlock={(type) => onAddBlockToRow(type, idx)}
-                onReorder={onReorder}
-                onDeleteBlock={onDeleteBlock}
-              />
-            );
-          })
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleRowDragEnd}
+          >
+            <SortableContext
+              items={effectiveRowConfig.map((_, idx) => `row-${idx}`)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-2">
+                {groupedRows.map((rowBlocks, idx) => {
+                  const config = effectiveRowConfig[idx] || {
+                    layout: 1 as const,
+                    blockCount: rowBlocks.length,
+                  };
+                  return (
+                    <SortableRowSection
+                      key={`row-${idx}`}
+                      rowIndex={idx}
+                      layout={config.layout}
+                      rowBlocks={rowBlocks}
+                      totalRows={effectiveRowConfig.length}
+                      selectedId={selectedId}
+                      onSelect={onSelect}
+                      onLayoutChange={(layout) => onRowLayoutChange(idx, layout)}
+                      onDeleteRow={() => onDeleteRow(idx)}
+                      onAddBlock={(type) => onAddBlockToRow(type, idx)}
+                      onReorder={onReorder}
+                      onDeleteBlock={onDeleteBlock}
+                    />
+                  );
+                })}
+              </div>
+            </SortableContext>
+          </DndContext>
         )}
       </div>
 

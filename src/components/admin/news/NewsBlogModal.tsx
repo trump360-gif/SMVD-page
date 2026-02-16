@@ -249,6 +249,52 @@ export default function NewsBlogModal({
     [blocks, reorderBlocks, rowConfig]
   );
 
+  const handleReorderRows = useCallback(
+    (sourceRowIndex: number, destinationRowIndex: number) => {
+      console.log('[NewsBlogModal] handleReorderRows called:', {
+        sourceRowIndex,
+        destinationRowIndex,
+        rowConfigLength: rowConfig.length,
+      });
+
+      setRowConfig((prev) => {
+        console.log('[NewsBlogModal] setRowConfig callback:', {
+          prev_length: prev.length,
+          sourceRowIndex,
+          destinationRowIndex,
+          prev_data: JSON.stringify(prev),
+        });
+
+        // Validate indices
+        if (
+          sourceRowIndex < 0 || sourceRowIndex >= prev.length ||
+          destinationRowIndex < 0 || destinationRowIndex >= prev.length ||
+          sourceRowIndex === destinationRowIndex
+        ) {
+          console.log('[NewsBlogModal] ❌ Validation failed:', {
+            check_sourceRowIndex_negative: sourceRowIndex < 0,
+            check_sourceRowIndex_outOfBounds: sourceRowIndex >= prev.length,
+            check_destinationRowIndex_negative: destinationRowIndex < 0,
+            check_destinationRowIndex_outOfBounds: destinationRowIndex >= prev.length,
+            check_sameIndex: sourceRowIndex === destinationRowIndex,
+          });
+          return prev;
+        }
+
+        const updated = [...prev];
+        const [movedRow] = updated.splice(sourceRowIndex, 1);
+        updated.splice(destinationRowIndex, 0, movedRow);
+        console.log('[NewsBlogModal] ✅ Reordered rowConfig:', {
+          oldIndex: sourceRowIndex,
+          newIndex: destinationRowIndex,
+          newLength: updated.length,
+        });
+        return updated;
+      });
+    },
+    [rowConfig.length]
+  );
+
   // ---- Reset form ----
   useEffect(() => {
     if (isOpen) {
@@ -288,15 +334,25 @@ export default function NewsBlogModal({
 
         if (parsedContent && parsedContent.blocks && parsedContent.blocks.length > 0) {
           setEditorContent(parsedContent);
-          setRowConfig(parsedContent.rowConfig || []);
+          // ✅ Ensure rowConfig is valid - if missing, create default from blockCount
+          const rowCfg = parsedContent.rowConfig || [];
+          if (rowCfg.length === 0 && parsedContent.blocks.length > 0) {
+            // Auto-generate: 1 row with all blocks
+            setRowConfig([{ layout: 1, blockCount: parsedContent.blocks.length }]);
+          } else {
+            setRowConfig(rowCfg);
+          }
           resetBlocks(parsedContent.blocks);
         } else {
           // Fallback: Convert legacy content to BlockEditor format
           const legacyContent = parseNewsContent(content as NewsContentShape | null);
           setEditorContent(legacyContent);
-          setRowConfig([]);
+          // ✅ Auto-generate rowConfig for legacy content too
           if (legacyContent.blocks && legacyContent.blocks.length > 0) {
+            setRowConfig([{ layout: 1, blockCount: legacyContent.blocks.length }]);
             resetBlocks(legacyContent.blocks);
+          } else {
+            setRowConfig([]);
           }
         }
       } else {
@@ -602,6 +658,7 @@ export default function NewsBlogModal({
                     onRowLayoutChange={handleRowLayoutChange}
                     onAddRow={handleAddRow}
                     onDeleteRow={handleDeleteRow}
+                    onReorderRows={handleReorderRows}
                     onAddBlockToRow={handleAddBlockToRow}
                     onDeleteBlock={handleDeleteBlock}
                     onMoveBlockToRow={handleMoveBlockToRow}
