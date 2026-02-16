@@ -304,7 +304,7 @@ export default function NewsBlogModal({
       excerpt: excerpt.trim() || undefined,
       publishedAt: publishedAt || undefined,
       thumbnailImage: thumbnailImage || undefined,
-      attachments: attachments.length > 0 ? attachments : undefined, // NEW - Include attachments in validation
+      // attachments는 API에서만 검증
     });
 
     if (!result.success) {

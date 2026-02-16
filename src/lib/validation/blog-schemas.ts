@@ -28,7 +28,7 @@ export const newsArticleInputSchema = z.object({
   excerpt: z.string().max(500).optional(),
   publishedAt: z.string().optional(),
   thumbnailImage: z.string().optional(),
-  attachments: z.unknown().optional(), // Attachments validated at runtime
+  // attachments는 API에서 검증 (클라이언트에서는 제외)
 });
 
 export type NewsArticleInput = z.infer<typeof newsArticleInputSchema>;
