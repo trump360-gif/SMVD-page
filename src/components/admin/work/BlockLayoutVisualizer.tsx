@@ -409,7 +409,7 @@ const RowSection = memo(function RowSection({
   }[layout];
 
   return (
-    <div className="border border-gray-200 rounded-lg bg-gray-50/50 overflow-hidden">
+    <div className="border border-gray-200 rounded-lg bg-gray-50/50">
       {/* Row header */}
       <div className="flex items-center justify-between px-2.5 py-1.5 bg-white border-b border-gray-100">
         <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
