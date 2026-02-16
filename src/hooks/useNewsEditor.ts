@@ -14,6 +14,16 @@ export interface GalleryData {
   bottomRight: string;
 }
 
+// Attachment data structure (NEW - 2026-02-16)
+export interface AttachmentData {
+  id: string;
+  filename: string;
+  filepath: string;
+  mimeType: string;
+  size: number;
+  uploadedAt: string;
+}
+
 export interface NewsContentData {
   // New block-based format
   blocks?: import('@/components/admin/shared/BlockEditor/types').Block[];
@@ -33,6 +43,7 @@ export interface NewsArticleData {
   excerpt: string | null;
   thumbnailImage: string;
   content: NewsContentData | null;
+  attachments?: AttachmentData[] | null; // NEW - 2026-02-16
   publishedAt: string;
   published: boolean;
   order: number;
@@ -46,6 +57,7 @@ export interface CreateArticleInput {
   excerpt?: string;
   thumbnailImage?: string;
   content?: NewsContentData | null;
+  attachments?: AttachmentData[]; // NEW - 2026-02-16
   publishedAt?: string;
   published?: boolean;
 }
@@ -56,6 +68,7 @@ export interface UpdateArticleInput {
   excerpt?: string | null;
   thumbnailImage?: string;
   content?: NewsContentData | null;
+  attachments?: AttachmentData[] | null; // NEW - 2026-02-16
   publishedAt?: string;
   published?: boolean;
 }

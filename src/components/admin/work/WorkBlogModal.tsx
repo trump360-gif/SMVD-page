@@ -6,6 +6,7 @@ import WorkDetailPreviewRenderer from '@/components/admin/shared/BlockEditor/ren
 import BlockLayoutVisualizer from '@/components/admin/work/BlockLayoutVisualizer';
 import BlockEditorPanel from '@/components/admin/work/BlockEditorPanel';
 import { useBlockEditor } from '@/components/admin/shared/BlockEditor/useBlockEditor';
+import { useRowManager } from '@/components/admin/shared/BlockEditor/useRowManager';
 import type {
   BlogContent,
   WorkProjectContext,
@@ -90,8 +91,25 @@ export default function WorkBlogModal({
   } = useBlockEditor(editorContent.blocks);
 
   // Row-based layout configuration (replaces single columnLayout)
-  const [rowConfig, setRowConfig] = useState<RowConfig[]>(
-    editorContent.rowConfig || []
+  const [rowConfig, setRowConfig] = useState<RowConfig[]>([]);
+
+  // ---- Row management callbacks (extracted to useRowManager hook) ----
+  const {
+    handleRowLayoutChange,
+    handleAddRow,
+    handleDeleteRow,
+    handleAddBlockToRow,
+    handleDeleteBlock,
+    handleMoveBlockToRow,
+    handleReorderRows,
+  } = useRowManager(
+    rowConfig,
+    setRowConfig,
+    blocks,
+    addBlock,
+    deleteBlock,
+    reorderBlocks,
+    'WorkBlogModal'
   );
 
   // ✅ 한 방향 동기화: blocks/rowConfig 변경 → editorContent 업데이트 (편집기 변경사항 저장용)
@@ -99,235 +117,6 @@ export default function WorkBlogModal({
   useEffect(() => {
     setEditorContent((prev) => ({ ...prev, blocks, rowConfig }));
   }, [blocks, rowConfig]);
-
-  // --- Row management callbacks ---
-
-  /** Change the column layout for a specific row */
-  const handleRowLayoutChange = useCallback(
-    (rowIndex: number, newLayout: 1 | 2 | 3) => {
-      setRowConfig((prev) => {
-        const updated = [...prev];
-        if (rowIndex < updated.length) {
-          updated[rowIndex] = { ...updated[rowIndex], layout: newLayout };
-        }
-        return updated;
-      });
-    },
-    []
-  );
-
-  /** Add a new row with a given column layout (default: 1) */
-  const handleAddRow = useCallback((layout: 1 | 2 | 3 = 1) => {
-    setRowConfig((prev) => [...prev, { layout, blockCount: 0 }]);
-  }, []);
-
-  /** Delete a row (blocks stay in the flat array; they get merged into adjacent rows) */
-  const handleDeleteRow = useCallback((rowIndex: number) => {
-    setRowConfig((prev) => {
-      if (prev.length <= 1) return prev; // don't delete last row
-      const updated = [...prev];
-      const removedBlockCount = updated[rowIndex].blockCount;
-      updated.splice(rowIndex, 1);
-      // Merge the removed row's blocks into the previous row (or next if first)
-      if (removedBlockCount > 0) {
-        const mergeTarget = rowIndex > 0 ? rowIndex - 1 : 0;
-        if (updated[mergeTarget]) {
-          updated[mergeTarget] = {
-            ...updated[mergeTarget],
-            blockCount: updated[mergeTarget].blockCount + removedBlockCount,
-          };
-        }
-      }
-      return updated;
-    });
-  }, []);
-
-  /** Add a block to a specific row */
-  const handleAddBlockToRow = useCallback(
-    (type: BlockType, rowIndex: number) => {
-      // Calculate the insertion index in the flat blocks array
-      // = sum of blockCounts for all rows before this one + this row's blockCount
-      setRowConfig((prev) => {
-        const updated = [...prev];
-        if (rowIndex < updated.length) {
-          updated[rowIndex] = {
-            ...updated[rowIndex],
-            blockCount: updated[rowIndex].blockCount + 1,
-          };
-        } else {
-          // Row doesn't exist yet, create it
-          updated.push({ layout: 1, blockCount: 1 });
-        }
-        return updated;
-      });
-
-      // Calculate position: insert after all blocks in previous rows + current row's blocks
-      let blockOffset = 0;
-      for (let i = 0; i < rowIndex; i++) {
-        blockOffset += rowConfig[i]?.blockCount ?? 0;
-      }
-      blockOffset += rowConfig[rowIndex]?.blockCount ?? 0;
-      // Insert at that position (the afterId is the block just before this position)
-      if (blockOffset > 0 && blockOffset <= blocks.length) {
-        const afterBlock = blocks[blockOffset - 1];
-        addBlock(type, afterBlock.id);
-      } else {
-        addBlock(type);
-      }
-    },
-    [addBlock, blocks, rowConfig]
-  );
-
-  /** Handle block deletion with rowConfig sync */
-  const handleDeleteBlock = useCallback(
-    (id: string) => {
-      // Find which row this block belongs to
-      const blockIndex = blocks.findIndex((b) => b.id === id);
-      if (blockIndex === -1) {
-        deleteBlock(id);
-        return;
-      }
-
-      // Determine the row this block belongs to
-      let accum = 0;
-      let targetRow = -1;
-      for (let i = 0; i < rowConfig.length; i++) {
-        accum += rowConfig[i].blockCount;
-        if (blockIndex < accum) {
-          targetRow = i;
-          break;
-        }
-      }
-
-      deleteBlock(id);
-
-      // Decrement the blockCount for the target row
-      if (targetRow >= 0) {
-        setRowConfig((prev) => {
-          const updated = [...prev];
-          if (targetRow < updated.length && updated[targetRow].blockCount > 0) {
-            updated[targetRow] = {
-              ...updated[targetRow],
-              blockCount: updated[targetRow].blockCount - 1,
-            };
-            // Remove row if it becomes empty and there are other rows
-            if (updated[targetRow].blockCount === 0 && updated.length > 1) {
-              updated.splice(targetRow, 1);
-            }
-          }
-          return updated;
-        });
-      }
-    },
-    [blocks, deleteBlock, rowConfig]
-  );
-
-  /** Move a block between rows via drag and drop */
-  const handleMoveBlockToRow = useCallback(
-    (blockId: string, targetRowIndex: number, positionInRow: number) => {
-      const blockIndex = blocks.findIndex((b) => b.id === blockId);
-      if (blockIndex === -1) return;
-
-      // Find source row
-      let accum = 0;
-      let sourceRow = -1;
-      for (let i = 0; i < rowConfig.length; i++) {
-        accum += rowConfig[i].blockCount;
-        if (blockIndex < accum) {
-          sourceRow = i;
-          break;
-        }
-      }
-
-      // Calculate destination index in flat array
-      let destIndex = 0;
-      for (let i = 0; i < targetRowIndex; i++) {
-        destIndex += rowConfig[i]?.blockCount ?? 0;
-      }
-      destIndex += positionInRow;
-
-      // Move block
-      reorderBlocks(blockId, destIndex);
-
-      // Update rowConfig: decrement source, increment destination
-      if (sourceRow >= 0 && sourceRow !== targetRowIndex) {
-        setRowConfig((prev) => {
-          const updated = [...prev];
-          // Decrement source
-          if (sourceRow < updated.length && updated[sourceRow].blockCount > 0) {
-            updated[sourceRow] = {
-              ...updated[sourceRow],
-              blockCount: updated[sourceRow].blockCount - 1,
-            };
-          }
-          // Increment destination
-          if (targetRowIndex < updated.length) {
-            updated[targetRowIndex] = {
-              ...updated[targetRowIndex],
-              blockCount: updated[targetRowIndex].blockCount + 1,
-            };
-          }
-          // Clean up empty source rows (if not the only row)
-          if (
-            sourceRow < updated.length &&
-            updated[sourceRow].blockCount === 0 &&
-            updated.length > 1
-          ) {
-            updated.splice(sourceRow, 1);
-          }
-          return updated;
-        });
-      }
-    },
-    [blocks, reorderBlocks, rowConfig]
-  );
-
-  /** Reorder rows themselves (not blocks within rows) */
-  const handleReorderRows = useCallback(
-    (sourceRowIndex: number, destinationRowIndex: number) => {
-      console.log('[WorkBlogModal] handleReorderRows called:', {
-        sourceRowIndex,
-        destinationRowIndex,
-        rowConfigLength: rowConfig.length,
-      });
-
-      setRowConfig((prev) => {
-        console.log('[WorkBlogModal] setRowConfig callback:', {
-          prev_length: prev.length,
-          sourceRowIndex,
-          destinationRowIndex,
-          prev_data: JSON.stringify(prev),
-        });
-
-        // Validate indices
-        if (
-          sourceRowIndex < 0 || sourceRowIndex >= prev.length ||
-          destinationRowIndex < 0 || destinationRowIndex >= prev.length ||
-          sourceRowIndex === destinationRowIndex
-        ) {
-          console.log('[WorkBlogModal] ❌ Validation failed:', {
-            check_sourceRowIndex_negative: sourceRowIndex < 0,
-            check_sourceRowIndex_outOfBounds: sourceRowIndex >= prev.length,
-            check_destinationRowIndex_negative: destinationRowIndex < 0,
-            check_destinationRowIndex_outOfBounds: destinationRowIndex >= prev.length,
-            check_sameIndex: sourceRowIndex === destinationRowIndex,
-          });
-          return prev;
-        }
-
-        const updated = [...prev];
-        const [movedRow] = updated.splice(sourceRowIndex, 1);
-        updated.splice(destinationRowIndex, 0, movedRow);
-        console.log('[WorkBlogModal] ✅ Reordered rowConfig:', {
-          oldIndex: sourceRowIndex,
-          newIndex: destinationRowIndex,
-          newLength: updated.length,
-        });
-        return updated;
-      });
-    },
-    [rowConfig.length]
-  );
 
   // ---- Reset form ----
   useEffect(() => {

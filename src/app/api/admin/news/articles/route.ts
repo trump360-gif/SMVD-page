@@ -35,12 +35,23 @@ const ContentSchema = z.union([
   }).passthrough(),
 ]).optional();
 
+// Attachment schema for file metadata (NEW - 2026-02-16)
+const AttachmentSchema = z.object({
+  id: z.string(),
+  filename: z.string(),
+  filepath: z.string(),
+  mimeType: z.string(),
+  size: z.number(),
+  uploadedAt: z.string(),
+});
+
 const CreateArticleSchema = z.object({
   title: z.string().min(1, '제목은 필수입니다'),
   category: z.enum(['Notice', 'Event', 'Awards', 'Recruiting']),
   excerpt: z.string().optional(),
   thumbnailImage: z.string().default('/Group-27.svg'),
   content: ContentSchema,
+  attachments: z.array(AttachmentSchema).optional(), // NEW - 2026-02-16
   publishedAt: z.string().optional(),
   published: z.boolean().default(true),
 });
@@ -124,6 +135,9 @@ export async function POST(request: NextRequest) {
         excerpt: data.excerpt || null,
         thumbnailImage: data.thumbnailImage,
         content: data.content ? (data.content as Prisma.InputJsonValue) : Prisma.JsonNull,
+        attachments: data.attachments && data.attachments.length > 0
+          ? (data.attachments as Prisma.InputJsonValue)
+          : Prisma.JsonNull,
         publishedAt: data.publishedAt ? new Date(data.publishedAt) : new Date(),
         published: data.published,
         order: nextOrder,

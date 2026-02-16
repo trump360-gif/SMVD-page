@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { X, RotateCcw, RotateCw } from 'lucide-react';
+import { X, RotateCcw, RotateCw, Trash2 } from 'lucide-react';
 import NewsDetailPreviewRenderer from '@/components/admin/shared/BlockEditor/renderers/NewsDetailPreviewRenderer';
 import type { NewsArticleContext } from '@/components/admin/shared/BlockEditor/renderers/NewsDetailPreviewRenderer';
 import BlockLayoutVisualizer from '@/components/admin/work/BlockLayoutVisualizer';
 import BlockEditorPanel from '@/components/admin/work/BlockEditorPanel';
 import { useBlockEditor } from '@/components/admin/shared/BlockEditor/useBlockEditor';
+import { useRowManager } from '@/components/admin/shared/BlockEditor/useRowManager';
 import type {
   BlogContent,
   BlockType,
@@ -43,7 +44,7 @@ export default function NewsBlogModal({
   const modalRef = useRef<HTMLDivElement>(null);
 
   // ---- State ----
-  const [activeTab, setActiveTab] = useState<'info' | 'content'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'content' | 'attachments'>('info'); // Updated - 2026-02-16
 
   // Basic info
   const [title, setTitle] = useState('');
@@ -58,6 +59,9 @@ export default function NewsBlogModal({
     blocks: [],
     version: '1.0',
   });
+
+  // Attachments (NEW - 2026-02-16)
+  const [attachments, setAttachments] = useState<import('@/hooks/useNewsEditor').AttachmentData[]>([]);
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -86,217 +90,31 @@ export default function NewsBlogModal({
   // Track if article data has been loaded to avoid overwriting loaded rowConfig
   const [isLoaded, setIsLoaded] = useState(false);
 
+  // ---- Row management callbacks (extracted to useRowManager hook) ----
+  const {
+    handleRowLayoutChange,
+    handleAddRow,
+    handleDeleteRow,
+    handleAddBlockToRow,
+    handleDeleteBlock,
+    handleMoveBlockToRow,
+    handleReorderRows,
+  } = useRowManager(
+    rowConfig,
+    setRowConfig,
+    blocks,
+    addBlock,
+    deleteBlock,
+    reorderBlocks,
+    'NewsBlogModal'
+  );
+
   // One-way sync: blocks/rowConfig changes -> editorContent update
   // BUT: Don't sync if we just loaded data (preserve loaded rowConfig)
   useEffect(() => {
     if (!isLoaded) return; // Skip sync during initial load
     setEditorContent((prev) => ({ ...prev, blocks, rowConfig }));
   }, [blocks, rowConfig, isLoaded]);
-
-  // --- Row management callbacks ---
-
-  const handleRowLayoutChange = useCallback(
-    (rowIndex: number, newLayout: 1 | 2 | 3) => {
-      setRowConfig((prev) => {
-        const updated = [...prev];
-        if (rowIndex < updated.length) {
-          updated[rowIndex] = { ...updated[rowIndex], layout: newLayout };
-        }
-        return updated;
-      });
-    },
-    []
-  );
-
-  const handleAddRow = useCallback((layout: 1 | 2 | 3 = 1) => {
-    setRowConfig((prev) => [...prev, { layout, blockCount: 0 }]);
-  }, []);
-
-  const handleDeleteRow = useCallback((rowIndex: number) => {
-    setRowConfig((prev) => {
-      if (prev.length <= 1) return prev;
-      const updated = [...prev];
-      const removedBlockCount = updated[rowIndex].blockCount;
-      updated.splice(rowIndex, 1);
-      if (removedBlockCount > 0) {
-        const mergeTarget = rowIndex > 0 ? rowIndex - 1 : 0;
-        if (updated[mergeTarget]) {
-          updated[mergeTarget] = {
-            ...updated[mergeTarget],
-            blockCount: updated[mergeTarget].blockCount + removedBlockCount,
-          };
-        }
-      }
-      return updated;
-    });
-  }, []);
-
-  const handleAddBlockToRow = useCallback(
-    (type: BlockType, rowIndex: number) => {
-      setRowConfig((prev) => {
-        const updated = [...prev];
-        if (rowIndex < updated.length) {
-          updated[rowIndex] = {
-            ...updated[rowIndex],
-            blockCount: updated[rowIndex].blockCount + 1,
-          };
-        } else {
-          updated.push({ layout: 1, blockCount: 1 });
-        }
-        return updated;
-      });
-
-      let blockOffset = 0;
-      for (let i = 0; i < rowIndex; i++) {
-        blockOffset += rowConfig[i]?.blockCount ?? 0;
-      }
-      blockOffset += rowConfig[rowIndex]?.blockCount ?? 0;
-      if (blockOffset > 0 && blockOffset <= blocks.length) {
-        const afterBlock = blocks[blockOffset - 1];
-        addBlock(type, afterBlock.id);
-      } else {
-        addBlock(type);
-      }
-    },
-    [addBlock, blocks, rowConfig]
-  );
-
-  const handleDeleteBlock = useCallback(
-    (id: string) => {
-      const blockIndex = blocks.findIndex((b) => b.id === id);
-      if (blockIndex === -1) {
-        deleteBlock(id);
-        return;
-      }
-
-      let accum = 0;
-      let targetRow = -1;
-      for (let i = 0; i < rowConfig.length; i++) {
-        accum += rowConfig[i].blockCount;
-        if (blockIndex < accum) {
-          targetRow = i;
-          break;
-        }
-      }
-
-      deleteBlock(id);
-
-      if (targetRow >= 0) {
-        setRowConfig((prev) => {
-          const updated = [...prev];
-          if (targetRow < updated.length && updated[targetRow].blockCount > 0) {
-            updated[targetRow] = {
-              ...updated[targetRow],
-              blockCount: updated[targetRow].blockCount - 1,
-            };
-            if (updated[targetRow].blockCount === 0 && updated.length > 1) {
-              updated.splice(targetRow, 1);
-            }
-          }
-          return updated;
-        });
-      }
-    },
-    [blocks, deleteBlock, rowConfig]
-  );
-
-  const handleMoveBlockToRow = useCallback(
-    (blockId: string, targetRowIndex: number, positionInRow: number) => {
-      const blockIndex = blocks.findIndex((b) => b.id === blockId);
-      if (blockIndex === -1) return;
-
-      let accum = 0;
-      let sourceRow = -1;
-      for (let i = 0; i < rowConfig.length; i++) {
-        accum += rowConfig[i].blockCount;
-        if (blockIndex < accum) {
-          sourceRow = i;
-          break;
-        }
-      }
-
-      let destIndex = 0;
-      for (let i = 0; i < targetRowIndex; i++) {
-        destIndex += rowConfig[i]?.blockCount ?? 0;
-      }
-      destIndex += positionInRow;
-
-      reorderBlocks(blockId, destIndex);
-
-      if (sourceRow >= 0 && sourceRow !== targetRowIndex) {
-        setRowConfig((prev) => {
-          const updated = [...prev];
-          if (sourceRow < updated.length && updated[sourceRow].blockCount > 0) {
-            updated[sourceRow] = {
-              ...updated[sourceRow],
-              blockCount: updated[sourceRow].blockCount - 1,
-            };
-          }
-          if (targetRowIndex < updated.length) {
-            updated[targetRowIndex] = {
-              ...updated[targetRowIndex],
-              blockCount: updated[targetRowIndex].blockCount + 1,
-            };
-          }
-          if (
-            sourceRow < updated.length &&
-            updated[sourceRow].blockCount === 0 &&
-            updated.length > 1
-          ) {
-            updated.splice(sourceRow, 1);
-          }
-          return updated;
-        });
-      }
-    },
-    [blocks, reorderBlocks, rowConfig]
-  );
-
-  const handleReorderRows = useCallback(
-    (sourceRowIndex: number, destinationRowIndex: number) => {
-      console.log('[NewsBlogModal] handleReorderRows called:', {
-        sourceRowIndex,
-        destinationRowIndex,
-        rowConfigLength: rowConfig.length,
-      });
-
-      setRowConfig((prev) => {
-        console.log('[NewsBlogModal] setRowConfig callback:', {
-          prev_length: prev.length,
-          sourceRowIndex,
-          destinationRowIndex,
-          prev_data: JSON.stringify(prev),
-        });
-
-        // Validate indices
-        if (
-          sourceRowIndex < 0 || sourceRowIndex >= prev.length ||
-          destinationRowIndex < 0 || destinationRowIndex >= prev.length ||
-          sourceRowIndex === destinationRowIndex
-        ) {
-          console.log('[NewsBlogModal] ❌ Validation failed:', {
-            check_sourceRowIndex_negative: sourceRowIndex < 0,
-            check_sourceRowIndex_outOfBounds: sourceRowIndex >= prev.length,
-            check_destinationRowIndex_negative: destinationRowIndex < 0,
-            check_destinationRowIndex_outOfBounds: destinationRowIndex >= prev.length,
-            check_sameIndex: sourceRowIndex === destinationRowIndex,
-          });
-          return prev;
-        }
-
-        const updated = [...prev];
-        const [movedRow] = updated.splice(sourceRowIndex, 1);
-        updated.splice(destinationRowIndex, 0, movedRow);
-        console.log('[NewsBlogModal] ✅ Reordered rowConfig:', {
-          oldIndex: sourceRowIndex,
-          newIndex: destinationRowIndex,
-          newLength: updated.length,
-        });
-        return updated;
-      });
-    },
-    [rowConfig.length]
-  );
 
   // ---- Reset form ----
   useEffect(() => {
@@ -317,6 +135,13 @@ export default function NewsBlogModal({
             : ''
         );
         setPublished(article.published);
+
+        // Load attachments (NEW - 2026-02-16)
+        if (article.attachments && Array.isArray(article.attachments)) {
+          setAttachments(article.attachments);
+        } else {
+          setAttachments([]);
+        }
 
         // Parse content: check for new block format or legacy format
         const content = article.content as NewsContentShape | BlogContent | null;
@@ -397,6 +222,7 @@ export default function NewsBlogModal({
         setPublished(true);
         setEditorContent({ blocks: [], version: '1.0' });
         setRowConfig([]);
+        setAttachments([]); // NEW - 2026-02-16
       }
       setError(null);
       setActiveTab('info');
@@ -533,6 +359,7 @@ export default function NewsBlogModal({
         excerpt: excerpt.trim() || undefined,
         thumbnailImage,
         content,
+        attachments: attachments.length > 0 ? attachments : undefined, // NEW - 2026-02-16
         publishedAt: publishedAt || new Date().toISOString().split('T')[0],
         published,
       };
@@ -565,6 +392,7 @@ export default function NewsBlogModal({
   const tabs = [
     { key: 'info' as const, label: 'Basic Info' },
     { key: 'content' as const, label: 'Content (Blocks)' },
+    { key: 'attachments' as const, label: 'Attachments' }, // NEW - 2026-02-16
   ];
 
   return (
@@ -814,6 +642,63 @@ export default function NewsBlogModal({
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Tab: Attachments (NEW - 2026-02-16) */}
+          {activeTab === 'attachments' && (
+            <div className="space-y-5 max-w-3xl p-6">
+              {/* File Upload Section */}
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-blue-400 hover:bg-blue-50 transition-colors cursor-pointer">
+                <div className="text-center">
+                  <p className="text-sm font-medium text-gray-700 mb-2">
+                    Drag files here or click to upload
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Supported formats: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, ZIP
+                  </p>
+                </div>
+              </div>
+
+              {/* Attachments List */}
+              {attachments.length > 0 ? (
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-gray-700">
+                    {attachments.length} file{attachments.length !== 1 ? 's' : ''}
+                  </h3>
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {attachments.map((attachment) => (
+                      <div
+                        key={attachment.id}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {attachment.filename}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {(attachment.size / 1024).toFixed(1)} KB • {new Date(attachment.uploadedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setAttachments(attachments.filter(a => a.id !== attachment.id))}
+                          className="ml-2 p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-sm text-gray-500">
+                    No attachments yet. Upload files above.
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -40,12 +40,23 @@ const ContentSchema = z.union([
   LegacyContentSchema,
 ]).optional();
 
+// Attachment schema for file metadata (NEW - 2026-02-16)
+const AttachmentSchema = z.object({
+  id: z.string(),
+  filename: z.string(),
+  filepath: z.string(),
+  mimeType: z.string(),
+  size: z.number(),
+  uploadedAt: z.string(),
+});
+
 const UpdateArticleSchema = z.object({
   title: z.string().min(1).optional(),
   category: z.enum(['Notice', 'Event', 'Awards', 'Recruiting']).optional(),
   excerpt: z.string().nullable().optional(),
   thumbnailImage: z.string().optional(),
   content: ContentSchema.nullable(),
+  attachments: z.array(AttachmentSchema).nullable().optional(), // NEW - 2026-02-16
   publishedAt: z.string().optional(),
   published: z.boolean().optional(),
 });
@@ -167,6 +178,11 @@ export async function PUT(
         : Prisma.JsonNull;
 
       console.log('[API PUT] Final updateData.content:', updateData.content === Prisma.JsonNull ? 'Prisma.JsonNull' : JSON.stringify(updateData.content));
+    }
+    if (validation.data.attachments !== undefined) {
+      updateData.attachments = validation.data.attachments && validation.data.attachments.length > 0
+        ? (validation.data.attachments as Prisma.InputJsonValue)
+        : Prisma.JsonNull;
     }
     if (validation.data.publishedAt !== undefined) updateData.publishedAt = new Date(validation.data.publishedAt);
     if (validation.data.published !== undefined) updateData.published = validation.data.published;

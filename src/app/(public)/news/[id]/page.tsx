@@ -4,6 +4,7 @@ import {
 } from '@/components/public/home';
 import { NewsEventDetailContent } from '@/components/public/news';
 import NewsBlockRenderer from '@/components/public/news/NewsBlockRenderer';
+import AttachmentDownloadBox from '@/components/public/news/AttachmentDownloadBox'; // NEW - 2026-02-16
 import { prisma } from '@/lib/db';
 
 // ⚠️ CRITICAL: Disable ISR caching to always fetch latest DB data
@@ -12,6 +13,15 @@ export const revalidate = 0;
 
 // ---- Types ----
 
+interface AttachmentData {
+  id: string;
+  filename: string;
+  filepath: string;
+  mimeType: string;
+  size: number;
+  uploadedAt: string;
+}
+
 interface NewsLegacyData {
   id: string;
   category: string;
@@ -19,6 +29,7 @@ interface NewsLegacyData {
   title: string;
   introTitle?: string;
   introText?: string;
+  attachments?: AttachmentData[] | null; // NEW - 2026-02-16
   images?: {
     main: string;
     centerLeft: string;
@@ -36,6 +47,7 @@ interface NewsBlockData {
   title: string;
   blocks: Array<Record<string, unknown>>;
   version: string;
+  attachments?: AttachmentData[] | null; // NEW - 2026-02-16
 }
 
 type NewsDetailResult =
@@ -61,6 +73,7 @@ async function getNewsDetail(slug: string): Promise<NewsDetailResult> {
           ? new Date(article.publishedAt).toISOString().split('T')[0]
           : '2025-01-05',
         title: article.title,
+        attachments: article.attachments as AttachmentData[] | null | undefined, // NEW - 2026-02-16
       };
 
       // Check if content is in block format (has blocks[] array with items)
@@ -150,10 +163,14 @@ export default async function NewsDetailPage({
             <NewsBlockDetailView data={result.data} />
           ) : (
             // Legacy content rendering (or fallback to hardcoded)
-            <NewsEventDetailContent
-              itemId={id}
-              dbData={result?.data ?? null}
-            />
+            <>
+              <NewsEventDetailContent
+                itemId={id}
+                dbData={result?.data ?? null}
+              />
+              {/* Attachment Download Box for legacy format (NEW - 2026-02-16) */}
+              <AttachmentDownloadBox attachments={result?.data?.attachments} />
+            </>
           )}
         </div>
       </div>
@@ -274,6 +291,9 @@ function NewsBlockDetailView({ data }: { data: NewsBlockData }) {
 
         {/* Block content */}
         <NewsBlockRenderer blocks={data.blocks} />
+
+        {/* Attachment Download Box (NEW - 2026-02-16) */}
+        <AttachmentDownloadBox attachments={data.attachments} />
       </div>
     </div>
   );

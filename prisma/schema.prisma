@@ -252,6 +252,7 @@ model NewsEvent {
   excerpt         String?                              // 목록 설명 (2줄 요약)
   thumbnailImage  String    @default("/Group-27.svg") @map("thumbnail_image")  // 썸네일 경로
   content         Json?                                // 상세 페이지 데이터
+  attachments     Json?                                // 첨부 파일 배열 [{id, filename, filepath, mimeType, size, uploadedAt}] (NEW - 2026-02-16)
   publishedAt     DateTime  @map("published_at")       // 표시 날짜
   published       Boolean   @default(true)
   order           Int       @default(0)                // 표시 순서
