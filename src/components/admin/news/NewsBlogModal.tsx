@@ -1,11 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { X, RotateCcw, RotateCw, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import NewsDetailPreviewRenderer from '@/components/admin/shared/BlockEditor/renderers/NewsDetailPreviewRenderer';
 import type { NewsArticleContext } from '@/components/admin/shared/BlockEditor/renderers/NewsDetailPreviewRenderer';
-import BlockLayoutVisualizer from '@/components/admin/work/BlockLayoutVisualizer';
-import BlockEditorPanel from '@/components/admin/work/BlockEditorPanel';
+import { ModalShell, ThreePanelLayout } from '@/components/admin/shared/BlogEditorModal';
 import { useBlockEditor } from '@/components/admin/shared/BlockEditor/useBlockEditor';
 import { useRowManager } from '@/components/admin/shared/BlockEditor/useRowManager';
 import type {
@@ -41,7 +40,6 @@ export default function NewsBlogModal({
   onSubmit,
 }: NewsBlogModalProps) {
   const isEditing = !!article;
-  const modalRef = useRef<HTMLDivElement>(null);
 
   // ---- State ----
   const [activeTab, setActiveTab] = useState<'info' | 'content' | 'attachments'>('info'); // Updated - 2026-02-16
@@ -62,6 +60,7 @@ export default function NewsBlogModal({
 
   // Attachments (NEW - 2026-02-16)
   const [attachments, setAttachments] = useState<import('@/hooks/useNewsEditor').AttachmentData[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -120,10 +119,10 @@ export default function NewsBlogModal({
   useEffect(() => {
     if (isOpen) {
       if (article) {
-        console.log('[NewsBlogModal] ========== LOADING ARTICLE ==========');
-        console.log('[NewsBlogModal] Article ID:', article.id);
-        console.log('[NewsBlogModal] Article slug:', article.slug);
-        console.log('[NewsBlogModal] Article title:', article.title);
+        if (process.env.DEBUG) console.log('[NewsBlogModal] ========== LOADING ARTICLE ==========');
+        if (process.env.DEBUG) console.log('[NewsBlogModal] Article ID:', article.id);
+        if (process.env.DEBUG) console.log('[NewsBlogModal] Article slug:', article.slug);
+        if (process.env.DEBUG) console.log('[NewsBlogModal] Article title:', article.title);
 
         setTitle(article.title);
         setCategory(article.category);
@@ -146,11 +145,11 @@ export default function NewsBlogModal({
         // Parse content: check for new block format or legacy format
         const content = article.content as NewsContentShape | BlogContent | null;
 
-        console.log('[NewsBlogModal] Loading article:', article.title);
-        console.log('[NewsBlogModal] content type:', typeof content);
-        console.log('[NewsBlogModal] content is null?:', content === null);
-        console.log('[NewsBlogModal] content is undefined?:', content === undefined);
-        console.log('[NewsBlogModal] content:', JSON.stringify(content));
+        if (process.env.DEBUG) console.log('[NewsBlogModal] Loading article:', article.title);
+        if (process.env.DEBUG) console.log('[NewsBlogModal] content type:', typeof content);
+        if (process.env.DEBUG) console.log('[NewsBlogModal] content is null?:', content === null);
+        if (process.env.DEBUG) console.log('[NewsBlogModal] content is undefined?:', content === undefined);
+        if (process.env.DEBUG) console.log('[NewsBlogModal] content:', JSON.stringify(content));
 
         let parsedContent: BlogContent | null = null;
         let contentToConvert: NewsContentShape | BlogContent | null = content;
@@ -158,12 +157,12 @@ export default function NewsBlogModal({
         if (content) {
           // First, handle case where content might be a JSON string
           if (typeof content === 'string') {
-            console.log('[NewsBlogModal] Content is a string, attempting to parse JSON');
+            if (process.env.DEBUG) console.log('[NewsBlogModal] Content is a string, attempting to parse JSON');
             try {
               contentToConvert = JSON.parse(content) as NewsContentShape | BlogContent;
-              console.log('[NewsBlogModal] ✅ Parsed JSON string:', contentToConvert);
+              if (process.env.DEBUG) console.log('[NewsBlogModal] ✅ Parsed JSON string:', contentToConvert);
             } catch (e) {
-              console.log('[NewsBlogModal] ❌ Failed to parse JSON string:', e);
+              if (process.env.DEBUG) console.log('[NewsBlogModal] ❌ Failed to parse JSON string:', e);
               contentToConvert = null;
             }
           }
@@ -177,12 +176,12 @@ export default function NewsBlogModal({
             contentToConvert.blocks.length > 0
           ) {
             parsedContent = contentToConvert as BlogContent;
-            console.log('[NewsBlogModal] ✅ Found blocks in content:', parsedContent.blocks.length, 'blocks');
+            if (process.env.DEBUG) console.log('[NewsBlogModal] ✅ Found blocks in content:', parsedContent.blocks.length, 'blocks');
           }
         }
 
         if (parsedContent && parsedContent.blocks && parsedContent.blocks.length > 0) {
-          console.log('[NewsBlogModal] ✅ Using block format with', parsedContent.blocks.length, 'blocks');
+          if (process.env.DEBUG) console.log('[NewsBlogModal] ✅ Using block format with', parsedContent.blocks.length, 'blocks');
           setEditorContent(parsedContent);
           // ✅ Ensure rowConfig is valid - if missing, create default from blockCount
           const rowCfg = parsedContent.rowConfig || [];
@@ -192,24 +191,24 @@ export default function NewsBlogModal({
           } else {
             setRowConfig(rowCfg);
           }
-          console.log('[NewsBlogModal] 🔄 Resetting blocks:', parsedContent.blocks.length);
+          if (process.env.DEBUG) console.log('[NewsBlogModal] 🔄 Resetting blocks:', parsedContent.blocks.length);
           resetBlocks(parsedContent.blocks);
         } else {
           // Fallback: Convert legacy content to BlockEditor format
-          console.log('[NewsBlogModal] ⚠️  Falling back to legacy format');
-          console.log('[NewsBlogModal] Content being converted:', JSON.stringify(contentToConvert, null, 2));
+          if (process.env.DEBUG) console.log('[NewsBlogModal] ⚠️  Falling back to legacy format');
+          if (process.env.DEBUG) console.log('[NewsBlogModal] Content being converted:', JSON.stringify(contentToConvert, null, 2));
           const legacyContent = parseNewsContent(contentToConvert as NewsContentShape | null);
-          console.log('[NewsBlogModal] Legacy content converted to:', JSON.stringify(legacyContent, null, 2));
+          if (process.env.DEBUG) console.log('[NewsBlogModal] Legacy content converted to:', JSON.stringify(legacyContent, null, 2));
           setEditorContent(legacyContent);
           // ✅ Auto-generate rowConfig for legacy content too
           if (legacyContent.blocks && legacyContent.blocks.length > 0) {
-            console.log('[NewsBlogModal] 🔄 Resetting legacy blocks:', legacyContent.blocks.length);
+            if (process.env.DEBUG) console.log('[NewsBlogModal] 🔄 Resetting legacy blocks:', legacyContent.blocks.length);
             setRowConfig([{ layout: 1, blockCount: legacyContent.blocks.length }]);
             resetBlocks(legacyContent.blocks);
           } else {
-            console.log('[NewsBlogModal] ❌ No blocks found!');
-            console.log('[NewsBlogModal] legacyContent:', legacyContent);
-            console.log('[NewsBlogModal] legacyContent.blocks:', legacyContent.blocks);
+            if (process.env.DEBUG) console.log('[NewsBlogModal] ❌ No blocks found!');
+            if (process.env.DEBUG) console.log('[NewsBlogModal] legacyContent:', legacyContent);
+            if (process.env.DEBUG) console.log('[NewsBlogModal] legacyContent.blocks:', legacyContent.blocks);
             setRowConfig([]);
           }
         }
@@ -234,32 +233,66 @@ export default function NewsBlogModal({
     }
   }, [isOpen, article]);
 
-  // ---- Keyboard shortcuts ----
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      } else if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
-        e.preventDefault();
-        if (canUndo) undo();
-      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
-        e.preventDefault();
-        if (canRedo) redo();
-      }
-    },
-    [onClose, canUndo, canRedo, undo, redo]
-  );
+  // ---- File Upload Handlers ----
+  const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
 
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.removeEventListener('keydown', handleKeyDown);
-        document.body.style.overflow = '';
-      };
+    const newAttachments: import('@/hooks/useNewsEditor').AttachmentData[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      newAttachments.push({
+        id: `temp-${Date.now()}-${i}`,
+        filename: file.name,
+        size: file.size,
+        uploadedAt: new Date().toISOString(),
+        fileBlob: file, // Store the actual file for later upload
+      } as any);
     }
-  }, [isOpen, handleKeyDown]);
+    setAttachments([...attachments, ...newAttachments]);
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, [attachments]);
+
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.add('border-blue-500', 'bg-blue-50');
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.remove('border-blue-500', 'bg-blue-50');
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.remove('border-blue-500', 'bg-blue-50');
+
+    const files = e.dataTransfer.files;
+    if (!files) return;
+
+    const newAttachments: import('@/hooks/useNewsEditor').AttachmentData[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      newAttachments.push({
+        id: `temp-${Date.now()}-${i}`,
+        filename: file.name,
+        size: file.size,
+        uploadedAt: new Date().toISOString(),
+        fileBlob: file,
+      } as any);
+    }
+    setAttachments([...attachments, ...newAttachments]);
+  }, [attachments]);
+
+  const handleUploadClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
 
   // ---- Submit ----
   const handleSubmit = async () => {
@@ -283,21 +316,21 @@ export default function NewsBlogModal({
 
     try {
       // 🔍 CRITICAL DEBUG: Log entry to try block
-      console.log('[NewsBlogModal] ========== ENTERING TRY BLOCK ==========');
-      console.log('[NewsBlogModal] blocks:', blocks);
-      console.log('[NewsBlogModal] blocks.length:', blocks?.length);
-      console.log('[NewsBlogModal] blocks type:', typeof blocks);
-      console.log('[NewsBlogModal] Array.isArray(blocks):', Array.isArray(blocks));
+      if (process.env.DEBUG) console.log('[NewsBlogModal] ========== ENTERING TRY BLOCK ==========');
+      if (process.env.DEBUG) console.log('[NewsBlogModal] blocks:', blocks);
+      if (process.env.DEBUG) console.log('[NewsBlogModal] blocks.length:', blocks?.length);
+      if (process.env.DEBUG) console.log('[NewsBlogModal] blocks type:', typeof blocks);
+      if (process.env.DEBUG) console.log('[NewsBlogModal] Array.isArray(blocks):', Array.isArray(blocks));
 
       // 🔍 Debug: Log blocks status before submit
-      console.log('[NewsBlogModal] ========== BEFORE SUBMIT ==========');
-      console.log('[NewsBlogModal] blocks.length:', blocks.length);
-      console.log('[NewsBlogModal] blocks:', JSON.stringify(blocks, null, 2));
-      console.log('[NewsBlogModal] editorContent.blocks.length:', editorContent.blocks.length);
-      console.log('[NewsBlogModal] editorContent.blocks:', JSON.stringify(editorContent.blocks, null, 2));
-      console.log('[NewsBlogModal] editorContent:', JSON.stringify(editorContent, null, 2));
-      console.log('[NewsBlogModal] rowConfig:', JSON.stringify(rowConfig, null, 2));
-      console.log('[NewsBlogModal] blocks === editorContent.blocks?:', blocks === editorContent.blocks);
+      if (process.env.DEBUG) console.log('[NewsBlogModal] ========== BEFORE SUBMIT ==========');
+      if (process.env.DEBUG) console.log('[NewsBlogModal] blocks.length:', blocks.length);
+      if (process.env.DEBUG) console.log('[NewsBlogModal] blocks:', JSON.stringify(blocks, null, 2));
+      if (process.env.DEBUG) console.log('[NewsBlogModal] editorContent.blocks.length:', editorContent.blocks.length);
+      if (process.env.DEBUG) console.log('[NewsBlogModal] editorContent.blocks:', JSON.stringify(editorContent.blocks, null, 2));
+      if (process.env.DEBUG) console.log('[NewsBlogModal] editorContent:', JSON.stringify(editorContent, null, 2));
+      if (process.env.DEBUG) console.log('[NewsBlogModal] rowConfig:', JSON.stringify(rowConfig, null, 2));
+      if (process.env.DEBUG) console.log('[NewsBlogModal] blocks === editorContent.blocks?:', blocks === editorContent.blocks);
 
       // 🔧 CRITICAL FIX: Use blocks from useBlockEditor hook (always fresh)
       const hasBlocks = blocks && blocks.length > 0;
@@ -338,18 +371,18 @@ export default function NewsBlogModal({
           throw new Error('최소 1개의 블록이 필요합니다.');
         }
 
-        console.log('[NewsBlogModal] ========== SUBMIT: CONTENT CREATED ==========');
-        console.log('[NewsBlogModal] hasBlocks:', true);
-        console.log('[NewsBlogModal] blocks.length:', blocks.length);
-        console.log('[NewsBlogModal] blocksCopy.length:', blocksCopy.length);
-        console.log('[NewsBlogModal] First block ID:', blocksCopy[0]?.id);
-        console.log('[NewsBlogModal] rowConfig.length:', rowConfig.length);
-        console.log('[NewsBlogModal] rowConfigCopy:', JSON.stringify(rowConfigCopy));
-        console.log('[NewsBlogModal] Final content:', JSON.stringify(content));
+        if (process.env.DEBUG) console.log('[NewsBlogModal] ========== SUBMIT: CONTENT CREATED ==========');
+        if (process.env.DEBUG) console.log('[NewsBlogModal] hasBlocks:', true);
+        if (process.env.DEBUG) console.log('[NewsBlogModal] blocks.length:', blocks.length);
+        if (process.env.DEBUG) console.log('[NewsBlogModal] blocksCopy.length:', blocksCopy.length);
+        if (process.env.DEBUG) console.log('[NewsBlogModal] First block ID:', blocksCopy[0]?.id);
+        if (process.env.DEBUG) console.log('[NewsBlogModal] rowConfig.length:', rowConfig.length);
+        if (process.env.DEBUG) console.log('[NewsBlogModal] rowConfigCopy:', JSON.stringify(rowConfigCopy));
+        if (process.env.DEBUG) console.log('[NewsBlogModal] Final content:', JSON.stringify(content));
       } else {
-        console.log('[NewsBlogModal] ========== SUBMIT: NO BLOCKS ==========');
-        console.log('[NewsBlogModal] blocks:', blocks);
-        console.log('[NewsBlogModal] blocks.length:', blocks?.length ?? 'N/A');
+        if (process.env.DEBUG) console.log('[NewsBlogModal] ========== SUBMIT: NO BLOCKS ==========');
+        if (process.env.DEBUG) console.log('[NewsBlogModal] blocks:', blocks);
+        if (process.env.DEBUG) console.log('[NewsBlogModal] blocks.length:', blocks?.length ?? 'N/A');
         content = null;
       }
 
@@ -373,10 +406,10 @@ export default function NewsBlogModal({
         }
       }
 
-      console.log('[NewsBlogModal] ========== SENDING DATA ==========');
-      console.log('[NewsBlogModal] data.content type:', typeof data.content);
-      console.log('[NewsBlogModal] data.content keys:', data.content ? Object.keys(data.content) : 'null');
-      console.log('[NewsBlogModal] data.content:', JSON.stringify(data.content, null, 2));
+      if (process.env.DEBUG) console.log('[NewsBlogModal] ========== SENDING DATA ==========');
+      if (process.env.DEBUG) console.log('[NewsBlogModal] data.content type:', typeof data.content);
+      if (process.env.DEBUG) console.log('[NewsBlogModal] data.content keys:', data.content ? Object.keys(data.content) : 'null');
+      if (process.env.DEBUG) console.log('[NewsBlogModal] data.content:', JSON.stringify(data.content, null, 2));
 
       await onSubmit(data);
       onClose();
@@ -387,79 +420,43 @@ export default function NewsBlogModal({
     }
   };
 
-  if (!isOpen) return null;
+  // Undo/Redo keyboard handler
+  const handleUndoRedoKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        if (canUndo) undo();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
+        e.preventDefault();
+        if (canRedo) redo();
+      }
+    },
+    [canUndo, canRedo, undo, redo]
+  );
 
   const tabs = [
-    { key: 'info' as const, label: 'Basic Info' },
-    { key: 'content' as const, label: 'Content (Blocks)' },
-    { key: 'attachments' as const, label: 'Attachments' }, // NEW - 2026-02-16
+    { key: 'info', label: 'Basic Info' },
+    { key: 'content', label: 'Content (Blocks)' },
+    { key: 'attachments', label: 'Attachments' },
   ];
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div
-        ref={modalRef}
-        className="bg-white rounded-xl shadow-2xl flex flex-col"
-        style={{
-          width: 'calc(100vw - 60px)',
-          maxWidth: '1600px',
-          height: 'calc(100vh - 60px)',
-          maxHeight: '960px',
-        }}
-      >
-        {/* Header */}
-        <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between shrink-0">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">
-              {isEditing ? 'Edit Article' : 'New Article'}
-            </h2>
-            <p className="text-xs text-gray-500 mt-0.5">
-              {isEditing ? `Editing: ${article?.title}` : 'Create a new news article or event'}
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label="Close"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Tab navigation */}
-        <div className="border-b border-gray-200 px-6 flex gap-0 shrink-0">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === tab.key
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Content area */}
-        <div className="flex-1 overflow-hidden p-0">
-          {/* Error */}
-          {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm flex items-center justify-between">
-              <span>{error}</span>
-              <button
-                type="button"
-                onClick={() => setError(null)}
-                className="text-red-400 hover:text-red-600 ml-2"
-              >
-                <X size={14} />
-              </button>
-            </div>
-          )}
-
+    <ModalShell
+      isOpen={isOpen}
+      onClose={onClose}
+      title={isEditing ? 'Edit Article' : 'New Article'}
+      subtitle={isEditing ? `Editing: ${article?.title}` : 'Create a new news article or event'}
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={(key) => setActiveTab(key as 'info' | 'content' | 'attachments')}
+      error={error}
+      onClearError={() => setError(null)}
+      footerInfo={`${editorContent.blocks.length} content block${editorContent.blocks.length !== 1 ? 's' : ''}`}
+      submitLabel={isSubmitting ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Article'}
+      isSubmitting={isSubmitting}
+      onSubmit={handleSubmit}
+      onKeyDown={handleUndoRedoKeyDown}
+    >
           {/* Tab: Basic Info */}
           {activeTab === 'info' && (
             <div className="space-y-5 max-w-3xl p-6">
@@ -562,94 +559,60 @@ export default function NewsBlogModal({
 
           {/* Tab: Content (3-Panel Layout) */}
           {activeTab === 'content' && (
-            <div className="flex flex-col h-full w-full">
-              {/* Undo/Redo Controls */}
-              <div className="border-b border-gray-200 px-4 py-2 bg-gray-50 flex items-center gap-1 shrink-0">
-                <button
-                  type="button"
-                  onClick={undo}
-                  disabled={!canUndo}
-                  title="Undo (Ctrl+Z)"
-                  className="p-2 rounded-lg border border-gray-200 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                >
-                  <RotateCcw size={16} className="text-gray-600" />
-                </button>
-                <button
-                  type="button"
-                  onClick={redo}
-                  disabled={!canRedo}
-                  title="Redo (Ctrl+Y)"
-                  className="p-2 rounded-lg border border-gray-200 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                >
-                  <RotateCw size={16} className="text-gray-600" />
-                </button>
-                <div className="text-xs text-gray-400 ml-2">
-                  Ctrl+Z / Ctrl+Y
-                </div>
-              </div>
-
-              {/* 3-Panel Layout */}
-              <div className="flex flex-1 overflow-hidden w-full">
-                {/* Left 25%: Block Layout Visualizer */}
-                <div className="w-[25%] border-r border-gray-200 bg-white overflow-hidden flex flex-col">
-                  <BlockLayoutVisualizer
-                    blocks={blocks}
-                    rowConfig={rowConfig}
-                    selectedId={selectedId}
-                    onSelect={setSelectedId}
-                    onReorder={reorderBlocks}
-                    onRowLayoutChange={handleRowLayoutChange}
-                    onAddRow={handleAddRow}
-                    onDeleteRow={handleDeleteRow}
-                    onReorderRows={handleReorderRows}
-                    onAddBlockToRow={handleAddBlockToRow}
-                    onDeleteBlock={handleDeleteBlock}
-                    onMoveBlockToRow={handleMoveBlockToRow}
-                  />
-                </div>
-
-                {/* Center 40%: Block Editor Panel */}
-                <div className="w-[40%] border-r border-gray-200 bg-white overflow-hidden flex flex-col">
-                  <div className="flex-1 overflow-y-auto">
-                    <BlockEditorPanel
-                      block={blocks.find((b) => b.id === selectedId) || null}
-                      onChange={updateBlock}
-                      onDelete={handleDeleteBlock}
-                      undo={undo}
-                      redo={redo}
-                      canUndo={canUndo}
-                      canRedo={canRedo}
-                    />
-                  </div>
-                </div>
-
-                {/* Right 35%: Live Preview */}
-                <div className="w-[35%] overflow-hidden bg-white flex flex-col h-full">
-                  <div className="shrink-0 px-4 py-3 border-b border-gray-200 bg-gray-50 sticky top-0">
-                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Live Preview</h4>
-                    <p className="text-[10px] text-gray-400 mt-1">News article preview</p>
-                  </div>
-                  <div className="flex-1 overflow-y-auto">
-                    <NewsDetailPreviewRenderer
-                      blocks={blocks}
-                      rowConfig={rowConfig}
-                      articleContext={{
-                        title: title,
-                        category: category,
-                        publishedAt: publishedAt,
-                      } satisfies NewsArticleContext}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ThreePanelLayout
+              blocks={blocks}
+              rowConfig={rowConfig}
+              selectedId={selectedId}
+              setSelectedId={setSelectedId}
+              updateBlock={updateBlock}
+              reorderBlocks={reorderBlocks}
+              handleRowLayoutChange={handleRowLayoutChange}
+              handleAddRow={handleAddRow}
+              handleDeleteRow={handleDeleteRow}
+              handleReorderRows={handleReorderRows}
+              handleAddBlockToRow={handleAddBlockToRow}
+              handleDeleteBlock={handleDeleteBlock}
+              handleMoveBlockToRow={handleMoveBlockToRow}
+              undo={undo}
+              redo={redo}
+              canUndo={canUndo}
+              canRedo={canRedo}
+              previewSubtitle="News article preview"
+              previewPanel={
+                <NewsDetailPreviewRenderer
+                  blocks={blocks}
+                  rowConfig={rowConfig}
+                  articleContext={{
+                    title: title,
+                    category: category,
+                    publishedAt: publishedAt,
+                  } satisfies NewsArticleContext}
+                />
+              }
+            />
           )}
 
           {/* Tab: Attachments (NEW - 2026-02-16) */}
           {activeTab === 'attachments' && (
             <div className="space-y-5 max-w-3xl p-6">
+              {/* Hidden File Input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                onChange={handleFileInputChange}
+                className="hidden"
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip"
+              />
+
               {/* File Upload Section */}
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-blue-400 hover:bg-blue-50 transition-colors cursor-pointer">
+              <div
+                className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-blue-400 hover:bg-blue-50 transition-colors cursor-pointer"
+                onClick={handleUploadClick}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
                 <div className="text-center">
                   <p className="text-sm font-medium text-gray-700 mb-2">
                     Drag files here or click to upload
@@ -701,32 +664,6 @@ export default function NewsBlogModal({
               )}
             </div>
           )}
-        </div>
-
-        {/* Footer */}
-        <div className="border-t border-gray-200 px-6 py-4 flex items-center justify-between shrink-0 bg-gray-50 rounded-b-xl">
-          <div className="text-xs text-gray-400">
-            {editorContent.blocks.length} content block{editorContent.blocks.length !== 1 ? 's' : ''}
-          </div>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors font-medium text-sm"
-            >
-              {isSubmitting ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Article'}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
