@@ -258,46 +258,48 @@ export default function ImageGridBlockEditor({
       return;
     }
 
-    // over.id가 드롭된 행의 ID
-    const targetRowId = over.id as string;
-    console.log('[ImageGridBlockEditor] Target row ID:', targetRowId);
-    console.log('[ImageGridBlockEditor] Available row IDs:', localBlock.rows.map((r) => r.id));
+    const targetId = over.id as string;
+    console.log('[ImageGridBlockEditor] Target ID:', targetId);
 
     // "available-images"면 그 자리 유지
-    if (targetRowId === 'available-images') {
+    if (targetId === 'available-images') {
       console.log('[ImageGridBlockEditor] Dropped on available images - keeping in place');
       return;
     }
 
-    const isValidRow = localBlock.rows.some((row) => row.id === targetRowId);
-    console.log('[ImageGridBlockEditor] Is valid row?', isValidRow);
+    // 1. 각 행에서 이미지가 어느 행에 속하는지 찾기
+    let draggedRowId: string | null = null;
+    let draggedImageIndex = -1;
+    let imageIdx = 0;
 
-    if (targetRowId && isValidRow) {
-      // 1. 각 행에서 이 이미지가 있는지 확인 (이미지가 어느 행에 속하는지 찾기)
-      let imageIdx = 0;
-      let sourceRowId: string | null = null;
-      for (const row of localBlock.rows) {
-        const startIdx = imageIdx;
-        const endIdx = imageIdx + row.imageCount;
-        if (localBlock.images.slice(startIdx, endIdx).some((img) => img.id === draggedImageId)) {
-          sourceRowId = row.id;
-          break;
-        }
-        imageIdx = endIdx;
+    for (let rowIdx = 0; rowIdx < localBlock.rows.length; rowIdx++) {
+      const row = localBlock.rows[rowIdx];
+      const startIdx = imageIdx;
+      const endIdx = imageIdx + row.imageCount;
+      const rowImages = localBlock.images.slice(startIdx, endIdx);
+
+      const foundIdx = rowImages.findIndex((img) => img.id === draggedImageId);
+      if (foundIdx !== -1) {
+        draggedRowId = row.id;
+        draggedImageIndex = startIdx + foundIdx;
+        break;
       }
+      imageIdx = endIdx;
+    }
 
-      console.log('[ImageGridBlockEditor] Source row ID:', sourceRowId);
+    // 2. targetId가 row인지 image인지 확인
+    const isTargetRow = localBlock.rows.some((row) => row.id === targetId);
 
-      // 2. 행 업데이트
+    if (isTargetRow) {
+      // 행으로 드롭된 경우 - 기존 로직 유지
+      const targetRowId = targetId;
+      console.log('[ImageGridBlockEditor] Dropped on row:', targetRowId);
+
       const newRows = localBlock.rows.map((row) => {
-        if (row.id === sourceRowId && sourceRowId !== targetRowId) {
-          // 원래 행: imageCount 감소 (Available에서 온 경우 sourceRowId가 null)
-          if (sourceRowId) {
-            return { ...row, imageCount: Math.max(0, row.imageCount - 1) };
-          }
+        if (row.id === draggedRowId && draggedRowId !== targetRowId && draggedRowId !== null) {
+          return { ...row, imageCount: Math.max(0, row.imageCount - 1) };
         }
         if (row.id === targetRowId) {
-          // 대상 행: imageCount 증가
           return { ...row, imageCount: row.imageCount + 1 };
         }
         return row;
@@ -306,7 +308,76 @@ export default function ImageGridBlockEditor({
       const updated = { ...localBlock, rows: newRows };
       setLocalBlock(updated);
       onChange(updated);
-      console.log('[ImageGridBlockEditor] Image moved successfully', { sourceRowId, targetRowId });
+      console.log('[ImageGridBlockEditor] Image moved to row:', { draggedRowId, targetRowId });
+    } else {
+      // targetId가 image인 경우 - row-internal reordering
+      const targetImage = localBlock.images.find((img) => img.id === targetId);
+      if (!targetImage) {
+        console.log('[ImageGridBlockEditor] Target image not found:', targetId);
+        return;
+      }
+
+      // 대상 이미지가 어느 행에 있는지 찾기
+      let targetRowId: string | null = null;
+      let targetImageIndex = -1;
+      imageIdx = 0;
+
+      for (let rowIdx = 0; rowIdx < localBlock.rows.length; rowIdx++) {
+        const row = localBlock.rows[rowIdx];
+        const startIdx = imageIdx;
+        const endIdx = imageIdx + row.imageCount;
+        const rowImages = localBlock.images.slice(startIdx, endIdx);
+
+        const foundIdx = rowImages.findIndex((img) => img.id === targetId);
+        if (foundIdx !== -1) {
+          targetRowId = row.id;
+          targetImageIndex = startIdx + foundIdx;
+          break;
+        }
+        imageIdx = endIdx;
+      }
+
+      if (draggedRowId === targetRowId && draggedRowId !== null) {
+        // 같은 행 내에서 reorder
+        console.log('[ImageGridBlockEditor] Reordering within row:', {
+          draggedRowId,
+          draggedImageIndex,
+          targetImageIndex,
+        });
+
+        const newImages = [...localBlock.images];
+        if (draggedImageIndex !== -1 && targetImageIndex !== -1) {
+          const draggedImg = newImages[draggedImageIndex];
+          newImages.splice(draggedImageIndex, 1);
+          newImages.splice(targetImageIndex, 0, draggedImg);
+
+          const updated = { ...localBlock, images: newImages };
+          setLocalBlock(updated);
+          onChange(updated);
+          console.log('[ImageGridBlockEditor] Images reordered successfully');
+        }
+      } else if (draggedRowId !== targetRowId) {
+        // 다른 행으로 이동 (행 이미지 카운트 업데이트)
+        console.log('[ImageGridBlockEditor] Moving image to different row:', {
+          draggedRowId,
+          targetRowId,
+        });
+
+        const newRows = localBlock.rows.map((row) => {
+          if (row.id === draggedRowId && draggedRowId !== null) {
+            return { ...row, imageCount: Math.max(0, row.imageCount - 1) };
+          }
+          if (row.id === targetRowId && targetRowId !== null) {
+            return { ...row, imageCount: row.imageCount + 1 };
+          }
+          return row;
+        });
+
+        const updated = { ...localBlock, rows: newRows };
+        setLocalBlock(updated);
+        onChange(updated);
+        console.log('[ImageGridBlockEditor] Image moved to different row');
+      }
     }
   };
 
