@@ -190,6 +190,8 @@ function NewsBlockDetailView({ data }: { data: NewsBlockData }) {
         flexDirection: 'column',
         gap: '40px',
         width: '100%',
+        maxWidth: '1440px',
+        margin: '0 auto',
       }}
     >
       {/* Title and Filter Tabs (matching NewsEventDetailContent layout) */}

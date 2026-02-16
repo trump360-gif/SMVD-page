@@ -305,8 +305,8 @@ function GalleryRenderer({ block }: { block: BlockBase & { images: { id: string;
           {images[1] && (
             <div
               style={{
-                width: '670px',
-                height: '670px',
+                flex: 1,
+                aspectRatio: '1',
                 backgroundColor: '#f0f0f0',
                 borderRadius: '4px',
                 overflow: 'hidden',
@@ -322,8 +322,8 @@ function GalleryRenderer({ block }: { block: BlockBase & { images: { id: string;
           {images[2] && (
             <div
               style={{
-                width: '670px',
-                height: '670px',
+                flex: 1,
+                aspectRatio: '1',
                 backgroundColor: '#f0f0f0',
                 borderRadius: '4px',
                 overflow: 'hidden',
@@ -346,8 +346,8 @@ function GalleryRenderer({ block }: { block: BlockBase & { images: { id: string;
             <div
               key={img!.id || `bottom-${idx}`}
               style={{
-                width: '440px',
-                height: '440px',
+                flex: 1,
+                aspectRatio: '1',
                 backgroundColor: '#f0f0f0',
                 borderRadius: '4px',
                 overflow: 'hidden',
