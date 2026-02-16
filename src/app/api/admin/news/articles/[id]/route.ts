@@ -43,14 +43,8 @@ const ContentSchema = z.union([
 ]).optional();
 
 // Attachment schema for file metadata (NEW - 2026-02-16)
-const AttachmentSchema = z.object({
-  id: z.string(),
-  filename: z.string(),
-  filepath: z.string(),
-  mimeType: z.string(),
-  size: z.number(),
-  uploadedAt: z.string(),
-});
+// Use passthrough() to allow flexible attachment object shapes (temporary IDs, missing fields)
+const AttachmentSchema = z.object({}).passthrough().optional();
 
 const UpdateArticleSchema = z.object({
   title: z.string().min(1).optional(),
@@ -58,7 +52,7 @@ const UpdateArticleSchema = z.object({
   excerpt: z.string().nullable().optional(),
   thumbnailImage: z.string().optional(),
   content: ContentSchema.nullable(),
-  attachments: z.array(AttachmentSchema).nullable().optional(), // NEW - 2026-02-16
+  attachments: z.array(z.object({}).passthrough()).nullable().optional(), // NEW - 2026-02-16
   publishedAt: z.string().optional(),
   published: z.boolean().optional(),
 });
