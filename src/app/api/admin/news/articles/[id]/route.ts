@@ -11,6 +11,10 @@ import { z } from 'zod';
 import { invalidateNews } from '@/lib/cache';
 import { logger } from '@/lib/logger';
 
+// Type guard: efficiently check if an object is empty
+const isEmpty = (obj: unknown): obj is Record<string, never> =>
+  obj !== null && typeof obj === 'object' && Object.keys(obj).length === 0;
+
 const GallerySchema = z.object({
   main: z.string().default(''),
   layout: z.string().default('1+2+3'),
@@ -83,9 +87,7 @@ export async function GET(
     // Prisma stores JsonNull as {}, so we need to convert it back
     const articleData = {
       ...article,
-      content: (article.content && Object.keys(article.content).length === 0)
-        ? null
-        : article.content,
+      content: isEmpty(article.content) ? null : article.content,
     };
 
     return successResponse(articleData, '뉴스 조회 성공');
@@ -140,7 +142,7 @@ export async function PUT(
       const content = validation.data.content as Record<string, unknown> | null;
 
       // CRITICAL: Explicitly reject empty objects - this is the core bug!
-      if (content && typeof content === 'object' && JSON.stringify(content) === '{}') {
+      if (isEmpty(content)) {
         return errorResponse(
           '콘텐츠가 비어있습니다. 최소 1개의 블록이 필요합니다.',
           'EMPTY_CONTENT',
