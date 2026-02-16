@@ -57,16 +57,14 @@ function DraggableImageItem({
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative bg-white border rounded-lg overflow-hidden transition-all ${
+      {...attributes}
+      {...listeners}
+      className={`relative bg-white border rounded-lg overflow-hidden transition-all cursor-grab active:cursor-grabbing ${
         isDragging ? 'border-blue-500 shadow-lg' : 'border-gray-200'
       }`}
     >
-      {/* Drag Handle */}
-      <div
-        {...attributes}
-        {...listeners}
-        className="absolute top-1 left-1 z-10 cursor-grab active:cursor-grabbing bg-black bg-opacity-50 text-white px-1.5 py-0.5 rounded text-[10px] font-bold"
-      >
+      {/* Drag Handle - Visual indicator only */}
+      <div className="absolute top-1 left-1 z-10 bg-black bg-opacity-50 text-white px-1.5 py-0.5 rounded text-[10px] font-bold">
         ⋮⋮
       </div>
 
