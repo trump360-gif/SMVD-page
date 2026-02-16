@@ -6,6 +6,10 @@ import { NewsEventDetailContent } from '@/components/public/news';
 import NewsBlockRenderer from '@/components/public/news/NewsBlockRenderer';
 import { prisma } from '@/lib/db';
 
+// ⚠️ CRITICAL: Disable ISR caching to always fetch latest DB data
+// When admin saves changes via CMS, they should appear immediately on public page
+export const revalidate = 0;
+
 // ---- Types ----
 
 interface NewsLegacyData {

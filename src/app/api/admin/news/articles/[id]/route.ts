@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
+import { Prisma } from '@/generated/prisma';
 import { checkAdminAuth } from '@/lib/auth-check';
 import {
   successResponse,
@@ -107,12 +108,20 @@ export async function PUT(
       return notFoundResponse('뉴스');
     }
 
-    const updateData: Record<string, unknown> = { ...validation.data };
+    const updateData: Record<string, unknown> = {};
 
-    // Convert publishedAt string to Date if provided
-    if (validation.data.publishedAt) {
-      updateData.publishedAt = new Date(validation.data.publishedAt);
+    // Copy all fields and convert types appropriately
+    if (validation.data.title !== undefined) updateData.title = validation.data.title;
+    if (validation.data.category !== undefined) updateData.category = validation.data.category;
+    if (validation.data.excerpt !== undefined) updateData.excerpt = validation.data.excerpt;
+    if (validation.data.thumbnailImage !== undefined) updateData.thumbnailImage = validation.data.thumbnailImage;
+    if (validation.data.content !== undefined) {
+      updateData.content = validation.data.content
+        ? (validation.data.content as Prisma.InputJsonValue)
+        : Prisma.JsonNull;
     }
+    if (validation.data.publishedAt !== undefined) updateData.publishedAt = new Date(validation.data.publishedAt);
+    if (validation.data.published !== undefined) updateData.published = validation.data.published;
 
     const updated = await prisma.newsEvent.update({
       where: { id },

@@ -299,6 +299,11 @@ export default function NewsBlogModal({
   useEffect(() => {
     if (isOpen) {
       if (article) {
+        console.log('[NewsBlogModal] ========== LOADING ARTICLE ==========');
+        console.log('[NewsBlogModal] Article ID:', article.id);
+        console.log('[NewsBlogModal] Article slug:', article.slug);
+        console.log('[NewsBlogModal] Article title:', article.title);
+
         setTitle(article.title);
         setCategory(article.category);
         setExcerpt(article.excerpt || '');
@@ -313,26 +318,43 @@ export default function NewsBlogModal({
         // Parse content: check for new block format or legacy format
         const content = article.content as NewsContentShape | BlogContent | null;
 
+        console.log('[NewsBlogModal] Loading article:', article.title);
+        console.log('[NewsBlogModal] content type:', typeof content);
+        console.log('[NewsBlogModal] content is null?:', content === null);
+        console.log('[NewsBlogModal] content is undefined?:', content === undefined);
+        console.log('[NewsBlogModal] content:', JSON.stringify(content));
+
         let parsedContent: BlogContent | null = null;
+        let contentToConvert: NewsContentShape | BlogContent | null = content;
 
         if (content) {
+          // First, handle case where content might be a JSON string
           if (typeof content === 'string') {
+            console.log('[NewsBlogModal] Content is a string, attempting to parse JSON');
             try {
-              parsedContent = JSON.parse(content) as BlogContent;
-            } catch {
-              // Not JSON
+              contentToConvert = JSON.parse(content) as NewsContentShape | BlogContent;
+              console.log('[NewsBlogModal] ✅ Parsed JSON string:', contentToConvert);
+            } catch (e) {
+              console.log('[NewsBlogModal] ❌ Failed to parse JSON string:', e);
+              contentToConvert = null;
             }
-          } else if (
-            typeof content === 'object' &&
-            'blocks' in content &&
-            Array.isArray(content.blocks) &&
-            content.blocks.length > 0
+          }
+
+          // Now check if it's in block format (has 'blocks' array)
+          if (
+            typeof contentToConvert === 'object' &&
+            contentToConvert !== null &&
+            'blocks' in contentToConvert &&
+            Array.isArray(contentToConvert.blocks) &&
+            contentToConvert.blocks.length > 0
           ) {
-            parsedContent = content as BlogContent;
+            parsedContent = contentToConvert as BlogContent;
+            console.log('[NewsBlogModal] ✅ Found blocks in content:', parsedContent.blocks.length, 'blocks');
           }
         }
 
         if (parsedContent && parsedContent.blocks && parsedContent.blocks.length > 0) {
+          console.log('[NewsBlogModal] ✅ Using block format with', parsedContent.blocks.length, 'blocks');
           setEditorContent(parsedContent);
           // ✅ Ensure rowConfig is valid - if missing, create default from blockCount
           const rowCfg = parsedContent.rowConfig || [];
@@ -342,16 +364,24 @@ export default function NewsBlogModal({
           } else {
             setRowConfig(rowCfg);
           }
+          console.log('[NewsBlogModal] 🔄 Resetting blocks:', parsedContent.blocks.length);
           resetBlocks(parsedContent.blocks);
         } else {
           // Fallback: Convert legacy content to BlockEditor format
-          const legacyContent = parseNewsContent(content as NewsContentShape | null);
+          console.log('[NewsBlogModal] ⚠️  Falling back to legacy format');
+          console.log('[NewsBlogModal] Content being converted:', JSON.stringify(contentToConvert, null, 2));
+          const legacyContent = parseNewsContent(contentToConvert as NewsContentShape | null);
+          console.log('[NewsBlogModal] Legacy content converted to:', JSON.stringify(legacyContent, null, 2));
           setEditorContent(legacyContent);
           // ✅ Auto-generate rowConfig for legacy content too
           if (legacyContent.blocks && legacyContent.blocks.length > 0) {
+            console.log('[NewsBlogModal] 🔄 Resetting legacy blocks:', legacyContent.blocks.length);
             setRowConfig([{ layout: 1, blockCount: legacyContent.blocks.length }]);
             resetBlocks(legacyContent.blocks);
           } else {
+            console.log('[NewsBlogModal] ❌ No blocks found!');
+            console.log('[NewsBlogModal] legacyContent:', legacyContent);
+            console.log('[NewsBlogModal] legacyContent.blocks:', legacyContent.blocks);
             setRowConfig([]);
           }
         }
