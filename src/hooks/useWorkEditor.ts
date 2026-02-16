@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { BlogContent } from '@/components/admin/shared/BlockEditor/types';
 
 // ---- Types ----
 
@@ -20,7 +21,7 @@ export interface WorkProjectData {
   galleryImages: string[];
   order: number;
   published: boolean;
-  content?: Record<string, any>; // BlockEditor content with blocks array
+  content?: BlogContent;
   createdAt: string;
   updatedAt: string;
 }
