@@ -139,15 +139,8 @@ export async function PUT(
       // Use Record<string, unknown> to access dynamic properties safely
       const content = validation.data.content as Record<string, unknown> | null;
 
-      if (process.env.DEBUG) console.log('[API PUT] ========== CONTENT VALIDATION ==========');
-      if (process.env.DEBUG) console.log('[API PUT] Input content:', JSON.stringify(content));
-      if (process.env.DEBUG) console.log('[API PUT] content type:', typeof content);
-      if (process.env.DEBUG) console.log('[API PUT] content === null?:', content === null);
-      if (process.env.DEBUG) console.log('[API PUT] content === {}?:', JSON.stringify(content) === '{}');
-
       // CRITICAL: Explicitly reject empty objects - this is the core bug!
       if (content && typeof content === 'object' && JSON.stringify(content) === '{}') {
-        if (process.env.DEBUG) console.log('[API PUT] CRITICAL: Rejecting empty content object!');
         return errorResponse(
           '콘텐츠가 비어있습니다. 최소 1개의 블록이 필요합니다.',
           'EMPTY_CONTENT',
@@ -162,20 +155,10 @@ export async function PUT(
       const isLegacyFormat = Boolean(content?.introTitle || content?.introText || content?.gallery);
       const isValidContent = isBlockFormat || isLegacyFormat;
 
-      if (process.env.DEBUG) console.log('[API PUT] isBlockFormat:', isBlockFormat, '(blocks count:', Array.isArray(blocks) ? blocks.length : 'N/A', ')');
-      if (process.env.DEBUG) console.log('[API PUT] isLegacyFormat:', isLegacyFormat);
-      if (process.env.DEBUG) console.log('[API PUT] isValidContent:', isValidContent);
-
-      if (!isValidContent) {
-        if (process.env.DEBUG) console.log('[API PUT] ⚠️ WARNING: Invalid content format detected, will save as null');
-      }
-
       // Save valid content or null
       updateData.content = isValidContent
         ? (content as Prisma.InputJsonValue)
         : Prisma.JsonNull;
-
-      if (process.env.DEBUG) console.log('[API PUT] Final updateData.content:', updateData.content === Prisma.JsonNull ? 'Prisma.JsonNull' : JSON.stringify(updateData.content));
     }
     if (validation.data.attachments !== undefined) {
       updateData.attachments = validation.data.attachments && validation.data.attachments.length > 0
