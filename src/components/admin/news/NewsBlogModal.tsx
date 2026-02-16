@@ -81,14 +81,17 @@ export default function NewsBlogModal({
   } = useBlockEditor(editorContent.blocks);
 
   // Row-based layout configuration
-  const [rowConfig, setRowConfig] = useState<RowConfig[]>(
-    editorContent.rowConfig || []
-  );
+  const [rowConfig, setRowConfig] = useState<RowConfig[]>([]);
+
+  // Track if article data has been loaded to avoid overwriting loaded rowConfig
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // One-way sync: blocks/rowConfig changes -> editorContent update
+  // BUT: Don't sync if we just loaded data (preserve loaded rowConfig)
   useEffect(() => {
+    if (!isLoaded) return; // Skip sync during initial load
     setEditorContent((prev) => ({ ...prev, blocks, rowConfig }));
-  }, [blocks, rowConfig]);
+  }, [blocks, rowConfig, isLoaded]);
 
   // --- Row management callbacks ---
 
@@ -397,6 +400,11 @@ export default function NewsBlogModal({
       }
       setError(null);
       setActiveTab('info');
+      // 🚨 CRITICAL: Mark as loaded so sync effect won't overwrite loaded data
+      setIsLoaded(true);
+    } else {
+      // Modal closed, reset isLoaded for next open
+      setIsLoaded(false);
     }
   }, [isOpen, article]);
 
@@ -448,14 +456,69 @@ export default function NewsBlogModal({
     setIsSubmitting(true);
 
     try {
-      const hasBlocks = editorContent.blocks.length > 0;
-      const content: NewsContentData | null = hasBlocks
-        ? {
-            blocks: editorContent.blocks,
-            rowConfig,
-            version: '1.0',
-          }
-        : null;
+      // 🔍 Debug: Log blocks status before submit
+      console.log('[NewsBlogModal] ========== BEFORE SUBMIT ==========');
+      console.log('[NewsBlogModal] blocks.length:', blocks.length);
+      console.log('[NewsBlogModal] blocks:', JSON.stringify(blocks, null, 2));
+      console.log('[NewsBlogModal] editorContent.blocks.length:', editorContent.blocks.length);
+      console.log('[NewsBlogModal] editorContent.blocks:', JSON.stringify(editorContent.blocks, null, 2));
+      console.log('[NewsBlogModal] editorContent:', JSON.stringify(editorContent, null, 2));
+      console.log('[NewsBlogModal] rowConfig:', JSON.stringify(rowConfig, null, 2));
+      console.log('[NewsBlogModal] blocks === editorContent.blocks?:', blocks === editorContent.blocks);
+
+      // 🔧 CRITICAL FIX: Use blocks from useBlockEditor hook (always fresh)
+      const hasBlocks = blocks && blocks.length > 0;
+
+      // 🔍 CRITICAL: Create content with explicit deep copy + row config safety check
+      let content: NewsContentData | null = null;
+
+      if (hasBlocks) {
+        // Explicitly deep copy blocks array to avoid reference issues
+        const blocksCopy = JSON.parse(JSON.stringify(blocks));
+
+        // Validate blocksCopy is not empty and has actual data
+        if (!Array.isArray(blocksCopy) || blocksCopy.length === 0) {
+          console.error('[NewsBlogModal] ❌ CRITICAL: blocksCopy is empty after deep copy!');
+          throw new Error('블록 데이터가 손실되었습니다. 다시 시도해주세요.');
+        }
+
+        // 🚨 CRITICAL FIX: rowConfig might be stale due to async setState
+        // Solution: Always generate rowConfig from actual blocks, never rely on state alone
+        const rowConfigCopy = Array.isArray(rowConfig) && rowConfig.length > 0
+          ? [...rowConfig]
+          : [{ layout: 1 as const, blockCount: blocksCopy.length }];
+
+        content = {
+          blocks: blocksCopy,
+          rowConfig: rowConfigCopy,
+          version: '1.0',
+        };
+
+        // 🔍 CRITICAL VALIDATION: Verify content object is valid before sending
+        if (!content || typeof content !== 'object' || !content.blocks || !Array.isArray(content.blocks)) {
+          console.error('[NewsBlogModal] ❌ CRITICAL: content object is invalid!', content);
+          throw new Error('콘텐츠 객체가 유효하지 않습니다.');
+        }
+
+        if (content.blocks.length === 0) {
+          console.error('[NewsBlogModal] ❌ CRITICAL: content.blocks is empty!');
+          throw new Error('최소 1개의 블록이 필요합니다.');
+        }
+
+        console.log('[NewsBlogModal] ========== SUBMIT: CONTENT CREATED ==========');
+        console.log('[NewsBlogModal] hasBlocks:', true);
+        console.log('[NewsBlogModal] blocks.length:', blocks.length);
+        console.log('[NewsBlogModal] blocksCopy.length:', blocksCopy.length);
+        console.log('[NewsBlogModal] First block ID:', blocksCopy[0]?.id);
+        console.log('[NewsBlogModal] rowConfig.length:', rowConfig.length);
+        console.log('[NewsBlogModal] rowConfigCopy:', JSON.stringify(rowConfigCopy));
+        console.log('[NewsBlogModal] Final content:', JSON.stringify(content));
+      } else {
+        console.log('[NewsBlogModal] ========== SUBMIT: NO BLOCKS ==========');
+        console.log('[NewsBlogModal] blocks:', blocks);
+        console.log('[NewsBlogModal] blocks.length:', blocks?.length ?? 'N/A');
+        content = null;
+      }
 
       const data: CreateArticleInput = {
         title: title.trim(),
@@ -466,6 +529,20 @@ export default function NewsBlogModal({
         publishedAt: publishedAt || new Date().toISOString().split('T')[0],
         published,
       };
+
+      // 🔍 CRITICAL VALIDATION: Verify the final data object
+      if (data.content && typeof data.content === 'object') {
+        const contentKeys = Object.keys(data.content);
+        if (contentKeys.length === 0) {
+          console.error('[NewsBlogModal] ❌ CRITICAL: data.content is an empty object!');
+          throw new Error('콘텐츠가 비어있습니다.');
+        }
+      }
+
+      console.log('[NewsBlogModal] ========== SENDING DATA ==========');
+      console.log('[NewsBlogModal] data.content type:', typeof data.content);
+      console.log('[NewsBlogModal] data.content keys:', data.content ? Object.keys(data.content) : 'null');
+      console.log('[NewsBlogModal] data.content:', JSON.stringify(data.content, null, 2));
 
       await onSubmit(data);
       onClose();

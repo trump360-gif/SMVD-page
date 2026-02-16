@@ -68,7 +68,16 @@ export async function GET(
       return notFoundResponse('뉴스');
     }
 
-    return successResponse(article, '뉴스 조회 성공');
+    // 🔧 Fix: Convert empty object {} to null for content field
+    // Prisma stores JsonNull as {}, so we need to convert it back
+    const articleData = {
+      ...article,
+      content: (article.content && Object.keys(article.content).length === 0)
+        ? null
+        : article.content,
+    };
+
+    return successResponse(articleData, '뉴스 조회 성공');
   } catch (error) {
     console.error('뉴스 조회 오류:', error);
     return errorResponse('뉴스를 불러오는 중 오류가 발생했습니다', 'FETCH_ERROR', 500);
@@ -118,15 +127,42 @@ export async function PUT(
     if (validation.data.content !== undefined) {
       const content = validation.data.content as any;
 
+      console.log('[API PUT] ========== CONTENT VALIDATION ==========');
+      console.log('[API PUT] Input content:', JSON.stringify(content));
+      console.log('[API PUT] content type:', typeof content);
+      console.log('[API PUT] content === null?:', content === null);
+      console.log('[API PUT] content === {}?:', JSON.stringify(content) === '{}');
+
+      // 🚨 CRITICAL: Explicitly reject empty objects - this is the core bug!
+      if (content && typeof content === 'object' && JSON.stringify(content) === '{}') {
+        console.log('[API PUT] ❌ CRITICAL: Rejecting empty content object!');
+        return errorResponse(
+          '콘텐츠가 비어있습니다. 최소 1개의 블록이 필요합니다.',
+          'EMPTY_CONTENT',
+          400
+        );
+      }
+
       // Check if content is valid (either block format or legacy format)
+      // 🔧 FIX: Require blocks array to have length > 0 to prevent data loss
       const isBlockFormat = content?.blocks && Array.isArray(content.blocks) && content.blocks.length > 0;
       const isLegacyFormat = content?.introTitle || content?.introText || content?.gallery;
       const isValidContent = isBlockFormat || isLegacyFormat;
+
+      console.log('[API PUT] isBlockFormat:', isBlockFormat, '(blocks count:', content?.blocks?.length ?? 'N/A', ')');
+      console.log('[API PUT] isLegacyFormat:', isLegacyFormat);
+      console.log('[API PUT] isValidContent:', isValidContent);
+
+      if (!isValidContent) {
+        console.log('[API PUT] ⚠️ WARNING: Invalid content format detected, will save as null');
+      }
 
       // Save valid content or null
       updateData.content = isValidContent
         ? (content as Prisma.InputJsonValue)
         : Prisma.JsonNull;
+
+      console.log('[API PUT] Final updateData.content:', updateData.content === Prisma.JsonNull ? 'Prisma.JsonNull' : JSON.stringify(updateData.content));
     }
     if (validation.data.publishedAt !== undefined) updateData.publishedAt = new Date(validation.data.publishedAt);
     if (validation.data.published !== undefined) updateData.published = validation.data.published;

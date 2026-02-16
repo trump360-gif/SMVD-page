@@ -112,12 +112,40 @@ export function useNewsEditor() {
   const updateArticle = useCallback(async (id: string, input: UpdateArticleInput) => {
     try {
       setError(null);
+
+      // 🔍 CRITICAL DEBUG: Log input object structure before sending
+      console.log('[useNewsEditor] ========== UPDATE ARTICLE ==========');
+      console.log('[useNewsEditor] Article ID:', id);
+      console.log('[useNewsEditor] Input object keys:', Object.keys(input));
+      console.log('[useNewsEditor] Input.content exists?:', 'content' in input);
+      console.log('[useNewsEditor] Input.content type:', typeof input.content);
+      console.log('[useNewsEditor] Input.content value:', input.content);
+      console.log('[useNewsEditor] Input.content === null?:', input.content === null);
+      console.log('[useNewsEditor] Input.content === undefined?:', input.content === undefined);
+
+      if (input.content && typeof input.content === 'object') {
+        console.log('[useNewsEditor] Content object keys:', Object.keys(input.content));
+        console.log('[useNewsEditor] Content.blocks exists?:', 'blocks' in input.content);
+        console.log('[useNewsEditor] Content.blocks type:', typeof (input.content as any).blocks);
+        console.log('[useNewsEditor] Content.blocks length:', (input.content as any).blocks?.length);
+        console.log('[useNewsEditor] Full content object:', JSON.stringify(input.content, null, 2));
+      }
+
+      // 🔍 CRITICAL DEBUG: Log full input before stringify
+      console.log('[useNewsEditor] Full input before stringify:', JSON.stringify(input, null, 2));
+
+      const jsonBody = JSON.stringify(input);
+      console.log('[useNewsEditor] JSON stringified body:', jsonBody);
+      console.log('[useNewsEditor] Body length:', jsonBody.length);
+
       const res = await fetch(`/api/admin/news/articles/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(input),
+        body: jsonBody,
         credentials: 'include',
       });
+
+      console.log('[useNewsEditor] Response status:', res.status);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || '뉴스 수정 실패');
       setArticles((prev) =>
