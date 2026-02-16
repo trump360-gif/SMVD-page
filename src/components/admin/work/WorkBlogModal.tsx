@@ -81,6 +81,8 @@ export default function WorkBlogModal({
     updateBlock,
     deleteBlock,
     reorderBlocks,
+    resetBlocks,        // ← 추가: 동기화용
+    getBlockCount,      // ← 추가: 디버깅용
   } = useBlockEditor(editorContent.blocks);
 
   // Row-based layout configuration (replaces single columnLayout)
@@ -88,7 +90,8 @@ export default function WorkBlogModal({
     editorContent.rowConfig || []
   );
 
-  // Sync blocks + rowConfig state with editorContent
+  // ✅ 한 방향 동기화: blocks/rowConfig 변경 → editorContent 업데이트 (편집기 변경사항 저장용)
+  // ⚠️ 역방향 동기화는 제거 (infinite loop 방지)
   useEffect(() => {
     setEditorContent((prev) => ({ ...prev, blocks, rowConfig }));
   }, [blocks, rowConfig]);
@@ -290,22 +293,33 @@ export default function WorkBlogModal({
         setPublished(project.published);
 
         // Priority: Check if project.content already has blocks (new format)
+        console.log('[WorkBlogModal] Loading project:', project.title);
+        console.log('[WorkBlogModal] project.content type:', typeof project.content);
+        console.log('[WorkBlogModal] project.content:', project.content);
+
         if (project.content && typeof project.content === 'object' && 'blocks' in project.content) {
           const content = project.content as BlogContent;
+          console.log('[WorkBlogModal] Using project.content with blocks:', content.blocks?.length);
           setEditorContent(content);
           setRowConfig(content.rowConfig || []);
+          // ✅ Immediately sync with useBlockEditor
+          if (content.blocks && content.blocks.length > 0) {
+            console.log('[WorkBlogModal] Immediately resetting blocks:', content.blocks.length);
+            resetBlocks(content.blocks);  // ← 추가: useBlockEditor와 동기화
+          }
         } else {
           // Fallback: Convert legacy description (markdown) + galleryImages + heroImage to BlogContent
-          setEditorContent(
-            parseWorkProjectContent(
-              project.description,
-              project.galleryImages as string[] | undefined,
-              project.heroImage,
-              project.title,
-              project.author,
-              project.email
-            )
+          console.log('[WorkBlogModal] Falling back to parseWorkProjectContent');
+          const parsedContent = parseWorkProjectContent(
+            project.description,
+            project.galleryImages as string[] | undefined,
+            project.heroImage,
+            project.title,
+            project.author,
+            project.email
           );
+          console.log('[WorkBlogModal] Parsed content blocks:', parsedContent.blocks?.length);
+          setEditorContent(parsedContent);
         }
       } else {
         setTitle('');
