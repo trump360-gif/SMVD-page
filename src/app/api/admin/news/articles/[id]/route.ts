@@ -116,8 +116,16 @@ export async function PUT(
     if (validation.data.excerpt !== undefined) updateData.excerpt = validation.data.excerpt;
     if (validation.data.thumbnailImage !== undefined) updateData.thumbnailImage = validation.data.thumbnailImage;
     if (validation.data.content !== undefined) {
-      updateData.content = validation.data.content
-        ? (validation.data.content as Prisma.InputJsonValue)
+      const content = validation.data.content as any;
+
+      // Check if content is valid (either block format or legacy format)
+      const isBlockFormat = content?.blocks && Array.isArray(content.blocks) && content.blocks.length > 0;
+      const isLegacyFormat = content?.introTitle || content?.introText || content?.gallery;
+      const isValidContent = isBlockFormat || isLegacyFormat;
+
+      // Save valid content or null
+      updateData.content = isValidContent
+        ? (content as Prisma.InputJsonValue)
         : Prisma.JsonNull;
     }
     if (validation.data.publishedAt !== undefined) updateData.publishedAt = new Date(validation.data.publishedAt);
