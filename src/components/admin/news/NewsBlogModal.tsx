@@ -456,6 +456,13 @@ export default function NewsBlogModal({
     setIsSubmitting(true);
 
     try {
+      // 🔍 CRITICAL DEBUG: Log entry to try block
+      console.log('[NewsBlogModal] ========== ENTERING TRY BLOCK ==========');
+      console.log('[NewsBlogModal] blocks:', blocks);
+      console.log('[NewsBlogModal] blocks.length:', blocks?.length);
+      console.log('[NewsBlogModal] blocks type:', typeof blocks);
+      console.log('[NewsBlogModal] Array.isArray(blocks):', Array.isArray(blocks));
+
       // 🔍 Debug: Log blocks status before submit
       console.log('[NewsBlogModal] ========== BEFORE SUBMIT ==========');
       console.log('[NewsBlogModal] blocks.length:', blocks.length);
