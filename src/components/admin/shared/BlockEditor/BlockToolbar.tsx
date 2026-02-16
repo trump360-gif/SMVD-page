@@ -40,6 +40,8 @@ const GENERIC_BLOCK_OPTIONS: BlockOption[] = [
   { type: 'divider', label: 'Divider', icon: <Minus size={14} />, group: 'generic' },
   { type: 'layout-row', label: 'Row Layout (2-3 cols)', icon: <Columns3 size={14} />, group: 'generic' },
   { type: 'layout-grid', label: 'Grid Layout', icon: <LayoutGrid size={14} />, group: 'generic' },
+  { type: 'image-row', label: 'Image Row (1-3)', icon: <Columns3 size={14} />, group: 'generic' },
+  { type: 'image-grid', label: 'Image Grid', icon: <LayoutGrid size={14} />, group: 'generic' },
 ];
 
 const WORK_BLOCK_OPTIONS: BlockOption[] = [
@@ -48,7 +50,6 @@ const WORK_BLOCK_OPTIONS: BlockOption[] = [
   { type: 'work-title', label: 'Work Title + Author', icon: <Tag size={14} />, group: 'work' },
   { type: 'work-metadata', label: 'Author / Email', icon: <User size={14} />, group: 'work' },
   { type: 'work-layout-config', label: 'Layout Configuration', icon: <Grid3X3 size={14} />, group: 'work' },
-  { type: 'work-gallery', label: 'Work Gallery (Stack)', icon: <Layers size={14} />, group: 'work' },
 ];
 
 /**

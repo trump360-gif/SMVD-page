@@ -1,7 +1,7 @@
 'use client';
 
 import React, { memo } from 'react';
-import { Trash2, FileText } from 'lucide-react';
+import { Trash2, FileText, RotateCcw, RotateCw } from 'lucide-react';
 import type { Block } from '@/components/admin/shared/BlockEditor/types';
 
 // Import all 14 block editors
@@ -15,15 +15,20 @@ import HeroImageBlockEditor from '@/components/admin/shared/BlockEditor/blocks/H
 import HeroSectionBlockEditor from '@/components/admin/shared/BlockEditor/blocks/HeroSectionBlockEditor';
 import WorkTitleBlockEditor from '@/components/admin/shared/BlockEditor/blocks/WorkTitleBlockEditor';
 import WorkMetadataBlockEditor from '@/components/admin/shared/BlockEditor/blocks/WorkMetadataBlockEditor';
-import WorkGalleryBlockEditor from '@/components/admin/shared/BlockEditor/blocks/WorkGalleryBlockEditor';
 import WorkLayoutConfigBlockEditor from '@/components/admin/shared/BlockEditor/blocks/WorkLayoutConfigBlockEditor';
 import LayoutRowBlockEditor from '@/components/admin/shared/BlockEditor/blocks/LayoutRowBlockEditor';
 import LayoutGridBlockEditor from '@/components/admin/shared/BlockEditor/blocks/LayoutGridBlockEditor';
+import ImageRowBlockEditor from '@/components/admin/shared/BlockEditor/blocks/ImageRowBlockEditor';
+import ImageGridBlockEditor from '@/components/admin/shared/BlockEditor/blocks/ImageGridBlockEditor';
 
 interface BlockEditorPanelProps {
   block: Block | null;
   onChange: (id: string, data: Partial<Block>) => void;
   onDelete: (id: string) => void;
+  undo?: () => void;
+  redo?: () => void;
+  canUndo?: boolean;
+  canRedo?: boolean;
 }
 
 // 블록 타입별 라벨
@@ -38,10 +43,11 @@ const BLOCK_LABELS: Record<string, string> = {
   'hero-section': 'Hero Section',
   'work-title': 'Work Title',
   'work-metadata': 'Metadata',
-  'work-gallery': 'Work Gallery',
   'work-layout-config': 'Layout Config',
   'layout-row': 'Row Layout',
   'layout-grid': 'Grid Layout',
+  'image-row': 'Image Row',
+  'image-grid': 'Image Grid',
 };
 
 /**
@@ -92,14 +98,16 @@ function renderBlockEditor(
       return <WorkTitleBlockEditor block={block} onChange={handleChange} />;
     case 'work-metadata':
       return <WorkMetadataBlockEditor block={block} onChange={handleChange} />;
-    case 'work-gallery':
-      return <WorkGalleryBlockEditor block={block} onChange={handleChange} />;
     case 'work-layout-config':
       return <WorkLayoutConfigBlockEditor block={block} onChange={handleChange} />;
     case 'layout-row':
       return <LayoutRowBlockEditor block={block} onChange={handleChange} />;
     case 'layout-grid':
       return <LayoutGridBlockEditor block={block} onChange={handleChange} />;
+    case 'image-row':
+      return <ImageRowBlockEditor block={block} onChange={handleChange} onRemove={() => {}} />;
+    case 'image-grid':
+      return <ImageGridBlockEditor block={block} onChange={handleChange} onRemove={() => {}} />;
     default:
       // TypeScript exhaustive check
       const _exhaustive: never = block;
@@ -114,6 +122,10 @@ export default memo(function BlockEditorPanel({
   block,
   onChange,
   onDelete,
+  undo,
+  redo,
+  canUndo,
+  canRedo,
 }: BlockEditorPanelProps) {
   if (!block) {
     return <EmptyState />;
@@ -143,11 +155,45 @@ export default memo(function BlockEditorPanel({
           <span className="text-sm font-semibold text-gray-700">Edit {blockLabel}</span>
         </div>
 
-        {/* Delete Button */}
-        <button
-          type="button"
-          onClick={handleDelete}
-          onBlur={() => setShowDeleteConfirm(false)}
+        {/* Undo/Redo & Delete Buttons */}
+        <div className="flex items-center gap-2">
+          {/* Undo Button */}
+          <button
+            type="button"
+            onClick={undo}
+            disabled={!canUndo}
+            className={`p-1.5 rounded transition-colors ${
+              canUndo
+                ? 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
+                : 'text-gray-300 cursor-not-allowed'
+            }`}
+            title="Undo (Ctrl+Z)"
+            aria-label="Undo"
+          >
+            <RotateCcw size={16} />
+          </button>
+
+          {/* Redo Button */}
+          <button
+            type="button"
+            onClick={redo}
+            disabled={!canRedo}
+            className={`p-1.5 rounded transition-colors ${
+              canRedo
+                ? 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
+                : 'text-gray-300 cursor-not-allowed'
+            }`}
+            title="Redo (Ctrl+Y)"
+            aria-label="Redo"
+          >
+            <RotateCw size={16} />
+          </button>
+
+          {/* Delete Button */}
+          <button
+            type="button"
+            onClick={handleDelete}
+            onBlur={() => setShowDeleteConfirm(false)}
           aria-label={showDeleteConfirm ? 'Confirm delete block' : 'Delete block'}
           className={`
             flex items-center gap-1.5 px-3 py-1.5 rounded transition-all duration-200
@@ -162,6 +208,7 @@ export default memo(function BlockEditorPanel({
           <Trash2 size={14} />
           {showDeleteConfirm && <span className="text-xs font-medium">Confirm</span>}
         </button>
+        </div>
       </div>
 
       {/* Block Editor Content */}

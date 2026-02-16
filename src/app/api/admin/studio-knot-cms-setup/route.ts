@@ -67,10 +67,13 @@ const studioKnotBlogContent = {
       letterSpacing: 0.5
     },
 
-    // Block 3: Work Gallery (9개 이미지)
+    // Block 3: Image Grid (9개 이미지)
     {
       id: "block-gallery-knot-1",
-      type: "work-gallery",
+      type: "image-grid",
+      template: "auto",
+      gap: 0,
+      aspectRatio: 2,
       order: 3,
       images: [
         { id: "img-1", url: "/images/work/knot/gallery-1.png", alt: "Gallery 1" },
@@ -82,10 +85,7 @@ const studioKnotBlogContent = {
         { id: "img-7", url: "/images/work/knot/gallery-7.png", alt: "Gallery 7" },
         { id: "img-8", url: "/images/work/knot/gallery-8.png", alt: "Gallery 8" },
         { id: "img-9", url: "/images/work/knot/gallery-9.png", alt: "Gallery 9" }
-      ],
-      imageLayout: 2,
-      gap: 16,
-      minImageHeight: 300
+      ]
     }
   ],
 

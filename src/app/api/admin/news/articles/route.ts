@@ -18,11 +18,22 @@ const GallerySchema = z.object({
   bottomRight: z.string().default(''),
 }).optional();
 
-const ContentSchema = z.object({
+// Legacy content format (introTitle, introText, gallery)
+const LegacyContentSchema = z.object({
   introTitle: z.string().optional(),
   introText: z.string().optional(),
   gallery: GallerySchema,
-}).optional();
+});
+
+// Content can be either legacy or block format
+// Use passthrough() to allow any JSON shape, since block content is complex and dynamic
+const ContentSchema = z.union([
+  LegacyContentSchema,
+  z.object({
+    blocks: z.array(z.any()),
+    version: z.string(),
+  }).passthrough(),
+]).optional();
 
 const CreateArticleSchema = z.object({
   title: z.string().min(1, '제목은 필수입니다'),
@@ -112,7 +123,7 @@ export async function POST(request: NextRequest) {
         category: data.category,
         excerpt: data.excerpt || null,
         thumbnailImage: data.thumbnailImage,
-        content: data.content ?? Prisma.JsonNull,
+        content: data.content ? (data.content as Prisma.InputJsonValue) : Prisma.JsonNull,
         publishedAt: data.publishedAt ? new Date(data.publishedAt) : new Date(),
         published: data.published,
         order: nextOrder,

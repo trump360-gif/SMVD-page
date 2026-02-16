@@ -36,7 +36,7 @@ interface ParsedBlockContent {
     columnGap?: number;
     textColumnWidth?: string;
   };
-  /** Gallery image URLs from WorkGalleryBlock or GalleryBlock */
+  /** Gallery image URLs from ImageGridBlock, GalleryBlock, or legacy WorkGalleryBlock */
   galleryImages: string[];
 }
 
@@ -47,7 +47,7 @@ interface ParsedBlockContent {
  * - hero-image block -> hero URL
  * - work-title block -> title, author, email (left column)
  * - First text block after work-title -> mainDescription (right column)
- * - work-gallery / gallery blocks -> galleryImages
+ * - image-grid / gallery / legacy work-gallery blocks -> galleryImages
  *
  * Returns null if not valid block JSON (i.e. legacy plain text description).
  */
@@ -103,11 +103,11 @@ function parseBlockContent(description: string): ParsedBlockContent | null {
           columnGap: block.columnGap,
           textColumnWidth: block.textColumnWidth,
         };
-      } else if (block.type === 'work-gallery' && Array.isArray(block.images)) {
+      } else if (block.type === 'image-grid' && Array.isArray(block.images)) {
         for (const img of block.images) {
           if (img.url) result.galleryImages.push(img.url);
         }
-      } else if (block.type === 'gallery' && Array.isArray(block.images)) {
+      } else if ((block.type === 'work-gallery' || block.type === 'gallery') && Array.isArray(block.images)) {
         // Legacy gallery block support
         for (const img of block.images) {
           if (img.url) result.galleryImages.push(img.url);

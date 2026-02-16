@@ -48,12 +48,12 @@ export function serializeContent(content: BlogContent): string {
  * Convert Work project's description (markdown) + galleryImages array to BlogContent.
  * - Combines heroImage + title/author/email into unified HeroSectionBlock
  * - Wraps description in TextBlock
- * - Converts galleryImages array to WorkGalleryBlock (vertical stack layout)
+ * - Converts galleryImages array to ImageGridBlock (grid layout)
  *
  * New format uses Work-specific block types:
  * - HeroSectionBlock for unified image + title/author/email (full-width, 860px, overlay styling)
  * - TextBlock for description (renders in right column)
- * - WorkGalleryBlock for gallery images (vertical stack, full-width, -1px overlap)
+ * - ImageGridBlock for gallery images (grid layout)
  */
 export function parseWorkProjectContent(
   description: string | null | undefined,
@@ -124,13 +124,38 @@ export function parseWorkProjectContent(
     });
   }
 
-  // Add galleryImages as WorkGalleryBlock (matching WorkDetailPage layout)
+  // Add galleryImages as ImageGridBlock (row-based layout)
   const validImages = galleryImages?.filter(url => url && typeof url === 'string') || [];
   if (validImages.length > 0) {
+    // Generate rows for image grid
+    const rows = [];
+    let imgIdx = 0;
+
+    // Layout strategy: 1-col, 2-col, 3-col for remaining
+    const layoutStrategy = [
+      { columns: 1, count: 1 },
+      { columns: 2, count: 2 },
+      { columns: 3, count: 999 }, // Fill rest with 3 columns
+    ];
+
+    for (const layout of layoutStrategy) {
+      if (imgIdx >= validImages.length) break;
+      const count = Math.min(layout.count, validImages.length - imgIdx);
+      rows.push({
+        id: generateBlockId(),
+        columns: layout.columns as 1 | 2 | 3,
+        imageCount: count,
+      });
+      imgIdx += count;
+    }
+
     blocks.push({
       id: generateBlockId(),
-      type: 'work-gallery',
+      type: 'image-grid',
       images: validImages.map(url => ({ id: generateBlockId(), url })),
+      rows,
+      gap: 0,
+      aspectRatio: 2,
       order: blocks.length,
     });
   }

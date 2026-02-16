@@ -1,9 +1,17 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { X } from 'lucide-react';
-import BlockEditor from '@/components/admin/shared/BlockEditor';
-import type { BlogContent } from '@/components/admin/shared/BlockEditor/types';
+import { X, RotateCcw, RotateCw } from 'lucide-react';
+import NewsDetailPreviewRenderer from '@/components/admin/shared/BlockEditor/renderers/NewsDetailPreviewRenderer';
+import type { NewsArticleContext } from '@/components/admin/shared/BlockEditor/renderers/NewsDetailPreviewRenderer';
+import BlockLayoutVisualizer from '@/components/admin/work/BlockLayoutVisualizer';
+import BlockEditorPanel from '@/components/admin/work/BlockEditorPanel';
+import { useBlockEditor } from '@/components/admin/shared/BlockEditor/useBlockEditor';
+import type {
+  BlogContent,
+  BlockType,
+  RowConfig,
+} from '@/components/admin/shared/BlockEditor/types';
 import { parseNewsContent, type NewsContentShape } from '@/lib/content-parser';
 import {
   newsArticleInputSchema,
@@ -35,7 +43,7 @@ export default function NewsBlogModal({
   const modalRef = useRef<HTMLDivElement>(null);
 
   // ---- State ----
-  const [activeTab, setActiveTab] = useState<'info' | 'blog-content'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'content'>('info');
 
   // Basic info
   const [title, setTitle] = useState('');
@@ -45,7 +53,7 @@ export default function NewsBlogModal({
   const [publishedAt, setPublishedAt] = useState('');
   const [published, setPublished] = useState(true);
 
-  // Block editor content (replaces introTitle + introText + gallery)
+  // Block editor content
   const [editorContent, setEditorContent] = useState<BlogContent>({
     blocks: [],
     version: '1.0',
@@ -54,6 +62,192 @@ export default function NewsBlogModal({
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Block Editor state (3-panel layout)
+  const {
+    blocks,
+    selectedId,
+    setSelectedId,
+    addBlock,
+    updateBlock,
+    deleteBlock,
+    reorderBlocks,
+    resetBlocks,
+    getBlockCount,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+  } = useBlockEditor(editorContent.blocks);
+
+  // Row-based layout configuration
+  const [rowConfig, setRowConfig] = useState<RowConfig[]>(
+    editorContent.rowConfig || []
+  );
+
+  // One-way sync: blocks/rowConfig changes -> editorContent update
+  useEffect(() => {
+    setEditorContent((prev) => ({ ...prev, blocks, rowConfig }));
+  }, [blocks, rowConfig]);
+
+  // --- Row management callbacks ---
+
+  const handleRowLayoutChange = useCallback(
+    (rowIndex: number, newLayout: 1 | 2 | 3) => {
+      setRowConfig((prev) => {
+        const updated = [...prev];
+        if (rowIndex < updated.length) {
+          updated[rowIndex] = { ...updated[rowIndex], layout: newLayout };
+        }
+        return updated;
+      });
+    },
+    []
+  );
+
+  const handleAddRow = useCallback((layout: 1 | 2 | 3 = 1) => {
+    setRowConfig((prev) => [...prev, { layout, blockCount: 0 }]);
+  }, []);
+
+  const handleDeleteRow = useCallback((rowIndex: number) => {
+    setRowConfig((prev) => {
+      if (prev.length <= 1) return prev;
+      const updated = [...prev];
+      const removedBlockCount = updated[rowIndex].blockCount;
+      updated.splice(rowIndex, 1);
+      if (removedBlockCount > 0) {
+        const mergeTarget = rowIndex > 0 ? rowIndex - 1 : 0;
+        if (updated[mergeTarget]) {
+          updated[mergeTarget] = {
+            ...updated[mergeTarget],
+            blockCount: updated[mergeTarget].blockCount + removedBlockCount,
+          };
+        }
+      }
+      return updated;
+    });
+  }, []);
+
+  const handleAddBlockToRow = useCallback(
+    (type: BlockType, rowIndex: number) => {
+      setRowConfig((prev) => {
+        const updated = [...prev];
+        if (rowIndex < updated.length) {
+          updated[rowIndex] = {
+            ...updated[rowIndex],
+            blockCount: updated[rowIndex].blockCount + 1,
+          };
+        } else {
+          updated.push({ layout: 1, blockCount: 1 });
+        }
+        return updated;
+      });
+
+      let blockOffset = 0;
+      for (let i = 0; i < rowIndex; i++) {
+        blockOffset += rowConfig[i]?.blockCount ?? 0;
+      }
+      blockOffset += rowConfig[rowIndex]?.blockCount ?? 0;
+      if (blockOffset > 0 && blockOffset <= blocks.length) {
+        const afterBlock = blocks[blockOffset - 1];
+        addBlock(type, afterBlock.id);
+      } else {
+        addBlock(type);
+      }
+    },
+    [addBlock, blocks, rowConfig]
+  );
+
+  const handleDeleteBlock = useCallback(
+    (id: string) => {
+      const blockIndex = blocks.findIndex((b) => b.id === id);
+      if (blockIndex === -1) {
+        deleteBlock(id);
+        return;
+      }
+
+      let accum = 0;
+      let targetRow = -1;
+      for (let i = 0; i < rowConfig.length; i++) {
+        accum += rowConfig[i].blockCount;
+        if (blockIndex < accum) {
+          targetRow = i;
+          break;
+        }
+      }
+
+      deleteBlock(id);
+
+      if (targetRow >= 0) {
+        setRowConfig((prev) => {
+          const updated = [...prev];
+          if (targetRow < updated.length && updated[targetRow].blockCount > 0) {
+            updated[targetRow] = {
+              ...updated[targetRow],
+              blockCount: updated[targetRow].blockCount - 1,
+            };
+            if (updated[targetRow].blockCount === 0 && updated.length > 1) {
+              updated.splice(targetRow, 1);
+            }
+          }
+          return updated;
+        });
+      }
+    },
+    [blocks, deleteBlock, rowConfig]
+  );
+
+  const handleMoveBlockToRow = useCallback(
+    (blockId: string, targetRowIndex: number, positionInRow: number) => {
+      const blockIndex = blocks.findIndex((b) => b.id === blockId);
+      if (blockIndex === -1) return;
+
+      let accum = 0;
+      let sourceRow = -1;
+      for (let i = 0; i < rowConfig.length; i++) {
+        accum += rowConfig[i].blockCount;
+        if (blockIndex < accum) {
+          sourceRow = i;
+          break;
+        }
+      }
+
+      let destIndex = 0;
+      for (let i = 0; i < targetRowIndex; i++) {
+        destIndex += rowConfig[i]?.blockCount ?? 0;
+      }
+      destIndex += positionInRow;
+
+      reorderBlocks(blockId, destIndex);
+
+      if (sourceRow >= 0 && sourceRow !== targetRowIndex) {
+        setRowConfig((prev) => {
+          const updated = [...prev];
+          if (sourceRow < updated.length && updated[sourceRow].blockCount > 0) {
+            updated[sourceRow] = {
+              ...updated[sourceRow],
+              blockCount: updated[sourceRow].blockCount - 1,
+            };
+          }
+          if (targetRowIndex < updated.length) {
+            updated[targetRowIndex] = {
+              ...updated[targetRowIndex],
+              blockCount: updated[targetRowIndex].blockCount + 1,
+            };
+          }
+          if (
+            sourceRow < updated.length &&
+            updated[sourceRow].blockCount === 0 &&
+            updated.length > 1
+          ) {
+            updated.splice(sourceRow, 1);
+          }
+          return updated;
+        });
+      }
+    },
+    [blocks, reorderBlocks, rowConfig]
+  );
 
   // ---- Reset form ----
   useEffect(() => {
@@ -70,9 +264,41 @@ export default function NewsBlogModal({
         );
         setPublished(article.published);
 
-        // Convert legacy content JSON to BlockEditor format
-        const content = article.content as NewsContentShape | null;
-        setEditorContent(parseNewsContent(content));
+        // Parse content: check for new block format or legacy format
+        const content = article.content as NewsContentShape | BlogContent | null;
+
+        let parsedContent: BlogContent | null = null;
+
+        if (content) {
+          if (typeof content === 'string') {
+            try {
+              parsedContent = JSON.parse(content) as BlogContent;
+            } catch {
+              // Not JSON
+            }
+          } else if (
+            typeof content === 'object' &&
+            'blocks' in content &&
+            Array.isArray(content.blocks) &&
+            content.blocks.length > 0
+          ) {
+            parsedContent = content as BlogContent;
+          }
+        }
+
+        if (parsedContent && parsedContent.blocks && parsedContent.blocks.length > 0) {
+          setEditorContent(parsedContent);
+          setRowConfig(parsedContent.rowConfig || []);
+          resetBlocks(parsedContent.blocks);
+        } else {
+          // Fallback: Convert legacy content to BlockEditor format
+          const legacyContent = parseNewsContent(content as NewsContentShape | null);
+          setEditorContent(legacyContent);
+          setRowConfig([]);
+          if (legacyContent.blocks && legacyContent.blocks.length > 0) {
+            resetBlocks(legacyContent.blocks);
+          }
+        }
       } else {
         setTitle('');
         setCategory('Notice');
@@ -81,18 +307,27 @@ export default function NewsBlogModal({
         setPublishedAt(new Date().toISOString().split('T')[0]);
         setPublished(true);
         setEditorContent({ blocks: [], version: '1.0' });
+        setRowConfig([]);
       }
       setError(null);
       setActiveTab('info');
     }
   }, [isOpen, article]);
 
-  // ---- Escape key handler ----
+  // ---- Keyboard shortcuts ----
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        onClose();
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        if (canUndo) undo();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
+        e.preventDefault();
+        if (canRedo) redo();
+      }
     },
-    [onClose]
+    [onClose, canUndo, canRedo, undo, redo]
   );
 
   useEffect(() => {
@@ -110,7 +345,6 @@ export default function NewsBlogModal({
   const handleSubmit = async () => {
     setError(null);
 
-    // Validate all basic info fields via Zod schema
     const result = newsArticleInputSchema.safeParse({
       title: title.trim(),
       category,
@@ -128,12 +362,10 @@ export default function NewsBlogModal({
     setIsSubmitting(true);
 
     try {
-      // Build content in new block format
-      // Each block is type-safe via discriminated union (Block type)
       const hasBlocks = editorContent.blocks.length > 0;
       const content: NewsContentData | null = hasBlocks
         ? {
-            blocks: editorContent.blocks, // Block[] - already type-safe
+            blocks: editorContent.blocks,
             version: '1.0',
           }
         : null;
@@ -161,7 +393,7 @@ export default function NewsBlogModal({
 
   const tabs = [
     { key: 'info' as const, label: 'Basic Info' },
-    { key: 'blog-content' as const, label: 'Blog Content' },
+    { key: 'content' as const, label: 'Content (Blocks)' },
   ];
 
   return (
@@ -170,10 +402,10 @@ export default function NewsBlogModal({
         ref={modalRef}
         className="bg-white rounded-xl shadow-2xl flex flex-col"
         style={{
-          width: 'calc(100vw - 80px)',
-          maxWidth: '1200px',
-          height: 'calc(100vh - 80px)',
-          maxHeight: '900px',
+          width: 'calc(100vw - 60px)',
+          maxWidth: '1600px',
+          height: 'calc(100vh - 60px)',
+          maxHeight: '960px',
         }}
       >
         {/* Header */}
@@ -214,7 +446,7 @@ export default function NewsBlogModal({
         </div>
 
         {/* Content area */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-hidden p-0">
           {/* Error */}
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm flex items-center justify-between">
@@ -231,7 +463,7 @@ export default function NewsBlogModal({
 
           {/* Tab: Basic Info */}
           {activeTab === 'info' && (
-            <div className="space-y-5 max-w-3xl">
+            <div className="space-y-5 max-w-3xl p-6">
               {/* Title + Category */}
               <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2">
@@ -329,17 +561,87 @@ export default function NewsBlogModal({
             </div>
           )}
 
-          {/* Tab: Blog Content (Block Editor) */}
-          {activeTab === 'blog-content' && (
-            <div>
-              <p className="text-sm text-gray-500 mb-3">
-                Build the article page using content blocks. Add text, images, galleries, and more.
-              </p>
-              <BlockEditor
-                value={editorContent}
-                onChange={setEditorContent}
-                enablePreview={true}
-              />
+          {/* Tab: Content (3-Panel Layout) */}
+          {activeTab === 'content' && (
+            <div className="flex flex-col h-full w-full">
+              {/* Undo/Redo Controls */}
+              <div className="border-b border-gray-200 px-4 py-2 bg-gray-50 flex items-center gap-1 shrink-0">
+                <button
+                  type="button"
+                  onClick={undo}
+                  disabled={!canUndo}
+                  title="Undo (Ctrl+Z)"
+                  className="p-2 rounded-lg border border-gray-200 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <RotateCcw size={16} className="text-gray-600" />
+                </button>
+                <button
+                  type="button"
+                  onClick={redo}
+                  disabled={!canRedo}
+                  title="Redo (Ctrl+Y)"
+                  className="p-2 rounded-lg border border-gray-200 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <RotateCw size={16} className="text-gray-600" />
+                </button>
+                <div className="text-xs text-gray-400 ml-2">
+                  Ctrl+Z / Ctrl+Y
+                </div>
+              </div>
+
+              {/* 3-Panel Layout */}
+              <div className="flex flex-1 overflow-hidden w-full">
+                {/* Left 25%: Block Layout Visualizer */}
+                <div className="w-[25%] border-r border-gray-200 bg-white overflow-hidden flex flex-col">
+                  <BlockLayoutVisualizer
+                    blocks={blocks}
+                    rowConfig={rowConfig}
+                    selectedId={selectedId}
+                    onSelect={setSelectedId}
+                    onReorder={reorderBlocks}
+                    onRowLayoutChange={handleRowLayoutChange}
+                    onAddRow={handleAddRow}
+                    onDeleteRow={handleDeleteRow}
+                    onAddBlockToRow={handleAddBlockToRow}
+                    onDeleteBlock={handleDeleteBlock}
+                    onMoveBlockToRow={handleMoveBlockToRow}
+                  />
+                </div>
+
+                {/* Center 40%: Block Editor Panel */}
+                <div className="w-[40%] border-r border-gray-200 bg-white overflow-hidden flex flex-col">
+                  <div className="flex-1 overflow-y-auto">
+                    <BlockEditorPanel
+                      block={blocks.find((b) => b.id === selectedId) || null}
+                      onChange={updateBlock}
+                      onDelete={handleDeleteBlock}
+                      undo={undo}
+                      redo={redo}
+                      canUndo={canUndo}
+                      canRedo={canRedo}
+                    />
+                  </div>
+                </div>
+
+                {/* Right 35%: Live Preview */}
+                <div className="w-[35%] overflow-hidden bg-white flex flex-col h-full">
+                  <div className="shrink-0 px-4 py-3 border-b border-gray-200 bg-gray-50 sticky top-0">
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Live Preview</h4>
+                    <p className="text-[10px] text-gray-400 mt-1">News article preview</p>
+                  </div>
+                  <div className="flex-1 overflow-y-auto">
+                    <NewsDetailPreviewRenderer
+                      blocks={blocks}
+                      rowConfig={rowConfig}
+                      articleContext={{
+                        title: title,
+                        category: category,
+                        publishedAt: publishedAt,
+                      } satisfies NewsArticleContext}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>

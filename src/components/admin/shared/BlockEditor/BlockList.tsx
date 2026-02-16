@@ -30,7 +30,6 @@ import {
   Maximize,
   Tag,
   User,
-  Layers,
   Columns3,
   LayoutGrid,
 } from 'lucide-react';
@@ -46,10 +45,11 @@ import type {
   HeroSectionBlock,
   WorkTitleBlock,
   WorkMetadataBlock,
-  WorkGalleryBlock,
   WorkLayoutConfigBlock,
   LayoutRowBlock,
   LayoutGridBlock,
+  ImageRowBlock,
+  ImageGridBlock,
 } from './types';
 import TextBlockEditor from './blocks/TextBlockEditor';
 import ImageBlockEditor from './blocks/ImageBlockEditor';
@@ -61,10 +61,11 @@ import HeroImageBlockEditor from './blocks/HeroImageBlockEditor';
 import HeroSectionBlockEditor from './blocks/HeroSectionBlockEditor';
 import WorkTitleBlockEditor from './blocks/WorkTitleBlockEditor';
 import WorkMetadataBlockEditor from './blocks/WorkMetadataBlockEditor';
-import WorkGalleryBlockEditor from './blocks/WorkGalleryBlockEditor';
 import WorkLayoutConfigBlockEditor from './blocks/WorkLayoutConfigBlockEditor';
 import LayoutRowBlockEditor from './blocks/LayoutRowBlockEditor';
 import LayoutGridBlockEditor from './blocks/LayoutGridBlockEditor';
+import ImageRowBlockEditor from './blocks/ImageRowBlockEditor';
+import ImageGridBlockEditor from './blocks/ImageGridBlockEditor';
 
 // ---------------------------------------------------------------------------
 // Block metadata
@@ -80,10 +81,11 @@ const BLOCK_META: Record<string, { label: string; Icon: typeof Type }> = {
   'hero-image': { label: 'Hero Image', Icon: Maximize },
   'work-title': { label: 'Work Title', Icon: Tag },
   'work-metadata': { label: 'Author/Email', Icon: User },
-  'work-gallery': { label: 'Work Gallery', Icon: Layers },
   'work-layout-config': { label: 'Layout Config', Icon: Grid3X3 },
   'layout-row': { label: 'Row Layout', Icon: Columns3 },
   'layout-grid': { label: 'Grid Layout', Icon: LayoutGrid },
+  'image-row': { label: 'Image Row', Icon: Columns3 },
+  'image-grid': { label: 'Image Grid', Icon: LayoutGrid },
 };
 
 // ---------------------------------------------------------------------------
@@ -305,12 +307,6 @@ const SortableBlockItem = memo(function SortableBlockItem({
             onChange={(data) => onUpdate(block.id, data)}
           />
         )}
-        {block.type === 'work-gallery' && (
-          <WorkGalleryBlockEditor
-            block={block as WorkGalleryBlock}
-            onChange={(data) => onUpdate(block.id, data)}
-          />
-        )}
         {block.type === 'work-layout-config' && (
           <WorkLayoutConfigBlockEditor
             block={block as WorkLayoutConfigBlock}
@@ -327,6 +323,20 @@ const SortableBlockItem = memo(function SortableBlockItem({
           <LayoutGridBlockEditor
             block={block as LayoutGridBlock}
             onChange={(data) => onUpdate(block.id, data)}
+          />
+        )}
+        {block.type === 'image-row' && (
+          <ImageRowBlockEditor
+            block={block as ImageRowBlock}
+            onChange={(data) => onUpdate(block.id, data)}
+            onRemove={() => onDelete(block.id)}
+          />
+        )}
+        {block.type === 'image-grid' && (
+          <ImageGridBlockEditor
+            block={block as ImageGridBlock}
+            onChange={(data) => onUpdate(block.id, data)}
+            onRemove={() => onDelete(block.id)}
           />
         )}
       </div>

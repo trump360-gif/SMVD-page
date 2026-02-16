@@ -301,16 +301,29 @@ export default function WorkBlogModal({
         console.log('[WorkBlogModal] project.content type:', typeof project.content);
         console.log('[WorkBlogModal] project.content:', project.content);
 
-        if (project.content && typeof project.content === 'object' && 'blocks' in project.content) {
-          const content = project.content as BlogContent;
-          console.log('[WorkBlogModal] Using project.content with blocks:', content.blocks?.length);
-          setEditorContent(content);
-          setRowConfig(content.rowConfig || []);
-          // ✅ Immediately sync with useBlockEditor
-          if (content.blocks && content.blocks.length > 0) {
-            console.log('[WorkBlogModal] Immediately resetting blocks:', content.blocks.length);
-            resetBlocks(content.blocks);  // ← 추가: useBlockEditor와 동기화
+        // ✅ Parse JSON if it's a string (Prisma Json field might return as string)
+        let parsedProjectContent: BlogContent | null = null;
+        if (project.content) {
+          if (typeof project.content === 'string') {
+            try {
+              parsedProjectContent = JSON.parse(project.content) as BlogContent;
+              console.log('[WorkBlogModal] Parsed JSON string content:', parsedProjectContent.blocks?.length, 'blocks');
+            } catch (e) {
+              console.log('[WorkBlogModal] Failed to parse JSON string:', e);
+            }
+          } else if (typeof project.content === 'object' && 'blocks' in project.content) {
+            parsedProjectContent = project.content as BlogContent;
+            console.log('[WorkBlogModal] Using object content:', parsedProjectContent.blocks?.length, 'blocks');
           }
+        }
+
+        if (parsedProjectContent && parsedProjectContent.blocks && parsedProjectContent.blocks.length > 0) {
+          console.log('[WorkBlogModal] Using project.content with blocks:', parsedProjectContent.blocks.length);
+          setEditorContent(parsedProjectContent);
+          setRowConfig(parsedProjectContent.rowConfig || []);
+          // ✅ Immediately sync with useBlockEditor
+          console.log('[WorkBlogModal] Resetting blocks:', parsedProjectContent.blocks.length);
+          resetBlocks(parsedProjectContent.blocks);
         } else {
           // Fallback: Convert legacy description (markdown) + galleryImages + heroImage to BlogContent
           console.log('[WorkBlogModal] Falling back to parseWorkProjectContent');
@@ -324,6 +337,11 @@ export default function WorkBlogModal({
           );
           console.log('[WorkBlogModal] Parsed content blocks:', parsedContent.blocks?.length);
           setEditorContent(parsedContent);
+          // ✅ Also sync fallback blocks with useBlockEditor
+          if (parsedContent.blocks && parsedContent.blocks.length > 0) {
+            console.log('[WorkBlogModal] Resetting fallback blocks:', parsedContent.blocks.length);
+            resetBlocks(parsedContent.blocks);
+          }
         }
       } else {
         setTitle('');
@@ -722,6 +740,10 @@ export default function WorkBlogModal({
                     block={blocks.find((b) => b.id === selectedId) || null}
                     onChange={updateBlock}
                     onDelete={handleDeleteBlock}
+                    undo={undo}
+                    redo={redo}
+                    canUndo={canUndo}
+                    canRedo={canRedo}
                   />
                 </div>
               </div>

@@ -9,15 +9,15 @@ import type {
   HeroImageBlock,
   HeroSectionBlock,
   WorkTitleBlock,
-  WorkGalleryBlock,
   GalleryBlock,
+  ImageGridBlock,
   WorkProjectContext,
   WorkLayoutConfigBlock,
   RowConfig,
+  GalleryImageEntry,
 } from '../types';
 import { groupBlocksByRows } from '../types';
 import BlockRenderer from './BlockRenderer';
-import WorkGalleryBlockRenderer from './WorkGalleryBlockRenderer';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -42,19 +42,20 @@ function hasMarkdownSyntax(text: string): boolean {
  * - hero-image block -> hero URL
  * - work-title block -> title, author, email (left column)
  * - First text block after work-title -> mainDescription (right column)
- * - work-gallery / gallery blocks -> galleryImages
+ * - image-grid / gallery blocks -> galleryImages
  */
 interface ParsedPreviewContent {
   hero?: { url: string; alt: string; id?: string };
   title?: { title: string; author: string; email: string };
   mainDescription?: string;
   mainDescriptionBlock?: TextBlock;
-  galleryBlock?: WorkGalleryBlock | GalleryBlock;
+  galleryImages: GalleryImageEntry[];
   layoutConfig?: WorkLayoutConfigBlock;
+  imageGridBlock?: ImageGridBlock;
 }
 
 function parseBlocks(blocks: Block[]): ParsedPreviewContent {
-  const result: ParsedPreviewContent = {};
+  const result: ParsedPreviewContent = { galleryImages: [] };
   let foundWorkTitle = false;
   let foundMainDescription = false;
 
@@ -102,15 +103,16 @@ function parseBlocks(blocks: Block[]): ParsedPreviewContent {
     } else if (block.type === 'work-layout-config') {
       const b = block as WorkLayoutConfigBlock;
       result.layoutConfig = b;
-    } else if (block.type === 'work-gallery') {
-      const b = block as WorkGalleryBlock;
+    } else if (block.type === 'image-grid') {
+      const b = block as ImageGridBlock;
       if (b.images.length > 0) {
-        result.galleryBlock = b;
+        result.galleryImages = b.images;
+        result.imageGridBlock = b;
       }
     } else if (block.type === 'gallery') {
       const b = block as GalleryBlock;
-      if (b.images.length > 0 && !result.galleryBlock) {
-        result.galleryBlock = b;
+      if (b.images.length > 0 && result.galleryImages.length === 0) {
+        result.galleryImages = b.images;
       }
     }
   }
@@ -138,7 +140,7 @@ interface WorkDetailPreviewRendererProps {
  * 2. 2-Column Layout:
  *    - Left: Title + Author + Email (from work-title block or projectContext)
  *    - Right: Description (first TextBlock after work-title)
- * 3. Gallery (vertical stack from work-gallery block)
+ * 3. Gallery (vertical stack from image-grid or gallery block)
  *
  * Falls back to projectContext values when blocks don't provide data.
  */
@@ -617,16 +619,86 @@ export default function WorkDetailPreviewRenderer({
           </div>
         )}
 
-        {/* 3. Gallery (vertical stack) */}
-        {parsed.galleryBlock && (
-          <WorkGalleryBlockRenderer
-            block={{
-              id: parsed.galleryBlock.id,
-              type: 'work-gallery',
-              order: parsed.galleryBlock.order,
-              images: parsed.galleryBlock.images,
-            }}
-          />
+        {/* 3. Gallery (with row-based grid layout if image-grid block exists) */}
+        {parsed.galleryImages.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: parsed.imageGridBlock?.gap || 0, width: '100%' }}>
+            {parsed.imageGridBlock?.rows && parsed.imageGridBlock.rows.length > 0 ? (
+              // Render with row-based grid layout from image-grid block
+              parsed.imageGridBlock.rows.map((row, rowIdx) => {
+                const rowStartIdx = parsed.imageGridBlock!.rows.slice(0, rowIdx).reduce((sum, r) => sum + r.imageCount, 0);
+                const rowImages = parsed.galleryImages.slice(rowStartIdx, rowStartIdx + row.imageCount);
+
+                return (
+                  <div
+                    key={row.id}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${row.columns}, 1fr)`,
+                      gap: `${parsed.imageGridBlock?.gap || 16}px`,
+                      width: '100%',
+                    }}
+                  >
+                    {rowImages.map((img, imgIdx) => (
+                      <div
+                        key={img.id || `${rowIdx}-${imgIdx}`}
+                        style={{
+                          backgroundColor: '#f0f0f0',
+                          overflow: 'hidden',
+                          aspectRatio: `${parsed.imageGridBlock?.aspectRatio || 1}`,
+                          lineHeight: '0',
+                          padding: '0',
+                          fontSize: '0',
+                        }}
+                      >
+                        <img
+                          src={img.url}
+                          alt={img.alt || `Gallery image ${rowStartIdx + imgIdx + 1}`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            display: 'block',
+                            margin: '0',
+                            padding: '0',
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                );
+              })
+            ) : (
+              // Fallback: vertical stack if no row config
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0', width: '100%' }}>
+                {parsed.galleryImages.map((img, index) => (
+                  <div
+                    key={img.id || index}
+                    style={{
+                      width: '100%',
+                      backgroundColor: '#f0f0f0',
+                      overflow: 'hidden',
+                      lineHeight: '0',
+                      margin: index > 0 ? '-1px 0 0 0' : '0',
+                      padding: '0',
+                      fontSize: '0',
+                    }}
+                  >
+                    <img
+                      src={img.url}
+                      alt={img.alt || `Gallery image ${index + 1}`}
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        display: 'block',
+                        margin: '0',
+                        padding: '0',
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

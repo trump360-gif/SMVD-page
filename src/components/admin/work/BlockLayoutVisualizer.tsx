@@ -28,7 +28,6 @@ import {
   Maximize,
   Tag,
   User,
-  Layers,
   FileText,
   Plus,
   Trash2,
@@ -90,11 +89,6 @@ const BLOCK_META: Record<
   },
   'work-title': { label: 'Work Title', Icon: Tag, color: 'text-red-600' },
   'work-metadata': { label: 'Metadata', Icon: User, color: 'text-red-500' },
-  'work-gallery': {
-    label: 'Work Gallery',
-    Icon: Layers,
-    color: 'text-red-400',
-  },
   'work-layout-config': {
     label: 'Layout',
     Icon: Grid3X3,
@@ -135,8 +129,6 @@ function getBlockPreviewText(block: Block): string {
       return `${(block as any).title || '(No title)'}`;
     case 'work-metadata':
       return `${(block as any).author || 'Author'}`;
-    case 'work-gallery':
-      return `Gallery (${(block as any).images?.length || 0})`;
     case 'work-layout-config':
       return `Layout (${(block as any).columnLayout || 2} cols)`;
     case 'layout-row':

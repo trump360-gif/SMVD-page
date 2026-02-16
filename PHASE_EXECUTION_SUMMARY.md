@@ -14,8 +14,9 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ PHASE 1: 동기화 버그 수정                    10분 🔴 긴급    │
-│ └─ WorkBlogModal에서 resetBlocks() 호출 추가               │
+│ PHASE 1: 동기화 검증                         5분 🟢 완료!    │
+│ └─ resetBlocks() 호출 검증 (이미 구현됨)                   │
+│ └─ 콘솔 로그 + UI 검증                                     │
 │                                                             │
 │ PHASE 2: UI 라벨 개선                        5분 🟡 사용성   │
 │ └─ "Columns:" → "Layout Mode:"                            │
@@ -31,40 +32,53 @@
 │ └─ ImageGridBlock: N개 이미지를 그리드로                   │
 │ └─ BlockToolbar에 옵션 추가                                │
 │                                                             │
-│ 총 예상 시간: 75분 (1시간 15분)                           │
+│ PHASE 5: Undo/Redo UI 버튼                  10분 🟢 NEW!   │
+│ └─ BlockEditorPanel에 Undo/Redo 버튼 추가                 │
+│                                                             │
+│ 총 예상 시간: 80분 (1시간 20분)                           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🔴 Phase 1: 동기화 버그 수정 (10분) - 즉시 실행!
+## 🟢 Phase 1: 동기화 검증 (5분) - 이미 구현됨! ⭐
 
-### 상황
-- DB에 4개 블록 저장됨 ✅
-- useBlockEditor.blocks: 0개 (동기화 안 됨) ❌
-- 결과: CMS 기능 완전 마비
+### ✅ 현재 상황
+- ✅ useBlockEditor.ts: resetBlocks 메서드 이미 구현됨
+- ✅ WorkBlogModal.tsx: resetBlocks 호출 이미 있음 (Line 312)
+- ✅ Undo/Redo: 이미 구현됨
+- 🔴 남은 것: 검증만!
 
-### 해결책
-**파일**: `src/app/admin/dashboard/work/page.tsx` (WorkBlogModal)
+### 📋 남은 작업: 검증 체크리스트
 
-**수정 내용**:
+**파일**: `src/components/admin/work/WorkBlogModal.tsx` (Line 310-312)
+
+**이미 구현된 코드**:
 ```typescript
-// useBlockEditor에서 resetBlocks 메서드 추출
-const { blocks, resetBlocks } = useBlockEditor();
-
-// Project 로드 시 동기화
-useEffect(() => {
-  if (selectedProject?.content?.blocks) {
-    resetBlocks(selectedProject.content.blocks);  // ← 추가
-  }
-}, [selectedProject, resetBlocks]);
+if (content.blocks && content.blocks.length > 0) {
+  console.log('[WorkBlogModal] Immediately resetting blocks:', content.blocks.length);
+  resetBlocks(content.blocks);  // ← ✅ 이미 있음!
+}
 ```
 
-### 검증
+### 🧪 검증 방법
+```bash
+1. npm run dev
+2. Admin → Work 페이지 방문
+3. 프로젝트 선택
+4. 브라우저 콘솔 확인:
+   "[WorkBlogModal] Immediately resetting blocks: 4"
+   "[useBlockEditor] resetBlocks called with 4 blocks"
+5. UI: "4 rows / 4 blocks" 표시 ✅
+6. Undo/Redo 버튼 클릭 가능 확인
 ```
-콘솔:  [useBlockEditor] resetBlocks called with 4 blocks
-UI:    "4 rows / 4 blocks" ✅
-편집:  블록 선택 가능 ✅
+
+### ✅ 완료 기준
+```
+□ 콘솔 로그 메시지 표시
+□ UI: "4 rows / 4 blocks" 표시
+□ 블록 선택/추가/삭제 가능
+□ Undo/Redo 작동 확인
 ```
 
 ---

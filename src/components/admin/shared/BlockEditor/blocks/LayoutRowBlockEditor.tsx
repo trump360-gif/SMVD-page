@@ -213,7 +213,7 @@ export default function LayoutRowBlockEditor({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-gray-700">Columns:</span>
+          <span className="text-xs font-semibold text-gray-700">Layout Mode:</span>
           <button
             type="button"
             onClick={() => handleChangeColumns(2)}
@@ -255,6 +255,9 @@ export default function LayoutRowBlockEditor({
       {/* Settings Panel */}
       {showSettings && (
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg space-y-3">
+          <div className="text-xs font-semibold text-gray-700 mb-2 pb-2 border-b border-blue-200">
+            Column Distribution & Spacing
+          </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Distribution
@@ -268,9 +271,10 @@ export default function LayoutRowBlockEditor({
               }
               className="w-full px-2 py-1.5 text-xs border border-gray-300 rounded bg-white"
             >
-              <option value="equal">Equal Width</option>
-              <option value="golden-left">Golden Ratio (wider left)</option>
-              <option value="golden-right">Golden Ratio (wider right)</option>
+              <option value="equal">Equal Width (1:1:1)</option>
+              <option value="golden-left">Golden Ratio Left (1.618:1:1)</option>
+              <option value="golden-center">Golden Ratio Center (1:1.618:1)</option>
+              <option value="golden-right">Golden Ratio Right (1:1:1.618)</option>
               <option value="custom">Custom Widths</option>
             </select>
           </div>
@@ -321,21 +325,24 @@ export default function LayoutRowBlockEditor({
 
       {/* Column Tabs */}
       <div className="flex gap-1 border-b border-gray-200">
-        {block.children.map((colBlocks, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() => setSelectedColumnIdx(idx)}
-            className={`px-3 py-2 text-xs font-medium border-b-2 transition-colors ${
-              selectedColumnIdx === idx
-                ? 'border-blue-500 text-blue-600 bg-blue-50'
-                : 'border-transparent text-gray-600 hover:text-gray-800'
-            }`}
-          >
-            Column {idx + 1}
-            <span className="ml-1 text-gray-400">({colBlocks.length})</span>
-          </button>
-        ))}
+        {block.children.map((colBlocks, idx) => {
+          const columnLabel = idx === 0 ? 'Left' : idx === 1 ? 'Center' : 'Right';
+          return (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => setSelectedColumnIdx(idx)}
+              className={`px-3 py-2 text-xs font-medium border-b-2 transition-colors ${
+                selectedColumnIdx === idx
+                  ? 'border-blue-500 text-blue-600 bg-blue-50'
+                  : 'border-transparent text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              {columnLabel}
+              <span className="ml-1 text-gray-400">({colBlocks.length})</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Column Content */}

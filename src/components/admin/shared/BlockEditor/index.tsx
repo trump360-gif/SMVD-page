@@ -235,7 +235,6 @@ export { default as DividerBlockRenderer } from './renderers/DividerBlockRendere
 export { default as HeroImageBlockRenderer } from './renderers/HeroImageBlockRenderer';
 export { default as WorkTitleBlockRenderer } from './renderers/WorkTitleBlockRenderer';
 export { default as WorkMetadataBlockRenderer } from './renderers/WorkMetadataBlockRenderer';
-export { default as WorkGalleryBlockRenderer } from './renderers/WorkGalleryBlockRenderer';
 export { default as BlockList } from './BlockList';
 export { default as BlockToolbar } from './BlockToolbar';
 export type {
@@ -252,7 +251,6 @@ export type {
   HeroImageBlock,
   WorkTitleBlock,
   WorkMetadataBlock,
-  WorkGalleryBlock,
   WorkProjectContext,
   ContentBlock,
 } from './types';

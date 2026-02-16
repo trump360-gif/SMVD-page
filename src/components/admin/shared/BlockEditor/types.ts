@@ -13,10 +13,11 @@ export type BlockType =
   | 'hero-section'
   | 'work-title'
   | 'work-metadata'
-  | 'work-gallery'
   | 'work-layout-config'
   | 'layout-row'
-  | 'layout-grid';
+  | 'layout-grid'
+  | 'image-row'
+  | 'image-grid';
 
 /** Base interface for all content blocks */
 export interface ContentBlock {
@@ -168,14 +169,6 @@ export interface WorkLayoutConfigBlock extends ContentBlock {
   textColumnWidth?: 'auto' | 'narrow' | 'wide';
 }
 
-/** Work gallery block - vertical stack, images 100% width, -1px margin overlap */
-export interface WorkGalleryBlock extends ContentBlock {
-  type: 'work-gallery';
-  images: GalleryImageEntry[];
-  /** Number of columns for image layout (1, 2, or 3) */
-  imageLayout?: 1 | 2 | 3;
-}
-
 // ---------------------------------------------------------------------------
 // Layout container block types (multi-column/grid layouts)
 // These are specialized container blocks that hold other blocks in columns/grids
@@ -191,7 +184,7 @@ export interface LayoutRowBlock extends ContentBlock {
   /** Gap between columns in pixels (default: 24) */
   columnGap?: number;
   /** Column width distribution mode */
-  distribution?: 'equal' | 'golden-left' | 'golden-right' | 'custom';
+  distribution?: 'equal' | 'golden-left' | 'golden-center' | 'golden-right' | 'custom';
   /** Custom column widths in percentages (required if distribution === 'custom') */
   customWidths?: number[];
 }
@@ -209,6 +202,51 @@ export interface LayoutGridBlock extends ContentBlock {
   minCellHeight?: number;
 }
 
+// ---------------------------------------------------------------------------
+// Image layout block types (specialized for image arrangement)
+// These are specialized blocks for arranging multiple images with different layouts
+// ---------------------------------------------------------------------------
+
+/** Image data entry for image blocks */
+export interface ImageData {
+  id: string;
+  url: string;
+  alt?: string;
+}
+
+/** Image row block - 1-3 images arranged horizontally */
+export interface ImageRowBlock extends ContentBlock {
+  type: 'image-row';
+  /** Images to display (1-3) */
+  images: ImageData[];
+  /** Column width distribution mode */
+  distribution?: 'equal' | 'golden-left' | 'golden-center' | 'golden-right';
+  /** Fixed height for all images in pixels (default: 300) */
+  imageHeight?: number;
+  /** Gap between images in pixels (default: 24) */
+  gap?: number;
+}
+
+/** Row configuration for image grid - specifies columns and image count per row */
+export interface ImageGridRow {
+  id: string;
+  columns: 1 | 2 | 3;
+  imageCount: number;
+}
+
+/** Image grid block - images arranged in rows with per-row column configuration */
+export interface ImageGridBlock extends ContentBlock {
+  type: 'image-grid';
+  /** Images to display (any number) */
+  images: ImageData[];
+  /** Row configurations (each row specifies column count and image count) */
+  rows: ImageGridRow[];
+  /** Gap between grid cells in pixels (default: 16) */
+  gap?: number;
+  /** Aspect ratio for grid cells: 1 (square) | 1.5 | 2 (default: 1) */
+  aspectRatio?: 1 | 1.5 | 2;
+}
+
 /** Union of all block types */
 export type Block =
   | TextBlock
@@ -221,10 +259,11 @@ export type Block =
   | HeroSectionBlock
   | WorkTitleBlock
   | WorkMetadataBlock
-  | WorkGalleryBlock
   | WorkLayoutConfigBlock
   | LayoutRowBlock
-  | LayoutGridBlock;
+  | LayoutGridBlock
+  | ImageRowBlock
+  | ImageGridBlock;
 
 // ---------------------------------------------------------------------------
 // Row-based layout configuration
@@ -353,8 +392,6 @@ export function createDefaultBlock(type: BlockType, order: number): Block {
       return { ...base, type: 'work-title', title: '', author: '', email: '' };
     case 'work-metadata':
       return { ...base, type: 'work-metadata', author: '', email: '' };
-    case 'work-gallery':
-      return { ...base, type: 'work-gallery', images: [], imageLayout: 1 };
     case 'work-layout-config':
       return {
         ...base,
@@ -380,6 +417,30 @@ export function createDefaultBlock(type: BlockType, order: number): Block {
         children: [[], [], [], []],
         gap: 16,
         minCellHeight: 200,
+      };
+    case 'image-row':
+      return {
+        ...base,
+        type: 'image-row',
+        images: [],
+        distribution: 'equal',
+        imageHeight: 300,
+        gap: 24,
+      };
+    case 'image-grid':
+      return {
+        ...base,
+        type: 'image-grid',
+        images: [],
+        rows: [
+          {
+            id: `row-${Date.now()}-1`,
+            columns: 2,
+            imageCount: 0,
+          },
+        ],
+        gap: 16,
+        aspectRatio: 1,
       };
   }
 }
