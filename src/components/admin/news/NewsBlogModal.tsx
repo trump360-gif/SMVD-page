@@ -422,6 +422,7 @@ export default function NewsBlogModal({
       const content: NewsContentData | null = hasBlocks
         ? {
             blocks: editorContent.blocks,
+            rowConfig,
             version: '1.0',
           }
         : null;

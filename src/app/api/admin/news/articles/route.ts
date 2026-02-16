@@ -136,3 +136,92 @@ export async function POST(request: NextRequest) {
     return errorResponse('뉴스를 생성하는 중 오류가 발생했습니다', 'CREATE_ERROR', 500);
   }
 }
+
+/**
+ * PUT /api/admin/news/articles/:id
+ * 뉴스 게시글 수정
+ */
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const authResult = await checkAdminAuth();
+    if (!authResult.authenticated) return authResult.error;
+
+    const { id } = await params;
+    const body = await request.json();
+
+    // Validate update data (all fields optional for PUT)
+    const updateSchema = z.object({
+      title: z.string().min(1).optional(),
+      category: z.enum(['Notice', 'Event', 'Awards', 'Recruiting']).optional(),
+      excerpt: z.string().nullable().optional(),
+      thumbnailImage: z.string().optional(),
+      content: ContentSchema,
+      publishedAt: z.string().optional(),
+      published: z.boolean().optional(),
+    });
+
+    const validation = updateSchema.safeParse(body);
+
+    if (!validation.success) {
+      const errors = validation.error.flatten().fieldErrors;
+      return errorResponse(
+        '입력값 검증 실패: ' +
+          Object.entries(errors)
+            .map(([k, v]) => `${k}: ${(v as string[])?.[0]}`)
+            .join(', '),
+        'VALIDATION_ERROR',
+        400
+      );
+    }
+
+    const data = validation.data;
+
+    // Build update object with only provided fields
+    const updateData: Record<string, any> = {};
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.category !== undefined) updateData.category = data.category;
+    if (data.excerpt !== undefined) updateData.excerpt = data.excerpt;
+    if (data.thumbnailImage !== undefined) updateData.thumbnailImage = data.thumbnailImage;
+    if (data.content !== undefined) updateData.content = data.content ? (data.content as Prisma.InputJsonValue) : Prisma.JsonNull;
+    if (data.publishedAt !== undefined) updateData.publishedAt = new Date(data.publishedAt);
+    if (data.published !== undefined) updateData.published = data.published;
+
+    const article = await prisma.newsEvent.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return successResponse(article, '뉴스가 수정되었습니다');
+  } catch (error) {
+    console.error('뉴스 수정 오류:', error);
+    if (error instanceof Error && error.message.includes('not found')) {
+      return errorResponse('해당 뉴스를 찾을 수 없습니다', 'NOT_FOUND', 404);
+    }
+    return errorResponse('뉴스를 수정하는 중 오류가 발생했습니다', 'UPDATE_ERROR', 500);
+  }
+}
+
+/**
+ * DELETE /api/admin/news/articles/:id
+ * 뉴스 게시글 삭제
+ */
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const authResult = await checkAdminAuth();
+    if (!authResult.authenticated) return authResult.error;
+
+    const { id } = await params;
+
+    await prisma.newsEvent.delete({
+      where: { id },
+    });
+
+    return successResponse(null, '뉴스가 삭제되었습니다');
+  } catch (error) {
+    console.error('뉴스 삭제 오류:', error);
+    if (error instanceof Error && error.message.includes('not found')) {
+      return errorResponse('해당 뉴스를 찾을 수 없습니다', 'NOT_FOUND', 404);
+    }
+    return errorResponse('뉴스를 삭제하는 중 오류가 발생했습니다', 'DELETE_ERROR', 500);
+  }
+}

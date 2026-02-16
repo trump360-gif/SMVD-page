@@ -17,6 +17,7 @@ export interface GalleryData {
 export interface NewsContentData {
   // New block-based format
   blocks?: import('@/components/admin/shared/BlockEditor/types').Block[];
+  rowConfig?: import('@/components/admin/shared/BlockEditor/types').RowConfig[];
   version?: string;
   // Legacy fields (kept for backward compatibility)
   introTitle?: string;
