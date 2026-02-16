@@ -13,6 +13,7 @@ import {
   GraduateContentSchema,
 } from "@/lib/validation/curriculum";
 import { z } from "zod";
+import { invalidateCurriculum } from "@/lib/cache";
 
 /**
  * GET /api/admin/curriculum/sections
@@ -123,6 +124,9 @@ export async function PUT(request: NextRequest) {
         type: type as SectionType,
       },
     });
+
+    // Invalidate ISR caches
+    invalidateCurriculum();
 
     return successResponse(updatedSection, "교과과정 섹션이 업데이트되었습니다");
   } catch (error) {

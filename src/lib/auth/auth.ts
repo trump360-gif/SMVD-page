@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { prisma } from "@/lib/db";
 import { LoginSchema } from "@/types/schemas";
+import { loginRatelimit } from "@/lib/ratelimit";
 
 // Extend Next-Auth types
 declare module "next-auth" {
@@ -31,9 +32,16 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("이메일과 비밀번호를 입력하세요");
+        }
+
+        // Rate limit check (by email to prevent brute-force per account)
+        const rateLimitKey = credentials.email.toLowerCase();
+        const { success: rateLimitOk } = await loginRatelimit.limit(rateLimitKey);
+        if (!rateLimitOk) {
+          throw new Error("로그인 시도가 너무 많습니다. 15분 후 다시 시도해주세요.");
         }
 
         // Validate credentials schema
@@ -60,6 +68,9 @@ export const authOptions: NextAuthOptions = {
         if (!isPasswordValid) {
           throw new Error("비밀번호가 일치하지 않습니다");
         }
+
+        // Reset rate limit on successful login
+        await loginRatelimit.reset(rateLimitKey);
 
         // Return user object if credentials are valid
         return {

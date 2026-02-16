@@ -7,6 +7,8 @@ import {
   errorResponse,
 } from '@/lib/api-response';
 import { z } from 'zod';
+import { invalidateNews } from '@/lib/cache';
+import { logger } from '@/lib/logger';
 
 const GallerySchema = z.object({
   main: z.string().default(''),
@@ -27,12 +29,13 @@ const LegacyContentSchema = z.object({
 
 // Content can be either legacy or block format
 // Use passthrough() to allow any JSON shape, since block content is complex and dynamic
+// IMPORTANT: Block format must come first in the union for proper validation
 const ContentSchema = z.union([
-  LegacyContentSchema,
   z.object({
     blocks: z.array(z.any()),
     version: z.string(),
   }).passthrough(),
+  LegacyContentSchema,
 ]).optional();
 
 // Attachment schema for file metadata (NEW - 2026-02-16)
@@ -79,7 +82,7 @@ export async function GET(request: NextRequest) {
 
     return successResponse(articles, '뉴스 목록 조회 성공');
   } catch (error) {
-    console.error('뉴스 조회 오류:', error);
+    logger.error({ err: error, context: 'GET /api/admin/news/articles' }, '뉴스 조회 오류');
     return errorResponse('뉴스 목록을 불러오는 중 오류가 발생했습니다', 'FETCH_ERROR', 500);
   }
 }
@@ -116,16 +119,39 @@ export async function POST(request: NextRequest) {
     });
     const nextOrder = lastArticle ? lastArticle.order + 1 : 0;
 
-    // Generate slug from title
+    // Generate slug from title (race condition safe)
     const baseSlug = data.title
       .toLowerCase()
       .replace(/[^a-z0-9가-힣]/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '');
-    const slugCount = await prisma.newsEvent.count({
-      where: { slug: { startsWith: baseSlug } },
-    });
-    const slug = slugCount > 0 ? `${baseSlug}-${slugCount + 1}` : baseSlug;
+
+    // Race condition 방지: 정확한 일치도로 확인
+    let slug = baseSlug;
+    let counter = 1;
+    let exists = true;
+
+    while (exists && counter <= 100) {  // 최대 100회 재시도
+      const found = await prisma.newsEvent.findUnique({
+        where: { slug },
+        select: { id: true },  // 최소 데이터만 요청
+      });
+
+      if (found) {
+        slug = `${baseSlug}-${counter}`;
+        counter++;
+      } else {
+        exists = false;
+      }
+    }
+
+    if (counter > 100) {
+      return errorResponse(
+        '유효한 slug를 생성할 수 없습니다',
+        'SLUG_GENERATION_FAILED',
+        500
+      );
+    }
 
     const article = await prisma.newsEvent.create({
       data: {
@@ -144,9 +170,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Invalidate ISR caches
+    invalidateNews();
+
     return successResponse(article, '뉴스가 생성되었습니다', 201);
   } catch (error) {
-    console.error('뉴스 생성 오류:', error);
+    logger.error({ err: error, context: 'POST /api/admin/news/articles' }, '뉴스 생성 오류');
     return errorResponse('뉴스를 생성하는 중 오류가 발생했습니다', 'CREATE_ERROR', 500);
   }
 }

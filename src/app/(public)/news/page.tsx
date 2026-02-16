@@ -5,6 +5,9 @@ import {
 import { NewsEventArchive } from '@/components/public/news';
 import { prisma } from '@/lib/db';
 
+// ISR: regenerate every 5 minutes. Admin API calls revalidatePath() on mutations.
+export const revalidate = 300;
+
 async function getNewsItems() {
   try {
     const articles = await prisma.newsEvent.findMany({

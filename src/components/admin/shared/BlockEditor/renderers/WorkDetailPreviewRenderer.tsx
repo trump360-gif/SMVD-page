@@ -164,7 +164,7 @@ export default function WorkDetailPreviewRenderer({
   const description = parsed.mainDescription || '';
 
   // Extract styling from work-title block if available
-  const titleBlock = blocks.find((b) => b.type === 'work-title') as any;
+  const titleBlock = blocks.find((b) => b.type === 'work-title') as import('@/components/admin/shared/BlockEditor/types').WorkTitleBlock | undefined;
   const titleFontSize = titleBlock?.titleFontSize ?? 60;
   const authorFontSize = titleBlock?.authorFontSize ?? 14;
   const gap = titleBlock?.gap ?? 24;

@@ -195,26 +195,26 @@ export interface NewsContentShape {
 export function parseNewsContent(
   content: NewsContentShape | null | undefined
 ): BlogContent {
-  console.log('[parseNewsContent] Input:', JSON.stringify(content));
+  if (process.env.DEBUG) console.log('[parseNewsContent] Input:', JSON.stringify(content));
 
   if (!content) {
-    console.log('[parseNewsContent] Content is null/undefined, returning empty blocks');
+    if (process.env.DEBUG) console.log('[parseNewsContent] Content is null/undefined, returning empty blocks');
     return { blocks: [], version: '1.0' };
   }
 
   // Already in new block format
   if (content.blocks && content.blocks.length > 0 && content.version) {
-    console.log('[parseNewsContent] Content already has blocks, returning as-is:', content.blocks.length, 'blocks');
+    if (process.env.DEBUG) console.log('[parseNewsContent] Content already has blocks, returning as-is:', content.blocks.length, 'blocks');
     return { blocks: content.blocks, version: content.version };
   }
 
   // Convert legacy fields to blocks
   const blocks: Block[] = [];
-  console.log('[parseNewsContent] Converting legacy format...');
+  if (process.env.DEBUG) console.log('[parseNewsContent] Converting legacy format...');
 
   // Text block from introText
   if (content.introText) {
-    console.log('[parseNewsContent] Adding TextBlock from introText');
+    if (process.env.DEBUG) console.log('[parseNewsContent] Adding TextBlock from introText');
     blocks.push({
       id: generateBlockId(),
       type: 'text',
@@ -222,12 +222,12 @@ export function parseNewsContent(
       order: blocks.length,
     });
   } else {
-    console.log('[parseNewsContent] ⚠️  No introText found');
+    if (process.env.DEBUG) console.log('[parseNewsContent] ⚠️  No introText found');
   }
 
   // Gallery block from gallery images
   if (content.gallery) {
-    console.log('[parseNewsContent] Gallery found, extracting URLs...');
+    if (process.env.DEBUG) console.log('[parseNewsContent] Gallery found, extracting URLs...');
     const galleryUrls = [
       content.gallery.main,
       content.gallery.centerLeft,
@@ -237,10 +237,10 @@ export function parseNewsContent(
       content.gallery.bottomRight,
     ].filter((url): url is string => !!url);
 
-    console.log('[parseNewsContent] Extracted', galleryUrls.length, 'gallery URLs');
+    if (process.env.DEBUG) console.log('[parseNewsContent] Extracted', galleryUrls.length, 'gallery URLs');
 
     if (galleryUrls.length > 0) {
-      console.log('[parseNewsContent] Adding Gallery block with', galleryUrls.length, 'images');
+      if (process.env.DEBUG) console.log('[parseNewsContent] Adding Gallery block with', galleryUrls.length, 'images');
       blocks.push({
         id: generateBlockId(),
         type: 'gallery',
@@ -252,12 +252,12 @@ export function parseNewsContent(
         order: blocks.length,
       });
     } else {
-      console.log('[parseNewsContent] ⚠️  Gallery found but no URLs extracted');
+      if (process.env.DEBUG) console.log('[parseNewsContent] ⚠️  Gallery found but no URLs extracted');
     }
   } else {
-    console.log('[parseNewsContent] ⚠️  No gallery found');
+    if (process.env.DEBUG) console.log('[parseNewsContent] ⚠️  No gallery found');
   }
 
-  console.log('[parseNewsContent] Returning', blocks.length, 'blocks');
+  if (process.env.DEBUG) console.log('[parseNewsContent] Returning', blocks.length, 'blocks');
   return { blocks, version: '1.0' };
 }

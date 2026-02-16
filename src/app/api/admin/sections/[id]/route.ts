@@ -8,6 +8,7 @@ import {
   notFoundResponse,
 } from "@/lib/api-response";
 import { UpdateSectionSchema } from "@/types/schemas";
+import { Prisma } from "@/generated/prisma";
 
 /**
  * PUT /api/admin/sections/[id]
@@ -52,9 +53,15 @@ export async function PUT(
     }
 
     // 섹션 수정
+    const { content, mediaIds, ...restData } = validation.data;
+    const updatePayload: Prisma.SectionUpdateInput = {
+      ...restData,
+      ...(content !== undefined && { content: content as Prisma.InputJsonValue }),
+      ...(mediaIds !== undefined && { mediaIds: mediaIds as Prisma.InputJsonValue }),
+    };
     const updated = await prisma.section.update({
       where: { id: sectionId },
-      data: validation.data as any,
+      data: updatePayload,
     });
 
     return successResponse(updated, "섹션이 수정되었습니다");

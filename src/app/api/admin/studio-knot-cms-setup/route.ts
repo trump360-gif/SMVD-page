@@ -10,6 +10,7 @@
 
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { Prisma } from "@/generated/prisma";
 
 // Remove auth by not using middleware, or allow via env check
 const SETUP_TOKEN = process.env.STUDIO_KNOT_SETUP_TOKEN;
@@ -98,7 +99,7 @@ const studioKnotBlogContent = {
 
 export async function POST() {
   try {
-    console.log('[Phase 2] 🔍 Finding Studio Knot project...');
+    if (process.env.DEBUG) console.log('[Phase 2] 🔍 Finding Studio Knot project...');
     const studioKnot = await prisma.workProject.findFirst({
       where: { title: "STUDIO KNOT" }
     });
@@ -110,25 +111,26 @@ export async function POST() {
       );
     }
 
-    console.log('[Phase 2] 📝 Updating database with BlogContent...');
+    if (process.env.DEBUG) console.log('[Phase 2] 📝 Updating database with BlogContent...');
     const updated = await prisma.workProject.update({
       where: { id: studioKnot.id },
       data: {
-        content: studioKnotBlogContent as any
+        content: studioKnotBlogContent as Prisma.InputJsonValue
       }
     });
 
-    console.log('[Phase 2] ✅ Database updated successfully');
+    if (process.env.DEBUG) console.log('[Phase 2] ✅ Database updated successfully');
 
+    const contentData = updated.content as { blocks: unknown[]; rowConfig: unknown[]; } | null;
     return NextResponse.json({
       success: true,
       message: "Phase 2 Complete: Studio Knot CMS data saved",
       data: {
         projectId: updated.id,
         title: updated.title,
-        blocks: (updated.content as any).blocks.length,
-        rows: (updated.content as any).rowConfig.length,
-        galleryImages: (updated.content as any).blocks[3].images.length
+        blocks: contentData?.blocks.length ?? 0,
+        rows: contentData?.rowConfig.length ?? 0,
+        galleryImages: ((contentData?.blocks[3] as { images?: unknown[] })?.images?.length) ?? 0
       }
     });
   } catch (error) {

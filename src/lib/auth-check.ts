@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth/auth";
 import { unauthorizedResponse, errorResponse } from "@/lib/api-response";
 import { NextResponse } from "next/server";
+import { adminRatelimit, getClientIp } from "@/lib/ratelimit";
 
 type AuthSuccessResult = {
   authenticated: true;
@@ -42,4 +43,36 @@ export async function checkAdminAuth(): Promise<AuthResult> {
   }
 
   return { authenticated: true, session };
+}
+
+/**
+ * Combined admin auth + rate limit check.
+ * Use this in admin API routes to enforce both authentication and rate limiting.
+ *
+ * @param request - The incoming request (used to extract client IP)
+ * @returns AuthResult with rate-limit-aware error responses
+ */
+export async function checkAdminAuthWithRateLimit(
+  request: Request
+): Promise<AuthResult> {
+  // Auth check first (cheaper than rate limit lookup)
+  const authResult = await checkAdminAuth();
+  if (!authResult.authenticated) return authResult;
+
+  // Rate limit check
+  const ip = getClientIp(request);
+  const { success } = await adminRatelimit.limit(ip);
+  if (!success) {
+    return {
+      authenticated: false,
+      session: null,
+      error: errorResponse(
+        "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.",
+        "RATE_LIMIT_EXCEEDED",
+        429
+      ),
+    };
+  }
+
+  return authResult;
 }

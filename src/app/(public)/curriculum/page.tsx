@@ -7,7 +7,8 @@ import { prisma } from '@/lib/db';
 import { SectionType } from '@/generated/prisma';
 import type { UndergraduateContent, GraduateContent } from '@/lib/validation/curriculum';
 
-export const dynamic = 'force-dynamic';
+// ISR: regenerate every 10 minutes. Curriculum changes very infrequently.
+export const revalidate = 600;
 
 async function getCurriculumData() {
   try {

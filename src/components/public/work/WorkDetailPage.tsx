@@ -196,10 +196,10 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
         }}
       >
         {/* Use BlockEditor content if available */}
-        {project.content && (project.content as any).blocks ? (
+        {project.content && project.content.blocks && project.content.blocks.length > 0 ? (
           <WorkDetailPreviewRenderer
-            blocks={(project.content as any).blocks}
-            rowConfig={(project.content as any).rowConfig}
+            blocks={project.content.blocks}
+            rowConfig={project.content.rowConfig}
             projectContext={{
               title: displayTitle,
               author: displayAuthor,

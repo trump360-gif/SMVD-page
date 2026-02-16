@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth/auth';
 import z from 'zod';
+import { invalidateAbout } from '@/lib/cache';
 
 // 인증 확인
 async function requireAuth() {
@@ -136,6 +137,9 @@ export async function PUT(request: NextRequest) {
         content: validatedContent,
       },
     });
+
+    // Invalidate ISR caches
+    invalidateAbout();
 
     return NextResponse.json({ section: updatedSection });
   } catch (error) {

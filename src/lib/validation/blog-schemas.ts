@@ -28,6 +28,7 @@ export const newsArticleInputSchema = z.object({
   excerpt: z.string().max(500).optional(),
   publishedAt: z.string().optional(),
   thumbnailImage: z.string().optional(),
+  attachments: z.unknown().optional(), // Attachments validated at runtime
 });
 
 export type NewsArticleInput = z.infer<typeof newsArticleInputSchema>;

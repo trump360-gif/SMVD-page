@@ -9,6 +9,9 @@ import {
   processImage,
   saveProcessedImage,
 } from "@/lib/image/process";
+import { Prisma } from "@/generated/prisma";
+import { validateFileContent } from "@/lib/file-validation";
+import { logger } from "@/lib/logger";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -52,6 +55,16 @@ export async function POST(request: NextRequest) {
     // 파일을 Buffer로 변환
     const buffer = Buffer.from(await file.arrayBuffer());
 
+    // 매직 바이트 검증 (파일 실제 내용 확인 - Content-Type 위조 방지)
+    const fileValidation = validateFileContent(buffer, ALLOWED_TYPES);
+    if (!fileValidation.valid) {
+      return errorResponse(
+        fileValidation.message || "파일이 손상되었거나 위조되었습니다",
+        "INVALID_FILE_CONTENT",
+        400
+      );
+    }
+
     // 이미지 처리 (WebP 변환)
     const processed = await processImage(buffer);
 
@@ -73,8 +86,8 @@ export async function POST(request: NextRequest) {
         formats: {
           original: file.type,
           size: file.size,
-        },
-      } as any,
+        } satisfies Prisma.InputJsonValue,
+      },
     });
 
     return successResponse(
@@ -90,7 +103,7 @@ export async function POST(request: NextRequest) {
       201
     );
   } catch (error) {
-    console.error("이미지 업로드 오류:", error);
+    logger.error({ err: error, context: "POST /api/admin/upload" }, "이미지 업로드 오류");
 
     if (error instanceof Error && error.message.includes("이미지 처리")) {
       return errorResponse(
@@ -108,49 +121,3 @@ export async function POST(request: NextRequest) {
   }
 }
 
-/**
- * DELETE /api/admin/upload/:id
- * 업로드된 이미지 삭제 (관리자)
- */
-export async function DELETE(request: NextRequest) {
-  try {
-    const authResult = await checkAdminAuth();
-    if (!authResult.authenticated) return authResult.error;
-
-    const fileId = request.nextUrl.pathname.split("/").pop();
-    if (!fileId) {
-      return errorResponse("파일 ID가 필요합니다", "MISSING_ID", 400);
-    }
-
-    // 미디어 파일 확인
-    const media = await prisma.media.findUnique({
-      where: { id: fileId },
-    });
-
-    if (!media) {
-      return errorResponse(
-        "파일을 찾을 수 없습니다",
-        "NOT_FOUND",
-        404
-      );
-    }
-
-    // 파일 시스템에서 삭제
-    const { deleteImage } = await import("@/lib/image/process");
-    await deleteImage(media.filename);
-
-    // DB에서 삭제
-    await prisma.media.delete({
-      where: { id: fileId },
-    });
-
-    return successResponse(null, "이미지가 삭제되었습니다");
-  } catch (error) {
-    console.error("이미지 삭제 오류:", error);
-    return errorResponse(
-      "이미지를 삭제하는 중 오류가 발생했습니다",
-      "DELETE_ERROR",
-      500
-    );
-  }
-}

@@ -7,9 +7,8 @@ import NewsBlockRenderer from '@/components/public/news/NewsBlockRenderer';
 import AttachmentDownloadBox from '@/components/public/news/AttachmentDownloadBox'; // NEW - 2026-02-16
 import { prisma } from '@/lib/db';
 
-// ⚠️ CRITICAL: Disable ISR caching to always fetch latest DB data
-// When admin saves changes via CMS, they should appear immediately on public page
-export const revalidate = 0;
+// ISR: regenerate every 60 seconds. Admin API calls revalidatePath() on mutations.
+export const revalidate = 60;
 
 // ---- Types ----
 

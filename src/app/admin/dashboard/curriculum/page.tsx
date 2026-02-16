@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { UndergraduateEditor, GraduateEditor } from '@/components/admin/curriculum';
 import type { UndergraduateContent, GraduateContent } from '@/lib/validation/curriculum';
-import { useCurriculumEditor } from '@/hooks/useCurriculumEditor';
+import { useCurriculumEditor } from '@/hooks/curriculum';
 
 type ActiveTab = 'undergraduate' | 'graduate';
 

@@ -5,6 +5,16 @@ import {
   Footer,
 } from '@/components/public/home';
 import AboutContent from './content';
+import {
+  asSectionContent,
+  type AboutIntroContent,
+  type AboutVisionContent,
+  type AboutHistoryContent,
+  type AboutPeopleContent,
+} from '@/types/domain/section-content';
+
+// ISR: regenerate every 5 minutes. About page changes infrequently.
+export const revalidate = 300;
 
 export default async function AboutPage() {
   const page = await prisma.page.findUnique({
@@ -26,11 +36,11 @@ export default async function AboutPage() {
     (s) => s.type === 'ABOUT_PEOPLE'
   );
 
-  // Extract data from sections
-  const introData = introSection?.content as any;
-  const visionData = visionSection?.content as any;
-  const historyData = historySection?.content as any;
-  const peopleData = peopleSection?.content as any;
+  // Extract data from sections with proper types
+  const introData = asSectionContent<AboutIntroContent>(introSection?.content);
+  const visionData = asSectionContent<AboutVisionContent>(visionSection?.content);
+  const historyData = asSectionContent<AboutHistoryContent>(historySection?.content);
+  const peopleData = asSectionContent<AboutPeopleContent>(peopleSection?.content);
 
   return (
     <div>

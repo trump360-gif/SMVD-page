@@ -7,7 +7,7 @@ import WorkPortfolioModal from '@/components/admin/WorkPortfolioModal';
 import ExhibitionItemModal from '@/components/admin/ExhibitionItemModal';
 import ExhibitionItemsList from '@/components/admin/ExhibitionItemsList';
 import WorkPortfolioList from '@/components/admin/WorkPortfolioList';
-import { useHomeEditor } from '@/hooks/useHomeEditor';
+import { useHomeEditor } from '@/hooks/home';
 
 interface Section {
   id: string;
@@ -81,8 +81,8 @@ export default function HomeEditorPage() {
   }, [status, router]);
 
   useEffect(() => {
-    console.log('🔥 Home 에디터 페이지 로드됨! iframeRef:', iframeRef);
-    console.log('📍 refreshPreview 함수:', refreshPreview);
+    if (process.env.DEBUG) console.log('🔥 Home 에디터 페이지 로드됨! iframeRef:', iframeRef);
+    if (process.env.DEBUG) console.log('📍 refreshPreview 함수:', refreshPreview);
     if (status === 'authenticated') {
       initializeSections();
     }
@@ -92,7 +92,7 @@ export default function HomeEditorPage() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('previewSection', activeSection);
-      console.log('💾 sessionStorage에 저장:', activeSection);
+      if (process.env.DEBUG) console.log('💾 sessionStorage에 저장:', activeSection);
     }
   }, [activeSection]);
 
@@ -140,34 +140,34 @@ export default function HomeEditorPage() {
   };
 
   const refreshPreview = () => {
-    console.log('🔄 refreshPreview 호출됨');
+    if (process.env.DEBUG) console.log('🔄 refreshPreview 호출됨');
     if (iframeRef.current) {
       try {
         // contentWindow.location.reload()를 사용해 더 안정적으로 리로드
         if (iframeRef.current.contentWindow) {
           iframeRef.current.contentWindow.location.reload();
-          console.log('✅ iframe contentWindow reload 완료');
+          if (process.env.DEBUG) console.log('✅ iframe contentWindow reload 완료');
         } else {
           // contentWindow가 없으면 src 재할당으로 폴백
           const url = iframeRef.current.src;
           if (url) {
             const baseUrl = url.split('?')[0];
             iframeRef.current.src = `${baseUrl}?refresh=${Date.now()}`;
-            console.log('✅ iframe src 재할당 완료');
+            if (process.env.DEBUG) console.log('✅ iframe src 재할당 완료');
           }
         }
       } catch (error) {
-        console.warn('⚠️ iframe reload 실패:', error);
+        if (process.env.DEBUG) console.warn('⚠️ iframe reload 실패:', error);
         // 크로스-오리진 에러가 나면 src 재할당으로 폴백
         const url = iframeRef.current.src;
         if (url) {
           const baseUrl = url.split('?')[0];
           iframeRef.current.src = `${baseUrl}?refresh=${Date.now()}`;
-          console.log('✅ 폴백: iframe src 재할당 완료');
+          if (process.env.DEBUG) console.log('✅ 폴백: iframe src 재할당 완료');
         }
       }
     } else {
-      console.warn('⚠️ iframeRef.current가 null입니다');
+      if (process.env.DEBUG) console.warn('⚠️ iframeRef.current가 null입니다');
     }
   };
 

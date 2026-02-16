@@ -8,6 +8,8 @@ import {
   notFoundResponse,
 } from '@/lib/api-response';
 import { z } from 'zod';
+import { invalidateNews } from '@/lib/cache';
+import { logger } from '@/lib/logger';
 
 const GallerySchema = z.object({
   main: z.string().default(''),
@@ -94,7 +96,7 @@ export async function GET(
 
     return successResponse(articleData, '뉴스 조회 성공');
   } catch (error) {
-    console.error('뉴스 조회 오류:', error);
+    logger.error({ err: error, context: 'GET /api/admin/news/articles/:id' }, '뉴스 조회 오류');
     return errorResponse('뉴스를 불러오는 중 오류가 발생했습니다', 'FETCH_ERROR', 500);
   }
 }
@@ -140,17 +142,18 @@ export async function PUT(
     if (validation.data.excerpt !== undefined) updateData.excerpt = validation.data.excerpt;
     if (validation.data.thumbnailImage !== undefined) updateData.thumbnailImage = validation.data.thumbnailImage;
     if (validation.data.content !== undefined) {
-      const content = validation.data.content as any;
+      // Use Record<string, unknown> to access dynamic properties safely
+      const content = validation.data.content as Record<string, unknown> | null;
 
-      console.log('[API PUT] ========== CONTENT VALIDATION ==========');
-      console.log('[API PUT] Input content:', JSON.stringify(content));
-      console.log('[API PUT] content type:', typeof content);
-      console.log('[API PUT] content === null?:', content === null);
-      console.log('[API PUT] content === {}?:', JSON.stringify(content) === '{}');
+      if (process.env.DEBUG) console.log('[API PUT] ========== CONTENT VALIDATION ==========');
+      if (process.env.DEBUG) console.log('[API PUT] Input content:', JSON.stringify(content));
+      if (process.env.DEBUG) console.log('[API PUT] content type:', typeof content);
+      if (process.env.DEBUG) console.log('[API PUT] content === null?:', content === null);
+      if (process.env.DEBUG) console.log('[API PUT] content === {}?:', JSON.stringify(content) === '{}');
 
-      // 🚨 CRITICAL: Explicitly reject empty objects - this is the core bug!
+      // CRITICAL: Explicitly reject empty objects - this is the core bug!
       if (content && typeof content === 'object' && JSON.stringify(content) === '{}') {
-        console.log('[API PUT] ❌ CRITICAL: Rejecting empty content object!');
+        if (process.env.DEBUG) console.log('[API PUT] CRITICAL: Rejecting empty content object!');
         return errorResponse(
           '콘텐츠가 비어있습니다. 최소 1개의 블록이 필요합니다.',
           'EMPTY_CONTENT',
@@ -159,17 +162,18 @@ export async function PUT(
       }
 
       // Check if content is valid (either block format or legacy format)
-      // 🔧 FIX: Require blocks array to have length > 0 to prevent data loss
-      const isBlockFormat = content?.blocks && Array.isArray(content.blocks) && content.blocks.length > 0;
-      const isLegacyFormat = content?.introTitle || content?.introText || content?.gallery;
+      // FIX: Require blocks array to have length > 0 to prevent data loss
+      const blocks = content?.blocks;
+      const isBlockFormat = Array.isArray(blocks) && blocks.length > 0;
+      const isLegacyFormat = Boolean(content?.introTitle || content?.introText || content?.gallery);
       const isValidContent = isBlockFormat || isLegacyFormat;
 
-      console.log('[API PUT] isBlockFormat:', isBlockFormat, '(blocks count:', content?.blocks?.length ?? 'N/A', ')');
-      console.log('[API PUT] isLegacyFormat:', isLegacyFormat);
-      console.log('[API PUT] isValidContent:', isValidContent);
+      if (process.env.DEBUG) console.log('[API PUT] isBlockFormat:', isBlockFormat, '(blocks count:', Array.isArray(blocks) ? blocks.length : 'N/A', ')');
+      if (process.env.DEBUG) console.log('[API PUT] isLegacyFormat:', isLegacyFormat);
+      if (process.env.DEBUG) console.log('[API PUT] isValidContent:', isValidContent);
 
       if (!isValidContent) {
-        console.log('[API PUT] ⚠️ WARNING: Invalid content format detected, will save as null');
+        if (process.env.DEBUG) console.log('[API PUT] ⚠️ WARNING: Invalid content format detected, will save as null');
       }
 
       // Save valid content or null
@@ -177,7 +181,7 @@ export async function PUT(
         ? (content as Prisma.InputJsonValue)
         : Prisma.JsonNull;
 
-      console.log('[API PUT] Final updateData.content:', updateData.content === Prisma.JsonNull ? 'Prisma.JsonNull' : JSON.stringify(updateData.content));
+      if (process.env.DEBUG) console.log('[API PUT] Final updateData.content:', updateData.content === Prisma.JsonNull ? 'Prisma.JsonNull' : JSON.stringify(updateData.content));
     }
     if (validation.data.attachments !== undefined) {
       updateData.attachments = validation.data.attachments && validation.data.attachments.length > 0
@@ -192,9 +196,12 @@ export async function PUT(
       data: updateData,
     });
 
+    // Invalidate ISR caches
+    invalidateNews();
+
     return successResponse(updated, '뉴스가 수정되었습니다');
   } catch (error) {
-    console.error('뉴스 수정 오류:', error);
+    logger.error({ err: error, context: 'PUT /api/admin/news/articles/:id' }, '뉴스 수정 오류');
     return errorResponse('뉴스를 수정하는 중 오류가 발생했습니다', 'UPDATE_ERROR', 500);
   }
 }
@@ -220,9 +227,12 @@ export async function DELETE(
 
     await prisma.newsEvent.delete({ where: { id } });
 
+    // Invalidate ISR caches
+    invalidateNews();
+
     return successResponse(null, '뉴스가 삭제되었습니다');
   } catch (error) {
-    console.error('뉴스 삭제 오류:', error);
+    logger.error({ err: error, context: 'DELETE /api/admin/news/articles/:id' }, '뉴스 삭제 오류');
     return errorResponse('뉴스를 삭제하는 중 오류가 발생했습니다', 'DELETE_ERROR', 500);
   }
 }

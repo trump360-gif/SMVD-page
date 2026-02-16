@@ -206,14 +206,14 @@ export function useRowManager(
   // ---- Reorder rows themselves ----
   const handleReorderRows = useCallback(
     (sourceRowIndex: number, destinationRowIndex: number) => {
-      console.log(`[${modalName}] handleReorderRows called:`, {
+      if (process.env.DEBUG) console.log(`[${modalName}] handleReorderRows called:`, {
         sourceRowIndex,
         destinationRowIndex,
         rowConfigLength: rowConfig.length,
       });
 
       setRowConfig((prev) => {
-        console.log(`[${modalName}] setRowConfig callback:`, {
+        if (process.env.DEBUG) console.log(`[${modalName}] setRowConfig callback:`, {
           prev_length: prev.length,
           sourceRowIndex,
           destinationRowIndex,
@@ -226,7 +226,7 @@ export function useRowManager(
           destinationRowIndex < 0 || destinationRowIndex >= prev.length ||
           sourceRowIndex === destinationRowIndex
         ) {
-          console.log(`[${modalName}] ❌ Validation failed:`, {
+          if (process.env.DEBUG) console.log(`[${modalName}] ❌ Validation failed:`, {
             check_sourceRowIndex_negative: sourceRowIndex < 0,
             check_sourceRowIndex_outOfBounds: sourceRowIndex >= prev.length,
             check_destinationRowIndex_negative: destinationRowIndex < 0,
@@ -239,7 +239,7 @@ export function useRowManager(
         const updated = [...prev];
         const [movedRow] = updated.splice(sourceRowIndex, 1);
         updated.splice(destinationRowIndex, 0, movedRow);
-        console.log(`[${modalName}] ✅ Reordered rowConfig:`, {
+        if (process.env.DEBUG) console.log(`[${modalName}] ✅ Reordered rowConfig:`, {
           oldIndex: sourceRowIndex,
           newIndex: destinationRowIndex,
           newLength: updated.length,

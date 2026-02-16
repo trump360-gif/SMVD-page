@@ -7,6 +7,8 @@ import {
   notFoundResponse,
 } from '@/lib/api-response';
 import { z } from 'zod';
+import { invalidateWork, invalidateHome } from '@/lib/cache';
+import { logger } from '@/lib/logger';
 
 const UpdateProjectSchema = z.object({
   title: z.string().min(1).optional(),
@@ -48,7 +50,7 @@ export async function GET(
 
     return successResponse(project, '프로젝트 조회 성공');
   } catch (error) {
-    console.error('프로젝트 조회 오류:', error);
+    logger.error({ err: error, context: 'GET /api/admin/work/projects/:id' }, '프로젝트 조회 오류');
     return errorResponse('프로젝트를 불러오는 중 오류가 발생했습니다', 'FETCH_ERROR', 500);
   }
 }
@@ -91,9 +93,13 @@ export async function PUT(
       data: validation.data as Parameters<typeof prisma.workProject.update>[0]['data'],
     });
 
+    // Invalidate ISR caches
+    invalidateWork();
+    invalidateHome();
+
     return successResponse(updated, '프로젝트가 수정되었습니다');
   } catch (error) {
-    console.error('프로젝트 수정 오류:', error);
+    logger.error({ err: error, context: 'PUT /api/admin/work/projects/:id' }, '프로젝트 수정 오류');
     return errorResponse('프로젝트를 수정하는 중 오류가 발생했습니다', 'UPDATE_ERROR', 500);
   }
 }
@@ -119,9 +125,13 @@ export async function DELETE(
 
     await prisma.workProject.delete({ where: { id } });
 
+    // Invalidate ISR caches
+    invalidateWork();
+    invalidateHome();
+
     return successResponse(null, '프로젝트가 삭제되었습니다');
   } catch (error) {
-    console.error('프로젝트 삭제 오류:', error);
+    logger.error({ err: error, context: 'DELETE /api/admin/work/projects/:id' }, '프로젝트 삭제 오류');
     return errorResponse('프로젝트를 삭제하는 중 오류가 발생했습니다', 'DELETE_ERROR', 500);
   }
 }

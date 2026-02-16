@@ -187,7 +187,7 @@ export async function DELETE(request: NextRequest) {
           where: { id: item.mediaId },
         });
       } catch (error) {
-        console.warn('미디어 삭제 실패:', error);
+        if (process.env.DEBUG) console.warn('미디어 삭제 실패:', error);
       }
     }
 

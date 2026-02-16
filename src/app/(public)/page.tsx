@@ -8,6 +8,9 @@ import {
   Footer,
 } from '@/components/public/home';
 
+// ISR: regenerate every 60 seconds. Admin API calls revalidatePath() on mutations.
+export const revalidate = 60;
+
 export const metadata = {
   title: '숙명여자대학교 시각영상디자인과',
   description: '숙명여자대학교 시각영상디자인과 공식 웹사이트',
@@ -62,7 +65,7 @@ export default async function HomePage() {
 
     // Extract about content
     const aboutContent = typeof aboutSection?.content === 'object' && aboutSection?.content
-      ? (aboutSection.content as any)?.description || ''
+      ? (aboutSection.content as Record<string, unknown>)?.description as string || ''
       : '';
 
     return (

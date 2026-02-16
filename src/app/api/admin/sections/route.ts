@@ -11,6 +11,7 @@ import {
   CreateSectionSchema,
   UpdateSectionSchema,
 } from "@/types/schemas";
+import { Prisma } from "@/generated/prisma";
 
 /**
  * GET /api/admin/sections?pageId=xxx
@@ -100,13 +101,13 @@ export async function POST(request: NextRequest) {
     // 섹션 생성
     const section = await prisma.section.create({
       data: {
-        pageId,
+        page: { connect: { id: pageId } },
         type,
         title,
-        content,
-        mediaIds,
+        content: content as Prisma.InputJsonValue ?? Prisma.JsonNull,
+        mediaIds: mediaIds as Prisma.InputJsonValue ?? Prisma.JsonNull,
         order,
-      } as any,
+      },
     });
 
     return successResponse(section, "섹션이 생성되었습니다", 201);

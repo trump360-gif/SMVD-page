@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
+import { Prisma } from "@/generated/prisma";
 import { checkAdminAuth } from "@/lib/auth-check";
 import {
   successResponse,
@@ -66,13 +67,33 @@ export async function PUT(request: NextRequest) {
         data: {
           id: "footer-default",
           title: validation.data.title || "숙명여자대학교 시각영상디자인과",
-        } as any,
+          description: validation.data.description ?? null,
+          address: validation.data.address ?? null,
+          phone: validation.data.phone ?? null,
+          email: validation.data.email ?? null,
+          socialLinks: validation.data.socialLinks
+            ? (validation.data.socialLinks as Prisma.InputJsonValue)
+            : Prisma.JsonNull,
+          copyright: validation.data.copyright ?? null,
+        },
       });
     } else {
       // 푸터 수정
+      const updateData: Prisma.FooterUpdateInput = {
+        title: validation.data.title,
+        description: validation.data.description ?? undefined,
+        address: validation.data.address ?? undefined,
+        phone: validation.data.phone ?? undefined,
+        email: validation.data.email ?? undefined,
+        socialLinks: validation.data.socialLinks
+          ? (validation.data.socialLinks as Prisma.InputJsonValue)
+          : undefined,
+        copyright: validation.data.copyright ?? undefined,
+      };
+
       footer = await prisma.footer.update({
         where: { id: footer.id },
-        data: validation.data as any,
+        data: updateData,
       });
     }
 

@@ -1,17 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth/auth';
+import { checkAdminAuth } from '@/lib/auth-check';
 import z from 'zod';
-
-// 인증 확인
-async function requireAuth() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return null;
-  }
-  return session;
-}
 
 // 교수 정보 스키마
 const ProfessorSchema = z.object({
@@ -40,10 +30,8 @@ const ProfessorSchema = z.object({
 // GET: 모든 교수/강사 조회
 export async function GET(request: NextRequest) {
   try {
-    const session = await requireAuth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const authResult = await checkAdminAuth();
+    if (!authResult.authenticated) return authResult.error;
 
     const people = await prisma.people.findMany({
       where: { archivedAt: null },
@@ -79,10 +67,8 @@ export async function GET(request: NextRequest) {
 // POST: 새 교수 추가
 export async function POST(request: NextRequest) {
   try {
-    const session = await requireAuth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const authResult = await checkAdminAuth();
+    if (!authResult.authenticated) return authResult.error;
 
     const body = await request.json();
     const validatedData = ProfessorSchema.parse(body);

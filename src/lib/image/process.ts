@@ -113,33 +113,28 @@ export async function saveProcessedImage(
   }
 }
 
-export async function deleteImage(filename: string): Promise<void> {
+export async function deleteImage(filepath: string): Promise<void> {
   try {
-    // 모든 버전 삭제
     const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    const filePath = path.join(uploadsDir, filepath);
 
-    // 현재 연도/월 기반으로 파일 찾기
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-
-    const filePath = path.join(uploadsDir, String(year), month, filename);
-    const thumbnailPath = path.join(uploadsDir, String(year), month, `${filename.replace(".webp", "")}-thumb.webp`);
+    // 썸네일 경로: "2026/02/abc123.webp" → "2026/02/abc123-thumb.webp"
+    const thumbnailPath = filePath.replace(/\.webp$/, "-thumb.webp");
 
     try {
       await fs.unlink(filePath);
-    } catch {
-      // 파일이 없을 수 있음
+    } catch (err) {
+      // 파일이 없거나 접근 불가 (무시)
     }
 
     try {
       await fs.unlink(thumbnailPath);
-    } catch {
-      // 파일이 없을 수 있음
+    } catch (err) {
+      // 썸네일이 없을 수 있음 (무시)
     }
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`이미지 삭제 실패: ${error.message}`);
+      console.error(`이미지 삭제 실패: ${error.message}`);
     }
     throw error;
   }

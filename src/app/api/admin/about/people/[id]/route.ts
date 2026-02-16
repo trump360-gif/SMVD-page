@@ -1,17 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth/auth';
+import { checkAdminAuth } from '@/lib/auth-check';
 import z from 'zod';
-
-// 인증 확인
-async function requireAuth() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return null;
-  }
-  return session;
-}
 
 // 교수 정보 업데이트 스키마
 const ProfessorUpdateSchema = z.object({
@@ -43,10 +33,8 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await requireAuth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const authResult = await checkAdminAuth();
+    if (!authResult.authenticated) return authResult.error;
 
     const { id } = await params;
     const body = await request.json();
@@ -90,10 +78,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await requireAuth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const authResult = await checkAdminAuth();
+    if (!authResult.authenticated) return authResult.error;
 
     const { id } = await params;
 

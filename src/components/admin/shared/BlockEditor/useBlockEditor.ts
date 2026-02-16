@@ -19,6 +19,9 @@ function withOrder(block: Block, order: number): Block {
   return copy;
 }
 
+/** Maximum number of undo steps to keep in memory */
+const MAX_HISTORY = 50;
+
 /**
  * State management hook for the block editor.
  * Provides CRUD operations and reordering for blocks.
@@ -33,15 +36,26 @@ export function useBlockEditor(initialBlocks: Block[] = []) {
   const reindex = (arr: Block[]): Block[] =>
     arr.map((block, idx) => withOrder(block, idx));
 
-  /** Save to history after state change */
+  /** Save to history after state change (capped at MAX_HISTORY entries) */
   const saveToHistory = useCallback((newBlocks: Block[]) => {
     setHistory((prev) => {
       // Remove any future history if we're not at the end
       const newHistory = prev.slice(0, historyIndex + 1);
       newHistory.push(newBlocks);
+
+      // Cap history size to prevent memory leak
+      if (newHistory.length > MAX_HISTORY) {
+        const overflow = newHistory.length - MAX_HISTORY;
+        newHistory.splice(0, overflow);
+      }
+
       return newHistory;
     });
-    setHistoryIndex((prev) => prev + 1);
+    setHistoryIndex((prev) => {
+      const next = prev + 1;
+      // Adjust index if history was trimmed
+      return Math.min(next, MAX_HISTORY - 1);
+    });
   }, [historyIndex]);
 
   /** Add a new block of the given type, optionally after a specific block */
@@ -119,7 +133,7 @@ export function useBlockEditor(initialBlocks: Block[] = []) {
 
   /** ✅ 새로 추가: 외부에서 블록 배열을 강제로 재설정 (동기화용) */
   const resetBlocks = useCallback((newBlocks: Block[]) => {
-    console.log('[useBlockEditor] resetBlocks called with', newBlocks.length, 'blocks');
+    if (process.env.DEBUG) console.log('[useBlockEditor] resetBlocks called with', newBlocks.length, 'blocks');
     const reindexed = reindex(newBlocks);
     setBlocks(reindexed);
     setHistory([reindexed]); // History 초기화

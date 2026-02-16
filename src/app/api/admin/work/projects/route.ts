@@ -7,6 +7,9 @@ import {
   notFoundResponse,
 } from '@/lib/api-response';
 import { z } from 'zod';
+import { Prisma } from '@/generated/prisma';
+import { invalidateWork, invalidateHome } from '@/lib/cache';
+import { logger } from '@/lib/logger';
 
 const CreateProjectSchema = z.object({
   title: z.string().min(1, '제목은 필수입니다'),
@@ -39,7 +42,7 @@ export async function GET() {
 
     return successResponse(projects, '프로젝트 목록 조회 성공');
   } catch (error) {
-    console.error('프로젝트 조회 오류:', error);
+    logger.error({ err: error, context: 'GET /api/admin/work/projects' }, '프로젝트 조회 오류');
     return errorResponse('프로젝트 목록을 불러오는 중 오류가 발생했습니다', 'FETCH_ERROR', 500);
   }
 }
@@ -76,16 +79,39 @@ export async function POST(request: NextRequest) {
     });
     const nextOrder = lastProject ? lastProject.order + 1 : 0;
 
-    // slug: title 기반으로 생성
+    // slug: title 기반으로 생성 (race condition safe)
     const baseSlug = data.title
       .toLowerCase()
       .replace(/[^a-z0-9가-힣]/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '');
-    const slugCount = await prisma.workProject.count({
-      where: { slug: { startsWith: baseSlug } },
-    });
-    const slug = slugCount > 0 ? `${baseSlug}-${slugCount + 1}` : baseSlug;
+
+    // Race condition 방지: 정확한 일치도로 확인
+    let slug = baseSlug;
+    let counter = 1;
+    let exists = true;
+
+    while (exists && counter <= 100) {  // 최대 100회 재시도
+      const found = await prisma.workProject.findUnique({
+        where: { slug },
+        select: { id: true },  // 최소 데이터만 요청
+      });
+
+      if (found) {
+        slug = `${baseSlug}-${counter}`;
+        counter++;
+      } else {
+        exists = false;
+      }
+    }
+
+    if (counter > 100) {
+      return errorResponse(
+        '유효한 slug를 생성할 수 없습니다',
+        'SLUG_GENERATION_FAILED',
+        500
+      );
+    }
 
     const project = await prisma.workProject.create({
       data: {
@@ -103,13 +129,17 @@ export async function POST(request: NextRequest) {
         galleryImages: data.galleryImages,
         order: nextOrder,
         published: data.published,
-        content: data.content as any, // BlockEditor content
+        content: (data.content ?? Prisma.JsonNull) as Prisma.InputJsonValue, // BlockEditor content
       },
     });
 
+    // Invalidate ISR caches
+    invalidateWork();
+    invalidateHome();
+
     return successResponse(project, '프로젝트가 생성되었습니다', 201);
   } catch (error) {
-    console.error('프로젝트 생성 오류:', error);
+    logger.error({ err: error, context: 'POST /api/admin/work/projects' }, '프로젝트 생성 오류');
     return errorResponse('프로젝트를 생성하는 중 오류가 발생했습니다', 'CREATE_ERROR', 500);
   }
 }

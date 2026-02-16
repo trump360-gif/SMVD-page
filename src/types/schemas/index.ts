@@ -69,6 +69,11 @@ export const SectionTypeSchema = z.enum([
   // Curriculum page types
   "CURRICULUM_UNDERGRADUATE",
   "CURRICULUM_GRADUATE",
+  // Work page types
+  "WORK_ARCHIVE",
+  "WORK_EXHIBITION",
+  // News page types
+  "NEWS_ARCHIVE",
 ]);
 
 export const SectionSchema = z.object({
@@ -170,9 +175,12 @@ export type UpdateNavigationItemInput = z.infer<typeof UpdateNavigationItemSchem
 export const FooterSchema = z.object({
   id: z.string(),
   title: z.string(),
-  content: z.string(),
-  links: z.array(z.object({ text: z.string(), href: z.string() })).optional(),
-  createdAt: z.date(),
+  description: z.string().nullable(),
+  address: z.string().nullable(),
+  phone: z.string().nullable(),
+  email: z.string().nullable(),
+  socialLinks: z.array(z.object({ text: z.string(), href: z.string() })).optional(),
+  copyright: z.string().nullable(),
   updatedAt: z.date(),
 });
 
@@ -180,8 +188,12 @@ export type Footer = z.infer<typeof FooterSchema>;
 
 export const UpdateFooterSchema = z.object({
   title: z.string().optional(),
-  content: z.string().optional(),
-  links: z.array(z.object({ text: z.string(), href: z.string() })).optional(),
+  description: z.string().nullable().optional(),
+  address: z.string().nullable().optional(),
+  phone: z.string().nullable().optional(),
+  email: z.string().nullable().optional(),
+  socialLinks: z.array(z.object({ text: z.string(), href: z.string() })).optional(),
+  copyright: z.string().nullable().optional(),
 });
 
 export type UpdateFooterInput = z.infer<typeof UpdateFooterSchema>;

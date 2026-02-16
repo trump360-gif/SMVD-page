@@ -1,3 +1,5 @@
+import type { BlogContent } from '@/components/admin/shared/BlockEditor/types';
+
 export interface WorkDetail {
   id: string;
   title: string;
@@ -9,7 +11,7 @@ export interface WorkDetail {
   email: string;
   heroImage: string;
   galleryImages: string[];
-  content?: Record<string, any>; // BlockEditor content with blocks array
+  content?: BlogContent | null; // BlockEditor content with blocks array
   nextProject?: {
     id: string;
     title: string;

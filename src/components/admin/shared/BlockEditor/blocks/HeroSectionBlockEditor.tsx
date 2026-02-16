@@ -398,7 +398,7 @@ export default function HeroSectionBlockEditor({ block, onChange }: HeroSectionB
                     name="overlayPosition"
                     value={pos}
                     checked={overlayPosition === pos}
-                    onChange={(e) => onChange({ overlayPosition: e.target.value as any })}
+                    onChange={(e) => onChange({ overlayPosition: e.target.value as HeroSectionBlock['overlayPosition'] })}
                     className="w-4 h-4"
                   />
                   <span className="text-xs text-gray-700 capitalize">

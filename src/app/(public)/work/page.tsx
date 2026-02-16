@@ -6,6 +6,9 @@ import {
 import { WorkArchive } from '@/components/public/work';
 import { prisma } from '@/lib/db';
 
+// ISR: regenerate every 5 minutes. Admin API calls revalidatePath() on mutations.
+export const revalidate = 300;
+
 // Fetch work data from DB with fallback to hardcoded
 async function getWorkData() {
   try {

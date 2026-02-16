@@ -129,7 +129,7 @@ function DropZone({ rowId, isOver, children }: { rowId: string; isOver?: boolean
   const { setNodeRef, isOver: isOverDropZone } = useDroppable({
     id: rowId,
   });
-  console.log('[DropZone] Created with rowId:', rowId);
+  if (process.env.DEBUG) console.log('[DropZone] Created with rowId:', rowId);
 
   const over = isOverDropZone;
 
@@ -243,27 +243,27 @@ export default function ImageGridBlockEditor({
   // 드래그 끝
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    console.log('[ImageGridBlockEditor] Drag ended:', { activeId: active.id, overId: over?.id });
+    if (process.env.DEBUG) console.log('[ImageGridBlockEditor] Drag ended:', { activeId: active.id, overId: over?.id });
     setActiveId(null);
 
     if (!over) {
-      console.log('[ImageGridBlockEditor] No drop target');
+      if (process.env.DEBUG) console.log('[ImageGridBlockEditor] No drop target');
       return;
     }
 
     const draggedImageId = active.id as string;
     const draggedImage = localBlock.images.find((img) => img.id === draggedImageId);
     if (!draggedImage) {
-      console.log('[ImageGridBlockEditor] Dragged image not found:', draggedImageId);
+      if (process.env.DEBUG) console.log('[ImageGridBlockEditor] Dragged image not found:', draggedImageId);
       return;
     }
 
     const targetId = over.id as string;
-    console.log('[ImageGridBlockEditor] Target ID:', targetId);
+    if (process.env.DEBUG) console.log('[ImageGridBlockEditor] Target ID:', targetId);
 
     // "available-images"면 그 자리 유지
     if (targetId === 'available-images') {
-      console.log('[ImageGridBlockEditor] Dropped on available images - keeping in place');
+      if (process.env.DEBUG) console.log('[ImageGridBlockEditor] Dropped on available images - keeping in place');
       return;
     }
 
@@ -293,7 +293,7 @@ export default function ImageGridBlockEditor({
     if (isTargetRow) {
       // 행으로 드롭된 경우 - 기존 로직 유지
       const targetRowId = targetId;
-      console.log('[ImageGridBlockEditor] Dropped on row:', targetRowId);
+      if (process.env.DEBUG) console.log('[ImageGridBlockEditor] Dropped on row:', targetRowId);
 
       const newRows = localBlock.rows.map((row) => {
         if (row.id === draggedRowId && draggedRowId !== targetRowId && draggedRowId !== null) {
@@ -308,12 +308,12 @@ export default function ImageGridBlockEditor({
       const updated = { ...localBlock, rows: newRows };
       setLocalBlock(updated);
       onChange(updated);
-      console.log('[ImageGridBlockEditor] Image moved to row:', { draggedRowId, targetRowId });
+      if (process.env.DEBUG) console.log('[ImageGridBlockEditor] Image moved to row:', { draggedRowId, targetRowId });
     } else {
       // targetId가 image인 경우 - row-internal reordering
       const targetImage = localBlock.images.find((img) => img.id === targetId);
       if (!targetImage) {
-        console.log('[ImageGridBlockEditor] Target image not found:', targetId);
+        if (process.env.DEBUG) console.log('[ImageGridBlockEditor] Target image not found:', targetId);
         return;
       }
 
@@ -339,7 +339,7 @@ export default function ImageGridBlockEditor({
 
       if (draggedRowId === targetRowId && draggedRowId !== null) {
         // 같은 행 내에서 reorder
-        console.log('[ImageGridBlockEditor] Reordering within row:', {
+        if (process.env.DEBUG) console.log('[ImageGridBlockEditor] Reordering within row:', {
           draggedRowId,
           draggedImageIndex,
           targetImageIndex,
@@ -354,11 +354,11 @@ export default function ImageGridBlockEditor({
           const updated = { ...localBlock, images: newImages };
           setLocalBlock(updated);
           onChange(updated);
-          console.log('[ImageGridBlockEditor] Images reordered successfully');
+          if (process.env.DEBUG) console.log('[ImageGridBlockEditor] Images reordered successfully');
         }
       } else if (draggedRowId !== targetRowId) {
         // 다른 행으로 이동 (행 이미지 카운트 업데이트)
-        console.log('[ImageGridBlockEditor] Moving image to different row:', {
+        if (process.env.DEBUG) console.log('[ImageGridBlockEditor] Moving image to different row:', {
           draggedRowId,
           targetRowId,
         });
@@ -376,13 +376,13 @@ export default function ImageGridBlockEditor({
         const updated = { ...localBlock, rows: newRows };
         setLocalBlock(updated);
         onChange(updated);
-        console.log('[ImageGridBlockEditor] Image moved to different row');
+        if (process.env.DEBUG) console.log('[ImageGridBlockEditor] Image moved to different row');
       }
     }
   };
 
   const handleDragStart = (event: any) => {
-    console.log('[ImageGridBlockEditor] Drag started:', event.active.id);
+    if (process.env.DEBUG) console.log('[ImageGridBlockEditor] Drag started:', event.active.id);
     setActiveId(event.active.id);
   };
 

@@ -386,13 +386,18 @@ export default function NewsBlogModal({
         content = null;
       }
 
+      // Filter out fileBlob (not JSON serializable) - keep only uploaded attachments with filepath
+      const validAttachments = attachments
+        .filter((a: any) => a.filepath) // Only include attachments that have been uploaded (have filepath)
+        .map(({ fileBlob, ...rest }: any) => rest); // Remove fileBlob property
+
       const data: CreateArticleInput = {
         title: title.trim(),
         category,
         excerpt: excerpt.trim() || undefined,
         thumbnailImage,
         content,
-        attachments: attachments.length > 0 ? attachments : undefined, // NEW - 2026-02-16
+        attachments: validAttachments.length > 0 ? validAttachments : undefined, // NEW - 2026-02-16
         publishedAt: publishedAt || new Date().toISOString().split('T')[0],
         published,
       };
