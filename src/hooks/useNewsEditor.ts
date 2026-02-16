@@ -18,10 +18,11 @@ export interface GalleryData {
 export interface AttachmentData {
   id: string;
   filename: string;
-  filepath: string;
-  mimeType: string;
-  size: number;
-  uploadedAt: string;
+  filepath?: string; // Optional: not set for newly selected files
+  mimeType?: string;
+  size?: number;
+  uploadedAt?: string;
+  fileBlob?: File; // Optional: only for newly selected files before upload
 }
 
 export interface NewsContentData {

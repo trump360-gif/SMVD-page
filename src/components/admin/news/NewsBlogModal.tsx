@@ -387,18 +387,60 @@ export default function NewsBlogModal({
         content = null;
       }
 
-      // Filter out fileBlob (not JSON serializable) - keep all attachments
-      const validAttachments = attachments
-        .map(({ fileBlob, ...rest }: any) => rest) // Remove fileBlob property from all
-        .filter((a: any) => a.filename); // Only keep those with filename
+      // ====== STEP 1: Upload files with fileBlob to server ======
+      const uploadedAttachments: any[] = [];
 
+      for (const attachment of attachments) {
+        // If fileBlob exists (new file), upload it
+        if (attachment.fileBlob && attachment.fileBlob instanceof File) {
+          try {
+            const formData = new FormData();
+            formData.append('file', attachment.fileBlob);
+
+            const uploadRes = await fetch('/api/admin/upload/document', {
+              method: 'POST',
+              body: formData,
+            });
+
+            if (!uploadRes.ok) {
+              const errorData = await uploadRes.json();
+              throw new Error(`파일 업로드 실패: ${errorData.message}`);
+            }
+
+            const uploadedData = await uploadRes.json();
+            // Replace fileBlob with filepath from server
+            uploadedAttachments.push({
+              id: uploadedData.data.id,
+              filename: uploadedData.data.filename,
+              filepath: uploadedData.data.filepath,
+              mimeType: uploadedData.data.mimeType,
+              size: uploadedData.data.size,
+              uploadedAt: uploadedData.data.uploadedAt,
+            });
+          } catch (err) {
+            throw new Error(err instanceof Error ? err.message : '파일 업로드 중 오류 발생');
+          }
+        } else if (attachment.filepath) {
+          // Already has filepath (existing file), keep as is
+          uploadedAttachments.push({
+            id: attachment.id,
+            filename: attachment.filename,
+            filepath: attachment.filepath,
+            mimeType: attachment.mimeType,
+            size: attachment.size,
+            uploadedAt: attachment.uploadedAt,
+          });
+        }
+      }
+
+      // ====== STEP 2: Prepare article data with uploaded attachments ======
       const data: CreateArticleInput = {
         title: title.trim(),
         category,
         excerpt: excerpt.trim() || undefined,
         thumbnailImage,
         content,
-        attachments: validAttachments.length > 0 ? validAttachments : undefined, // NEW - 2026-02-16
+        attachments: uploadedAttachments.length > 0 ? uploadedAttachments : undefined,
         publishedAt: publishedAt || new Date().toISOString().split('T')[0],
         published,
       };
@@ -645,9 +687,11 @@ export default function NewsBlogModal({
                           <p className="text-sm font-medium text-gray-900 truncate">
                             {attachment.filename}
                           </p>
-                          <p className="text-xs text-gray-500">
-                            {(attachment.size / 1024).toFixed(1)} KB • {new Date(attachment.uploadedAt).toLocaleDateString()}
-                          </p>
+                          {attachment.size && attachment.uploadedAt && (
+                            <p className="text-xs text-gray-500">
+                              {(attachment.size / 1024).toFixed(1)} KB • {new Date(attachment.uploadedAt).toLocaleDateString()}
+                            </p>
+                          )}
                         </div>
                         <button
                           type="button"
