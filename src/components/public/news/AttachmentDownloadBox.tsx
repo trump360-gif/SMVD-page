@@ -31,7 +31,8 @@ interface Attachment {
  */
 export default function AttachmentDownloadBox({ attachments }: { attachments?: Attachment[] | null }) {
   // Don't render if no attachments
-  if (!attachments || attachments.length === 0) {
+  // Handle null, undefined, empty array, and non-array values (e.g., empty object from Prisma)
+  if (!attachments || !Array.isArray(attachments) || attachments.length === 0) {
     return null;
   }
 
