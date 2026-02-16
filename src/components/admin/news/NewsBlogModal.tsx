@@ -400,6 +400,7 @@ export default function NewsBlogModal({
             const uploadRes = await fetch('/api/admin/upload/document', {
               method: 'POST',
               body: formData,
+              credentials: 'include', // Send auth cookies with request
             });
 
             if (!uploadRes.ok) {
