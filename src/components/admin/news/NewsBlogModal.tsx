@@ -386,10 +386,10 @@ export default function NewsBlogModal({
         content = null;
       }
 
-      // Filter out fileBlob (not JSON serializable) - keep only uploaded attachments with filepath
+      // Filter out fileBlob (not JSON serializable) - keep all attachments
       const validAttachments = attachments
-        .filter((a: any) => a.filepath) // Only include attachments that have been uploaded (have filepath)
-        .map(({ fileBlob, ...rest }: any) => rest); // Remove fileBlob property
+        .map(({ fileBlob, ...rest }: any) => rest) // Remove fileBlob property from all
+        .filter((a: any) => a.filename); // Only keep those with filename
 
       const data: CreateArticleInput = {
         title: title.trim(),
