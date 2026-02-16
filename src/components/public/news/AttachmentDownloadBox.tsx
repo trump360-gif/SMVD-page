@@ -36,7 +36,7 @@ export default function AttachmentDownloadBox({ attachments }: { attachments?: A
   }
 
   return (
-    <div className="mt-12">
+    <div className="mt-12 border border-gray-800 p-6">
       {/* Header with minimal design */}
       <h3 className="text-lg font-semibold text-gray-900 mb-4">
         Attached File
