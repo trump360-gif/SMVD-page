@@ -39,14 +39,8 @@ const ContentSchema = z.union([
 ]).optional();
 
 // Attachment schema for file metadata (NEW - 2026-02-16)
-const AttachmentSchema = z.object({
-  id: z.string(),
-  filename: z.string(),
-  filepath: z.string().optional(), // Can be empty for newly added files
-  mimeType: z.string().optional(), // Can be empty for newly added files
-  size: z.number().optional(), // Can be empty for newly added files
-  uploadedAt: z.string(),
-});
+// Use passthrough to allow any shape since attachments are flexible
+const AttachmentSchema = z.object({}).passthrough().optional();
 
 const CreateArticleSchema = z.object({
   title: z.string().min(1, '제목은 필수입니다'),
@@ -54,7 +48,7 @@ const CreateArticleSchema = z.object({
   excerpt: z.string().optional(),
   thumbnailImage: z.string().default('/Group-27.svg'),
   content: ContentSchema,
-  attachments: z.array(AttachmentSchema).optional(), // NEW - 2026-02-16
+  attachments: z.array(z.object({}).passthrough()).optional(), // Flexible array of attachment objects
   publishedAt: z.string().optional(),
   published: z.boolean().default(true),
 });
