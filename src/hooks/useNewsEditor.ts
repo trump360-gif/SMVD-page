@@ -58,7 +58,7 @@ export interface CreateArticleInput {
   excerpt?: string;
   thumbnailImage?: string;
   content?: NewsContentData | null;
-  attachments?: AttachmentData[]; // NEW - 2026-02-16
+  attachments?: AttachmentData[] | null; // NEW - 2026-02-16 (Allow null to clear attachments)
   publishedAt?: string;
   published?: boolean;
 }

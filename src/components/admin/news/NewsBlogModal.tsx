@@ -441,7 +441,7 @@ export default function NewsBlogModal({
         excerpt: excerpt.trim() || undefined,
         thumbnailImage,
         content,
-        attachments: uploadedAttachments.length > 0 ? uploadedAttachments : undefined,
+        attachments: uploadedAttachments.length > 0 ? uploadedAttachments : null, // Use null to explicitly clear attachments in DB
         publishedAt: publishedAt || new Date().toISOString().split('T')[0],
         published,
       };
