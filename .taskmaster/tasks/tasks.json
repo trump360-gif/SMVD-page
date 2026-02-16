@@ -1,0 +1,62 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Phase 1: 코드 리뷰 필수 개선 (7-8시간)",
+        "description": "코드 리뷰 결과 발견된 필수 개선 사항 - 버그 수정 및 구조 개선. 중요: 타입 정의, 검증 로직, 보안 강화",
+        "details": "## 목표\n- debug console.log 제거\n- 복잡한 검증 로직 함수화\n- Record<string, any> 제거\n- XSS 방지 (ReactMarkdown)\n- src/lib 폴더 구조 정리\n- 모달 분리 (탭 → 컴포넌트)\n- logger 사용 확대\n- 파일 검증 강화\n- useMemo 추가\n\n## 변형 방지 전략\n- 각 파일별 주석으로 변경사항 표기\n- TypeScript strict mode 유지\n- 빌드 에러 0 유지\n- 기존 API 응답 포맷 변경 금지",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "1.1 Critical 오류 수정 (2시간)",
+            "description": "즉시 해결해야 할 버그 및 에러 처리",
+            "details": "### 1.1.1 debug console.log 제거 (10분)\n- 파일: api/admin/news/articles/[id]/route.ts Line ~130\n- 작업: console.log('[news] Content validation...'); 제거\n- 영향도: 로그 노이즈 제거, 성능 미미\n\n### 1.1.2 복잡한 검증 로직 함수화 (30분)\n- 파일: api/admin/news/articles/[id]/route.ts Line 140-150\n- 현재 코드:\n  ```typescript\n  if (content && typeof content === 'object' && JSON.stringify(content) === '{}') {\n    // 빈 객체 처리\n  }\n  ```\n- 개선안:\n  ```typescript\n  const isEmpty = (obj: unknown): obj is Record<string, never> =>\n    obj !== null && typeof obj === 'object' && Object.keys(obj).length === 0;\n  \n  if (isEmpty(content)) {\n    // 처리\n  }\n  ```\n- 영향도: 가독성 개선, 재사용 가능\n\n### 1.1.3 Record<string, any> → 명시적 타입 (20분)\n- 파일: src/hooks/useWorkEditor.ts Line 23\n- 현재: content?: Record<string, any>;\n- 개선: content?: BlogContent;\n- 영향도: 타입 안전성 강화\n\n### 1.1.4 XSS 방지 (45분)\n- 파일: src/components/public/home/ (ReactMarkdown 사용 부분)\n- 작업: sanitize-html 패키지 추가 및 적용\n- 코드: npm install sanitize-html @types/sanitize-html\n- 영향도: 보안 강화 (중요)",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 1
+          },
+          {
+            "id": 2,
+            "title": "1.2 High 우선순위 구조 개선 (6시간)",
+            "description": "코드 구조 정리 및 성능 개선",
+            "details": "### 1.2.1 src/lib 폴더 구조 정리 (1시간)\n- 현재: 10개 파일 평탄 구조\n- 개선 후:\n  ```\n  src/lib/\n  ├── auth/\n  │   ├── auth.ts\n  │   └── auth-check.ts\n  ├── cache/\n  │   └── cache.ts\n  ├── validation/\n  │   ├── blog-schemas.ts\n  │   └── file-validation.ts\n  ├── utils/\n  │   ├── api-response.ts\n  │   └── logger.ts\n  ```\n- 영향도: 구조 개선, 유지보수 용이\n\n### 1.2.2 모달 분리 (2시간)\n- 파일: src/components/admin/news/NewsBlogModal.tsx (719줄)\n- 파일: src/components/admin/work/WorkBlogModal.tsx (650줄)\n- 작업:\n  - InfoTab.tsx (기본 정보)\n  - ContentTab.tsx (블록 에디터)\n  - AttachmentTab.tsx (파일)\n  - index.tsx (상태 + 탭 관리)\n- 각각 300줄 이하로 분리\n- 영향도: 가독성, 재사용성 향상\n\n### 1.2.3 logger 사용 확대 (1시간)\n- 현재: 50% API에만 적용\n- 목표: 100% 모든 API에 적용\n- 패턴:\n  ```typescript\n  logger.info({ context: 'GET /api/work' }, 'Project list fetched');\n  logger.error({ err: error, context: 'PUT /api/work/:id' }, 'Update failed');\n  ```\n- 영향도: 운영성 개선\n\n### 1.2.4 파일 검증 강화 (0.75시간)\n- 파일: src/app/api/admin/upload/route.ts\n- 추가 검증:\n  - MIME 타입 화이트리스트 (JPEG, PNG, WebP)\n  - 파일 크기 제한 (MAX_SIZE: 10MB)\n  - 확장자 검증 (이중 검증)\n- 코드:\n  ```typescript\n  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];\n  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB\n  \n  if (!ALLOWED_TYPES.includes(file.type)) {\n    return errorResponse('Invalid file type', 'INVALID_MIME_TYPE', 400);\n  }\n  ```\n- 영향도: 보안 강화\n\n### 1.2.5 useMemo 추가 (1.25시간)\n- 대상:\n  - BlockRenderer.tsx: calculateRowWidths(), widthCalculation\n  - CourseTable.tsx: coursesByYear 계산\n  - WorkSection.tsx: filteredProjects 필터링\n- 패턴:\n  ```typescript\n  const widths = useMemo(\n    () => calculateRowWidths(rowBlock),\n    [rowBlock]\n  );\n  ```\n- 영향도: 성능 개선 (불필요한 재계산 방지)",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 1
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Phase 2: 홈페이지 반응형 구현 (16.5시간)",
+        "description": "메인페이지의 모든 섹션을 모바일/태블릿/데스크톱에 맞게 반응형 적용. CSS-in-JS + @media 쿼리 조합 사용. 현재 모바일 사용성 0% → 100% 목표",
+        "details": "## 반응형 전략\n- CSS-in-JS 유지 (Tailwind 클래스 미사용)\n- @media 쿼리로 breakpoint 정의\n- breakpoint: 640px(mobile), 1024px(desktop)\n- 각 컴포넌트에서 useEffect로 상태 관리\n\n## Breakpoint 정의\n```javascript\nconst BREAKPOINTS = {\n  mobile: 640,    // < 640px\n  tablet: 1024,   // 640px - 1024px  \n  desktop: 1024,  // >= 1024px\n};\n```\n\n## Git Merge Conflict 해결 필수\n- src/app/(public)/page.tsx\n- src/components/public/home/AboutSection.tsx\n- src/components/public/home/WorkSection.tsx\n\n## 변형 방지 전략\n- 이미지 sizes prop 최적화만 수정\n- 기존 데이터 구조 변경 금지\n- API 응답 포맷 변경 금지\n- 타입 정의 추가 금지 (기존 타입만 사용)",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "2.1 Git Conflict 해결 & 기초 인프라 (1.25시간)",
+            "description": "반응형 작업을 위한 기초 준비",
+            "details": "### 2.1.1 Git Merge Conflict 해결 (15분)\n```bash\ngit status  # conflict 파일 확인\n# 3개 파일:\n# - src/app/(public)/page.tsx\n# - src/components/public/home/AboutSection.tsx\n# - src/components/public/home/WorkSection.tsx\n\n# 각 파일에서 HEAD 또는 branch 선택\ngit add src/app/(public)/page.tsx\ngit add src/components/public/home/AboutSection.tsx\ngit add src/components/public/home/WorkSection.tsx\n\ngit commit -m \"chore: resolve merge conflicts before responsive implementation\"\n```\n\n### 2.1.2 반응형 유틸리티 생성 (30분)\n- 파일 생성: src/lib/responsive.ts\n- 코드:\n  ```typescript\n  export const useResponsive = () => {\n    const [isMobile, setIsMobile] = useState(false);\n    const [isTablet, setIsTablet] = useState(false);\n  \n    useEffect(() => {\n      const handleResize = () => {\n        setIsMobile(window.innerWidth < 640);\n        setIsTablet(window.innerWidth >= 640 && window.innerWidth < 1024);\n      };\n  \n      handleResize();\n      window.addEventListener('resize', handleResize);\n      return () => window.removeEventListener('resize', handleResize);\n    }, []);\n  \n    return { isMobile, isTablet, isDesktop: !isMobile && !isTablet };\n  };\n  ```\n- 테스트: npm run dev → 콘솔 확인\n\n### 2.1.3 Breakpoint 상수 정의 (15분)\n- 파일: src/constants/responsive.ts\n- 코드:\n  ```typescript\n  export const BREAKPOINTS = {\n    mobile: 640,\n    tablet: 768,\n    desktop: 1024,\n    wide: 1440,\n  };\n  \n  export const PADDING = {\n    mobile: 16,\n    tablet: 24,\n    desktop: 40,\n  };\n  \n  export const GAP = {\n    mobile: 20,\n    tablet: 24,\n    desktop: 40,\n  };\n  ```\n\n### 2.1.4 성능 기준선 측정 (30분)\n```bash\nnpm run build  # 빌드 성공 확인\nnpx lighthouse http://localhost:3000 --output-path=lighthouse-baseline.html\n# 현재 성능 점수 기록 (나중에 비교)\n\n# 핵심 지표 메모:\n# - Performance: ?\n# - Accessibility: ?\n# - Best Practices: ?\n# - SEO: ?\n```\n\n## 변형 방지 체크리스트\n✓ 타입 정의 변경 금지\n✓ API 응답 포맷 변경 금지\n✓ 데이터 구조 변경 금지",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 2
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2026-02-16T16:21:39.411Z",
+      "description": "Default tasks context",
+      "updated": "2026-02-16T16:22:07.119Z"
+    }
+  }
+}

@@ -358,7 +358,7 @@ export default function WorkDetailPreviewRenderer({
             >
               {description ? (
                 hasMarkdownSyntax(description) ? (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml>
                     {description}
                   </ReactMarkdown>
                 ) : (
@@ -477,7 +477,7 @@ export default function WorkDetailPreviewRenderer({
                     }}
                     className="prose prose-lg max-w-none"
                   >
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml>
                       {description}
                     </ReactMarkdown>
                   </div>
@@ -590,7 +590,7 @@ export default function WorkDetailPreviewRenderer({
                     }}
                     className="prose prose-lg max-w-none"
                   >
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml>
                       {description}
                     </ReactMarkdown>
                   </div>

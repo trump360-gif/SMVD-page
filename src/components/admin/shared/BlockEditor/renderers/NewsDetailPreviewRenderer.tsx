@@ -359,7 +359,7 @@ export default function NewsDetailPreviewRenderer({
                 }}
                 className="prose prose-lg max-w-none"
               >
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml>
                   {introText}
                 </ReactMarkdown>
               </div>

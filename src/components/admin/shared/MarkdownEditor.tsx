@@ -138,7 +138,7 @@ export default function MarkdownEditor({
             style={{ minHeight }}
           >
             {value ? (
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml>{value}</ReactMarkdown>
             ) : (
               <p className="text-gray-400 text-sm italic">Preview will appear here...</p>
             )}
