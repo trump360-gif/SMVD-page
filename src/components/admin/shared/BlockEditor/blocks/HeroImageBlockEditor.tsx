@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { ImageIcon, AlertCircle } from 'lucide-react';
+import ImageUploadField from '../../ImageUploadField';
 import type { HeroImageBlock } from '../types';
 
 interface HeroImageBlockEditorProps {
@@ -15,6 +16,19 @@ interface HeroImageBlockEditorProps {
  */
 export default function HeroImageBlockEditor({ block, onChange }: HeroImageBlockEditorProps) {
   const [imgError, setImgError] = useState(false);
+  const [showUploadMode, setShowUploadMode] = useState(!block.url);
+
+  const handleImageUpload = (url: string | null) => {
+    if (url) {
+      setImgError(false);
+      onChange({ url });
+      setShowUploadMode(false);
+    }
+  };
+
+  const handleToggleUploadMode = () => {
+    setShowUploadMode(!showUploadMode);
+  };
 
   return (
     <div className="space-y-3">
@@ -52,21 +66,39 @@ export default function HeroImageBlockEditor({ block, onChange }: HeroImageBlock
         )}
       </div>
 
-      {/* URL input */}
+      {/* Image source: upload or URL */}
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">
-          Hero Image URL
-        </label>
-        <input
-          type="text"
-          value={block.url}
-          onChange={(e) => {
-            setImgError(false);
-            onChange({ url: e.target.value });
-          }}
-          placeholder="/images/work/project/hero.png"
-          className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
-        />
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-xs font-medium text-gray-600">
+            Hero Image
+          </label>
+          <button
+            type="button"
+            onClick={handleToggleUploadMode}
+            className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+          >
+            {showUploadMode ? 'Paste URL' : 'Upload'}
+          </button>
+        </div>
+
+        {showUploadMode ? (
+          <ImageUploadField
+            imageUrl={null}
+            onImageChange={handleImageUpload}
+            label=""
+          />
+        ) : (
+          <input
+            type="text"
+            value={block.url}
+            onChange={(e) => {
+              setImgError(false);
+              onChange({ url: e.target.value });
+            }}
+            placeholder="/images/work/project/hero.png"
+            className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
+          />
+        )}
       </div>
 
       {/* Alt text */}

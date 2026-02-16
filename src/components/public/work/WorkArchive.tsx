@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import WorkHeader from './WorkHeader';
 
@@ -183,10 +184,19 @@ export default function WorkArchive({
 }: WorkArchiveProps = {}) {
   const portfolioItems = portfolioItemsFromDB ?? defaultPortfolioItems;
   const exhibitionItems = exhibitionItemsFromDB ?? defaultExhibitionItems;
+  const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState<'achieve' | 'exhibition'>('achieve');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [currentPage, setCurrentPage] = useState<number>(1);
+
+  // 쿼리 파라미터에 따라 activeTab 설정
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'achieve' || tabParam === 'exhibition') {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
 
   // Dynamic categories from actual data
   const dynamicCategories = ['All', ...Array.from(new Set(portfolioItems.map((item) => item.category)))];

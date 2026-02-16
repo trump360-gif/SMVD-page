@@ -1,0 +1,457 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - link "S 숙명여대 CMS" [ref=e5] [cursor=pointer]:
+        - /url: /admin/dashboard
+        - generic [ref=e6]: S
+        - generic [ref=e7]:
+          - paragraph [ref=e8]: 숙명여대
+          - paragraph [ref=e9]: CMS
+      - navigation [ref=e10]:
+        - link "📊 대시보드" [ref=e12] [cursor=pointer]:
+          - /url: /admin/dashboard
+          - generic [ref=e13]: 📊
+          - generic [ref=e14]: 대시보드
+        - generic [ref=e15]:
+          - generic [ref=e16]: 페이지 관리
+          - link "🏠 홈" [ref=e17] [cursor=pointer]:
+            - /url: /admin/dashboard/home
+            - generic [ref=e18]: 🏠
+            - generic [ref=e19]: 홈
+        - link "📚 About" [ref=e21] [cursor=pointer]:
+          - /url: /admin/dashboard/about
+          - generic [ref=e22]: 📚
+          - generic [ref=e23]: About
+        - link "📖 Curriculum" [ref=e25] [cursor=pointer]:
+          - /url: /admin/dashboard/curriculum
+          - generic [ref=e26]: 📖
+          - generic [ref=e27]: Curriculum
+        - link "🎨 Work" [ref=e29] [cursor=pointer]:
+          - /url: /admin/dashboard/work
+          - generic [ref=e30]: 🎨
+          - generic [ref=e31]: Work
+        - link "📰 News&Event" [ref=e33] [cursor=pointer]:
+          - /url: /admin/dashboard/news
+          - generic [ref=e34]: 📰
+          - generic [ref=e35]: News&Event
+        - link "🔗 네비게이션" [ref=e37] [cursor=pointer]:
+          - /url: /admin/navigation
+          - generic [ref=e38]: 🔗
+          - generic [ref=e39]: 네비게이션
+        - link "📌 푸터" [ref=e41] [cursor=pointer]:
+          - /url: /admin/footer
+          - generic [ref=e42]: 📌
+          - generic [ref=e43]: 푸터
+        - link "🖼️ 미디어" [ref=e45] [cursor=pointer]:
+          - /url: /admin/media
+          - generic [ref=e46]: 🖼️
+          - generic [ref=e47]: 미디어
+      - generic [ref=e48]:
+        - generic [ref=e49]:
+          - generic [ref=e50]: A
+          - paragraph [ref=e52]: admin@smvd.ac.kr
+        - button "로그아웃" [ref=e53]
+      - button [ref=e54]:
+        - img [ref=e55]
+    - main [ref=e57]:
+      - generic [ref=e58]:
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - heading "Work 페이지 관리" [level=1] [ref=e63]
+            - paragraph [ref=e64]: 포트폴리오 프로젝트 및 전시 정보를 관리합니다
+          - link "← 돌아가기" [ref=e65] [cursor=pointer]:
+            - /url: /admin/dashboard
+        - main [ref=e66]:
+          - generic [ref=e67]:
+            - generic [ref=e68]:
+              - button "Achieve (12)" [ref=e69]
+              - button "Exhibition (6)" [ref=e70]
+            - generic [ref=e71]:
+              - generic [ref=e72]:
+                - generic [ref=e73]:
+                  - heading "프로젝트 목록" [level=2] [ref=e74]
+                  - paragraph [ref=e75]: 포트폴리오 프로젝트 관리 (12개)
+                - button "+ 프로젝트 추가" [ref=e76]
+              - generic [ref=e77]:
+                - generic [ref=e78]:
+                  - button "드래그해서 순서 변경" [ref=e79]:
+                    - img [ref=e80]
+                  - img "Vora" [ref=e88]
+                  - generic [ref=e89]:
+                    - paragraph [ref=e90]: Vora
+                    - paragraph [ref=e91]: UX/UI | 권나연 외 3명, 2025
+                    - paragraph [ref=e92]: 권나연 | 2025
+                  - generic [ref=e93]:
+                    - button "수정" [ref=e94]:
+                      - img [ref=e95]
+                    - button "삭제" [ref=e98]:
+                      - img [ref=e99]
+                - generic [ref=e102]:
+                  - button "드래그해서 순서 변경" [ref=e103]:
+                    - img [ref=e104]
+                  - img "Mindit" [ref=e112]
+                  - generic [ref=e113]:
+                    - paragraph [ref=e114]: Mindit
+                    - paragraph [ref=e115]: UX/UI | 도인영 외 3명, 2025
+                    - paragraph [ref=e116]: 도인영 | 2025
+                  - generic [ref=e117]:
+                    - button "수정" [ref=e118]:
+                      - img [ref=e119]
+                    - button "삭제" [ref=e122]:
+                      - img [ref=e123]
+                - generic [ref=e126]:
+                  - button "드래그해서 순서 변경" [ref=e127]:
+                    - img [ref=e128]
+                  - img "StarNew Valley" [ref=e136]
+                  - generic [ref=e137]:
+                    - paragraph [ref=e138]: StarNew Valley
+                    - paragraph [ref=e139]: Game | 안시현 외 3명, 2025
+                    - paragraph [ref=e140]: 안시현 | 2025
+                  - generic [ref=e141]:
+                    - button "수정" [ref=e142]:
+                      - img [ref=e143]
+                    - button "삭제" [ref=e146]:
+                      - img [ref=e147]
+                - generic [ref=e150]:
+                  - button "드래그해서 순서 변경" [ref=e151]:
+                    - img [ref=e152]
+                  - img "Pave" [ref=e160]
+                  - generic [ref=e161]:
+                    - paragraph [ref=e162]: Pave
+                    - paragraph [ref=e163]: UX/UI | 박지우 외 2명, 2025
+                    - paragraph [ref=e164]: 박지우 | 2025
+                  - generic [ref=e165]:
+                    - button "수정" [ref=e166]:
+                      - img [ref=e167]
+                    - button "삭제" [ref=e170]:
+                      - img [ref=e171]
+                - generic [ref=e174]:
+                  - button "드래그해서 순서 변경" [ref=e175]:
+                    - img [ref=e176]
+                  - img "Bolio" [ref=e184]
+                  - generic [ref=e185]:
+                    - paragraph [ref=e186]: Bolio
+                    - paragraph [ref=e187]: UX/UI | 박근영, 2025
+                    - paragraph [ref=e188]: 박근영 | 2025
+                  - generic [ref=e189]:
+                    - button "수정" [ref=e190]:
+                      - img [ref=e191]
+                    - button "삭제" [ref=e194]:
+                      - img [ref=e195]
+                - generic [ref=e198]:
+                  - button "드래그해서 순서 변경" [ref=e199]:
+                    - img [ref=e200]
+                  - img "MIST AWAY" [ref=e208]
+                  - generic [ref=e209]:
+                    - paragraph [ref=e210]: MIST AWAY
+                    - paragraph [ref=e211]: UX/UI | 신예지, 2025
+                    - paragraph [ref=e212]: 신예지 | 2025
+                  - generic [ref=e213]:
+                    - button "수정" [ref=e214]:
+                      - img [ref=e215]
+                    - button "삭제" [ref=e218]:
+                      - img [ref=e219]
+                - generic [ref=e222]:
+                  - button "드래그해서 순서 변경" [ref=e223]:
+                    - img [ref=e224]
+                  - img "BICHAE" [ref=e232]
+                  - generic [ref=e233]:
+                    - paragraph [ref=e234]: BICHAE
+                    - paragraph [ref=e235]: Branding | 최은정, 2025
+                    - paragraph [ref=e236]: 최은정 | 2025
+                  - generic [ref=e237]:
+                    - button "수정" [ref=e238]:
+                      - img [ref=e239]
+                    - button "삭제" [ref=e242]:
+                      - img [ref=e243]
+                - generic [ref=e246]:
+                  - button "드래그해서 순서 변경" [ref=e247]:
+                    - img [ref=e248]
+                  - img "Morae" [ref=e256]
+                  - generic [ref=e257]:
+                    - paragraph [ref=e258]: Morae
+                    - paragraph [ref=e259]: UX/UI | 고은서, 2023
+                    - paragraph [ref=e260]: 고은서 | 2023
+                  - generic [ref=e261]:
+                    - button "수정" [ref=e262]:
+                      - img [ref=e263]
+                    - button "삭제" [ref=e266]:
+                      - img [ref=e267]
+                - generic [ref=e270]:
+                  - button "드래그해서 순서 변경" [ref=e271]:
+                    - img [ref=e272]
+                  - img "STUDIO KNOT" [ref=e280]
+                  - generic [ref=e281]:
+                    - paragraph [ref=e282]: STUDIO KNOT
+                    - paragraph [ref=e283]: Branding | 노하린, 2025
+                    - paragraph [ref=e284]: 노하린 | 2025
+                  - generic [ref=e285]:
+                    - button "수정" [active] [ref=e286]:
+                      - img [ref=e287]
+                    - button "삭제" [ref=e290]:
+                      - img [ref=e291]
+                - generic [ref=e294]:
+                  - button "드래그해서 순서 변경" [ref=e295]:
+                    - img [ref=e296]
+                  - img "BLOMÉ" [ref=e304]
+                  - generic [ref=e305]:
+                    - paragraph [ref=e306]: BLOMÉ
+                    - paragraph [ref=e307]: Branding | 김진아 외 1명, 2025
+                    - paragraph [ref=e308]: 김진아 | 2025
+                  - generic [ref=e309]:
+                    - button "수정" [ref=e310]:
+                      - img [ref=e311]
+                    - button "삭제" [ref=e314]:
+                      - img [ref=e315]
+                - generic [ref=e318]:
+                  - button "드래그해서 순서 변경" [ref=e319]:
+                    - img [ref=e320]
+                  - 'img "alors: romanticize your life, every..." [ref=e328]'
+                  - generic [ref=e329]:
+                    - paragraph [ref=e330]: "alors: romanticize your life, every..."
+                    - paragraph [ref=e331]: Motion | 정유진, 2025
+                    - paragraph [ref=e332]: 정유진 | 2025
+                  - generic [ref=e333]:
+                    - button "수정" [ref=e334]:
+                      - img [ref=e335]
+                    - button "삭제" [ref=e338]:
+                      - img [ref=e339]
+                - generic [ref=e342]:
+                  - button "드래그해서 순서 변경" [ref=e343]:
+                    - img [ref=e344]
+                  - img "고군분투" [ref=e352]
+                  - generic [ref=e353]:
+                    - paragraph [ref=e354]: 고군분투
+                    - paragraph [ref=e355]: Motion | 한다인, 2025
+                    - paragraph [ref=e356]: 한다인 | 2025
+                  - generic [ref=e357]:
+                    - button "수정" [ref=e358]:
+                      - img [ref=e359]
+                    - button "삭제" [ref=e362]:
+                      - img [ref=e363]
+              - status [ref=e366]
+          - generic [ref=e367]:
+            - generic [ref=e368]:
+              - generic [ref=e369]:
+                - heading "실시간 미리보기" [level=3] [ref=e370]
+                - paragraph [ref=e371]: 변경사항이 저장 후 반영됩니다
+              - button "페이지로 이동" [ref=e372]
+            - iframe [ref=e373]:
+              - generic [active] [ref=f2e1]:
+                - generic [ref=f2e2]:
+                  - banner [ref=f2e3]:
+                    - link [ref=f2e4] [cursor=pointer]:
+                      - /url: /
+                      - img [ref=f2e5]
+                    - navigation [ref=f2e23]:
+                      - link "About" [ref=f2e24] [cursor=pointer]:
+                        - /url: /about
+                      - link "Curriculum" [ref=f2e25] [cursor=pointer]:
+                        - /url: /curriculum
+                      - link "Work" [ref=f2e26] [cursor=pointer]:
+                        - /url: /work
+                      - link "News&Event" [ref=f2e27] [cursor=pointer]:
+                        - /url: /news
+                  - generic [ref=f2e30]:
+                    - generic [ref=f2e31]:
+                      - button "Achieve" [ref=f2e32] [cursor=pointer]
+                      - button "Exhibition" [ref=f2e33] [cursor=pointer]
+                    - generic [ref=f2e34]:
+                      - heading "Achieve" [level=1] [ref=f2e35]
+                      - generic [ref=f2e36]:
+                        - generic [ref=f2e37] [cursor=pointer]: All
+                        - generic [ref=f2e38] [cursor=pointer]: UX/UI
+                        - generic [ref=f2e39] [cursor=pointer]: Game
+                        - generic [ref=f2e40] [cursor=pointer]: Branding
+                        - generic [ref=f2e41] [cursor=pointer]: Motion
+                    - generic [ref=f2e42]:
+                      - link "Vora UX/UI Vora 권나연 외 3명, 2025" [ref=f2e43] [cursor=pointer]:
+                        - /url: /work/1
+                        - generic [ref=f2e44]:
+                          - img "Vora" [ref=f2e46]
+                          - generic [ref=f2e47]:
+                            - generic [ref=f2e48]: UX/UI
+                            - heading "Vora" [level=3] [ref=f2e49]
+                            - generic [ref=f2e50]: 권나연 외 3명, 2025
+                      - link "Mindit UX/UI Mindit 도인영 외 3명, 2025" [ref=f2e51] [cursor=pointer]:
+                        - /url: /work/2
+                        - generic [ref=f2e52]:
+                          - img "Mindit" [ref=f2e54]
+                          - generic [ref=f2e55]:
+                            - generic [ref=f2e56]: UX/UI
+                            - heading "Mindit" [level=3] [ref=f2e57]
+                            - generic [ref=f2e58]: 도인영 외 3명, 2025
+                      - link "StarNew Valley Game StarNew Valley 안시현 외 3명, 2025" [ref=f2e59] [cursor=pointer]:
+                        - /url: /work/3
+                        - generic [ref=f2e60]:
+                          - img "StarNew Valley" [ref=f2e62]
+                          - generic [ref=f2e63]:
+                            - generic [ref=f2e64]: Game
+                            - heading "StarNew Valley" [level=3] [ref=f2e65]
+                            - generic [ref=f2e66]: 안시현 외 3명, 2025
+                      - link "Pave UX/UI Pave 박지우 외 2명, 2025" [ref=f2e67] [cursor=pointer]:
+                        - /url: /work/4
+                        - generic [ref=f2e68]:
+                          - img "Pave" [ref=f2e70]
+                          - generic [ref=f2e71]:
+                            - generic [ref=f2e72]: UX/UI
+                            - heading "Pave" [level=3] [ref=f2e73]
+                            - generic [ref=f2e74]: 박지우 외 2명, 2025
+                      - link "Bolio UX/UI Bolio 박근영, 2025" [ref=f2e75] [cursor=pointer]:
+                        - /url: /work/5
+                        - generic [ref=f2e76]:
+                          - img "Bolio" [ref=f2e78]
+                          - generic [ref=f2e79]:
+                            - generic [ref=f2e80]: UX/UI
+                            - heading "Bolio" [level=3] [ref=f2e81]
+                            - generic [ref=f2e82]: 박근영, 2025
+                      - link "MIST AWAY UX/UI MIST AWAY 신예지, 2025" [ref=f2e83] [cursor=pointer]:
+                        - /url: /work/6
+                        - generic [ref=f2e84]:
+                          - img "MIST AWAY" [ref=f2e86]
+                          - generic [ref=f2e87]:
+                            - generic [ref=f2e88]: UX/UI
+                            - heading "MIST AWAY" [level=3] [ref=f2e89]
+                            - generic [ref=f2e90]: 신예지, 2025
+                      - link "BICHAE Branding BICHAE 최은정, 2025" [ref=f2e91] [cursor=pointer]:
+                        - /url: /work/7
+                        - generic [ref=f2e92]:
+                          - img "BICHAE" [ref=f2e94]
+                          - generic [ref=f2e95]:
+                            - generic [ref=f2e96]: Branding
+                            - heading "BICHAE" [level=3] [ref=f2e97]
+                            - generic [ref=f2e98]: 최은정, 2025
+                      - link "Morae UX/UI Morae 고은서, 2023" [ref=f2e99] [cursor=pointer]:
+                        - /url: /work/8
+                        - generic [ref=f2e100]:
+                          - img "Morae" [ref=f2e102]
+                          - generic [ref=f2e103]:
+                            - generic [ref=f2e104]: UX/UI
+                            - heading "Morae" [level=3] [ref=f2e105]
+                            - generic [ref=f2e106]: 고은서, 2023
+                      - link "STUDIO KNOT Branding STUDIO KNOT 노하린, 2025" [ref=f2e107] [cursor=pointer]:
+                        - /url: /work/9
+                        - generic [ref=f2e108]:
+                          - img "STUDIO KNOT" [ref=f2e110]
+                          - generic [ref=f2e111]:
+                            - generic [ref=f2e112]: Branding
+                            - heading "STUDIO KNOT" [level=3] [ref=f2e113]
+                            - generic [ref=f2e114]: 노하린, 2025
+                      - link "BLOMÉ Branding BLOMÉ 김진아 외 1명, 2025" [ref=f2e115] [cursor=pointer]:
+                        - /url: /work/10
+                        - generic [ref=f2e116]:
+                          - img "BLOMÉ" [ref=f2e118]
+                          - generic [ref=f2e119]:
+                            - generic [ref=f2e120]: Branding
+                            - heading "BLOMÉ" [level=3] [ref=f2e121]
+                            - generic [ref=f2e122]: 김진아 외 1명, 2025
+                      - 'link "alors: romanticize your life, every... Motion alors: romanticize your life, every... 정유진, 2025" [ref=f2e123] [cursor=pointer]':
+                        - /url: /work/11
+                        - generic [ref=f2e124]:
+                          - 'img "alors: romanticize your life, every..." [ref=f2e126]'
+                          - generic [ref=f2e127]:
+                            - generic [ref=f2e128]: Motion
+                            - 'heading "alors: romanticize your life, every..." [level=3] [ref=f2e129]'
+                            - generic [ref=f2e130]: 정유진, 2025
+                      - link "고군분투 Motion 고군분투 한다인, 2025" [ref=f2e131] [cursor=pointer]:
+                        - /url: /work/12
+                        - generic [ref=f2e132]:
+                          - img "고군분투" [ref=f2e134]
+                          - generic [ref=f2e135]:
+                            - generic [ref=f2e136]: Motion
+                            - heading "고군분투" [level=3] [ref=f2e137]
+                            - generic [ref=f2e138]: 한다인, 2025
+                  - contentinfo [ref=f2e139]:
+                    - generic [ref=f2e140]:
+                      - generic [ref=f2e141]:
+                        - img "logo" [ref=f2e142]
+                        - generic [ref=f2e143]:
+                          - paragraph [ref=f2e144]: 숙명여자대학교 미술대학 시각영상디자인학과
+                          - paragraph [ref=f2e145]: University of Sookmyung Women, Visual Media Design
+                      - generic [ref=f2e146]:
+                        - paragraph [ref=f2e147]: Contact
+                        - paragraph [ref=f2e148]:
+                          - text: +82 (0)2 710 9958
+                          - text: 서울 특별시 용산구 청파로 47길 100 숙명여자대학교
+                          - text: 시각영상디자인과 (미술대학 201호)
+                - button "Open Next.js Dev Tools" [ref=f2e154] [cursor=pointer]:
+                  - img [ref=f2e155]
+                - alert [ref=f2e158]
+        - generic [ref=e385]:
+          - generic [ref=e386]:
+            - generic [ref=e387]:
+              - heading "Edit Portfolio" [level=2] [ref=e388]
+              - paragraph [ref=e389]: "Editing: STUDIO KNOT"
+            - button "Close" [ref=e390]:
+              - img [ref=e391]
+          - generic [ref=e394]:
+            - button "Basic Info" [ref=e395]
+            - button "Content (Blocks)" [ref=e396]
+          - generic [ref=e398]:
+            - generic [ref=e399]:
+              - generic [ref=e400]:
+                - generic [ref=e401]: Title *
+                - textbox "Title *" [ref=e402]:
+                  - /placeholder: Vora
+                  - text: STUDIO KNOT
+              - generic [ref=e403]:
+                - generic [ref=e404]: Category *
+                - combobox "Category *" [ref=e405]:
+                  - option "Select"
+                  - option "UX/UI"
+                  - option "Motion"
+                  - option "Branding" [selected]
+                  - option "Game"
+                  - option "Graphics"
+            - generic [ref=e406]:
+              - generic [ref=e407]: Subtitle *
+              - textbox "Subtitle *" [ref=e408]:
+                - /placeholder: Author Name, 2025
+                - text: 노하린, 2025
+            - generic [ref=e409]:
+              - generic [ref=e410]:
+                - generic [ref=e411]: Author *
+                - textbox "Author *" [ref=e412]:
+                  - /placeholder: Author name
+                  - text: 노하린
+              - generic [ref=e413]:
+                - generic [ref=e414]: Email *
+                - textbox "Email *" [ref=e415]:
+                  - /placeholder: contact@example.com
+                  - text: havein6@gmail.com
+              - generic [ref=e416]:
+                - generic [ref=e417]: Year
+                - textbox "Year" [ref=e418]:
+                  - /placeholder: "2025"
+                  - text: "2025"
+            - generic [ref=e419]:
+              - generic [ref=e420]: Tags (comma-separated)
+              - textbox "Tags (comma-separated)" [ref=e421]:
+                - /placeholder: UX/UI, Branding, Motion
+                - text: UX/UI, Graphic, Editorial, Illustration, Branding, CM/CF, Game
+              - generic [ref=e422]:
+                - generic [ref=e423]: UX/UI
+                - generic [ref=e424]: Graphic
+                - generic [ref=e425]: Editorial
+                - generic [ref=e426]: Illustration
+                - generic [ref=e427]: Branding
+                - generic [ref=e428]: CM/CF
+                - generic [ref=e429]: Game
+            - generic [ref=e430]:
+              - generic [ref=e431]: Thumbnail
+              - textbox "Thumbnail" [ref=e432]:
+                - /placeholder: /images/work/portfolio-1.png
+                - text: /images/work/portfolio-3.png
+              - img "Thumbnail" [ref=e434]
+              - paragraph [ref=e435]: Hero image is managed in the Content (Blocks) tab using the Hero Image block.
+            - generic [ref=e436]:
+              - checkbox "Published (visible to public)" [checked] [ref=e437]
+              - generic [ref=e438]: Published (visible to public)
+          - generic [ref=e439]:
+            - generic [ref=e440]: 4 content blocks
+            - generic [ref=e441]:
+              - button "Cancel" [ref=e442]
+              - button "Save Changes" [ref=e443]
+  - button "Open Next.js Dev Tools" [ref=e379] [cursor=pointer]:
+    - img [ref=e380]
+  - alert [ref=e383]

@@ -12,6 +12,7 @@ import type {
   SpacerBlock,
   DividerBlock,
   HeroImageBlock,
+  HeroSectionBlock,
   WorkTitleBlock,
   WorkMetadataBlock,
   WorkGalleryBlock,
@@ -24,6 +25,7 @@ import GalleryBlockRenderer from './GalleryBlockRenderer';
 import SpacerBlockRenderer from './SpacerBlockRenderer';
 import DividerBlockRenderer from './DividerBlockRenderer';
 import HeroImageBlockRenderer from './HeroImageBlockRenderer';
+import HeroSectionBlockRenderer from './HeroSectionBlockRenderer';
 import WorkTitleBlockRenderer from './WorkTitleBlockRenderer';
 import WorkMetadataBlockRenderer from './WorkMetadataBlockRenderer';
 import WorkGalleryBlockRenderer from './WorkGalleryBlockRenderer';
@@ -169,6 +171,8 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
             return <DividerBlockRenderer key={block.id} block={block as DividerBlock} />;
           case 'hero-image':
             return <HeroImageBlockRenderer key={block.id} block={block as HeroImageBlock} />;
+          case 'hero-section':
+            return <HeroSectionBlockRenderer key={block.id} block={block as HeroSectionBlock} />;
           case 'work-title':
             return <WorkTitleBlockRenderer key={block.id} block={block as WorkTitleBlock} />;
           case 'work-metadata':

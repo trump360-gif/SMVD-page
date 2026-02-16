@@ -43,6 +43,7 @@ import type {
   SpacerBlock,
   DividerBlock,
   HeroImageBlock,
+  HeroSectionBlock,
   WorkTitleBlock,
   WorkMetadataBlock,
   WorkGalleryBlock,
@@ -57,6 +58,7 @@ import GalleryBlockEditor from './blocks/GalleryBlockEditor';
 import SpacerBlockEditor from './blocks/SpacerBlockEditor';
 import DividerBlockEditor from './blocks/DividerBlockEditor';
 import HeroImageBlockEditor from './blocks/HeroImageBlockEditor';
+import HeroSectionBlockEditor from './blocks/HeroSectionBlockEditor';
 import WorkTitleBlockEditor from './blocks/WorkTitleBlockEditor';
 import WorkMetadataBlockEditor from './blocks/WorkMetadataBlockEditor';
 import WorkGalleryBlockEditor from './blocks/WorkGalleryBlockEditor';
@@ -282,6 +284,12 @@ const SortableBlockItem = memo(function SortableBlockItem({
         {block.type === 'hero-image' && (
           <HeroImageBlockEditor
             block={block as HeroImageBlock}
+            onChange={(data) => onUpdate(block.id, data)}
+          />
+        )}
+        {block.type === 'hero-section' && (
+          <HeroSectionBlockEditor
+            block={block as HeroSectionBlock}
             onChange={(data) => onUpdate(block.id, data)}
           />
         )}

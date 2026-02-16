@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { ImageIcon, AlertCircle } from 'lucide-react';
+import ImageUploadField from '../../ImageUploadField';
 import type { ImageBlock } from '../types';
 
 interface ImageBlockEditorProps {
@@ -28,10 +29,18 @@ const ALIGN_OPTIONS: { value: ImageBlock['align']; label: string }[] = [
  */
 export default function ImageBlockEditor({ block, onChange }: ImageBlockEditorProps) {
   const [imgError, setImgError] = useState(false);
+  const [showUploadMode, setShowUploadMode] = useState(!block.url);
 
-  const handleUrlChange = (url: string) => {
+  const handleUrlChange = (url: string | null) => {
     setImgError(false);
-    onChange({ url });
+    if (url) {
+      onChange({ url });
+      setShowUploadMode(false);
+    }
+  };
+
+  const handleToggleUploadMode = () => {
+    setShowUploadMode(!showUploadMode);
   };
 
   return (
@@ -64,18 +73,36 @@ export default function ImageBlockEditor({ block, onChange }: ImageBlockEditorPr
         )}
       </div>
 
-      {/* URL input */}
+      {/* Image source: upload or URL */}
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">
-          Image URL
-        </label>
-        <input
-          type="text"
-          value={block.url}
-          onChange={(e) => handleUrlChange(e.target.value)}
-          placeholder="/images/blog/..."
-          className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
-        />
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-xs font-medium text-gray-600">
+            Image Source
+          </label>
+          <button
+            type="button"
+            onClick={handleToggleUploadMode}
+            className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+          >
+            {showUploadMode ? 'Paste URL' : 'Upload'}
+          </button>
+        </div>
+
+        {showUploadMode ? (
+          <ImageUploadField
+            imageUrl={null}
+            onImageChange={handleUrlChange}
+            label=""
+          />
+        ) : (
+          <input
+            type="text"
+            value={block.url}
+            onChange={(e) => handleUrlChange(e.target.value)}
+            placeholder="/images/blog/..."
+            className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
+          />
+        )}
       </div>
 
       {/* Alt text */}

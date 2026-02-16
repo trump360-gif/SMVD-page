@@ -44,6 +44,7 @@ const GENERIC_BLOCK_OPTIONS: BlockOption[] = [
 
 const WORK_BLOCK_OPTIONS: BlockOption[] = [
   { type: 'hero-image', label: 'Hero Image (860px)', icon: <Maximize size={14} />, group: 'work' },
+  { type: 'hero-section', label: 'Hero Section (Image + Text)', icon: <Maximize size={14} />, group: 'work' },
   { type: 'work-title', label: 'Work Title + Author', icon: <Tag size={14} />, group: 'work' },
   { type: 'work-metadata', label: 'Author / Email', icon: <User size={14} />, group: 'work' },
   { type: 'work-layout-config', label: 'Layout Configuration', icon: <Grid3X3 size={14} />, group: 'work' },

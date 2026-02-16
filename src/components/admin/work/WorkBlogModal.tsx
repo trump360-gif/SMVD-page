@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { X } from 'lucide-react';
+import { X, RotateCcw, RotateCw } from 'lucide-react';
 import WorkDetailPreviewRenderer from '@/components/admin/shared/BlockEditor/renderers/WorkDetailPreviewRenderer';
 import BlockLayoutVisualizer from '@/components/admin/work/BlockLayoutVisualizer';
 import BlockEditorPanel from '@/components/admin/work/BlockEditorPanel';
@@ -83,6 +83,10 @@ export default function WorkBlogModal({
     reorderBlocks,
     resetBlocks,        // ← 추가: 동기화용
     getBlockCount,      // ← 추가: 디버깅용
+    undo,               // ← 새로 추가: Undo
+    redo,               // ← 새로 추가: Redo
+    canUndo,            // ← 새로 추가: Undo 가능 여부
+    canRedo,            // ← 새로 추가: Redo 가능 여부
   } = useBlockEditor(editorContent.blocks);
 
   // Row-based layout configuration (replaces single columnLayout)
@@ -339,12 +343,22 @@ export default function WorkBlogModal({
     }
   }, [isOpen, project]);
 
-  // ---- Escape key handler ----
+  // ---- Keyboard shortcuts ----
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        onClose();
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        // Ctrl+Z or Cmd+Z: Undo
+        e.preventDefault();
+        if (canUndo) undo();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
+        // Ctrl+Y or Cmd+Y or Ctrl+Shift+Z: Redo
+        e.preventDefault();
+        if (canRedo) redo();
+      }
     },
-    [onClose]
+    [onClose, canUndo, canRedo, undo, redo]
   );
 
   useEffect(() => {
@@ -656,9 +670,36 @@ export default function WorkBlogModal({
 
           {/* Tab: Content (3-Panel Layout) */}
           {activeTab === 'content' && (
-            <div className="flex h-full w-full">
-              {/* 좌측 25%: Block Layout Visualizer */}
-              <div className="w-[25%] border-r border-gray-200 bg-white overflow-hidden flex flex-col">
+            <div className="flex flex-col h-full w-full">
+              {/* Undo/Redo Controls */}
+              <div className="border-b border-gray-200 px-4 py-2 bg-gray-50 flex items-center gap-1 shrink-0">
+                <button
+                  type="button"
+                  onClick={undo}
+                  disabled={!canUndo}
+                  title="Undo (Ctrl+Z)"
+                  className="p-2 rounded-lg border border-gray-200 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <RotateCcw size={16} className="text-gray-600" />
+                </button>
+                <button
+                  type="button"
+                  onClick={redo}
+                  disabled={!canRedo}
+                  title="Redo (Ctrl+Y)"
+                  className="p-2 rounded-lg border border-gray-200 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <RotateCw size={16} className="text-gray-600" />
+                </button>
+                <div className="text-xs text-gray-400 ml-2">
+                  Ctrl+Z / Ctrl+Y
+                </div>
+              </div>
+
+              {/* 3-Panel Layout */}
+              <div className="flex flex-1 overflow-hidden w-full">
+                {/* 좌측 25%: Block Layout Visualizer */}
+                <div className="w-[25%] border-r border-gray-200 bg-white overflow-hidden flex flex-col">
                 <BlockLayoutVisualizer
                   blocks={blocks}
                   rowConfig={rowConfig}
@@ -686,26 +727,25 @@ export default function WorkBlogModal({
               </div>
 
               {/* 우측 35%: Live Preview */}
-              <div className="w-[35%] overflow-y-auto bg-gray-50 px-6 py-6">
-                <div className="sticky top-0 mb-4 bg-gray-50 pb-3">
+              <div className="w-[35%] overflow-hidden bg-white flex flex-col h-full">
+                <div className="shrink-0 px-4 py-3 border-b border-gray-200 bg-gray-50 sticky top-0">
                   <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Live Preview</h4>
                   <p className="text-[10px] text-gray-400 mt-1">실시간 미리보기</p>
                 </div>
-                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                  <div className="p-6">
-                    <WorkDetailPreviewRenderer
-                      blocks={blocks}
-                      rowConfig={rowConfig}
-                      projectContext={{
-                        title: title,
-                        author: author,
-                        email: email,
-                        heroImage: '',
-                        category: category,
-                      } satisfies WorkProjectContext}
-                    />
-                  </div>
+                <div className="flex-1 overflow-y-auto">
+                  <WorkDetailPreviewRenderer
+                    blocks={blocks}
+                    rowConfig={rowConfig}
+                    projectContext={{
+                      title: title,
+                      author: author,
+                      email: email,
+                      heroImage: '',
+                      category: category,
+                    } satisfies WorkProjectContext}
+                  />
                 </div>
+              </div>
               </div>
             </div>
           )}

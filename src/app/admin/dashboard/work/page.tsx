@@ -90,6 +90,13 @@ export default function WorkDashboard() {
     }
   }, []);
 
+  // 탭 변경 시 미리보기 업데이트
+  useEffect(() => {
+    if (iframeRef.current) {
+      iframeRef.current.src = `/work?tab=${activeTab}`;
+    }
+  }, [activeTab]);
+
   const showSuccess = useCallback((msg: string) => {
     setSuccessMessage(msg);
     setTimeout(() => setSuccessMessage(null), 3000);
@@ -209,7 +216,7 @@ export default function WorkDashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex overflow-hidden">
+      <main className="flex-1 flex overflow-hidden h-full">
         {/* Left Side - Editor */}
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Success message */}
@@ -338,7 +345,7 @@ export default function WorkDashboard() {
         </div>
 
         {/* Right Side - Preview */}
-        <div className="hidden lg:flex lg:w-1/2 bg-white border-l border-gray-200 flex-col overflow-hidden">
+        <div className="w-1/2 bg-white border-l border-gray-200 flex flex-col overflow-hidden h-full">
           <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between shrink-0">
             <div>
               <h3 className="text-sm font-semibold text-gray-900">실시간 미리보기</h3>
@@ -352,9 +359,10 @@ export default function WorkDashboard() {
             </button>
           </div>
           <iframe
+            key={activeTab}
             ref={iframeRef}
-            src="/work"
-            className="flex-1 border-0 w-full overflow-auto"
+            src={`/work?tab=${activeTab}`}
+            className="flex-1 border-0 w-full h-full min-h-screen"
             title="Work Page Preview"
           />
         </div>
@@ -362,6 +370,7 @@ export default function WorkDashboard() {
 
       {/* Project Blog Modal */}
       <WorkBlogModal
+        key={editingProject?.id || 'new'}
         isOpen={isProjectModalOpen}
         project={editingProject}
         onClose={() => {

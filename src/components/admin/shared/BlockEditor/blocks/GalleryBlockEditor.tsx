@@ -19,6 +19,7 @@ import {
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Trash2, Plus, ImagePlus } from 'lucide-react';
+import ImageUploadField from '../../ImageUploadField';
 import type { GalleryBlock, GalleryImageEntry } from '../types';
 import { generateBlockId } from '../types';
 
@@ -43,6 +44,7 @@ function SortableGalleryImage({ image, onRemove, onUpdate }: SortableGalleryImag
   } = useSortable({ id: image.id });
 
   const [imgError, setImgError] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -92,25 +94,50 @@ function SortableGalleryImage({ image, onRemove, onUpdate }: SortableGalleryImag
         </button>
       </div>
 
-      {/* Input fields */}
+      {/* Input fields or edit mode */}
       <div className="p-1.5 space-y-1">
-        <input
-          type="text"
-          value={image.url}
-          onChange={(e) => {
-            setImgError(false);
-            onUpdate(image.id, { url: e.target.value });
-          }}
-          placeholder="Image URL (/images/...)"
-          className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
-        />
-        <input
-          type="text"
-          value={image.alt ?? ''}
-          onChange={(e) => onUpdate(image.id, { alt: e.target.value })}
-          placeholder="Alt text (optional)"
-          className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
-        />
+        {isEditing ? (
+          <div>
+            <ImageUploadField
+              imageUrl={image.url}
+              onImageChange={(url) => {
+                if (url) {
+                  setImgError(false);
+                  onUpdate(image.id, { url });
+                  setIsEditing(false);
+                }
+              }}
+              label=""
+            />
+          </div>
+        ) : (
+          <>
+            <input
+              type="text"
+              value={image.url}
+              onChange={(e) => {
+                setImgError(false);
+                onUpdate(image.id, { url: e.target.value });
+              }}
+              placeholder="Image URL (/images/...)"
+              className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => setIsEditing(true)}
+              className="w-full px-2 py-1 text-xs bg-blue-50 text-blue-600 border border-blue-200 rounded hover:bg-blue-100 transition-colors font-medium"
+            >
+              Or Upload Image
+            </button>
+            <input
+              type="text"
+              value={image.alt ?? ''}
+              onChange={(e) => onUpdate(image.id, { alt: e.target.value })}
+              placeholder="Alt text (optional)"
+              className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
+            />
+          </>
+        )}
       </div>
     </div>
   );
@@ -137,6 +164,7 @@ const LAYOUT_OPTIONS: { value: NonNullable<GalleryBlock['layout']>; label: strin
  */
 export default function GalleryBlockEditor({ block, onChange }: GalleryBlockEditorProps) {
   const [urlInput, setUrlInput] = useState('');
+  const [showUploadField, setShowUploadField] = useState(false);
   const imageLayout = block.imageLayout ?? 1;
 
   const sensors = useSensors(
@@ -200,6 +228,18 @@ export default function GalleryBlockEditor({ block, onChange }: GalleryBlockEdit
     [block.images, onChange]
   );
 
+  // Handle image upload from ImageUploadField
+  const handleImageUpload = useCallback(
+    (url: string | null) => {
+      if (url) {
+        const newImage: GalleryImageEntry = { id: generateImageId(), url };
+        onChange({ images: [...block.images, newImage] });
+        setShowUploadField(false);
+      }
+    },
+    [block.images, onChange, generateImageId]
+  );
+
   return (
     <div className="space-y-3">
       {/* Layout selector + Add button */}
@@ -255,7 +295,28 @@ export default function GalleryBlockEditor({ block, onChange }: GalleryBlockEdit
         </div>
       </div>
 
-      {/* URL quick-add */}
+      {/* Upload field toggle */}
+      {showUploadField && (
+        <div className="border border-gray-200 rounded-lg p-3 bg-blue-50">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-xs font-medium text-gray-700">이미지 업로드</h4>
+            <button
+              type="button"
+              onClick={() => setShowUploadField(false)}
+              className="text-gray-400 hover:text-gray-600 text-lg"
+            >
+              ×
+            </button>
+          </div>
+          <ImageUploadField
+            imageUrl={null}
+            onImageChange={handleImageUpload}
+            label=""
+          />
+        </div>
+      )}
+
+      {/* URL quick-add (fallback) */}
       <div className="flex gap-2">
         <input
           type="text"
@@ -267,9 +328,21 @@ export default function GalleryBlockEditor({ block, onChange }: GalleryBlockEdit
               handleAddByUrl();
             }
           }}
-          placeholder="Paste image URL and press Enter..."
+          placeholder="Or paste image URL and press Enter..."
           className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
         />
+        <button
+          type="button"
+          onClick={() => setShowUploadField(!showUploadField)}
+          disabled={showUploadField}
+          className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+            showUploadField
+              ? 'bg-gray-200 text-gray-600'
+              : 'bg-blue-600 text-white hover:bg-blue-700'
+          }`}
+        >
+          Upload
+        </button>
         <button
           type="button"
           onClick={handleAddByUrl}

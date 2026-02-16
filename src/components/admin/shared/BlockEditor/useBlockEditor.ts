@@ -26,10 +26,23 @@ function withOrder(block: Block, order: number): Block {
 export function useBlockEditor(initialBlocks: Block[] = []) {
   const [blocks, setBlocks] = useState<Block[]>(initialBlocks);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [history, setHistory] = useState<Block[][]>([initialBlocks]);
+  const [historyIndex, setHistoryIndex] = useState(0);
 
   /** Re-index order values for an array of blocks */
   const reindex = (arr: Block[]): Block[] =>
     arr.map((block, idx) => withOrder(block, idx));
+
+  /** Save to history after state change */
+  const saveToHistory = useCallback((newBlocks: Block[]) => {
+    setHistory((prev) => {
+      // Remove any future history if we're not at the end
+      const newHistory = prev.slice(0, historyIndex + 1);
+      newHistory.push(newBlocks);
+      return newHistory;
+    });
+    setHistoryIndex((prev) => prev + 1);
+  }, [historyIndex]);
 
   /** Add a new block of the given type, optionally after a specific block */
   const addBlock = useCallback((type: BlockType, afterId?: string) => {
@@ -47,29 +60,35 @@ export function useBlockEditor(initialBlocks: Block[] = []) {
       const updated = [...prev];
       updated.splice(insertIndex, 0, newBlock);
 
-      return reindex(updated);
+      const reindexed = reindex(updated);
+      saveToHistory(reindexed);
+      return reindexed;
     });
-  }, []);
+  }, [saveToHistory]);
 
   /** Update a block's data by ID (partial merge) */
   const updateBlock = useCallback((id: string, data: Partial<Block>) => {
-    setBlocks((prev) =>
-      prev.map((block) => {
+    setBlocks((prev) => {
+      const updated = prev.map((block) => {
         if (block.id !== id) return block;
         // Merge data into the block, preserving the discriminated union
         return { ...block, ...data } as Block;
-      })
-    );
-  }, []);
+      });
+      saveToHistory(updated);
+      return updated;
+    });
+  }, [saveToHistory]);
 
   /** Delete a block by ID */
   const deleteBlock = useCallback((id: string) => {
     setBlocks((prev) => {
       const filtered = prev.filter((b) => b.id !== id);
-      return reindex(filtered);
+      const reindexed = reindex(filtered);
+      saveToHistory(reindexed);
+      return reindexed;
     });
     setSelectedId((prev) => (prev === id ? null : prev));
-  }, []);
+  }, [saveToHistory]);
 
   /** Move a block from its current position to a new index */
   const reorderBlocks = useCallback(
@@ -82,10 +101,12 @@ export function useBlockEditor(initialBlocks: Block[] = []) {
         const [moved] = updated.splice(sourceIndex, 1);
         updated.splice(destinationIndex, 0, moved);
 
-        return reindex(updated);
+        const reindexed = reindex(updated);
+        saveToHistory(reindexed);
+        return reindexed;
       });
     },
-    []
+    [saveToHistory]
   );
 
   /** Find a block by ID */
@@ -96,6 +117,41 @@ export function useBlockEditor(initialBlocks: Block[] = []) {
     [blocks]
   );
 
+  /** ✅ 새로 추가: 외부에서 블록 배열을 강제로 재설정 (동기화용) */
+  const resetBlocks = useCallback((newBlocks: Block[]) => {
+    console.log('[useBlockEditor] resetBlocks called with', newBlocks.length, 'blocks');
+    const reindexed = reindex(newBlocks);
+    setBlocks(reindexed);
+    setHistory([reindexed]); // History 초기화
+    setHistoryIndex(0);      // 히스토리 인덱스 초기화
+    setSelectedId(null);     // 선택 상태 초기화
+  }, []);
+
+  /** ✅ 새로 추가: 현재 블록 개수 반환 (디버깅용) */
+  const getBlockCount = useCallback(() => blocks.length, [blocks]);
+
+  /** ✅ 새로 추가: 이전 상태로 돌아가기 */
+  const undo = useCallback(() => {
+    if (historyIndex > 0) {
+      const newIndex = historyIndex - 1;
+      setBlocks(history[newIndex]);
+      setHistoryIndex(newIndex);
+    }
+  }, [history, historyIndex]);
+
+  /** ✅ 새로 추가: 다음 상태로 진행 */
+  const redo = useCallback(() => {
+    if (historyIndex < history.length - 1) {
+      const newIndex = historyIndex + 1;
+      setBlocks(history[newIndex]);
+      setHistoryIndex(newIndex);
+    }
+  }, [history, historyIndex]);
+
+  /** ✅ 새로 추가: Undo/Redo 가능 여부 반환 */
+  const canUndo = historyIndex > 0;
+  const canRedo = historyIndex < history.length - 1;
+
   return {
     blocks,
     selectedId,
@@ -105,5 +161,11 @@ export function useBlockEditor(initialBlocks: Block[] = []) {
     deleteBlock,
     reorderBlocks,
     getBlockById,
+    resetBlocks,        // ← 추가
+    getBlockCount,      // ← 추가
+    undo,               // ← 새로 추가
+    redo,               // ← 새로 추가
+    canUndo,            // ← 새로 추가
+    canRedo,            // ← 새로 추가
   };
 }

@@ -162,6 +162,7 @@ const BlockVisualCard = memo(function BlockVisualCard({
   setNodeRef,
   transform,
   transition,
+  onDelete,
 }: {
   block: Block;
   isSelected: boolean;
@@ -172,6 +173,7 @@ const BlockVisualCard = memo(function BlockVisualCard({
   setNodeRef: any;
   transform: any;
   transition: any;
+  onDelete?: () => void;
 }) {
   const meta = BLOCK_META[block.type] || {
     label: block.type,
@@ -222,6 +224,19 @@ const BlockVisualCard = memo(function BlockVisualCard({
         <span className="text-[10px] font-medium text-gray-600 truncate flex-1 min-w-0">
           {meta.label}
         </span>
+        {onDelete && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="p-0.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors opacity-0 group-hover:opacity-100 shrink-0"
+            title="Delete block"
+          >
+            <Trash2 size={10} />
+          </button>
+        )}
       </div>
       <p className="text-[9px] text-gray-400 truncate mt-0.5 pl-5 leading-tight">
         {getBlockPreviewText(block)}
@@ -234,10 +249,12 @@ const SortableBlockVisualCard = memo(function SortableBlockVisualCard({
   block,
   isSelected,
   onSelect,
+  onDelete,
 }: {
   block: Block;
   isSelected: boolean;
   onSelect: () => void;
+  onDelete?: () => void;
 }) {
   const {
     attributes,
@@ -259,6 +276,7 @@ const SortableBlockVisualCard = memo(function SortableBlockVisualCard({
       setNodeRef={setNodeRef}
       transform={transform}
       transition={transition}
+      onDelete={onDelete}
     />
   );
 });
@@ -278,6 +296,7 @@ interface RowSectionProps {
   onDeleteRow: () => void;
   onAddBlock: (type: BlockType) => void;
   onReorder: (sourceId: string, destinationIndex: number) => void;
+  onDeleteBlock: (id: string) => void;
 }
 
 const LAYOUT_LABELS: Record<number, string> = {
@@ -297,6 +316,7 @@ const RowSection = memo(function RowSection({
   onDeleteRow,
   onAddBlock,
   onReorder,
+  onDeleteBlock,
 }: RowSectionProps) {
   const [showToolbar, setShowToolbar] = React.useState(false);
 
@@ -395,6 +415,7 @@ const RowSection = memo(function RowSection({
                     block={block}
                     isSelected={selectedId === block.id}
                     onSelect={() => onSelect(block.id)}
+                    onDelete={() => onDeleteBlock(block.id)}
                   />
                 ))}
               </div>
@@ -511,6 +532,7 @@ export default function BlockLayoutVisualizer({
                 onDeleteRow={() => onDeleteRow(idx)}
                 onAddBlock={(type) => onAddBlockToRow(type, idx)}
                 onReorder={onReorder}
+                onDeleteBlock={onDeleteBlock}
               />
             );
           })

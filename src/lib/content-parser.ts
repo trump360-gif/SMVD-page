@@ -46,12 +46,12 @@ export function serializeContent(content: BlogContent): string {
 
 /**
  * Convert Work project's description (markdown) + galleryImages array to BlogContent.
+ * - Combines heroImage + title/author/email into unified HeroSectionBlock
  * - Wraps description in TextBlock
  * - Converts galleryImages array to WorkGalleryBlock (vertical stack layout)
- * - Optionally includes heroImage as HeroImageBlock
  *
  * New format uses Work-specific block types:
- * - HeroImageBlock for hero image (full-width, 860px)
+ * - HeroSectionBlock for unified image + title/author/email (full-width, 860px, overlay styling)
  * - TextBlock for description (renders in right column)
  * - WorkGalleryBlock for gallery images (vertical stack, full-width, -1px overlap)
  */
@@ -78,22 +78,14 @@ export function parseWorkProjectContent(
 
   const blocks: Block[] = [];
 
-  // Add heroImage as HeroImageBlock (if available)
-  if (heroImage) {
+  // Add unified HeroSectionBlock if heroImage + title/author/email are available
+  // Combines image + title in a single block (overlay styling applied)
+  if (heroImage && (title || author || email)) {
     blocks.push({
       id: generateBlockId(),
-      type: 'hero-image',
+      type: 'hero-section',
       url: heroImage,
       alt: '',
-      order: blocks.length,
-    });
-  }
-
-  // Add WorkTitleBlock if title/author/email are available
-  if (title || author || email) {
-    blocks.push({
-      id: generateBlockId(),
-      type: 'work-title',
       title: title || '',
       author: author || '',
       email: email || '',
@@ -106,6 +98,18 @@ export function parseWorkProjectContent(
       titleColor: '#1b1d1f',
       authorColor: '#1b1d1f',
       emailColor: '#7b828e',
+      overlayPosition: 'bottom-left',
+      overlayOpacity: 0.8,
+      overlayBackground: 'rgba(0, 0, 0, 0.3)',
+      order: blocks.length,
+    });
+  } else if (heroImage) {
+    // Fallback: If only heroImage without title/author/email, use HeroImageBlock
+    blocks.push({
+      id: generateBlockId(),
+      type: 'hero-image',
+      url: heroImage,
+      alt: '',
       order: blocks.length,
     });
   }
