@@ -28,12 +28,16 @@ const LegacyContentSchema = z.object({
 
 // Content can be either legacy or block format
 // Use passthrough() to allow any JSON shape, since block content is complex and dynamic
+// 🔧 FIX: Block format MUST come FIRST in union!
+// LegacyContentSchema has all optional fields, so if it's first, Zod matches it for everything
 const ContentSchema = z.union([
-  LegacyContentSchema,
+  // Try block format FIRST (requires blocks + version)
   z.object({
     blocks: z.array(z.any()),
     version: z.string(),
   }).passthrough(),
+  // Fall back to legacy format (all optional fields)
+  LegacyContentSchema,
 ]).optional();
 
 const UpdateArticleSchema = z.object({
