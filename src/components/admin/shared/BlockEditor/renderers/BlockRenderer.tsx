@@ -15,10 +15,12 @@ import type {
   HeroSectionBlock,
   WorkTitleBlock,
   WorkMetadataBlock,
-  WorkGalleryBlock,
   WorkLayoutConfigBlock,
   LayoutRowBlock,
   LayoutGridBlock,
+  ImageRowBlock,
+  ImageGridBlock,
+  ImageData,
 } from '../types';
 import HeadingBlockRenderer from './HeadingBlockRenderer';
 import GalleryBlockRenderer from './GalleryBlockRenderer';
@@ -28,8 +30,6 @@ import HeroImageBlockRenderer from './HeroImageBlockRenderer';
 import HeroSectionBlockRenderer from './HeroSectionBlockRenderer';
 import WorkTitleBlockRenderer from './WorkTitleBlockRenderer';
 import WorkMetadataBlockRenderer from './WorkMetadataBlockRenderer';
-import WorkGalleryBlockRenderer from './WorkGalleryBlockRenderer';
-
 // ---------------------------------------------------------------------------
 // Per-block renderers (Text + Image are inline, others are separate files)
 // ---------------------------------------------------------------------------
@@ -73,6 +73,10 @@ function calculateRowWidths(rowBlock: LayoutRowBlock): number[] {
   if (rowBlock.distribution === 'golden-left') {
     // Golden ratio: wider left column
     return columns === 2 ? [61.8, 38.2] : [50, 25, 25];
+  }
+  if (rowBlock.distribution === 'golden-center') {
+    // Golden ratio: wider center column (only for 3 columns)
+    return columns === 2 ? [50, 50] : [27.6, 44.8, 27.6];
   }
   if (rowBlock.distribution === 'golden-right') {
     // Golden ratio: wider right column
@@ -177,8 +181,6 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
             return <WorkTitleBlockRenderer key={block.id} block={block as WorkTitleBlock} />;
           case 'work-metadata':
             return <WorkMetadataBlockRenderer key={block.id} block={block as WorkMetadataBlock} />;
-          case 'work-gallery':
-            return <WorkGalleryBlockRenderer key={block.id} block={block as WorkGalleryBlock} />;
           case 'work-layout-config':
             // Layout config block is metadata - doesn't render as visible content
             return null;
@@ -225,6 +227,149 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
                     className="layout-grid-cell"
                   >
                     <BlockRenderer blocks={cellBlocks} />
+                  </div>
+                ))}
+              </div>
+            );
+          }
+          case 'image-row': {
+            const imageRowBlock = block as ImageRowBlock;
+            const numImages = Math.min(Math.max(imageRowBlock.images.length, 1), 3);
+            const columns = (numImages === 1 ? 1 : numImages === 2 ? 2 : 3) as 2 | 3;
+            const mockRowBlock: LayoutRowBlock = {
+              id: block.id,
+              type: 'layout-row',
+              order: block.order,
+              columns,
+              distribution: imageRowBlock.distribution ?? 'equal',
+              children: [],
+              columnGap: imageRowBlock.gap ?? 24,
+            };
+            const widths = calculateRowWidths(mockRowBlock);
+            const gap = imageRowBlock.gap ?? 24;
+            const height = imageRowBlock.imageHeight ?? 300;
+            return (
+              <div
+                key={block.id}
+                style={{ display: 'flex', gap: `${gap}px` }}
+                className="image-row-container"
+              >
+                {imageRowBlock.images.map((img, idx) => (
+                  <div
+                    key={img.id}
+                    style={{
+                      flex: `0 0 ${widths[idx] || 50}%`,
+                      height: `${height}px`,
+                      overflow: 'hidden',
+                      borderRadius: '4px',
+                    }}
+                    className="image-row-item"
+                  >
+                    <img
+                      src={img.url}
+                      alt={img.alt || `Image ${idx + 1}`}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const parent = target.parentElement;
+                        if (parent && !parent.querySelector('.img-error-msg')) {
+                          const msg = document.createElement('div');
+                          msg.className = 'img-error-msg flex items-center justify-center h-full bg-red-50 text-red-400 text-sm';
+                          msg.textContent = 'Image failed to load';
+                          parent.prepend(msg);
+                        }
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            );
+          }
+          case 'image-grid': {
+            const imageGridBlock = block as ImageGridBlock;
+            const gap = imageGridBlock.gap ?? 16;
+
+            // Use existing rows, or generate fallback rows if missing (for backward compatibility)
+            let rows = imageGridBlock.rows || [];
+            if (rows.length === 0 && imageGridBlock.images.length > 0) {
+              // Fallback: auto-generate rows
+              rows = [];
+              let imgIdx = 0;
+              const layoutStrategy = [
+                { columns: 1 as const, count: 1 },
+                { columns: 2 as const, count: 2 },
+                { columns: 3 as const, count: 999 },
+              ];
+              for (const layout of layoutStrategy) {
+                if (imgIdx >= imageGridBlock.images.length) break;
+                const count = Math.min(layout.count, imageGridBlock.images.length - imgIdx);
+                rows.push({
+                  id: `fallback-row-${rows.length}`,
+                  columns: layout.columns,
+                  imageCount: count,
+                });
+                imgIdx += count;
+              }
+            }
+
+            // Build image index map
+            let imageIdx = 0;
+            const rowImages: ImageData[][] = [];
+
+            for (const row of rows) {
+              const rowImgs: ImageData[] = [];
+              for (let i = 0; i < row.imageCount && imageIdx < imageGridBlock.images.length; i++) {
+                rowImgs.push(imageGridBlock.images[imageIdx]);
+                imageIdx++;
+              }
+              rowImages.push(rowImgs);
+            }
+
+            return (
+              <div
+                key={block.id}
+                style={{ display: 'flex', flexDirection: 'column', gap: `${gap}px` }}
+                className="image-grid-container"
+              >
+                {rows.map((row, rowIdx) => (
+                  <div
+                    key={row.id}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${row.columns}, 1fr)`,
+                      gap: `${gap}px`,
+                    }}
+                    className="image-grid-row"
+                  >
+                    {(rowImages[rowIdx] || []).map((img, colIdx) => (
+                      <div
+                        key={img.id}
+                        style={{
+                          aspectRatio: 'auto',
+                          overflow: 'hidden',
+                          borderRadius: '4px',
+                        }}
+                        className="image-grid-item"
+                      >
+                        <img
+                          src={img.url}
+                          alt={img.alt || `Image ${colIdx + 1}`}
+                          style={{ width: '100%', height: 'auto', display: 'block' }}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const parent = target.parentElement;
+                            if (parent && !parent.querySelector('.img-error-msg')) {
+                              const msg = document.createElement('div');
+                              msg.className = 'img-error-msg flex items-center justify-center h-full bg-red-50 text-red-400 text-sm';
+                              msg.textContent = 'Image failed to load';
+                              parent.prepend(msg);
+                            }
+                          }}
+                        />
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
