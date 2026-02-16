@@ -42,9 +42,9 @@ const ContentSchema = z.union([
 const AttachmentSchema = z.object({
   id: z.string(),
   filename: z.string(),
-  filepath: z.string(),
-  mimeType: z.string(),
-  size: z.number(),
+  filepath: z.string().optional(), // Can be empty for newly added files
+  mimeType: z.string().optional(), // Can be empty for newly added files
+  size: z.number().optional(), // Can be empty for newly added files
   uploadedAt: z.string(),
 });
 
