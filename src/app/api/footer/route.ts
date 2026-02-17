@@ -8,6 +8,7 @@ import {
   validationErrorResponse,
   notFoundResponse,
 } from "@/lib/api-response";
+import { logger } from "@/lib/logger";
 import { UpdateFooterSchema } from "@/types/schemas";
 
 /**
@@ -22,9 +23,10 @@ export async function GET() {
       return notFoundResponse("푸터");
     }
 
+    logger.info({ context: 'GET /api/footer' }, '푸터를 조회했습니다');
     return successResponse(footer, "푸터를 조회했습니다");
   } catch (error) {
-    console.error("푸터 조회 오류:", error);
+    logger.error({ err: error, context: 'GET /api/footer' }, '푸터 조회 오류');
     return errorResponse(
       "푸터를 조회하는 중 오류가 발생했습니다",
       "FETCH_ERROR",
@@ -97,9 +99,10 @@ export async function PUT(request: NextRequest) {
       });
     }
 
+    logger.info({ context: 'PUT /api/footer' }, '푸터가 수정되었습니다');
     return successResponse(footer, "푸터가 수정되었습니다");
   } catch (error) {
-    console.error("푸터 수정 오류:", error);
+    logger.error({ err: error, context: 'PUT /api/footer' }, '푸터 수정 오류');
     return errorResponse(
       "푸터를 수정하는 중 오류가 발생했습니다",
       "UPDATE_ERROR",
