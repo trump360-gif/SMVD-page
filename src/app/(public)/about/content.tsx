@@ -69,7 +69,7 @@ export default function AboutContent({
   const containerPaddingBottom = isMobile ? '24px' : isTablet ? '32px' : '61px';
   const tabButtonFontSize = isMobile ? '16px' : isTablet ? '18px' : '24px';
   const tabButtonGap = isMobile ? '20px' : isTablet ? '30px' : '40px';
-  const sectionGap = isMobile ? '32px' : isTablet ? '40px' : '50px';
+  const sectionGap = isMobile ? '40px' : isTablet ? '40px' : '50px';
 
   useEffect(() => {
     const tab = searchParams.get('tab');

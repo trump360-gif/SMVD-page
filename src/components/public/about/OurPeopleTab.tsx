@@ -117,7 +117,7 @@ export default function OurPeopleTab({
   const headingWidth = isMobile ? '100%' : isTablet ? '150px' : '333px';
   const headingFlexShrink = isMobile ? undefined : 0;
   const profSectionDirection = isMobile ? 'column' : 'row' as const;
-  const profListGap = isMobile ? '24px' : isTablet ? '12px' : '20px';
+  const profListGap = isMobile ? '40px' : isTablet ? '12px' : '20px';
   const profListWrap = isMobile ? 'wrap' : isTablet ? 'wrap' : 'nowrap' as const;
   const cardWidth = isMobile ? '100%' : isTablet ? '160px' : '236px';
   const cardFlexShrink = isMobile ? undefined : 0;

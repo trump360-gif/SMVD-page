@@ -20,7 +20,7 @@ export default function CurriculumContent({
   const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop;
   const containerPaddingVertical = isMobile ? '24px' : isTablet ? '32px' : '80px';
   const containerPaddingBottom = isMobile ? '24px' : isTablet ? '32px' : '61px';
-  const sectionGap = isMobile ? '40px' : isTablet ? '60px' : '100px';
+  const sectionGap = isMobile ? '30px' : isTablet ? '60px' : '100px';
 
   return (
     <div
