@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth/auth';
 import z from 'zod';
 import { invalidateAbout } from '@/lib/cache';
+import { logger } from "@/lib/logger";
 
 // 인증 확인
 async function requireAuth() {

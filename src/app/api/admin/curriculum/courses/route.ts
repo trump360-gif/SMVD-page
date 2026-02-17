@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { checkAdminAuth } from "@/lib/auth-check";
+import { logger } from "@/lib/logger";
 import {
   successResponse,
   errorResponse,
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
       201
     );
   } catch (error) {
-    console.error("Curriculum courses POST error:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "Curriculum courses POST error:");
     return errorResponse(
       "과목을 추가하는 중 오류가 발생했습니다",
       "CREATE_ERROR",
@@ -152,7 +153,7 @@ export async function PUT(request: NextRequest) {
 
     return successResponse(updatedSection, "과목이 수정되었습니다");
   } catch (error) {
-    console.error("Curriculum courses PUT error:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "Curriculum courses PUT error:");
     return errorResponse(
       "과목을 수정하는 중 오류가 발생했습니다",
       "UPDATE_ERROR",
@@ -220,7 +221,7 @@ export async function DELETE(request: NextRequest) {
 
     return successResponse(updatedSection, "과목이 삭제되었습니다");
   } catch (error) {
-    console.error("Curriculum courses DELETE error:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "Curriculum courses DELETE error:");
     return errorResponse(
       "과목을 삭제하는 중 오류가 발생했습니다",
       "DELETE_ERROR",

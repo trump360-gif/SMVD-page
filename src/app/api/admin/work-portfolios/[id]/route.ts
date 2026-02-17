@@ -8,6 +8,7 @@ import {
   notFoundResponse,
 } from "@/lib/api-response";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 const UpdateWorkPortfolioSchema = z.object({
   title: z.string().min(1, "제목은 필수입니다").optional(),
@@ -74,7 +75,7 @@ export async function PUT(
 
     return successResponse(updated, "작품이 수정되었습니다");
   } catch (error) {
-    console.error("작품 수정 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "작품 수정 오류:");
     return errorResponse(
       "작품을 수정하는 중 오류가 발생했습니다",
       "UPDATE_ERROR",
@@ -112,7 +113,7 @@ export async function DELETE(
 
     return successResponse(null, "작품이 삭제되었습니다");
   } catch (error) {
-    console.error("작품 삭제 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "작품 삭제 오류:");
     return errorResponse(
       "작품을 삭제하는 중 오류가 발생했습니다",
       "DELETE_ERROR",

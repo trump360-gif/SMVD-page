@@ -8,6 +8,7 @@ import {
   notFoundResponse,
 } from "@/lib/api-response";
 import { SectionReorderSchema } from "@/types/schemas";
+import { logger } from "@/lib/logger";
 
 /**
  * PUT /api/admin/sections/reorder
@@ -83,7 +84,7 @@ export async function PUT(request: NextRequest) {
       "섹션 순서가 변경되었습니다"
     );
   } catch (error) {
-    console.error("섹션 순서 변경 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "섹션 순서 변경 오류:");
     return errorResponse(
       "섹션 순서를 변경하는 중 오류가 발생했습니다",
       "REORDER_ERROR",

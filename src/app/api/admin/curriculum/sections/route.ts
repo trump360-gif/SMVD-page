@@ -14,6 +14,7 @@ import {
 } from "@/lib/validation/curriculum";
 import { z } from "zod";
 import { invalidateCurriculum } from "@/lib/cache";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/admin/curriculum/sections
@@ -48,7 +49,7 @@ export async function GET() {
       "교과과정 섹션을 조회했습니다"
     );
   } catch (error) {
-    console.error("Curriculum sections GET error:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "Curriculum sections GET error:");
     return errorResponse(
       "교과과정 섹션을 조회하는 중 오류가 발생했습니다",
       "FETCH_ERROR",
@@ -130,7 +131,7 @@ export async function PUT(request: NextRequest) {
 
     return successResponse(updatedSection, "교과과정 섹션이 업데이트되었습니다");
   } catch (error) {
-    console.error("Curriculum sections PUT error:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "Curriculum sections PUT error:");
     if (error instanceof z.ZodError) {
       return errorResponse(
         "데이터 형식이 올바르지 않습니다",

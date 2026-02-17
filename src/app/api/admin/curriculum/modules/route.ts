@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { checkAdminAuth } from "@/lib/auth-check";
+import { logger } from "@/lib/logger";
 import {
   successResponse,
   errorResponse,
@@ -64,7 +65,7 @@ export async function PUT(request: NextRequest) {
 
     return successResponse(updatedSection, "모듈 정보가 업데이트되었습니다");
   } catch (error) {
-    console.error("Curriculum modules PUT error:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "Curriculum modules PUT error:");
     return errorResponse(
       "모듈 정보를 업데이트하는 중 오류가 발생했습니다",
       "UPDATE_ERROR",

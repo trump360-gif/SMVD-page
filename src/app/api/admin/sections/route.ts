@@ -12,6 +12,7 @@ import {
   UpdateSectionSchema,
 } from "@/types/schemas";
 import { Prisma } from "@/generated/prisma";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/admin/sections?pageId=xxx
@@ -49,7 +50,7 @@ export async function GET(request: NextRequest) {
 
     return successResponse(sections, "섹션 목록을 조회했습니다");
   } catch (error) {
-    console.error("섹션 조회 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "섹션 조회 오류:");
     return errorResponse(
       "섹션을 조회하는 중 오류가 발생했습니다",
       "FETCH_ERROR",
@@ -112,7 +113,7 @@ export async function POST(request: NextRequest) {
 
     return successResponse(section, "섹션이 생성되었습니다", 201);
   } catch (error) {
-    console.error("섹션 생성 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "섹션 생성 오류:");
     return errorResponse(
       "섹션을 생성하는 중 오류가 발생했습니다",
       "CREATE_ERROR",

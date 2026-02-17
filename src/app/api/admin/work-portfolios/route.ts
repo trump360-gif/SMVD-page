@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 import { checkAdminAuth } from '@/lib/auth-check';
 import { successResponse, errorResponse } from '@/lib/api-response';
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/admin/work-portfolios

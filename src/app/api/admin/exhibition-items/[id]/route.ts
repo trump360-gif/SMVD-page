@@ -8,6 +8,7 @@ import {
   notFoundResponse,
 } from "@/lib/api-response";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 const UpdateExhibitionItemSchema = z.object({
   year: z.string().min(1, "연도는 필수입니다").optional(),
@@ -73,7 +74,7 @@ export async function PUT(
 
     return successResponse(updated, "전시 아이템이 수정되었습니다");
   } catch (error) {
-    console.error("전시 아이템 수정 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "전시 아이템 수정 오류:");
     return errorResponse(
       "전시 아이템을 수정하는 중 오류가 발생했습니다",
       "UPDATE_ERROR",
@@ -111,7 +112,7 @@ export async function DELETE(
 
     return successResponse(null, "전시 아이템이 삭제되었습니다");
   } catch (error) {
-    console.error("전시 아이템 삭제 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "전시 아이템 삭제 오류:");
     return errorResponse(
       "전시 아이템을 삭제하는 중 오류가 발생했습니다",
       "DELETE_ERROR",

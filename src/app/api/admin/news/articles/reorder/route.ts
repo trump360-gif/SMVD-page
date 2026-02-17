@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db';
 import { checkAdminAuth } from '@/lib/auth-check';
 import { successResponse, errorResponse } from '@/lib/api-response';
 import { z } from 'zod';
+import { logger } from "@/lib/logger";
 
 const ReorderSchema = z.object({
   articleId: z.string().min(1),

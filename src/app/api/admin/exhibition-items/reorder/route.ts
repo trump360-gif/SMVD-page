@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { prisma } from '@/lib/db';
 import { authOptions } from '@/lib/auth/auth';
 import { z } from 'zod';
+import { logger } from "@/lib/logger";
 
 const ReorderSchema = z.object({
   itemId: z.string().min(1),

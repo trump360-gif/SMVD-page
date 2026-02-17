@@ -6,6 +6,7 @@ import {
   errorResponse,
 } from '@/lib/api-response';
 import { z } from 'zod';
+import { logger } from "@/lib/logger";
 
 const CreateExhibitionSchema = z.object({
   title: z.string().min(1, '제목은 필수입니다'),

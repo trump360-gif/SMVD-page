@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { checkAdminAuth } from "@/lib/auth-check";
 import { successResponse, errorResponse } from "@/lib/api-response";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/admin/pages
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
 
     return successResponse(pages, "페이지 목록을 조회했습니다");
   } catch (error) {
-    console.error("페이지 목록 조회 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "페이지 목록 조회 오류:");
     return errorResponse(
       "페이지 목록을 조회하는 중 오류가 발생했습니다",
       "FETCH_ERROR",

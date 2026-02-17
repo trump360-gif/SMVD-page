@@ -11,6 +11,7 @@
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { Prisma } from "@/generated/prisma";
+import { logger } from "@/lib/logger";
 
 // Remove auth by not using middleware, or allow via env check
 const SETUP_TOKEN = process.env.STUDIO_KNOT_SETUP_TOKEN;

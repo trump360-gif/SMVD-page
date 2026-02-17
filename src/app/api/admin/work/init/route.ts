@@ -2,6 +2,7 @@ import { prisma } from '@/lib/db';
 import { checkAdminAuth } from '@/lib/auth-check';
 import { successResponse, errorResponse } from '@/lib/api-response';
 import { workDetails } from '@/constants/work-details';
+import { logger } from "@/lib/logger";
 
 // Hardcoded exhibition data (from WorkArchive.tsx)
 const defaultExhibitions = [

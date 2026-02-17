@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { checkAdminAuth } from "@/lib/auth-check";
+import { logger } from "@/lib/logger";
 import {
   successResponse,
   errorResponse,
@@ -73,7 +74,7 @@ export async function PUT(request: NextRequest) {
 
     return successResponse(updatedSection, "과목 순서가 변경되었습니다");
   } catch (error) {
-    console.error("Curriculum courses reorder error:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "Curriculum courses reorder error:");
     return errorResponse(
       "과목 순서를 변경하는 중 오류가 발생했습니다",
       "REORDER_ERROR",

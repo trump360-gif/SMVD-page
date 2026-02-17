@@ -9,6 +9,7 @@ import {
 } from "@/lib/api-response";
 import { UpdateSectionSchema } from "@/types/schemas";
 import { Prisma } from "@/generated/prisma";
+import { logger } from "@/lib/logger";
 
 /**
  * PUT /api/admin/sections/[id]
@@ -66,7 +67,7 @@ export async function PUT(
 
     return successResponse(updated, "섹션이 수정되었습니다");
   } catch (error) {
-    console.error("섹션 수정 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "섹션 수정 오류:");
     return errorResponse(
       "섹션을 수정하는 중 오류가 발생했습니다",
       "UPDATE_ERROR",
@@ -108,7 +109,7 @@ export async function DELETE(
 
     return successResponse(null, "섹션이 삭제되었습니다");
   } catch (error) {
-    console.error("섹션 삭제 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "섹션 삭제 오류:");
     return errorResponse(
       "섹션을 삭제하는 중 오류가 발생했습니다",
       "DELETE_ERROR",

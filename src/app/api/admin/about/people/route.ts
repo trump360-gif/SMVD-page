@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { checkAdminAuth } from '@/lib/auth-check';
 import z from 'zod';
+import { logger } from "@/lib/logger";
 
 // 교수 정보 스키마
 const ProfessorSchema = z.object({

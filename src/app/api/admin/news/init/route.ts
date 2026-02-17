@@ -2,6 +2,7 @@ import { prisma } from '@/lib/db';
 import { Prisma } from '@/generated/prisma';
 import { checkAdminAuth } from '@/lib/auth-check';
 import { successResponse, errorResponse } from '@/lib/api-response';
+import { logger } from "@/lib/logger";
 
 // 10 default news items from NewsEventArchive.tsx (hardcoded data)
 const defaultNewsItems = [

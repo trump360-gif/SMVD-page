@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { successResponse, errorResponse, notFoundResponse } from "@/lib/api-response";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/pages
@@ -23,7 +24,7 @@ export async function GET() {
 
     return successResponse(pages, "페이지 목록을 조회했습니다");
   } catch (error) {
-    console.error("페이지 조회 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "페이지 조회 오류:");
     return errorResponse(
       "페이지를 조회하는 중 오류가 발생했습니다",
       "FETCH_ERROR",

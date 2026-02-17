@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { checkAdminAuth } from "@/lib/auth-check";
+import { logger } from "@/lib/logger";
 import {
   successResponse,
   errorResponse,
@@ -25,7 +26,7 @@ export async function GET() {
 
     return successResponse(items, "네비게이션을 조회했습니다");
   } catch (error) {
-    console.error("네비게이션 조회 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "네비게이션 조회 오류:");
     return errorResponse(
       "네비게이션을 조회하는 중 오류가 발생했습니다",
       "FETCH_ERROR",
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     return successResponse(item, "네비게이션 항목이 추가되었습니다", 201);
   } catch (error) {
-    console.error("네비게이션 항목 추가 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "네비게이션 항목 추가 오류:");
     return errorResponse(
       "네비게이션 항목을 추가하는 중 오류가 발생했습니다",
       "CREATE_ERROR",

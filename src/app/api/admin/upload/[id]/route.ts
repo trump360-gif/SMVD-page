@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { checkAdminAuth } from "@/lib/auth-check";
+import { logger } from "@/lib/logger";
 import {
   successResponse,
   errorResponse,
@@ -44,7 +45,7 @@ export async function DELETE(
 
     return successResponse(null, "이미지가 삭제되었습니다");
   } catch (error) {
-    console.error("이미지 삭제 오류:", error);
+    logger.error({ err: error, context: "GET /api/..." }, "이미지 삭제 오류:");
     return errorResponse(
       "이미지를 삭제하는 중 오류가 발생했습니다",
       "DELETE_ERROR",

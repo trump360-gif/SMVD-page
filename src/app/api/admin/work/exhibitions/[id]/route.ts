@@ -7,6 +7,7 @@ import {
   notFoundResponse,
 } from '@/lib/api-response';
 import { z } from 'zod';
+import { logger } from "@/lib/logger";
 
 const UpdateExhibitionSchema = z.object({
   title: z.string().min(1).optional(),

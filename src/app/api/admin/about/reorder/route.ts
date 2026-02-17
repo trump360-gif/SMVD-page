@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth/auth';
 import z from 'zod';
+import { logger } from "@/lib/logger";
 
 // 인증 확인
 async function requireAuth() {
