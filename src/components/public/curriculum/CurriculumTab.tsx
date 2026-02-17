@@ -21,8 +21,8 @@ export default function CurriculumTab({
   const [activeSubTab, setActiveSubTab] = useState<'master' | 'doctor' | 'thesis'>('master');
 
   // Responsive variables
-  const containerGap = isMobile ? '32px' : isTablet ? '36px' : '40px';
-  const titleFontSize = isMobile ? '18px' : isTablet ? '20px' : '24px';
+  const containerGap = isMobile ? '20px' : isTablet ? '30px' : '40px';
+  const titleFontSize = isMobile ? '24px' : isTablet ? '22px' : '24px';
   const buttonFontSize = isMobile ? '14px' : isTablet ? '16px' : '18px';
   const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : 0;
 

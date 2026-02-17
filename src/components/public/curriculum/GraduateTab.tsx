@@ -1,5 +1,6 @@
 'use client';
 
+import { useResponsive } from '@/lib/responsive';
 import type { GraduateContent } from '@/lib/validation/curriculum';
 
 interface CourseItem {
@@ -86,132 +87,153 @@ const thesisCards: ThesisCard[] = [
   },
 ];
 
-const CurriculumSectionComponent = ({ section }: { section: CurriculumSection }) => (
-  <div
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '20px',
-      width: '100%',
-    }}
-  >
-    {/* Section Header */}
+const CurriculumSectionComponent = ({ section }: { section: CurriculumSection }) => {
+  const { isMobile, isTablet } = useResponsive();
+
+  const sectionGap = isMobile ? '16px' : '20px';
+  const columnGap = isMobile ? '8px' : '10px';
+  const courseHeight = isMobile ? 'auto' : '95px';
+  const coursePadding = isMobile ? '16px 0' : '35px 0';
+  const courseFontSize = isMobile ? '14px' : '18px';
+  const titleFontSize = isMobile ? '18px' : isTablet ? '19px' : '20px';
+  const titleGap = isMobile ? '12px' : '20px';
+  const titlePaddingBottom = isMobile ? '12px' : '20px';
+  const courseDirection = isMobile ? 'column' : 'row';
+  const courseWidth = isMobile ? '100%' : '50%';
+
+  return (
     <div
       style={{
         display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingBottom: '20px',
-        borderBottom: '3px solid #000000ff',
+        flexDirection: 'column',
+        gap: sectionGap,
         width: '100%',
       }}
     >
-      <h2
-        style={{
-          fontSize: '20px',
-          fontWeight: '700',
-          color: '#1b1d1fff',
-          fontFamily: 'Satoshi',
-          margin: '0',
-        }}
-      >
-        {section.title}
-      </h2>
-    </div>
-
-    {/* Two Column Course Layout */}
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        gap: '10px',
-        width: '100%',
-      }}
-    >
-      {/* Left Column */}
+      {/* Section Header */}
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
-          flex: 1,
-          width: '50%',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingBottom: titlePaddingBottom,
+          borderBottom: '3px solid #000000ff',
+          width: '100%',
         }}
       >
-        {section.leftCourses.map((course, index) => (
-          <div
-            key={index}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              height: '95px',
-              padding: '35px 0',
-              borderTop: '1px solid #000000ff',
-              borderBottom: '1px solid #000000ff',
-              width: '100%',
-              boxSizing: 'border-box',
-            }}
-          >
-            {/* Course title */}
-            <span
-              style={{
-                fontSize: '18px',
-                fontWeight: '500',
-                color: '#353030ff',
-                fontFamily: 'Pretendard',
-              }}
-            >
-              {course.title}
-            </span>
-          </div>
-        ))}
+        <h2
+          style={{
+            fontSize: titleFontSize,
+            fontWeight: '700',
+            color: '#1b1d1fff',
+            fontFamily: 'Satoshi',
+            margin: '0',
+          }}
+        >
+          {section.title}
+        </h2>
       </div>
 
-      {/* Right Column */}
+      {/* Two Column Course Layout / Mobile Single Column */}
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
-          flex: 1,
-          width: '50%',
+          flexDirection: courseDirection,
+          justifyContent: 'space-between',
+          gap: columnGap,
+          width: '100%',
         }}
       >
-        {section.rightCourses.map((course, index) => (
-          <div
-            key={index}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              height: '95px',
-              padding: '35px 0',
-              borderTop: '1px solid #000000ff',
-              borderBottom: '1px solid #000000ff',
-              width: '100%',
-              boxSizing: 'border-box',
-            }}
-          >
-            {/* Course title */}
-            <span
+        {/* Left Column */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: sectionGap,
+            flex: 1,
+            width: courseWidth,
+          }}
+        >
+          {section.leftCourses.map((course, index) => (
+            <div
+              key={index}
               style={{
-                fontSize: '18px',
-                fontWeight: '500',
-                color: '#353030ff',
-                fontFamily: 'Pretendard',
+                display: 'flex',
+                alignItems: isMobile ? 'flex-start' : 'center',
+                height: courseHeight,
+                padding: coursePadding,
+                borderTop: '1px solid #000000ff',
+                borderBottom: '1px solid #000000ff',
+                width: '100%',
+                boxSizing: 'border-box',
               }}
             >
-              {course.title}
-            </span>
-          </div>
-        ))}
+              {/* Course title */}
+              <span
+                style={{
+                  fontSize: courseFontSize,
+                  fontWeight: '500',
+                  color: '#353030ff',
+                  fontFamily: 'Pretendard',
+                  wordBreak: 'keep-all',
+                  lineHeight: isMobile ? 1.4 : 1.5,
+                }}
+              >
+                {course.title}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Right Column */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: sectionGap,
+            flex: 1,
+            width: courseWidth,
+          }}
+        >
+          {section.rightCourses.map((course, index) => (
+            <div
+              key={index}
+              style={{
+                display: 'flex',
+                alignItems: isMobile ? 'flex-start' : 'center',
+                height: courseHeight,
+                padding: coursePadding,
+                borderTop: '1px solid #000000ff',
+                borderBottom: '1px solid #000000ff',
+                width: '100%',
+                boxSizing: 'border-box',
+              }}
+            >
+              {/* Course title */}
+              <span
+                style={{
+                  fontSize: courseFontSize,
+                  fontWeight: '500',
+                  color: '#353030ff',
+                  fontFamily: 'Pretendard',
+                  wordBreak: 'keep-all',
+                  lineHeight: isMobile ? 1.4 : 1.5,
+                }}
+              >
+                {course.title}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default function GraduateTab({ content }: GraduateTabProps) {
+  const { isMobile, isTablet } = useResponsive();
+
   // Use DB data if available, otherwise fall back to hardcoded defaults
   const displayMaster: CurriculumSection = content?.master
     ? { id: content.master.id ?? 'master', title: content.master.title, leftCourses: content.master.leftCourses, rightCourses: content.master.rightCourses }
@@ -221,12 +243,24 @@ export default function GraduateTab({ content }: GraduateTabProps) {
     : doctorCurriculum;
   const displayTheses: ThesisCard[] = content?.theses ?? thesisCards;
 
+  // Responsive variables
+  const mainGap = isMobile ? '40px' : isTablet ? '70px' : '100px';
+  const curriculumSectionGap = isMobile ? '32px' : isTablet ? '35px' : '40px';
+  const thesisSectionGap = isMobile ? '16px' : '20px';
+  const thesisHeaderPaddingBottom = isMobile ? '12px' : '20px';
+  const thesisTitleFontSize = isMobile ? '18px' : isTablet ? '19px' : '20px';
+  const thesisItemHeight = isMobile ? 'auto' : '95px';
+  const thesisItemPadding = isMobile ? '16px 0' : '32px 0';
+  const thesisCategoryMinWidth = isMobile ? 'auto' : '54px';
+  const thesisItemGap = isMobile ? '8px' : '10px';
+  const thesisTextFontSize = isMobile ? '14px' : '18px';
+
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '100px',
+        gap: mainGap,
         width: '100%',
       }}
     >
@@ -235,7 +269,7 @@ export default function GraduateTab({ content }: GraduateTabProps) {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '40px',
+          gap: curriculumSectionGap,
           width: '100%',
         }}
       >
@@ -253,7 +287,7 @@ export default function GraduateTab({ content }: GraduateTabProps) {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '20px',
+          gap: thesisSectionGap,
           width: '100%',
         }}
       >
@@ -263,14 +297,14 @@ export default function GraduateTab({ content }: GraduateTabProps) {
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'space-between',
-            paddingBottom: '20px',
+            paddingBottom: thesisHeaderPaddingBottom,
             borderBottom: '3px solid #000000ff',
             width: '100%',
           }}
         >
           <h2
             style={{
-              fontSize: '20px',
+              fontSize: thesisTitleFontSize,
               fontWeight: '700',
               color: '#1b1d1fff',
               fontFamily: 'Satoshi',
@@ -295,10 +329,11 @@ export default function GraduateTab({ content }: GraduateTabProps) {
               key={index}
               style={{
                 display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                height: '95px',
-                padding: '32px 0',
+                alignItems: isMobile ? 'flex-start' : 'center',
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: thesisItemGap,
+                height: thesisItemHeight,
+                padding: thesisItemPadding,
                 borderTop: '1px solid #000000ff',
                 borderBottom: '1px solid #000000ff',
                 width: '100%',
@@ -311,20 +346,21 @@ export default function GraduateTab({ content }: GraduateTabProps) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  minWidth: '54px',
-                  height: '28px',
+                  minWidth: thesisCategoryMinWidth,
+                  height: isMobile ? '24px' : '28px',
                   borderRadius: '4px',
-                  padding: '4px 8px',
+                  padding: isMobile ? '2px 6px' : '4px 8px',
                   flexShrink: 0,
                 }}
               >
                 <span
                   style={{
-                    fontSize: '14px',
+                    fontSize: isMobile ? '12px' : '14px',
                     fontWeight: '500',
                     color: '#000000ff',
                     fontFamily: 'Satoshi',
                     letterSpacing: '-0.14px',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {thesis.category}
@@ -334,12 +370,13 @@ export default function GraduateTab({ content }: GraduateTabProps) {
               {/* Title */}
               <span
                 style={{
-                  fontSize: '18px',
+                  fontSize: thesisTextFontSize,
                   fontWeight: '500',
                   color: '#000000ff',
                   fontFamily: 'Pretendard',
-                  lineHeight: '1.4',
+                  lineHeight: isMobile ? 1.5 : 1.4,
                   flex: 1,
+                  wordBreak: 'keep-all',
                 }}
               >
                 {thesis.title}
@@ -348,7 +385,7 @@ export default function GraduateTab({ content }: GraduateTabProps) {
               {/* Date */}
               <span
                 style={{
-                  fontSize: '18px',
+                  fontSize: thesisTextFontSize,
                   fontWeight: '500',
                   color: '#000000ff',
                   fontFamily: 'Pretendard',

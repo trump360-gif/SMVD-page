@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useResponsive } from '@/lib/responsive';
 import type { UndergraduateContent } from '@/lib/validation/curriculum';
 import type { Semester, GraduateModule, ModuleDetail } from './types';
 import {
@@ -20,6 +21,7 @@ interface UndergraduateTabProps {
 }
 
 export default function UndergraduateTab({ content }: UndergraduateTabProps) {
+  const { isMobile, isTablet } = useResponsive();
   const [checkedClassification] = useState<string>('required');
 
   // Use DB data if available, otherwise fall back to hardcoded defaults
@@ -28,12 +30,16 @@ export default function UndergraduateTab({ content }: UndergraduateTabProps) {
   const displayModuleDetails: ModuleDetail[] =
     content?.modules ?? defaultModuleDetails;
 
+  // Responsive variables
+  const mainGap = isMobile ? '40px' : isTablet ? '50px' : '60px';
+  const sectionGap = isMobile ? '40px' : '60px';
+
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '60px',
+        gap: mainGap,
         width: '100%',
       }}
     >
