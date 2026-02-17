@@ -3,8 +3,9 @@ import {
   Footer,
 } from '@/components/public/home';
 import { NewsEventDetailContent } from '@/components/public/news';
-import NewsBlockRenderer from '@/components/public/news/NewsBlockRenderer';
 import AttachmentDownloadBox from '@/components/public/news/AttachmentDownloadBox'; // NEW - 2026-02-16
+import NewsDetailLayout from '@/components/public/news/NewsDetailLayout';
+import NewsBlockDetailView from '@/components/public/news/NewsBlockDetailView';
 import { prisma } from '@/lib/db';
 
 // ISR: regenerate every 60 seconds. Admin API calls revalidatePath() on mutations.
@@ -137,42 +138,23 @@ export default async function NewsDetailPage({
       {/* Header */}
       <Header />
 
-      {/* Main Content Container */}
-      <div
-        style={{
-          width: '100%',
-          paddingTop: '0px',
-          paddingBottom: '61px',
-          paddingLeft: '40px',
-          paddingRight: '40px',
-          backgroundColor: '#ffffffff',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '1440px',
-            margin: '0 auto',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '100px',
-          }}
-        >
-          {result?.type === 'blocks' ? (
-            // Block-based content rendering
-            <NewsBlockDetailView data={result.data} />
-          ) : (
-            // Legacy content rendering (or fallback to hardcoded)
-            <>
-              <NewsEventDetailContent
-                itemId={id}
-                dbData={result?.data ?? null}
-              />
-              {/* Attachment Download Box for legacy format (NEW - 2026-02-16) */}
-              <AttachmentDownloadBox attachments={result?.data?.attachments} />
-            </>
-          )}
-        </div>
-      </div>
+      {/* Main Content Container - Responsive via client component */}
+      <NewsDetailLayout>
+        {result?.type === 'blocks' ? (
+          // Block-based content rendering (responsive client component)
+          <NewsBlockDetailView data={result.data} />
+        ) : (
+          // Legacy content rendering (or fallback to hardcoded)
+          <>
+            <NewsEventDetailContent
+              itemId={id}
+              dbData={result?.data ?? null}
+            />
+            {/* Attachment Download Box for legacy format (NEW - 2026-02-16) */}
+            <AttachmentDownloadBox attachments={result?.data?.attachments} />
+          </>
+        )}
+      </NewsDetailLayout>
 
       {/* Footer */}
       <Footer />
@@ -180,122 +162,3 @@ export default async function NewsDetailPage({
   );
 }
 
-// ---- Block-based detail view ----
-
-function NewsBlockDetailView({ data }: { data: NewsBlockData }) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '40px',
-        width: '100%',
-        maxWidth: '1440px',
-        margin: '0 auto',
-      }}
-    >
-      {/* Title and Filter Tabs (matching NewsEventDetailContent layout) */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          width: '100%',
-          paddingBottom: '20px',
-          borderBottom: '2px solid #141414ff',
-        }}
-      >
-        <h1
-          style={{
-            fontSize: '24px',
-            fontWeight: '700',
-            fontFamily: 'Satoshi',
-            color: '#1b1d1fff',
-            margin: '0',
-          }}
-        >
-          News&Event
-        </h1>
-      </div>
-
-      {/* Detail Content */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '40px',
-          width: '100%',
-          paddingBottom: '80px',
-        }}
-      >
-        {/* Header Section */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px',
-            width: '100%',
-            paddingBottom: '20px',
-            borderBottom: '2px solid #e5e7ebff',
-          }}
-        >
-          {/* Meta Info */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <span
-              style={{
-                fontSize: '14px',
-                fontWeight: '500',
-                fontFamily: 'Satoshi',
-                color: '#141414ff',
-                backgroundColor: '#ebecf0ff',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                minWidth: 'fit-content',
-              }}
-            >
-              {data.category}
-            </span>
-            <span
-              style={{
-                fontSize: '14px',
-                fontWeight: '500',
-                fontFamily: 'Pretendard',
-                color: '#626872ff',
-                letterSpacing: '-0.14px',
-              }}
-            >
-              {data.date}
-            </span>
-          </div>
-
-          {/* Title */}
-          <h1
-            style={{
-              fontSize: '48px',
-              fontWeight: '700',
-              fontFamily: 'Pretendard',
-              color: '#000000ff',
-              margin: '0',
-              lineHeight: '1.45',
-              letterSpacing: '-0.48px',
-            }}
-          >
-            {data.title}
-          </h1>
-        </div>
-
-        {/* Block content */}
-        <NewsBlockRenderer blocks={data.blocks} />
-
-        {/* Attachment Download Box (NEW - 2026-02-16) */}
-        <AttachmentDownloadBox attachments={data.attachments} />
-      </div>
-    </div>
-  );
-}
