@@ -3,6 +3,7 @@
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Header, Footer } from '@/components/public/home';
+import { useResponsive } from '@/lib/responsive';
 
 interface Professor {
   id: string;
@@ -154,12 +155,38 @@ export default function ProfessorDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const professor = professorsData[id];
+  const { isMobile, isTablet } = useResponsive();
+
+  // -- Responsive values --
+  const tabHeaderPadding = isMobile ? '16px' : isTablet ? '24px' : '40px';
+  const tabFontSize = isMobile ? '18px' : '24px';
+  const tabGap = isMobile ? '20px' : '40px';
+
+  const mainPaddingX = isMobile ? '16px' : isTablet ? '40px' : '95.5px';
+  const mainPaddingBottom = isMobile ? '60px' : '100px';
+  const contentDirection = isMobile ? 'column' : 'row' as const;
+  const contentGap = isMobile ? '40px' : isTablet ? '40px' : '80px';
+  const contentPaddingTop = isMobile ? '40px' : '100px';
+
+  const imageWidth = isMobile ? '100%' : isTablet ? '200px' : '333px';
+  const imageHeight = isMobile ? '350px' : isTablet ? '280px' : '468px';
+  const imageFlexShrink = isMobile ? undefined : 0;
+
+  const nameFontSize = isMobile ? '36px' : isTablet ? '48px' : '60px';
+  const nameHeight = isMobile ? 'auto' : '66px';
+
+  const labelGap = isMobile ? '12px' : '30px';
+  const detailFontSize = isMobile ? '15px' : '18px';
+  const labelFontSize = isMobile ? '12px' : '14px';
+  const detailGap = isMobile ? '20px' : '30px';
+
+  const badgeFontSize = isMobile ? '14px' : '18px';
 
   if (!professor) {
     return (
       <div>
         <Header />
-        <div style={{ padding: '60px 40px', textAlign: 'center' }}>
+        <div style={{ padding: `60px ${tabHeaderPadding}`, textAlign: 'center' }}>
           <h1>교수 정보를 찾을 수 없습니다.</h1>
         </div>
         <Footer />
@@ -175,10 +202,10 @@ export default function ProfessorDetailPage() {
       <div
         style={{
           width: '100%',
-          paddingTop: '60px',
+          paddingTop: isMobile ? '40px' : '60px',
           paddingBottom: '0px',
-          paddingLeft: '40px',
-          paddingRight: '40px',
+          paddingLeft: tabHeaderPadding,
+          paddingRight: tabHeaderPadding,
           backgroundColor: '#ffffffff',
         }}
       >
@@ -193,7 +220,7 @@ export default function ProfessorDetailPage() {
           <div
             style={{
               display: 'flex',
-              gap: '40px',
+              gap: tabGap,
               borderBottom: '1px solid #141414ff',
               paddingBottom: '10px',
             }}
@@ -203,7 +230,7 @@ export default function ProfessorDetailPage() {
               style={{
                 backgroundColor: 'transparent',
                 border: 'none',
-                fontSize: '24px',
+                fontSize: tabFontSize,
                 fontWeight: '400',
                 color: '#141414ff',
                 fontFamily: 'Inter',
@@ -221,7 +248,7 @@ export default function ProfessorDetailPage() {
               style={{
                 backgroundColor: 'transparent',
                 border: 'none',
-                fontSize: '24px',
+                fontSize: tabFontSize,
                 fontWeight: '700',
                 color: '#141414ff',
                 fontFamily: 'Inter',
@@ -244,9 +271,9 @@ export default function ProfessorDetailPage() {
         style={{
           width: '100%',
           paddingTop: '0px',
-          paddingBottom: '100px',
-          paddingLeft: '95.5px',
-          paddingRight: '95.5px',
+          paddingBottom: mainPaddingBottom,
+          paddingLeft: mainPaddingX,
+          paddingRight: mainPaddingX,
           backgroundColor: '#ffffffff',
         }}
       >
@@ -255,8 +282,8 @@ export default function ProfessorDetailPage() {
             maxWidth: '1360px',
             margin: '0 auto',
             display: 'flex',
-            flexDirection: 'row',
-            gap: '80px',
+            flexDirection: contentDirection,
+            gap: contentGap,
             alignItems: 'flex-start',
             width: '100%',
           }}
@@ -266,9 +293,9 @@ export default function ProfessorDetailPage() {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              width: '333px',
-              flexShrink: 0,
-              paddingTop: '100px',
+              width: imageWidth,
+              flexShrink: imageFlexShrink,
+              paddingTop: contentPaddingTop,
               position: 'relative',
             }}
           >
@@ -276,8 +303,8 @@ export default function ProfessorDetailPage() {
             <div
               style={{
                 position: 'relative',
-                width: '333px',
-                height: '468px',
+                width: '100%',
+                height: imageHeight,
                 backgroundColor: '#f3f4f6ff',
                 marginBottom: '0px',
               }}
@@ -286,6 +313,7 @@ export default function ProfessorDetailPage() {
                 src={professor.profileImage}
                 alt={professor.name}
                 fill
+                sizes={isMobile ? '100vw' : isTablet ? '200px' : '333px'}
                 style={{
                   objectFit: 'cover',
                 }}
@@ -301,14 +329,14 @@ export default function ProfessorDetailPage() {
                 left: '0',
                 right: '0',
                 backgroundColor: '#141414ff',
-                padding: '12px 0',
+                padding: isMobile ? '10px 0' : '12px 0',
                 textAlign: 'center',
                 width: '100%',
               }}
             >
               <span
                 style={{
-                  fontSize: '18px',
+                  fontSize: badgeFontSize,
                   fontWeight: 'normal',
                   color: '#ffffffff',
                   fontFamily: 'Helvetica',
@@ -325,22 +353,23 @@ export default function ProfessorDetailPage() {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '30px',
+              gap: detailGap,
               flex: 1,
-              paddingTop: '100px',
+              paddingTop: isMobile ? '0px' : contentPaddingTop,
+              width: isMobile ? '100%' : undefined,
             }}
           >
             {/* Name */}
             <div
               style={{
-                height: '66px',
+                height: nameHeight,
                 display: 'flex',
                 alignItems: 'flex-end',
               }}
             >
               <h1
                 style={{
-                  fontSize: '60px',
+                  fontSize: nameFontSize,
                   fontWeight: 'normal',
                   color: '#0a0a0aff',
                   fontFamily: 'Helvetica',
@@ -354,13 +383,13 @@ export default function ProfessorDetailPage() {
             </div>
 
             {/* Office */}
-            <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: labelGap, alignItems: 'center' }}>
               <div
                 style={{
                   backgroundColor: '#ebecf0ff',
                   padding: '0 12px',
                   borderRadius: '0px',
-                  width: '80px',
+                  width: isMobile ? '70px' : '80px',
                   flexShrink: 0,
                   display: 'flex',
                   alignItems: 'center',
@@ -370,7 +399,7 @@ export default function ProfessorDetailPage() {
               >
                 <span
                   style={{
-                    fontSize: '14px',
+                    fontSize: labelFontSize,
                     fontWeight: 'normal',
                     color: '#141414ff',
                     fontFamily: 'Helvetica',
@@ -382,7 +411,7 @@ export default function ProfessorDetailPage() {
               </div>
               <p
                 style={{
-                  fontSize: '18px',
+                  fontSize: detailFontSize,
                   fontWeight: 'normal',
                   color: '#141414ff',
                   fontFamily: 'Inter',
@@ -396,13 +425,13 @@ export default function ProfessorDetailPage() {
             </div>
 
             {/* Email */}
-            <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: labelGap, alignItems: isMobile ? 'flex-start' : 'center', flexDirection: isMobile ? 'column' : 'row' }}>
               <div
                 style={{
                   backgroundColor: '#ebecf0ff',
                   padding: '0 12px',
                   borderRadius: '0px',
-                  width: '80px',
+                  width: isMobile ? '70px' : '80px',
                   flexShrink: 0,
                   display: 'flex',
                   alignItems: 'center',
@@ -412,7 +441,7 @@ export default function ProfessorDetailPage() {
               >
                 <span
                   style={{
-                    fontSize: '14px',
+                    fontSize: labelFontSize,
                     fontWeight: 'normal',
                     color: '#141414ff',
                     fontFamily: 'Helvetica',
@@ -424,28 +453,29 @@ export default function ProfessorDetailPage() {
               </div>
               <p
                 style={{
-                  fontSize: '18px',
+                  fontSize: isMobile ? '14px' : detailFontSize,
                   fontWeight: 'normal',
                   color: '#141414ff',
                   fontFamily: 'Inter',
                   margin: '0',
                   letterSpacing: '-0.44px',
                   lineHeight: 1.5,
+                  wordBreak: isMobile ? 'break-all' : undefined,
                 }}
               >
-                {professor.email.join(' ')}
+                {professor.email.join(isMobile ? '\n' : ' ')}
               </p>
             </div>
 
             {/* Homepage */}
             {professor.homepage && (
-              <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: labelGap, alignItems: isMobile ? 'flex-start' : 'center', flexDirection: isMobile ? 'column' : 'row' }}>
                 <div
                   style={{
                     backgroundColor: '#ebecf0ff',
                     padding: '0 12px',
                     borderRadius: '0px',
-                    width: '80px',
+                    width: isMobile ? '70px' : '80px',
                     flexShrink: 0,
                     display: 'flex',
                     alignItems: 'center',
@@ -455,7 +485,7 @@ export default function ProfessorDetailPage() {
                 >
                   <span
                     style={{
-                      fontSize: '14px',
+                      fontSize: labelFontSize,
                       fontWeight: 'normal',
                       color: '#141414ff',
                       fontFamily: 'Helvetica',
@@ -470,7 +500,7 @@ export default function ProfessorDetailPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
-                    fontSize: '18px',
+                    fontSize: isMobile ? '14px' : detailFontSize,
                     fontWeight: 'normal',
                     color: '#141414ff',
                     fontFamily: 'Inter',
@@ -479,6 +509,7 @@ export default function ProfessorDetailPage() {
                     lineHeight: 1.5,
                     textDecoration: 'underline',
                     cursor: 'pointer',
+                    wordBreak: isMobile ? 'break-all' : undefined,
                   }}
                 >
                   {professor.homepage}
@@ -487,13 +518,13 @@ export default function ProfessorDetailPage() {
             )}
 
             {/* Courses */}
-            <div style={{ display: 'flex', gap: '30px', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', gap: labelGap, alignItems: 'flex-start' }}>
               <div
                 style={{
                   backgroundColor: '#ebecf0ff',
                   padding: '0 12px',
                   borderRadius: '0px',
-                  width: '90px',
+                  width: isMobile ? '70px' : '90px',
                   flexShrink: 0,
                   display: 'flex',
                   alignItems: 'center',
@@ -503,7 +534,7 @@ export default function ProfessorDetailPage() {
               >
                 <span
                   style={{
-                    fontSize: '14px',
+                    fontSize: labelFontSize,
                     fontWeight: 'normal',
                     color: '#141414ff',
                     fontFamily: 'Helvetica',
@@ -531,7 +562,7 @@ export default function ProfessorDetailPage() {
                 >
                   <p
                     style={{
-                      fontSize: '18px',
+                      fontSize: detailFontSize,
                       fontWeight: 'normal',
                       color: '#353030ff',
                       fontFamily: 'Inter',
@@ -555,7 +586,7 @@ export default function ProfessorDetailPage() {
                       <p
                         key={idx}
                         style={{
-                          fontSize: '18px',
+                          fontSize: detailFontSize,
                           fontWeight: 'normal',
                           color: '#141414ff',
                           fontFamily: 'Inter',
@@ -580,7 +611,7 @@ export default function ProfessorDetailPage() {
                 >
                   <p
                     style={{
-                      fontSize: '18px',
+                      fontSize: detailFontSize,
                       fontWeight: 'normal',
                       color: '#353030ff',
                       fontFamily: 'Inter',
@@ -604,7 +635,7 @@ export default function ProfessorDetailPage() {
                       <p
                         key={idx}
                         style={{
-                          fontSize: '18px',
+                          fontSize: detailFontSize,
                           fontWeight: 'normal',
                           color: '#141414ff',
                           fontFamily: 'Inter',
@@ -622,13 +653,13 @@ export default function ProfessorDetailPage() {
             </div>
 
             {/* Biography */}
-            <div style={{ display: 'flex', gap: '30px', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', gap: labelGap, alignItems: 'flex-start' }}>
               <div
                 style={{
                   backgroundColor: '#ebecf0ff',
                   padding: '0 12px',
                   borderRadius: '0px',
-                  width: '70px',
+                  width: isMobile ? '60px' : '70px',
                   flexShrink: 0,
                   display: 'flex',
                   alignItems: 'center',
@@ -638,7 +669,7 @@ export default function ProfessorDetailPage() {
               >
                 <span
                   style={{
-                    fontSize: '14px',
+                    fontSize: labelFontSize,
                     fontWeight: 'normal',
                     color: '#141414ff',
                     fontFamily: 'Helvetica',
@@ -660,7 +691,7 @@ export default function ProfessorDetailPage() {
                 <a
                   href="#"
                   style={{
-                    fontSize: '18px',
+                    fontSize: detailFontSize,
                     fontWeight: 'normal',
                     color: '#141414ff',
                     fontFamily: 'Inter',
@@ -677,7 +708,7 @@ export default function ProfessorDetailPage() {
                 {/* Position */}
                 <p
                   style={{
-                    fontSize: '18px',
+                    fontSize: detailFontSize,
                     fontWeight: 'normal',
                     color: '#141414ff',
                     fontFamily: 'Inter',
@@ -695,7 +726,7 @@ export default function ProfessorDetailPage() {
                     <p
                       key={idx}
                       style={{
-                        fontSize: '18px',
+                        fontSize: detailFontSize,
                         fontWeight: 'normal',
                         color: '#141414ff',
                         fontFamily: 'Inter',
@@ -715,7 +746,7 @@ export default function ProfessorDetailPage() {
                     <p
                       key={idx}
                       style={{
-                        fontSize: '18px',
+                        fontSize: detailFontSize,
                         fontWeight: 'normal',
                         color: '#141414ff',
                         fontFamily: 'Inter',
