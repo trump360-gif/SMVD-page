@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { sanitizeContent } from '@/lib/sanitize';
 import { WorkDetail } from '@/constants/work-details';
 import WorkHeader from './WorkHeader';
 import WorkDetailPreviewRenderer from '@/components/admin/shared/BlockEditor/renderers/WorkDetailPreviewRenderer';
@@ -322,7 +323,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                     className="prose prose-lg max-w-none"
                   >
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {displayDescription}
+                      {sanitizeContent(displayDescription)}
                     </ReactMarkdown>
                   </div>
                 ) : (
@@ -422,7 +423,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                     className="prose prose-lg max-w-none"
                   >
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {displayDescription}
+                      {sanitizeContent(displayDescription)}
                     </ReactMarkdown>
                   </div>
                 ) : (

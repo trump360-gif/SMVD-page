@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { sanitizeContent } from '@/lib/sanitize';
 
 /**
  * Check if text contains markdown syntax.
@@ -252,7 +253,7 @@ export default function NewsEventDetailContent({ itemId, dbData }: NewsEventDeta
                 className="prose prose-lg max-w-none"
               >
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {item.introText}
+                  {sanitizeContent(item.introText)}
                 </ReactMarkdown>
               </div>
             ) : (

@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { sanitizeContent } from '@/lib/sanitize';
 
 interface MarkdownEditorProps {
   value: string;
@@ -138,7 +139,7 @@ export default function MarkdownEditor({
             style={{ minHeight }}
           >
             {value ? (
-              <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml>{value}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml>{sanitizeContent(value)}</ReactMarkdown>
             ) : (
               <p className="text-gray-400 text-sm italic">Preview will appear here...</p>
             )}

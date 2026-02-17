@@ -3,6 +3,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { sanitizeContent } from '@/lib/sanitize';
 import type { TextBlock } from '../types';
 
 interface TextBlockRendererProps {
@@ -85,7 +86,7 @@ export default function TextBlockRenderer({ block }: TextBlockRendererProps) {
             ),
           }}
         >
-          {block.content}
+          {sanitizeContent(block.content)}
         </ReactMarkdown>
       ) : (
         <p style={{

@@ -3,6 +3,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { sanitizeContent } from '@/lib/sanitize';
 
 /**
  * Public-facing block renderer for news articles.
@@ -104,7 +105,7 @@ function TextRenderer({ block }: { block: BlockBase & { content: string; fontSiz
         className="prose prose-lg max-w-none"
       >
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
-          {block.content}
+          {sanitizeContent(block.content)}
         </ReactMarkdown>
       </div>
     );

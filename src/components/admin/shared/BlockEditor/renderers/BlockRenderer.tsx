@@ -3,6 +3,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { sanitizeContent } from '@/lib/sanitize';
 import type {
   Block,
   TextBlock,
@@ -44,7 +45,7 @@ function TextBlockRenderer({ block }: { block: TextBlock }) {
   return (
     <div className="prose prose-sm max-w-none">
       <ReactMarkdown remarkPlugins={[remarkGfm]}>
-        {block.content}
+        {sanitizeContent(block.content)}
       </ReactMarkdown>
     </div>
   );

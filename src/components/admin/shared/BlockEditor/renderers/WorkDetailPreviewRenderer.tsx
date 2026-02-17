@@ -3,6 +3,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { sanitizeContent } from '@/lib/sanitize';
 import type {
   Block,
   TextBlock,
@@ -359,7 +360,7 @@ export default function WorkDetailPreviewRenderer({
               {description ? (
                 hasMarkdownSyntax(description) ? (
                   <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml>
-                    {description}
+                    {sanitizeContent(description)}
                   </ReactMarkdown>
                 ) : (
                   <p style={{ margin: '0', whiteSpace: 'pre-wrap' }}>
@@ -478,7 +479,7 @@ export default function WorkDetailPreviewRenderer({
                     className="prose prose-lg max-w-none"
                   >
                     <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml>
-                      {description}
+                      {sanitizeContent(description)}
                     </ReactMarkdown>
                   </div>
                 ) : (
@@ -591,7 +592,7 @@ export default function WorkDetailPreviewRenderer({
                     className="prose prose-lg max-w-none"
                   >
                     <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml>
-                      {description}
+                      {sanitizeContent(description)}
                     </ReactMarkdown>
                   </div>
                 ) : (
