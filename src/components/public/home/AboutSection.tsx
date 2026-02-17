@@ -1,5 +1,8 @@
 'use client';
 
+import { useResponsive } from '@/lib/responsive';
+import { PADDING, FONT_SIZE } from '@/constants/responsive';
+
 interface AboutSectionProps {
   title?: string;
   content?: string;
@@ -9,6 +12,15 @@ export default function AboutSection({
   title = 'About SMVD',
   content = '',
 }: AboutSectionProps) {
+  const { isMobile, isTablet } = useResponsive();
+
+  const paddingTop = isMobile ? '32px' : isTablet ? '48px' : '60px';
+  const paddingBottom = isMobile ? '32px' : isTablet ? '48px' : '40px';
+  const padding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop;
+  const contentPaddingTop = isMobile ? '40px' : isTablet ? '60px' : '80px';
+  const contentPaddingBottom = isMobile ? '40px' : isTablet ? '60px' : '80px';
+  const fontSize = isMobile ? FONT_SIZE.mobile.h1 : isTablet ? FONT_SIZE.tablet.h2 : FONT_SIZE.desktop.h1;
+  const svgSize = isMobile ? '24px' : isTablet ? '28px' : '36px';
   return (
     <section
       id="about"
@@ -23,10 +35,10 @@ export default function AboutSection({
       <div
         style={{
           width: '100%',
-          paddingTop: '60px',
-          paddingBottom: '40px',
-          paddingLeft: '40px',
-          paddingRight: '40px',
+          paddingTop,
+          paddingBottom,
+          paddingLeft: `${padding}px`,
+          paddingRight: `${padding}px`,
         }}
       >
         <div
@@ -37,7 +49,7 @@ export default function AboutSection({
         >
           <h2
             style={{
-              fontSize: '32px',
+              fontSize: `${fontSize}px`,
               fontWeight: '700',
               color: '#000000ff',
               fontFamily: 'Helvetica',
@@ -54,10 +66,10 @@ export default function AboutSection({
         style={{
           width: '100%',
           backgroundColor: '#f0f0f0ff',
-          paddingTop: '80px',
-          paddingBottom: '80px',
-          paddingLeft: '40px',
-          paddingRight: '40px',
+          paddingTop: contentPaddingTop,
+          paddingBottom: contentPaddingBottom,
+          paddingLeft: `${padding}px`,
+          paddingRight: `${padding}px`,
         }}
       >
         <div
@@ -68,14 +80,14 @@ export default function AboutSection({
             alignItems: 'center',
             justifyContent: 'center',
             flexDirection: 'column',
-            gap: '8px',
+            gap: isMobile ? '4px' : '8px',
           }}
         >
           {content ? (
             // Display content from database
             <p
               style={{
-                fontSize: '18px',
+                fontSize: `${isTablet ? '15px' : isMobile ? '14px' : '16px'}`,
                 fontWeight: '400',
                 lineHeight: 1.6,
                 color: '#141414ff',
@@ -97,7 +109,7 @@ export default function AboutSection({
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  fontSize: '40px',
+                  fontSize: isMobile ? '20px' : isTablet ? '28px' : '40px',
                   fontWeight: '500',
                   lineHeight: 1.3,
                   color: '#141414ff',
@@ -106,8 +118,8 @@ export default function AboutSection({
               >
                 FROM VISUAL DELIVERY
                 <svg
-                  width="36"
-                  height="36"
+                  width={svgSize}
+                  height={svgSize}
                   viewBox="0 0 50 50"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -127,7 +139,7 @@ export default function AboutSection({
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  fontSize: '40px',
+                  fontSize: isMobile ? '20px' : isTablet ? '28px' : '40px',
                   fontWeight: '500',
                   lineHeight: 1.3,
                   color: '#141414ff',
@@ -135,8 +147,8 @@ export default function AboutSection({
                 }}
               >
                 <svg
-                  width="36"
-                  height="40"
+                  width={svgSize}
+                  height={svgSize}
                   viewBox="0 0 50 56"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
