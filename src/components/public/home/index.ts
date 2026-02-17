@@ -1,4 +1,4 @@
-export { default as Header } from './Header';
+export { Header } from './Header';
 export { default as HomeHero } from './HomeHero';
 export { default as VideoHero } from './VideoHero';
 export { default as VisionSection } from './VisionSection';

@@ -13,26 +13,26 @@ datasource db {
 
 // Admin users
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  passwordHash  String    @map("password_hash")
-  role          String    @default("admin")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  role         String   @default("admin")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   @@map("users")
 }
 
 // Pages for the website
 model Page {
-  id          String      @id @default(cuid())
-  slug        String      @unique
+  id          String    @id @default(cuid())
+  slug        String    @unique
   title       String
   description String?
-  order       Int         @default(0)
+  order       Int       @default(0)
   sections    Section[]
-  createdAt   DateTime    @default(now()) @map("created_at")
-  updatedAt   DateTime    @updatedAt @map("updated_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
   @@map("pages")
 }
@@ -61,111 +61,113 @@ enum SectionType {
   MAP
   CUSTOM_HTML
   // About page section types (NEW - 2026-02-15)
-  ABOUT_INTRO           // About 소개 섹션
-  ABOUT_VISION          // About 비전 섹션
-  ABOUT_HISTORY         // About 역사 섹션
-  ABOUT_PEOPLE          // About 교수/강사 섹션
+  ABOUT_INTRO // About 소개 섹션
+  ABOUT_VISION // About 비전 섹션
+  ABOUT_HISTORY // About 역사 섹션
+  ABOUT_PEOPLE // About 교수/강사 섹션
   // Home page section types (NEW - 2026-02-15)
-  HOME_HERO             // Home 히어로 섹션
-  EXHIBITION_SECTION    // Home 전시 섹션
-  HOME_ABOUT            // Home 소개 섹션
+  HOME_HERO // Home 히어로 섹션
+  EXHIBITION_SECTION // Home 전시 섹션
+  HOME_ABOUT // Home 소개 섹션
   // Curriculum page section types (NEW - 2026-02-15)
-  CURRICULUM_UNDERGRADUATE  // 학부 교과과정
-  CURRICULUM_GRADUATE       // 대학원 교과과정
+  CURRICULUM_UNDERGRADUATE // 학부 교과과정
+  CURRICULUM_GRADUATE // 대학원 교과과정
   // Work page section types (NEW - 2026-02-15)
-  WORK_ARCHIVE              // Work 아카이브 (포트폴리오 목록)
-  WORK_EXHIBITION           // Work 전시 탭
+  WORK_ARCHIVE // Work 아카이브 (포트폴리오 목록)
+  WORK_EXHIBITION // Work 전시 탭
   // News page section types (NEW - 2026-02-15)
-  NEWS_ARCHIVE              // News 아카이브 (뉴스 목록)
+  NEWS_ARCHIVE // News 아카이브 (뉴스 목록)
 }
 
 // Sections with flexible content
 model Section {
-  id                String             @id @default(cuid())
-  pageId            String             @map("page_id")
-  page              Page               @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  type              SectionType
-  title             String?
-  content           Json?
-  mediaIds          Json?              @map("media_ids")
-  order             Int                @default(0)
-  exhibitionItems   ExhibitionItem[]   // Home page exhibition items
-  workPortfolios    WorkPortfolio[]    // Home page work portfolio items
-  createdAt         DateTime           @default(now()) @map("created_at")
-  updatedAt         DateTime           @updatedAt @map("updated_at")
+  id              String           @id @default(cuid())
+  pageId          String           @map("page_id")
+  page            Page             @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type            SectionType
+  title           String?
+  content         Json?
+  mediaIds        Json?            @map("media_ids")
+  order           Int              @default(0)
+  exhibitionItems ExhibitionItem[] // Home page exhibition items
+  workPortfolios  WorkPortfolio[] // Home page work portfolio items
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
 
-  @@map("sections")
   @@index([pageId])
+  @@map("sections")
 }
 
 // Media management (images, videos, etc.)
 model Media {
-  id                String             @id @default(cuid())
-  filename          String
-  filepath          String             @map("file_path")
-  mimeType          String             @map("mime_type")
-  size              Int
-  formats           Json?              // { webp: { path, size }, thumbnail: { path, size } }
-  width             Int?
-  height            Int?
-  altText           String?            @map("alt_text")
-  uploadedAt        DateTime           @default(now()) @map("uploaded_at")
+  id         String   @id @default(cuid())
+  filename   String
+  filepath   String   @map("file_path")
+  mimeType   String   @map("mime_type")
+  size       Int
+  formats    Json? // { webp: { path, size }, thumbnail: { path, size } }
+  width      Int?
+  height     Int?
+  altText    String?  @map("alt_text")
+  uploadedAt DateTime @default(now()) @map("uploaded_at")
 
   // Relations
-  people            People[]           // Faculty & Staff profile images
-  exhibitionItems   ExhibitionItem[]   // Home page exhibition items
-  workPortfolios    WorkPortfolio[]    // Home page work portfolio items
+  people          People[] // Faculty & Staff profile images
+  exhibitionItems ExhibitionItem[] // Home page exhibition items
+  workPortfolios  WorkPortfolio[] // Home page work portfolio items
+  headerLogo      HeaderConfig[]   @relation("LogoImage") // Header logo image
+  headerFavicon   HeaderConfig[]   @relation("FaviconImage") // Header favicon image
 
   @@map("media")
 }
 
 // Exhibition items (for Home page)
 model ExhibitionItem {
-  id          String    @id @default(cuid())
-  sectionId   String    @map("section_id")
-  section     Section   @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  year        String
-  mediaId     String    @map("media_id")
-  media       Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-  order       Int       @default(0)
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id        String   @id @default(cuid())
+  sectionId String   @map("section_id")
+  section   Section  @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  year      String
+  mediaId   String   @map("media_id")
+  media     Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  order     Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([sectionId, order])
-  @@map("exhibition_items")
   @@index([sectionId])
   @@index([mediaId])
+  @@map("exhibition_items")
 }
 
 // Work portfolio items (for Home page)
 model WorkPortfolio {
-  id          String    @id @default(cuid())
-  sectionId   String    @map("section_id")
-  section     Section   @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  title       String
-  category    String
-  mediaId     String    @map("media_id")
-  media       Media     @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-  order       Int       @default(0)
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id        String   @id @default(cuid())
+  sectionId String   @map("section_id")
+  section   Section  @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  title     String
+  category  String
+  mediaId   String   @map("media_id")
+  media     Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  order     Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([sectionId, order])
-  @@map("work_portfolios")
   @@index([sectionId])
   @@index([mediaId])
+  @@map("work_portfolios")
 }
 
 // Navigation menu items
 model Navigation {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   label     String
   href      String
-  order     Int       @default(0)
-  isActive  Boolean   @default(true) @map("is_active")
-  parentId  String?   @map("parent_id")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  order     Int      @default(0)
+  isActive  Boolean  @default(true) @map("is_active")
+  parentId  String?  @map("parent_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([order])
   @@map("navigation")
@@ -173,123 +175,136 @@ model Navigation {
 
 // Footer content
 model Footer {
-  id          String    @id @default(cuid())
-  title       String    @default("숙명여자대학교 시각영상디자인과")
+  id          String   @id @default(cuid())
+  title       String   @default("숙명여자대학교 시각영상디자인과")
   description String?
   address     String?
   phone       String?
   email       String?
-  socialLinks Json?     @map("social_links")
+  socialLinks Json?    @map("social_links")
   copyright   String?
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("footer")
 }
 
 // Work/Portfolio items (Legacy - kept for backward compatibility)
 model Work {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
   description String?
   content     Json?
-  mediaIds    Json?     @map("media_ids")
-  order       Int       @default(0)
-  published   Boolean   @default(true)
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  mediaIds    Json?    @map("media_ids")
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("works")
 }
 
 // Work 프로젝트 (포트폴리오 아카이브 - NEW 2026-02-15)
 model WorkProject {
-  id              String    @id @default(cuid())
-  slug            String    @unique                    // URL용 (기존 '1', '2', ... '12')
-  title           String                               // 'Vora', 'Mindit', etc.
-  subtitle        String                               // '권나연 외 3명, 2025'
-  category        String                               // 'UX/UI', 'Branding', 'Motion', 'Game'
-  tags            String[]                             // PostgreSQL 배열
-  author          String                               // 작가명
-  email           String                               // 이메일
-  description     String    @default("")               // 프로젝트 설명
-  year            String    @default("2025")           // 연도
-  heroImage       String    @map("hero_image")         // 상세 히어로 이미지 경로
-  thumbnailImage  String    @map("thumbnail_image")    // 목록 썸네일 경로
-  galleryImages   Json      @default("[]") @map("gallery_images")  // 갤러리 이미지 배열
-  content         Json?                                // BlockEditor 컨텐츠 (블록 배열)
-  order           Int       @default(0)                // 표시 순서
-  published       Boolean   @default(true)             // 공개 여부
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
+  id             String   @id @default(cuid())
+  slug           String   @unique // URL용 (기존 '1', '2', ... '12')
+  title          String // 'Vora', 'Mindit', etc.
+  subtitle       String // '권나연 외 3명, 2025'
+  category       String // 'UX/UI', 'Branding', 'Motion', 'Game'
+  tags           String[] // PostgreSQL 배열
+  author         String // 작가명
+  email          String // 이메일
+  description    String   @default("") // 프로젝트 설명
+  year           String   @default("2025") // 연도
+  heroImage      String   @map("hero_image") // 상세 히어로 이미지 경로
+  thumbnailImage String   @map("thumbnail_image") // 목록 썸네일 경로
+  galleryImages  Json     @default("[]") @map("gallery_images") // 갤러리 이미지 배열
+  content        Json? // BlockEditor 컨텐츠 (블록 배열)
+  order          Int      @default(0) // 표시 순서
+  published      Boolean  @default(true) // 공개 여부
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
-  @@map("work_projects")
   @@index([category])
   @@index([order])
+  @@map("work_projects")
 }
 
 // Work 전시 아이템 (Exhibition 탭 - NEW 2026-02-15)
 model WorkExhibition {
-  id          String    @id @default(cuid())
-  title       String                               // 'Vora', 'GALJIDO' 등
-  subtitle    String                               // '권나연 외 3명, 2025'
-  artist      String                               // 작가명
-  image       String                               // 전시 이미지 경로
-  year        String    @default("2025")           // 연도
-  order       Int       @default(0)                // 표시 순서
-  published   Boolean   @default(true)             // 공개 여부
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id        String   @id @default(cuid())
+  title     String // 'Vora', 'GALJIDO' 등
+  subtitle  String // '권나연 외 3명, 2025'
+  artist    String // 작가명
+  image     String // 전시 이미지 경로
+  year      String   @default("2025") // 연도
+  order     Int      @default(0) // 표시 순서
+  published Boolean  @default(true) // 공개 여부
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("work_exhibitions")
   @@index([order])
+  @@map("work_exhibitions")
 }
 
 // News & Events (개선된 모델 - 2026-02-15)
 model NewsEvent {
-  id              String    @id @default(cuid())
-  slug            String    @unique                    // URL용 (기존 '1'~'10')
-  title           String                               // 목록 제목
-  category        String    @default("Notice")         // 'Notice', 'Event', 'Awards', 'Recruiting'
-  excerpt         String?                              // 목록 설명 (2줄 요약)
-  thumbnailImage  String    @default("/Group-27.svg") @map("thumbnail_image")  // 썸네일 경로
-  content         Json?                                // 상세 페이지 데이터
-  attachments     Json?                                // 첨부 파일 배열 [{id, filename, filepath, mimeType, size, uploadedAt}] (NEW - 2026-02-16)
-  publishedAt     DateTime  @map("published_at")       // 표시 날짜
-  published       Boolean   @default(true)
-  order           Int       @default(0)                // 표시 순서
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
+  id             String   @id @default(cuid())
+  slug           String   @unique // URL용 (기존 '1'~'10')
+  title          String // 목록 제목
+  category       String   @default("Notice") // 'Notice', 'Event', 'Awards', 'Recruiting'
+  excerpt        String? // 목록 설명 (2줄 요약)
+  thumbnailImage String   @default("/Group-27.svg") @map("thumbnail_image") // 썸네일 경로
+  content        Json? // 상세 페이지 데이터
+  attachments    Json? // 첨부 파일 배열 [{id, filename, filepath, mimeType, size, uploadedAt}] (NEW - 2026-02-16)
+  publishedAt    DateTime @map("published_at") // 표시 날짜
+  published      Boolean  @default(true)
+  order          Int      @default(0) // 표시 순서
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
-  @@map("news_events")
   @@index([category])
   @@index([order])
   @@index([publishedAt])
+  @@map("news_events")
 }
 
 // Faculty & Staff (Enhanced for About page - 2026-02-15)
 model People {
-  id            String    @id @default(cuid())
-  name          String
-  title         String
-  role          String?   // "professor" | "instructor"
-  office        String?   // 연구실 위치
-  email         String[]  // 여러 이메일 지원
-  phone         String?
-  homepage      String?   // 홈페이지 URL
-  major         String?   // 전공
-  specialty     String?   // 전문분야
-  badge         String?   // 뱃지 ("Research & Mentoring", "User Experience" 등)
-  profileImage  String?   @map("profile_image") // 프로필 이미지 경로
-  courses       Json?     // { undergraduate: string[], graduate: string[] }
-  biography     Json?     // { cvText, position, education[], experience[] }
-  mediaId       String?   @map("media_id")
-  media         Media?    @relation(fields: [mediaId], references: [id], onDelete: SetNull)
-  order         Int       @default(0)
-  published     Boolean   @default(true)
-  archivedAt    DateTime? @map("archived_at") // Soft delete
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  id           String    @id @default(cuid())
+  name         String
+  title        String
+  role         String? // "professor" | "instructor"
+  office       String? // 연구실 위치
+  email        String[] // 여러 이메일 지원
+  phone        String?
+  homepage     String? // 홈페이지 URL
+  major        String? // 전공
+  specialty    String? // 전문분야
+  badge        String? // 뱃지 ("Research & Mentoring", "User Experience" 등)
+  profileImage String?   @map("profile_image") // 프로필 이미지 경로
+  courses      Json? // { undergraduate: string[], graduate: string[] }
+  biography    Json? // { cvText, position, education[], experience[] }
+  mediaId      String?   @map("media_id")
+  media        Media?    @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+  order        Int       @default(0)
+  published    Boolean   @default(true)
+  archivedAt   DateTime? @map("archived_at") // Soft delete
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
 
   @@index([order])
   @@map("people")
+}
+
+// Header configuration (logo, favicon - NEW 2026-02-17)
+model HeaderConfig {
+  id             String   @id @default(cuid())
+  logoImageId    String?  @map("logo_image_id")
+  logoImage      Media?   @relation("LogoImage", fields: [logoImageId], references: [id], onDelete: SetNull)
+  faviconImageId String?  @map("favicon_image_id")
+  faviconImage   Media?   @relation("FaviconImage", fields: [faviconImageId], references: [id], onDelete: SetNull)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("header_config")
 }

@@ -12,24 +12,37 @@ export const metadata = {
 
 export default async function HomePage() {
   try {
-    const page = await prisma.page.findUnique({
-      where: { slug: 'home' },
-      include: {
-        sections: {
-          orderBy: { order: 'asc' },
-          include: {
-            exhibitionItems: {
-              orderBy: { order: 'asc' },
-              include: { media: true },
-            },
-            workPortfolios: {
-              orderBy: { order: 'asc' },
-              include: { media: true },
+    const [page, navigationItems, headerConfig, footer] = await Promise.all([
+      prisma.page.findUnique({
+        where: { slug: 'home' },
+        include: {
+          sections: {
+            orderBy: { order: 'asc' },
+            include: {
+              exhibitionItems: {
+                orderBy: { order: 'asc' },
+                include: { media: true },
+              },
+              workPortfolios: {
+                orderBy: { order: 'asc' },
+                include: { media: true },
+              },
             },
           },
         },
-      },
-    });
+      }),
+      prisma.navigation.findMany({
+        where: { isActive: true },
+        orderBy: { order: 'asc' },
+      }),
+      prisma.headerConfig.findFirst({
+        include: {
+          logoImage: true,
+          faviconImage: true,
+        },
+      }),
+      prisma.footer.findFirst(),
+    ]);
 
     // Extract sections
     const exhibitionSection = page?.sections.find(
@@ -62,11 +75,50 @@ export default async function HomePage() {
       ? (aboutSection.content as Record<string, unknown>)?.description as string || ''
       : '';
 
+    // Map navigation items
+    const navigation = navigationItems.map((item) => ({
+      id: item.id,
+      label: item.label,
+      href: item.href,
+      order: item.order,
+      isActive: item.isActive,
+      parentId: item.parentId,
+    }));
+
+    // Map header config
+    const headerConfigData = headerConfig
+      ? {
+          logoImagePath: headerConfig.logoImage?.filepath ?? null,
+          faviconImagePath: headerConfig.faviconImage?.filepath ?? null,
+        }
+      : undefined;
+
+    // Map footer data
+    const footerData = footer
+      ? {
+          title: footer.title,
+          description: footer.description ?? undefined,
+          address: footer.address ?? undefined,
+          phone: footer.phone ?? undefined,
+          email: footer.email ?? undefined,
+        }
+      : undefined;
+
+    // Parse social links
+    const socialLinks = footer?.socialLinks as
+      | Record<string, { url: string; isActive: boolean }>
+      | null
+      | undefined;
+
     return (
       <HomePageContent
         exhibitionItems={exhibitionItems}
         workItems={workItems}
         aboutContent={aboutContent}
+        navigation={navigation}
+        headerConfig={headerConfigData}
+        footerData={footerData}
+        socialLinks={socialLinks ?? undefined}
       />
     );
   } catch (error) {

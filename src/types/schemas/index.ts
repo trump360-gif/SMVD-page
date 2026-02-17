@@ -153,25 +153,62 @@ export const NavigationItemSchema = z.object({
   href: z.string(),
   order: z.number(),
   isActive: z.boolean(),
+  parentId: z.string().nullable().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
 
 export type NavigationItem = z.infer<typeof NavigationItemSchema>;
 
-export const CreateNavigationItemSchema = z.object({
+export const CreateNavigationSchema = z.object({
   label: z.string().min(1, "메뉴 이름은 필수입니다"),
-  href: z.string().url("유효한 URL을 입력하세요"),
-  isActive: z.boolean().default(true),
+  href: z.string().min(1, "href는 필수입니다"),
+  parentId: z.string().optional(),
 });
 
-export type CreateNavigationItemInput = z.infer<typeof CreateNavigationItemSchema>;
+export type CreateNavigationInput = z.infer<typeof CreateNavigationSchema>;
 
-export const UpdateNavigationItemSchema = CreateNavigationItemSchema.partial();
+export const UpdateNavigationSchema = CreateNavigationSchema.partial().extend({
+  parentId: z.string().nullable().optional(),
+});
 
-export type UpdateNavigationItemInput = z.infer<typeof UpdateNavigationItemSchema>;
+export type UpdateNavigationInput = z.infer<typeof UpdateNavigationSchema>;
+
+export const ReorderNavigationSchema = z.object({
+  items: z.array(
+    z.object({
+      id: z.string(),
+      order: z.number().int().min(0),
+    })
+  ).min(1, "최소 1개 이상의 항목이 필요합니다"),
+});
+
+export type ReorderNavigationInput = z.infer<typeof ReorderNavigationSchema>;
+
+// Legacy aliases (하위 호환성 유지)
+export const CreateNavigationItemSchema = CreateNavigationSchema;
+export type CreateNavigationItemInput = CreateNavigationInput;
+export const UpdateNavigationItemSchema = UpdateNavigationSchema;
+export type UpdateNavigationItemInput = UpdateNavigationInput;
 
 // Footer schemas
+export const SOCIAL_PLATFORMS = ['instagram', 'youtube', 'facebook', 'twitter', 'linkedin'] as const;
+export type SocialPlatform = typeof SOCIAL_PLATFORMS[number];
+
+export const PlatformSchema = z.enum(SOCIAL_PLATFORMS);
+
+export const SocialLinkItemSchema = z.object({
+  url: z.string(),
+  isActive: z.boolean(),
+});
+
+export type SocialLinkItem = z.infer<typeof SocialLinkItemSchema>;
+
+export const SocialLinksMapSchema = z.record(
+  PlatformSchema,
+  SocialLinkItemSchema
+);
+
 export const FooterSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -179,7 +216,7 @@ export const FooterSchema = z.object({
   address: z.string().nullable(),
   phone: z.string().nullable(),
   email: z.string().nullable(),
-  socialLinks: z.array(z.object({ text: z.string(), href: z.string() })).optional(),
+  socialLinks: SocialLinksMapSchema.nullable().optional(),
   copyright: z.string().nullable(),
   updatedAt: z.date(),
 });
@@ -192,11 +229,40 @@ export const UpdateFooterSchema = z.object({
   address: z.string().nullable().optional(),
   phone: z.string().nullable().optional(),
   email: z.string().nullable().optional(),
-  socialLinks: z.array(z.object({ text: z.string(), href: z.string() })).optional(),
   copyright: z.string().nullable().optional(),
+  // socialLinks는 /api/admin/footer/social-links/:platform 경로로 관리되지만,
+  // 공개 API(/api/footer) 하위 호환성을 위해 유지
+  socialLinks: z.array(z.object({ text: z.string(), href: z.string() })).optional(),
 });
 
 export type UpdateFooterInput = z.infer<typeof UpdateFooterSchema>;
+
+export const AddSocialLinkSchema = z.object({
+  url: z.string().url('유효한 URL이어야 합니다'),
+  isActive: z.boolean().default(true),
+});
+
+export type AddSocialLinkInput = z.infer<typeof AddSocialLinkSchema>;
+
+// Header config schemas
+export const HeaderConfigSchema = z.object({
+  id: z.string(),
+  logoImageId: z.string().nullable(),
+  logoImage: MediaSchema.nullable().optional(),
+  faviconImageId: z.string().nullable(),
+  faviconImage: MediaSchema.nullable().optional(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+export type HeaderConfig = z.infer<typeof HeaderConfigSchema>;
+
+export const UpdateHeaderConfigSchema = z.object({
+  logoImageId: z.string().nullable().optional(),
+  faviconImageId: z.string().nullable().optional(),
+});
+
+export type UpdateHeaderConfigInput = z.infer<typeof UpdateHeaderConfigSchema>;
 
 // API response schemas
 export const ApiErrorSchema = z.object({

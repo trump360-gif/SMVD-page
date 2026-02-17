@@ -14,8 +14,6 @@ interface SidebarItem {
 }
 
 const sidebarItems: SidebarItem[] = [
-  { href: '/admin/dashboard', label: '대시보드', icon: '📊' },
-
   // 페이지 관리 섹션
   { href: '/admin/dashboard/home', label: '홈', icon: '🏠', category: '페이지 관리' },
   { href: '/admin/dashboard/about', label: 'About', icon: '📚', category: '페이지 관리' },
@@ -25,7 +23,6 @@ const sidebarItems: SidebarItem[] = [
 
   { href: '/admin/navigation', label: '네비게이션', icon: '🔗' },
   { href: '/admin/footer', label: '푸터', icon: '📌' },
-  { href: '/admin/media', label: '미디어', icon: '🖼️' },
 ];
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {

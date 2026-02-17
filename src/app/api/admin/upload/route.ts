@@ -1,4 +1,7 @@
 import { NextRequest } from "next/server";
+import { promises as fs } from "fs";
+import path from "path";
+import crypto from "crypto";
 import { prisma } from "@/lib/db";
 import { checkAdminAuth } from "@/lib/auth-check";
 import {
@@ -14,7 +17,7 @@ import { validateFileContent } from "@/lib/file-validation";
 import { logger } from "@/lib/logger";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
 
 /**
  * POST /api/admin/upload
@@ -55,34 +58,68 @@ export async function POST(request: NextRequest) {
     // 파일을 Buffer로 변환
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // 매직 바이트 검증 (파일 실제 내용 확인 - Content-Type 위조 방지)
-    const fileValidation = validateFileContent(buffer, ALLOWED_TYPES);
-    if (!fileValidation.valid) {
-      return errorResponse(
-        fileValidation.message || "파일이 손상되었거나 위조되었습니다",
-        "INVALID_FILE_CONTENT",
-        400
-      );
+    // SVG는 검증 스킵 (XML 기반이므로 매직 바이트 검증 불필요)
+    if (file.type !== "image/svg+xml") {
+      // 매직 바이트 검증 (파일 실제 내용 확인 - Content-Type 위조 방지)
+      const fileValidation = validateFileContent(buffer, ALLOWED_TYPES);
+      if (!fileValidation.valid) {
+        return errorResponse(
+          fileValidation.message || "파일이 손상되었거나 위조되었습니다",
+          "INVALID_FILE_CONTENT",
+          400
+        );
+      }
     }
 
-    // 이미지 처리 (WebP 변환)
-    const processed = await processImage(buffer);
+    // SVG는 그대로 저장, 다른 이미지는 WebP 변환
+    let filename: string;
+    let filepath: string;
+    let mimeType: string;
+    let width: number = 0;
+    let height: number = 0;
+    let fileSize: number;
 
-    // 처리된 이미지 저장
-    const saved = await saveProcessedImage(processed, {
-      altText: altText || undefined,
-    });
+    if (file.type === "image/svg+xml") {
+      // SVG 파일 직접 저장
+      const now = new Date();
+      const yearMonth = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, "0")}`;
+      const dir = path.join(process.cwd(), "public", "uploads", yearMonth);
+      await fs.mkdir(dir, { recursive: true });
+
+      filename = `${crypto.randomBytes(8).toString("hex")}.svg`;
+      const fullPath = path.join(dir, filename);
+      await fs.writeFile(fullPath, buffer);
+
+      filepath = `/uploads/${yearMonth}/${filename}`;
+      mimeType = "image/svg+xml";
+      fileSize = buffer.length;
+    } else {
+      // 이미지 처리 (WebP 변환)
+      const processed = await processImage(buffer);
+
+      // 처리된 이미지 저장
+      const saved = await saveProcessedImage(processed, {
+        altText: altText || undefined,
+      });
+
+      filename = saved.filename;
+      filepath = saved.path;
+      mimeType = "image/webp";
+      width = saved.width;
+      height = saved.height;
+      fileSize = processed.webp.length;
+    }
 
     // DB에 메타 정보 저장
     const media = await prisma.media.create({
       data: {
-        filename: saved.filename,
-        filepath: saved.path,
-        mimeType: "image/webp",
-        size: processed.webp.length,
-        width: saved.width,
-        height: saved.height,
-        altText: saved.altText,
+        filename,
+        filepath,
+        mimeType,
+        size: fileSize,
+        width,
+        height,
+        altText: altText || undefined,
         formats: {
           original: file.type,
           size: file.size,
