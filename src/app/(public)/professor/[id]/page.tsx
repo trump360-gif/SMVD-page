@@ -4,6 +4,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Header, Footer } from '@/components/public/home';
 import { useResponsive } from '@/lib/responsive';
+import { PADDING } from '@/constants/responsive';
 
 interface Professor {
   id: string;
@@ -197,6 +198,72 @@ export default function ProfessorDetailPage() {
   return (
     <div>
       <Header />
+
+      {/* Tab Header Section - About Major / Our People */}
+      <div
+        style={{
+          width: '100%',
+          paddingTop: isMobile ? '24px' : isTablet ? '32px' : '60px',
+          paddingBottom: '0px',
+          paddingLeft: `${isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop}px`,
+          paddingRight: `${isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop}px`,
+          backgroundColor: '#ffffffff',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+          }}
+        >
+          {/* Tab Buttons */}
+          <div
+            style={{
+              display: 'flex',
+              gap: isMobile ? '20px' : isTablet ? '30px' : '40px',
+              borderBottom: '1px solid #141414ff',
+              paddingBottom: '10px',
+            }}
+          >
+            <button
+              onClick={() => router.push('/about')}
+              style={{
+                backgroundColor: 'transparent',
+                border: 'none',
+                fontSize: isMobile ? '16px' : isTablet ? '18px' : '24px',
+                fontWeight: '400',
+                color: '#141414ff',
+                fontFamily: 'Inter',
+                cursor: 'pointer',
+                padding: '0',
+                transition: 'all 0.2s ease',
+                paddingBottom: '10px',
+                marginBottom: '-10px',
+              }}
+            >
+              About Major
+            </button>
+            <button
+              style={{
+                backgroundColor: 'transparent',
+                border: 'none',
+                fontSize: isMobile ? '16px' : isTablet ? '18px' : '24px',
+                fontWeight: '700',
+                color: '#141414ff',
+                fontFamily: 'Inter',
+                cursor: 'default',
+                padding: '0',
+                borderBottom: '2px solid #141414ff',
+                paddingBottom: '10px',
+                marginBottom: '-10px',
+              }}
+            >
+              Our People
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Main Content */}
       <div
