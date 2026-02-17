@@ -1,16 +1,13 @@
-'use client';
+import DOMPurify from 'isomorphic-dompurify';
+import { SANITIZE_CONFIG } from './sanitize-config';
 
 /**
- * Markdown 콘텐츠 기본 검증
- * 위험한 태그는 제거하지만 일반 마크다운은 허용
+ * DOMPurify 기반 XSS 방지 sanitize 함수
+ * - 화이트리스트 기반 태그/속성 필터링
+ * - SVG, 이벤트 핸들러, script 태그 등 모든 XSS 벡터 차단
+ * - 마크다운 렌더링에 필요한 태그는 그대로 허용
  */
 export const sanitizeContent = (content: string | null | undefined): string => {
   if (!content) return '';
-
-  // 기본 검증: script 태그 제거
-  let sanitized = content
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '');
-
-  return sanitized;
+  return DOMPurify.sanitize(content, SANITIZE_CONFIG);
 };
