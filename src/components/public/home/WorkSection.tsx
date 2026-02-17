@@ -203,7 +203,8 @@ export default function WorkSection({
             flex: 1,
             display: 'grid',
             gridTemplateColumns: gridColumns,
-            gap: `${gridGap}px`,
+            columnGap: `${gridGap}px`,
+            rowGap: '32px',
           }}
         >
           {filteredItems.map((item, idx) => (
@@ -222,7 +223,7 @@ export default function WorkSection({
                   aspectRatio: '530 / 286',
                   backgroundColor: '#e1e1e1ff',
                   overflow: 'hidden',
-                  marginBottom: '12px',
+                  marginBottom: '0px',
                 }}
               >
                 <Image
