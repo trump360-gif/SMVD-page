@@ -1,3 +1,6 @@
+'use client';
+
+import { useResponsive } from '@/lib/responsive';
 import type { Semester } from './types';
 
 interface SemesterGridProps {
@@ -9,11 +12,22 @@ export default function SemesterGrid({
   semesters,
   checkedClassification,
 }: SemesterGridProps) {
+  const { isMobile, isTablet } = useResponsive();
+
+  // Responsive grid columns: 1 column on mobile, 2 on tablet, 4 on desktop
+  const gridColumns = isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)';
+
+  // Responsive course item styles
+  const courseHeight = isMobile ? 'auto' : '95px';
+  const coursePadding = isMobile ? '16px 0' : '35px 0';
+  const courseFontSize = isMobile ? '14px' : '18px';
+  const semesterTitleFontSize = isMobile ? '14px' : '18px';
+
   return (
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
+        gridTemplateColumns: gridColumns,
         gap: '10px',
         rowGap: '60px',
         width: '100%',
@@ -28,7 +42,7 @@ export default function SemesterGrid({
           {/* Semester Title */}
           <h3
             style={{
-              fontSize: '18px',
+              fontSize: semesterTitleFontSize,
               fontWeight: '500',
               color: '#000000ff',
               fontFamily: 'Pretendard',
@@ -50,8 +64,8 @@ export default function SemesterGrid({
                     display: 'flex',
                     alignItems: 'center',
                     gap: '10px',
-                    height: '95px',
-                    padding: '35px 0',
+                    height: courseHeight,
+                    padding: coursePadding,
                     backgroundColor: isMatchedClassification
                       ? '#f0f0f0ff'
                       : '#ffffffff',
@@ -73,7 +87,7 @@ export default function SemesterGrid({
                   {/* Course Name */}
                   <p
                     style={{
-                      fontSize: '18px',
+                      fontSize: courseFontSize,
                       fontWeight: '500',
                       color: '#353030ff',
                       fontFamily: 'Pretendard',
