@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useResponsive } from '@/lib/responsive';
 
 interface WorkItem {
   src: string;
@@ -35,10 +36,28 @@ export default function WorkSection({
   items = workItems,
 }: WorkSectionProps) {
   const [activeCategory, setActiveCategory] = useState('All');
+  const { isMobile, isTablet, isDesktop } = useResponsive();
 
   const filteredItems = activeCategory === 'All'
     ? items
     : items.filter(item => item.category === activeCategory || item.category === (activeCategory === 'Game design' ? 'Game' : activeCategory));
+
+  // 반응형 값 계산
+  const sectionPaddingTop = isMobile ? '32px' : isTablet ? '48px' : '61px';
+  const sectionPaddingBottom = isMobile ? '32px' : isTablet ? '48px' : '61px';
+  const headerPadding = isMobile ? '16px' : isTablet ? '24px' : '40px';
+  const mainGap = isMobile ? '24px' : isTablet ? '40px' : '60px';
+  const sidebarWidth = isMobile ? '100%' : isTablet ? '100px' : '200px';
+  const sidebarFlexDirection = isMobile || isTablet ? 'row' : 'column';
+  const sidebarGap = isMobile ? '8px' : isTablet ? '12px' : '20px';
+  const buttonFontSize = isMobile ? '18px' : isTablet ? '24px' : '32px';
+  const buttonHeight = isMobile ? '44px' : isTablet ? '50px' : '56px';
+  const gridColumns = isMobile ? '1fr' : isTablet ? '1fr' : 'repeat(2, 1fr)';
+  const gridGap = isMobile ? '24px' : isTablet ? '40px' : '60px';
+  const headerFontSize = isMobile ? '28px' : isTablet ? '40px' : '48px';
+  const moreTextFontSize = isMobile ? '14px' : isTablet ? '16px' : '18px';
+  const itemTitleFontSize = isMobile ? '18px' : isTablet ? '19px' : '20px';
+  const itemCategoryFontSize = isMobile ? '14px' : isTablet ? '16px' : '18px';
 
   return (
     <section
@@ -47,8 +66,8 @@ export default function WorkSection({
         width: '100%',
         backgroundColor: '#ffffffff',
         borderTop: '1px solid #adadadff',
-        paddingTop: '61px',
-        paddingBottom: '61px',
+        paddingTop: sectionPaddingTop,
+        paddingBottom: sectionPaddingBottom,
       }}
     >
       {/* Header */}
@@ -57,56 +76,61 @@ export default function WorkSection({
           width: '100%',
           maxWidth: '1440px',
           margin: '0 auto',
-          paddingLeft: '40px',
-          paddingRight: '40px',
-          marginBottom: '48px',
+          paddingLeft: headerPadding,
+          paddingRight: headerPadding,
+          marginBottom: isMobile ? '32px' : '48px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           paddingBottom: '0',
           borderBottom: '1px solid #adadadff',
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: isMobile ? '12px' : '0',
         }}
       >
         <h2
           style={{
-            fontSize: '48px',
+            fontSize: headerFontSize,
             fontWeight: '500',
             color: '#000000ff',
             fontFamily: 'Inter',
             margin: '0',
             letterSpacing: '-0.128px',
             lineHeight: 1.5,
-            paddingBottom: '0',
+            paddingBottom: isMobile ? '12px' : '0',
+            width: isMobile ? '100%' : 'auto',
           }}
         >
           {title}
         </h2>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-          }}
-        >
-          <span
+        {!isMobile && (
+          <div
             style={{
-              fontSize: '18px',
-              fontWeight: 'normal',
-              color: '#000000ff',
-              fontFamily: 'Inter',
-              letterSpacing: '-0.439px',
-              lineHeight: 1.5,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
             }}
           >
-            More
-          </span>
-          <img
-            src="/images/icon/Right-3.svg"
-            alt="more"
-            width={14}
-            height={14}
-          />
-        </div>
+            <span
+              style={{
+                fontSize: moreTextFontSize,
+                fontWeight: 'normal',
+                color: '#000000ff',
+                fontFamily: 'Inter',
+                letterSpacing: '-0.439px',
+                lineHeight: 1.5,
+              }}
+            >
+              More
+            </span>
+            <img
+              src="/images/icon/Right-3.svg"
+              alt="more"
+              width={14}
+              height={14}
+            />
+          </div>
+        )}
       </div>
 
       {/* Main Container: Sidebar + Grid */}
@@ -115,20 +139,23 @@ export default function WorkSection({
           width: '100%',
           maxWidth: '1440px',
           margin: '0 auto',
-          paddingLeft: '40px',
-          paddingRight: '40px',
+          paddingLeft: headerPadding,
+          paddingRight: headerPadding,
           display: 'flex',
-          gap: '60px',
+          flexDirection: isMobile || isTablet ? 'column' : 'row',
+          gap: mainGap,
         }}
       >
         {/* Sidebar Filter */}
         <div
           style={{
-            width: '200px',
+            width: sidebarWidth,
             flexShrink: 0,
             display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
+            flexDirection: sidebarFlexDirection,
+            gap: sidebarGap,
+            overflowX: isMobile || isTablet ? 'auto' : 'visible',
+            paddingBottom: isMobile || isTablet ? '8px' : '0',
           }}
         >
           {categories.map((category) => (
@@ -139,11 +166,11 @@ export default function WorkSection({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '5px',
-                padding: activeCategory === category ? '0 4px' : '0',
-                minWidth: activeCategory === category ? '185px' : 'auto',
-                height: '56px',
-                fontSize: '32px',
-                fontWeight: activeCategory === category ? 'normal' : 'normal',
+                padding: activeCategory === category ? '0 8px' : '0',
+                minWidth: activeCategory === category ? 'auto' : 'auto',
+                height: buttonHeight,
+                fontSize: buttonFontSize,
+                fontWeight: 'normal',
                 fontFamily: 'Inter',
                 letterSpacing: '0.406px',
                 lineHeight: 1.5,
@@ -175,8 +202,8 @@ export default function WorkSection({
           style={{
             flex: 1,
             display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '60px',
+            gridTemplateColumns: gridColumns,
+            gap: `${gridGap}px`,
           }}
         >
           {filteredItems.map((item, idx) => (
@@ -212,15 +239,17 @@ export default function WorkSection({
               <div
                 style={{
                   display: 'flex',
-                  alignItems: 'center',
                   justifyContent: 'space-between',
                   paddingTop: '14px',
                   borderTop: '1px solid #e1e1e1ff',
+                  flexDirection: isMobile ? 'column' : 'row',
+                  gap: isMobile ? '8px' : '0',
+                  alignItems: isMobile ? 'flex-start' : 'center',
                 }}
               >
                 <h3
                   style={{
-                    fontSize: '20px',
+                    fontSize: itemTitleFontSize,
                     fontWeight: '500',
                     color: '#000000ff',
                     fontFamily: 'Inter',
@@ -233,7 +262,7 @@ export default function WorkSection({
                 </h3>
                 <span
                   style={{
-                    fontSize: '18px',
+                    fontSize: itemCategoryFontSize,
                     fontWeight: 'normal',
                     color: '#000000ff',
                     fontFamily: 'Inter',
