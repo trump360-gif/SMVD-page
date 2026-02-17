@@ -52,7 +52,7 @@ export interface CreateProjectInput {
   thumbnailImage: string;
   galleryImages: string[];
   published?: boolean;
-  content?: Record<string, any>; // BlockEditor content with blocks array
+  content?: BlogContent; // BlockEditor content with blocks array
 }
 
 export interface UpdateProjectInput {
@@ -68,7 +68,7 @@ export interface UpdateProjectInput {
   thumbnailImage?: string;
   galleryImages?: string[];
   published?: boolean;
-  content?: Record<string, any>; // BlockEditor content with blocks array
+  content?: BlogContent; // BlockEditor content with blocks array
 }
 
 export interface CreateExhibitionInput {
