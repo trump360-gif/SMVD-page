@@ -1,16 +1,28 @@
 'use client';
 
+import { useResponsive } from '@/lib/responsive';
+import { PADDING } from '@/constants/responsive';
+
 export default function Footer() {
+  const { isMobile, isTablet } = useResponsive();
+
+  const footerPadding = isMobile ? '32px' : isTablet ? '48px' : '81px';
+  const padding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop;
+  const footerGap = isMobile ? '24px' : '40px';
+  const fontSize = isMobile ? '14px' : isTablet ? '15px' : '16px';
+  const iconSize = isMobile ? '24px' : '31px';
+  const iconHeight = isMobile ? '24px' : '32px';
+
   return (
     <footer
       style={{
         width: '100%',
         backgroundColor: '#ebeef4ff',
         borderTop: '1px solid #e5e7ebff',
-        paddingTop: '81px',
-        paddingBottom: '81px',
-        paddingLeft: '40px',
-        paddingRight: '40px',
+        paddingTop: footerPadding,
+        paddingBottom: footerPadding,
+        paddingLeft: `${padding}px`,
+        paddingRight: `${padding}px`,
       }}
     >
       <div
@@ -18,8 +30,8 @@ export default function Footer() {
           maxWidth: '1440px',
           margin: '0 auto',
           display: 'flex',
-          flexDirection: 'column',
-          gap: '40px',
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: footerGap,
           width: '100%',
         }}
       >
@@ -36,8 +48,8 @@ export default function Footer() {
           <img
             src="/images/icon/Group-27-3.svg"
             alt="logo"
-            width={31}
-            height={32}
+            width={isMobile ? 24 : 31}
+            height={isMobile ? 24 : 32}
             style={{ display: 'block' }}
           />
 
@@ -51,7 +63,7 @@ export default function Footer() {
           >
             <p
               style={{
-                fontSize: '16px',
+                fontSize,
                 fontWeight: '700',
                 color: '#434850ff',
                 fontFamily: 'Inter',
@@ -64,7 +76,7 @@ export default function Footer() {
             </p>
             <p
               style={{
-                fontSize: '16px',
+                fontSize,
                 fontWeight: '400',
                 color: '#434850ff',
                 fontFamily: 'Inter',
