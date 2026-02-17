@@ -2,9 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useResponsive } from '@/lib/responsive';
+import { PADDING } from '@/constants/responsive';
 
 export default function Header() {
   const pathname = usePathname();
+  const { isMobile, isTablet } = useResponsive();
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
@@ -18,24 +21,32 @@ export default function Header() {
     { label: 'News&Event', href: '/news' },
   ];
 
+  // 반응형 값 계산
+  const headerHeight = isMobile ? '64px' : isTablet ? '72px' : '80px';
+  const headerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop;
+  const headerPaddingLeft = isMobile ? `${PADDING.mobile}px` : isTablet ? `${PADDING.tablet}px` : '55.5px';
+  const headerPaddingRight = isMobile ? `${PADDING.mobile}px` : isTablet ? `${PADDING.tablet}px` : '55.5px';
+  const logoSize = isMobile ? '36px' : '42px';
+  const navGap = isMobile ? '8px' : isTablet ? '12px' : '18px';
+
   return (
     <header
       style={{
         width: '100%',
-        height: '80px',
+        height: headerHeight,
         backgroundColor: '#ffffffff',
         display: 'flex',
         alignItems: 'center',
-        paddingLeft: '55.5px',
-        paddingRight: '55.5px',
+        paddingLeft: headerPaddingLeft,
+        paddingRight: headerPaddingRight,
       }}
     >
       {/* Logo */}
       <Link
         href="/"
         style={{
-          width: '42px',
-          height: '42px',
+          width: logoSize,
+          height: logoSize,
           marginRight: 'auto',
           display: 'flex',
           alignItems: 'center',
@@ -76,7 +87,7 @@ export default function Header() {
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '18px',
+          gap: navGap,
           height: '38px',
         }}
       >
