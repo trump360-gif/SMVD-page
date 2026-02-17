@@ -53,7 +53,7 @@ export default function WorkSection({
   const buttonFontSize = isMobile ? '18px' : isTablet ? '24px' : '32px';
   const buttonHeight = isMobile ? '44px' : isTablet ? '50px' : '56px';
   const gridColumns = isMobile ? '1fr' : isTablet ? '1fr' : 'repeat(2, 1fr)';
-  const gridGap = isMobile ? 24 : isTablet ? 40 : 100;
+  const gridGap = isMobile ? 24 : isTablet ? 40 : 50;
   const headerFontSize = isMobile ? '28px' : isTablet ? '40px' : '48px';
   const moreTextFontSize = isMobile ? '14px' : isTablet ? '16px' : '18px';
   const itemTitleFontSize = isMobile ? '18px' : isTablet ? '19px' : '20px';
