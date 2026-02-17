@@ -118,8 +118,8 @@ export default function OurPeopleTab({
   const headingFlexShrink = isMobile ? undefined : 0;
   const profSectionDirection = isMobile ? 'column' : 'row' as const;
   const profListGap = isMobile ? '40px' : isTablet ? '12px' : '20px';
-  const profListWrap = isMobile ? 'wrap' : isTablet ? 'wrap' : 'nowrap' as const;
-  const cardWidth = isMobile ? 'calc(50% - 20px)' : isTablet ? '160px' : '236px';
+  const profListWrap = isMobile || isTablet ? 'wrap' : 'nowrap' as const;
+  const cardWidth = isMobile ? 'calc(50% - 20px)' : isTablet ? 'calc(50% - 6px)' : '236px';
   const cardFlexShrink = isMobile ? undefined : 0;
   const imageHeight = isMobile ? '300px' : isTablet ? '240px' : '356px';
   const imageSizes = isMobile ? '100vw' : isTablet ? '160px' : '236px';
