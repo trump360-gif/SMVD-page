@@ -124,7 +124,7 @@ export default function AboutContent({
                 marginBottom: '-10px',
               }}
             >
-              {isMobile ? 'Major' : 'About Major'}
+              About Major
             </button>
             <button
               onClick={() => setActiveTab('people')}
@@ -143,7 +143,7 @@ export default function AboutContent({
                 marginBottom: '-10px',
               }}
             >
-              {isMobile ? 'People' : 'Our People'}
+              Our People
             </button>
           </div>
         </div>
