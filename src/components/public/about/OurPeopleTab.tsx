@@ -121,7 +121,7 @@ export default function OurPeopleTab({
   const profListWrap = isMobile || isTablet ? 'wrap' : 'nowrap' as const;
   const cardWidth = isMobile ? 'calc(50% - 20px)' : isTablet ? 'calc(50% - 6px)' : '236px';
   const cardFlexShrink = isMobile ? undefined : 0;
-  const imageHeight = isMobile ? '300px' : isTablet ? '240px' : '356px';
+  const imageHeight = '356px';
   const imageSizes = isMobile ? '100vw' : isTablet ? '160px' : '236px';
   const infoPadding = isMobile ? '20px 16px 0 16px' : isTablet ? '20px 12px 0 12px' : '37px 30px 0 30px';
   const profNameFontSize = isMobile ? '16px' : '18px';
@@ -216,7 +216,6 @@ export default function OurPeopleTab({
                   height: imageHeight,
                   backgroundColor: '#ffffff',
                   borderRadius: '0px',
-                  overflow: 'hidden',
                   border: 'none',
                 }}
               >
@@ -227,7 +226,7 @@ export default function OurPeopleTab({
                     fill
                     sizes={imageSizes}
                     style={{
-                      objectFit: 'cover',
+                      objectFit: 'contain',
                     }}
                     priority={false}
                   />
