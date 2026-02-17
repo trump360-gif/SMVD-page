@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useResponsive } from '@/lib/responsive';
+import { PADDING } from '@/constants/responsive';
 
 interface NewsItem {
   id: string;
@@ -103,9 +105,22 @@ interface NewsEventArchiveProps {
 }
 
 export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
+  const { isMobile, isTablet } = useResponsive();
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
 
   const newsItems = items ?? defaultNewsItems;
+
+  // Responsive variables
+  const containerGap = isMobile ? '32px' : isTablet ? '36px' : '40px';
+  const titleFontSize = isMobile ? '18px' : isTablet ? '20px' : '24px';
+  const filterFontSize = isMobile ? '12px' : isTablet ? '14px' : '16px';
+  const gridColumns = isMobile ? '1fr' : 'repeat(2, 1fr)';
+  const gridGap = isMobile ? '24px' : isTablet ? '32px' : '40px';
+  const imageThumbnailSize = isMobile ? '120px' : isTablet ? '140px' : '160px';
+  const cardGap = isMobile ? '12px' : '20px';
+  const titleFontSizeCard = isMobile ? '16px' : isTablet ? '18px' : '20px';
+  const badgeFontSize = isMobile ? '12px' : isTablet ? '13px' : '14px';
+  const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : 0;
 
   // Filter items based on selected category
   const displayedItems =
@@ -122,24 +137,28 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '40px',
+        gap: containerGap,
         width: '100%',
+        paddingLeft: `${containerPadding}px`,
+        paddingRight: `${containerPadding}px`,
       }}
     >
       {/* Title and Filter Tabs */}
       <div
         style={{
           display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
           justifyContent: 'space-between',
-          alignItems: 'center',
+          alignItems: isMobile ? 'flex-start' : 'center',
           width: '100%',
-          paddingBottom: '20px',
+          paddingBottom: isMobile ? '16px' : '20px',
           borderBottom: '2px solid #141414ff',
+          gap: isMobile ? '12px' : '0px',
         }}
       >
         <h1
           style={{
-            fontSize: '24px',
+            fontSize: titleFontSize,
             fontWeight: '700',
             fontFamily: 'Satoshi',
             color: '#1b1d1fff',
@@ -153,7 +172,8 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
         <div
           style={{
             display: 'flex',
-            gap: '20px',
+            gap: isMobile ? '8px' : '12px',
+            flexWrap: 'wrap',
           }}
         >
           {categories.map((category) => (
@@ -161,7 +181,7 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
               key={category}
               onClick={() => handleCategoryChange(category)}
               style={{
-                fontSize: '16px',
+                fontSize: filterFontSize,
                 fontWeight: selectedCategory === category ? '600' : '400',
                 fontFamily: 'Satoshi',
                 color:
@@ -175,6 +195,7 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
                     ? '2px solid #141414ff'
                     : 'none',
                 paddingBottom: '4px',
+                whiteSpace: 'nowrap',
               }}
             >
               {category}
@@ -187,8 +208,8 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '40px',
+          gridTemplateColumns: gridColumns,
+          gap: gridGap,
           width: '100%',
         }}
       >
@@ -215,9 +236,9 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
             {/* Thumbnail Image */}
             <div
               style={{
-                width: '160px',
-                height: '160px',
-                minWidth: '160px',
+                width: imageThumbnailSize,
+                height: imageThumbnailSize,
+                minWidth: imageThumbnailSize,
                 backgroundColor: '#ebecf0ff',
                 borderRadius: '4px',
                 overflow: 'hidden',
@@ -242,7 +263,7 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '8px',
+                gap: cardGap,
                 flex: 1,
               }}
             >
@@ -251,18 +272,19 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px',
+                  gap: isMobile ? '6px' : '8px',
+                  flexWrap: 'wrap',
                 }}
               >
                 {/* Category Badge */}
                 <span
                   style={{
-                    fontSize: '14px',
+                    fontSize: badgeFontSize,
                     fontWeight: '500',
                     fontFamily: 'Satoshi',
                     color: '#141414ff',
                     backgroundColor: '#ebecf0ff',
-                    padding: '4px 8px',
+                    padding: isMobile ? '2px 6px' : '4px 8px',
                     borderRadius: '4px',
                     minWidth: 'fit-content',
                   }}
@@ -273,7 +295,7 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
                 {/* Date */}
                 <span
                   style={{
-                    fontSize: '14px',
+                    fontSize: badgeFontSize,
                     fontWeight: '500',
                     fontFamily: 'Pretendard',
                     color: '#626872ff',
@@ -287,7 +309,7 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
               {/* Title */}
               <h3
                 style={{
-                  fontSize: '20px',
+                  fontSize: titleFontSizeCard,
                   fontWeight: '700',
                   fontFamily: 'Pretendard',
                   color: '#141414ff',
@@ -303,7 +325,7 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
               {item.description && (
                 <p
                   style={{
-                    fontSize: '16px',
+                    fontSize: isMobile ? '14px' : isTablet ? '15px' : '16px',
                     fontWeight: '500',
                     fontFamily: 'Pretendard',
                     color: '#7b828eff',
