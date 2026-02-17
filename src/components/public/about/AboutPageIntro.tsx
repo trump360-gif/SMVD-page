@@ -94,12 +94,14 @@ export default function AboutPageIntro({
           alt="About SMVD Hero Image"
           width={1017}
           height={500}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1360px"
           style={{
             width: '100%',
             height: '100%',
             objectFit: 'cover',
           }}
           priority
+          quality={85}
         />
       </div>
     </div>

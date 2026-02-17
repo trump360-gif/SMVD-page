@@ -192,6 +192,7 @@ export default function OurPeopleTab({
                     src={prof.profileImage}
                     alt={prof.name}
                     fill
+                    sizes="236px"
                     style={{
                       objectFit: 'cover',
                     }}

@@ -229,6 +229,7 @@ export default function WorkSection({
                   src={item.src}
                   alt={item.alt}
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 50vw"
                   style={{
                     objectFit: 'cover',
                   }}

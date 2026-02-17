@@ -54,3 +54,9 @@ Thumbs.db
 
 # Legacy CMS (integrated into main project)
 smvd-cms/
+
+# Playwright E2E Testing
+e2e/.auth/
+test-results/
+playwright-report/
+.playwright/

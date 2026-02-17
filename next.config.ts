@@ -5,7 +5,19 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   images: {
-    unoptimized: true,
+    // Enable Next.js Image optimization (disabled for Vercel builds by default)
+    unoptimized: false,
+    // Support WebP format with fallback to original format
+    formats: ['image/webp', 'image/avif'],
+    // Device sizes for responsive image generation
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    // Image sizes for srcset generation
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // 1 year cache for optimized images
+    minimumCacheTTL: 31536000,
+    // Allow SVG files
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
   },
   // Security headers for production
   headers: async () => [
