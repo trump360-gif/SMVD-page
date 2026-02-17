@@ -1,5 +1,8 @@
 'use client';
 
+import { useResponsive } from '@/lib/responsive';
+import { PADDING } from '@/constants/responsive';
+
 const DEFAULT_TIMELINE_ITEMS = [
   { year: '2021', description: '디자인학부로 통합되었던 학과가 시각영상디자인전공, 산업디자인전공,\n환경디자인학과로 나누어져 1학년 때부터 전공을 심화하여 학습할 수 있도록 개편' },
   { year: '2006', description: '3개 전공 (시각영상디자인전공, 산업디자인전공, 환경디자인전공)\n영역으로 통합 개편' },
@@ -25,26 +28,42 @@ export default function AboutPageHistory({
   introText = '숙명여자대학교 시각영상디자인과는 설립 이래 디지털 시대가 요구하는 창의적 시각 커뮤니케이션의 중심에서 인재를 배출해 왔습니다.\n축적된 전통과 혁신을 바탕으로 미래 디자인 교육을 선도하고 있습니다.',
   timelineItems = DEFAULT_TIMELINE_ITEMS,
 }: AboutPageHistoryProps) {
+  const { isMobile, isTablet } = useResponsive();
+
+  const titleFontSize = isMobile ? '24px' : isTablet ? '32px' : '48px';
+  const titleMinWidth = isMobile ? 'auto' : isTablet ? '200px' : '333px';
+  const contentFontSize = isMobile ? '14px' : isTablet ? '16px' : '18px';
+  const yearBadgeFontSize = isMobile ? '12px' : isTablet ? '13px' : '14px';
+  const containerFlexDirection = isMobile ? 'column' : 'row';
+  const containerGap = isMobile ? '20px' : isTablet ? '16px' : '10px';
+  const timelineGap = isMobile ? '24px' : isTablet ? '32px' : '40px';
+  const timelineWidth = isMobile ? '100%' : isTablet ? '100%' : '504px';
+  const contentGap = isMobile ? '32px' : isTablet ? '48px' : '60px';
+  const containerPaddingHorizontal = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : 0;
+
   return (
     <div
       style={{
         display: 'flex',
-        gap: '10px',
+        flexDirection: containerFlexDirection,
+        gap: containerGap,
         width: '100%',
+        paddingLeft: `${containerPaddingHorizontal}px`,
+        paddingRight: `${containerPaddingHorizontal}px`,
       }}
     >
       {/* Title */}
       <h2
         style={{
-          fontSize: '48px',
+          fontSize: titleFontSize,
           fontWeight: '500',
           color: '#141414ff',
           fontFamily: 'Inter',
           margin: '0',
           letterSpacing: '-0.128px',
           lineHeight: 1.1,
-          minWidth: '333px',
-          flex: '0 0 333px',
+          minWidth: titleMinWidth,
+          flex: isMobile ? '1' : '0 0 333px',
         }}
       >
         {title}
@@ -56,14 +75,14 @@ export default function AboutPageHistory({
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-end',
-          gap: '60px',
+          gap: contentGap,
           flex: 1,
         }}
       >
         {/* Intro Text */}
         <p
           style={{
-            fontSize: '18px',
+            fontSize: contentFontSize,
             fontWeight: '500',
             color: '#141414ff',
             fontFamily: 'Inter',
@@ -83,8 +102,8 @@ export default function AboutPageHistory({
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '40px',
-            width: '504px',
+            gap: timelineGap,
+            width: timelineWidth,
           }}
         >
           {timelineItems.map((item, index) => (
@@ -102,7 +121,7 @@ export default function AboutPageHistory({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  height: '28px',
+                  height: isMobile ? '24px' : '28px',
                   padding: '0 8px',
                   backgroundColor: '#ebecf0ff',
                   borderRadius: '0px',
@@ -111,7 +130,7 @@ export default function AboutPageHistory({
               >
                 <span
                   style={{
-                    fontSize: '14px',
+                    fontSize: yearBadgeFontSize,
                     fontWeight: '500',
                     color: '#141414ff',
                     fontFamily: 'Inter',
@@ -126,7 +145,7 @@ export default function AboutPageHistory({
               {/* Description */}
               <p
                 style={{
-                  fontSize: '18px',
+                  fontSize: contentFontSize,
                   fontWeight: '500',
                   color: '#141414ff',
                   fontFamily: 'Inter',

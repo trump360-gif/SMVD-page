@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useResponsive } from '@/lib/responsive';
+import { PADDING } from '@/constants/responsive';
 import UndergraduateTab from './UndergraduateTab';
 import GraduateTab from './GraduateTab';
 import type { UndergraduateContent, GraduateContent } from '@/lib/validation/curriculum';
@@ -14,8 +16,15 @@ export default function CurriculumTab({
   undergraduateContent,
   graduateContent,
 }: CurriculumTabProps) {
+  const { isMobile, isTablet } = useResponsive();
   const [activeTab, setActiveTab] = useState<'undergraduate' | 'graduate'>('undergraduate');
   const [activeSubTab, setActiveSubTab] = useState<'master' | 'doctor' | 'thesis'>('master');
+
+  // Responsive variables
+  const containerGap = isMobile ? '32px' : isTablet ? '36px' : '40px';
+  const titleFontSize = isMobile ? '18px' : isTablet ? '20px' : '24px';
+  const buttonFontSize = isMobile ? '14px' : isTablet ? '16px' : '18px';
+  const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : 0;
 
   // Handle hash navigation
   useEffect(() => {
@@ -70,26 +79,29 @@ export default function CurriculumTab({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '40px',
+        gap: containerGap,
         width: '100%',
+        paddingLeft: `${containerPadding}px`,
+        paddingRight: `${containerPadding}px`,
       }}
     >
       {/* Tab Header */}
       <div
         style={{
           display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'flex-start',
+          flexDirection: isMobile ? 'column' : 'row',
+          alignItems: isMobile ? 'flex-start' : 'flex-start',
           justifyContent: 'space-between',
           width: '100%',
-          paddingBottom: '20px',
+          paddingBottom: isMobile ? '16px' : '20px',
           borderBottom: '2.5px solid #000000ff',
+          gap: isMobile ? '12px' : '0px',
         }}
       >
         {/* Curriculum Title */}
         <h2
           style={{
-            fontSize: '24px',
+            fontSize: titleFontSize,
             fontWeight: '700',
             color: '#1b1d1fff',
             fontFamily: 'Satoshi',
@@ -105,13 +117,13 @@ export default function CurriculumTab({
         <div
           style={{
             display: 'flex',
-            gap: '20px',
+            gap: isMobile ? '12px' : '16px',
           }}
         >
           <button
             onClick={() => handleTabChange('undergraduate')}
             style={{
-              fontSize: '18px',
+              fontSize: buttonFontSize,
               fontWeight: '500',
               fontFamily: 'Satoshi',
               color: activeTab === 'undergraduate' ? '#141414ff' : '#7b828eff',
@@ -123,12 +135,12 @@ export default function CurriculumTab({
               transition: 'color 0.3s ease',
             }}
           >
-            Undergraduate
+            {isMobile ? 'Under' : 'Undergraduate'}
           </button>
           <button
             onClick={() => handleTabChange('graduate')}
             style={{
-              fontSize: '18px',
+              fontSize: buttonFontSize,
               fontWeight: '500',
               fontFamily: 'Satoshi',
               color: activeTab === 'graduate' ? '#141414ff' : '#7b828eff',
@@ -141,7 +153,7 @@ export default function CurriculumTab({
               whiteSpace: 'nowrap',
             }}
           >
-            Graduate School
+            {isMobile ? 'Grad' : 'Graduate School'}
           </button>
         </div>
       </div>

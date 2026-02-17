@@ -1,3 +1,7 @@
+'use client';
+
+import { useResponsive } from '@/lib/responsive';
+
 interface WorkHeaderProps {
   currentCategory?: string;
   onCategoryChange?: (category: string) => void;
@@ -11,6 +15,12 @@ export default function WorkHeader({
   onCategoryChange,
   categories = defaultCategories,
 }: WorkHeaderProps) {
+  const { isMobile, isTablet } = useResponsive();
+
+  const titleFontSize = isMobile ? '18px' : isTablet ? '20px' : '24px';
+  const categoryFontSize = isMobile ? '14px' : isTablet ? '15px' : '16px';
+  const categoryGap = isMobile ? '12px' : '16px';
+
   return (
     <div
       style={{
@@ -26,7 +36,7 @@ export default function WorkHeader({
     >
       <h1
         style={{
-          fontSize: '24px',
+          fontSize: titleFontSize,
           fontWeight: '700',
           color: '#1b1d1fff',
           fontFamily: 'Satoshi',
@@ -41,7 +51,7 @@ export default function WorkHeader({
       <div
         style={{
           display: 'flex',
-          gap: '20px',
+          gap: categoryGap,
           flexWrap: 'wrap',
           width: '100%',
           paddingBottom: '0px',
@@ -53,7 +63,7 @@ export default function WorkHeader({
             key={category}
             onClick={() => onCategoryChange?.(category)}
             style={{
-              fontSize: '16px',
+              fontSize: categoryFontSize,
               fontWeight: '500',
               fontFamily: 'Satoshi',
               color:

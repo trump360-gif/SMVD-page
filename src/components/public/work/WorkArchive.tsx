@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useResponsive } from '@/lib/responsive';
+import { PADDING } from '@/constants/responsive';
 import WorkHeader from './WorkHeader';
 
 interface PortfolioItem {
@@ -182,6 +184,7 @@ export default function WorkArchive({
   portfolioItemsFromDB,
   exhibitionItemsFromDB,
 }: WorkArchiveProps = {}) {
+  const { isMobile, isTablet } = useResponsive();
   const portfolioItems = portfolioItemsFromDB ?? defaultPortfolioItems;
   const exhibitionItems = exhibitionItemsFromDB ?? defaultExhibitionItems;
   const searchParams = useSearchParams();
@@ -189,6 +192,15 @@ export default function WorkArchive({
   const [activeTab, setActiveTab] = useState<'achieve' | 'exhibition'>('achieve');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [currentPage, setCurrentPage] = useState<number>(1);
+
+  // Responsive variables
+  const gridColumns = isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)';
+  const gridGap = isMobile ? '16px' : isTablet ? '20px' : '20px';
+  const exhibitionGap = isMobile ? '24px' : isTablet ? '32px' : '40px';
+  const tabFontSize = isMobile ? '18px' : isTablet ? '20px' : '24px';
+  const itemTitleFontSize = isMobile ? '12px' : isTablet ? '13px' : '14px';
+  const exhibitionTitleFontSize = isMobile ? '14px' : isTablet ? '15px' : '16px';
+  const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : 0;
 
   // 쿼리 파라미터에 따라 activeTab 설정
   useEffect(() => {
@@ -237,15 +249,17 @@ export default function WorkArchive({
         flexDirection: 'column',
         gap: '5px',
         width: '100%',
+        paddingLeft: `${containerPadding}px`,
+        paddingRight: `${containerPadding}px`,
       }}
     >
       {/* Achieve / Exhibition Tabs */}
       <div
         style={{
           display: 'flex',
-          gap: '20px',
+          gap: isMobile ? '16px' : '20px',
           width: '100%',
-          marginBottom: '20px',
+          marginBottom: isMobile ? '16px' : '20px',
           borderBottom: '1px solid #e5e7ebff',
           paddingBottom: '0px',
         }}
@@ -256,7 +270,7 @@ export default function WorkArchive({
             setCurrentPage(1);
           }}
           style={{
-            fontSize: '24px',
+            fontSize: tabFontSize,
             fontWeight: '700',
             fontFamily: 'Satoshi',
             color: activeTab === 'achieve' ? '#1b1d1fff' : '#7b828eff',
@@ -276,7 +290,7 @@ export default function WorkArchive({
             setCurrentPage(1);
           }}
           style={{
-            fontSize: '24px',
+            fontSize: tabFontSize,
             fontWeight: '700',
             fontFamily: 'Satoshi',
             color: activeTab === 'exhibition' ? '#1b1d1fff' : '#7b828eff',
@@ -306,8 +320,8 @@ export default function WorkArchive({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '20px',
+            gridTemplateColumns: gridColumns,
+            gap: gridGap,
             width: '100%',
           }}
         >
@@ -362,7 +376,7 @@ export default function WorkArchive({
                 {/* Category Badge */}
                 <span
                   style={{
-                    fontSize: '12px',
+                    fontSize: isMobile ? '11px' : isTablet ? '12px' : '12px',
                     fontWeight: '500',
                     color: '#7b828eff',
                     fontFamily: 'Satoshi',
@@ -374,7 +388,7 @@ export default function WorkArchive({
                 {/* Title */}
                 <h3
                   style={{
-                    fontSize: '14px',
+                    fontSize: itemTitleFontSize,
                     fontWeight: '600',
                     color: '#141414ff',
                     fontFamily: 'Pretendard',
@@ -388,7 +402,7 @@ export default function WorkArchive({
                 {/* Subtitle */}
                 <span
                   style={{
-                    fontSize: '12px',
+                    fontSize: isMobile ? '11px' : isTablet ? '11px' : '12px',
                     fontWeight: '400',
                     color: '#000000',
                     fontFamily: 'Satoshi',
@@ -408,10 +422,10 @@ export default function WorkArchive({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '40px',
+            gridTemplateColumns: gridColumns,
+            gap: exhibitionGap,
             width: '100%',
-            paddingTop: '20px',
+            paddingTop: isMobile ? '16px' : '20px',
           }}
         >
           {exhibitionItems.map((item) => (
@@ -465,7 +479,7 @@ export default function WorkArchive({
                 {/* Title */}
                 <h3
                   style={{
-                    fontSize: '16px',
+                    fontSize: exhibitionTitleFontSize,
                     fontWeight: '600',
                     color: '#141414ff',
                     fontFamily: 'Pretendard',
@@ -479,7 +493,7 @@ export default function WorkArchive({
                 {/* Date/Artist */}
                 <span
                   style={{
-                    fontSize: '14px',
+                    fontSize: isMobile ? '12px' : isTablet ? '13px' : '14px',
                     fontWeight: '400',
                     color: '#000000',
                     fontFamily: 'Satoshi',
@@ -502,7 +516,7 @@ export default function WorkArchive({
             alignItems: 'center',
             gap: '8px',
             width: '100%',
-            marginTop: '40px',
+            marginTop: isMobile ? '32px' : isTablet ? '36px' : '40px',
           }}
         >
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -510,7 +524,7 @@ export default function WorkArchive({
               key={page}
               onClick={() => setCurrentPage(page)}
               style={{
-                fontSize: '14px',
+                fontSize: isMobile ? '12px' : '14px',
                 fontWeight: currentPage === page ? '600' : '500',
                 fontFamily: 'Satoshi',
                 color:
@@ -518,7 +532,7 @@ export default function WorkArchive({
                 backgroundColor:
                   currentPage === page ? '#f0f0f0ff' : 'transparent',
                 border: 'none',
-                padding: '8px 12px',
+                padding: isMobile ? '6px 10px' : '8px 12px',
                 cursor: 'pointer',
                 borderRadius: '4px',
                 transition: 'all 0.3s ease',
