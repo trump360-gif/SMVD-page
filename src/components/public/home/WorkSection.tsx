@@ -47,9 +47,9 @@ export default function WorkSection({
   const sectionPaddingBottom = isMobile ? '32px' : isTablet ? '48px' : '61px';
   const headerPadding = isMobile ? '16px' : isTablet ? '24px' : '40px';
   const mainGap = isMobile ? '24px' : isTablet ? '40px' : '60px';
-  const sidebarWidth = isMobile ? '100%' : isTablet ? '100px' : '200px';
-  const sidebarFlexDirection = isMobile || isTablet ? 'row' : 'column';
-  const sidebarGap = isMobile ? '8px' : isTablet ? '12px' : '20px';
+  const sidebarWidth = isMobile ? '100%' : isTablet ? '100%' : '100%';
+  const sidebarFlexDirection = 'row';
+  const sidebarGap = isMobile ? '8px' : isTablet ? '8px' : '16px';
   const buttonFontSize = isMobile ? '18px' : isTablet ? '24px' : '32px';
   const buttonHeight = isMobile ? '44px' : isTablet ? '50px' : '56px';
   const gridColumns = isMobile ? '1fr' : isTablet ? '1fr' : 'repeat(2, 1fr)';
