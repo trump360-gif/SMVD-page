@@ -174,7 +174,6 @@ export default function TrackTable({ modules }: TrackTableProps) {
                       fontSize: '12px',
                       fontWeight: '600',
                       color: '#4e535bff',
-                      marginRight: 'auto',
                       minWidth: '40px',
                     }}
                   >

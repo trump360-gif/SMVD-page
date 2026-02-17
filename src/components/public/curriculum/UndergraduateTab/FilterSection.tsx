@@ -16,9 +16,10 @@ export default function FilterSection({
 
   const containerGap = isMobile ? '24px' : isTablet ? '40px' : '60px';
   const labelFontSize = isMobile ? '14px' : '18px';
-  const trackGridColumns = isMobile ? 'repeat(2, auto)' : isTablet ? 'repeat(2, auto)' : 'repeat(3, auto)';
+  const trackGridColumns = isMobile ? '1fr' : isTablet ? 'repeat(2, auto)' : 'repeat(3, auto)';
   const trackGap = isMobile ? '12px' : '20px';
   const labelWidth = isMobile ? 'auto' : '35px';
+  const trackItemFontSize = isMobile ? '14px' : '18px';
 
   return (
     <div
@@ -133,7 +134,7 @@ export default function FilterSection({
               />
               <p
                 style={{
-                  fontSize: '18px',
+                  fontSize: trackItemFontSize,
                   fontWeight: '500',
                   fontFamily: 'Pretendard',
                   color: '#000000ff',
