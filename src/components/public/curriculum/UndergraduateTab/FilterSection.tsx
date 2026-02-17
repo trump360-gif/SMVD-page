@@ -1,3 +1,4 @@
+import { useResponsive } from '@/lib/responsive';
 import type { FilterOption } from './types';
 
 interface FilterSectionProps {
@@ -11,41 +12,51 @@ export default function FilterSection({
   classificationOptions,
   trackOptions,
 }: FilterSectionProps) {
+  const { isMobile, isTablet } = useResponsive();
+
+  const containerGap = isMobile ? '24px' : isTablet ? '40px' : '60px';
+  const labelFontSize = isMobile ? '14px' : '18px';
+  const trackGridColumns = isMobile ? 'repeat(2, auto)' : isTablet ? 'repeat(2, auto)' : 'repeat(3, auto)';
+  const trackGap = isMobile ? '12px' : '20px';
+  const labelWidth = isMobile ? 'auto' : '35px';
+
   return (
     <div
       style={{
         display: 'flex',
-        gap: '60px',
-        flexWrap: 'wrap',
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: containerGap,
+        flexWrap: isMobile ? 'nowrap' : 'wrap',
         paddingBottom: '20px',
         borderBottom: '1px solid #e0e0e0ff',
         alignItems: 'flex-start',
       }}
     >
       {/* Classification Filter */}
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', gap: isMobile ? '12px' : '20px', alignItems: 'flex-start', minWidth: 0 }}>
         <p
           style={{
-            fontSize: '18px',
+            fontSize: labelFontSize,
             fontWeight: '500',
             fontFamily: 'Pretendard',
             color: '#000000ff',
             margin: '0',
             whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           분류
         </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {classificationOptions.map((option) => (
             <label
               key={option.value}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '10px',
+                gap: '8px',
                 cursor: 'pointer',
-                fontSize: '18px',
+                fontSize: labelFontSize,
                 fontWeight: '500',
                 fontFamily: 'Pretendard',
                 color: '#000000ff',
@@ -59,12 +70,13 @@ export default function FilterSection({
                 disabled
                 style={{
                   appearance: 'none',
-                  width: '14px',
-                  height: '14px',
+                  width: '12px',
+                  height: '12px',
                   cursor: 'not-allowed',
                   backgroundColor: checkedClassification === option.value ? '#d0d0d0ff' : '#ffffffff',
                   border: '1px solid #ccc',
                   borderRadius: '2px',
+                  flexShrink: 0,
                 }}
               />
               {option.label}
@@ -74,17 +86,17 @@ export default function FilterSection({
       </div>
 
       {/* Track Filter */}
-      <div style={{ display: 'flex', gap: '30px', alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', gap: isMobile ? '12px' : '30px', alignItems: 'flex-start', minWidth: 0 }}>
         <p
           style={{
-            fontSize: '18px',
+            fontSize: labelFontSize,
             fontWeight: '500',
             fontFamily: 'Pretendard',
             color: '#000000ff',
             margin: '0',
             whiteSpace: 'nowrap',
             flexShrink: 0,
-            width: '35px',
+            width: labelWidth,
           }}
         >
           트랙
@@ -92,9 +104,9 @@ export default function FilterSection({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, auto)',
-            columnGap: '20px',
-            rowGap: '20px',
+            gridTemplateColumns: trackGridColumns,
+            columnGap: trackGap,
+            rowGap: isMobile ? '12px' : '20px',
           }}
         >
           {trackOptions.map((option) => (
