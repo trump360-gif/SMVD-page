@@ -142,7 +142,7 @@ export default function WorkSection({
           paddingLeft: headerPadding,
           paddingRight: headerPadding,
           display: 'flex',
-          flexDirection: isMobile || isTablet ? 'column' : 'row',
+          flexDirection: 'column',
           gap: mainGap,
         }}
       >
