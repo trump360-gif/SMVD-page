@@ -35,10 +35,10 @@ export default function AboutPageHistory({
   const contentFontSize = isMobile ? '14px' : isTablet ? '16px' : '18px';
   const yearBadgeFontSize = isMobile ? '12px' : isTablet ? '13px' : '14px';
   const containerFlexDirection = isMobile ? 'column' : 'row';
-  const containerGap = isMobile ? '20px' : isTablet ? '16px' : '10px';
+  const containerGap = isMobile ? '10px' : isTablet ? '16px' : '10px';
   const timelineGap = isMobile ? '24px' : isTablet ? '32px' : '40px';
-  const timelineWidth = isMobile ? '100%' : isTablet ? '100%' : '504px';
-  const contentGap = isMobile ? '32px' : isTablet ? '48px' : '60px';
+  const timelineWidth = isMobile ? '353px' : isTablet ? '100%' : '504px';
+  const contentGap = isMobile ? '36px' : isTablet ? '48px' : '60px';
   const containerPaddingHorizontal = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : 0;
 
   return (
@@ -48,6 +48,8 @@ export default function AboutPageHistory({
         flexDirection: containerFlexDirection,
         gap: containerGap,
         width: '100%',
+        alignItems: isMobile ? 'center' : 'flex-start',
+        justifyContent: isMobile ? 'center' : 'flex-start',
         paddingLeft: `${containerPaddingHorizontal}px`,
         paddingRight: `${containerPaddingHorizontal}px`,
       }}
@@ -74,9 +76,10 @@ export default function AboutPageHistory({
         style={{
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'flex-end',
+          alignItems: isMobile ? 'center' : 'flex-end',
           gap: contentGap,
           flex: 1,
+          width: isMobile ? '100%' : 'auto',
         }}
       >
         {/* Intro Text */}
@@ -90,8 +93,10 @@ export default function AboutPageHistory({
             letterSpacing: '-0.619px',
             lineHeight: 1.5,
             whiteSpace: 'pre-wrap',
-            alignSelf: 'flex-start',
+            alignSelf: isMobile ? 'center' : 'flex-start',
             wordBreak: 'keep-all',
+            textAlign: isMobile ? 'center' : 'left',
+            width: isMobile ? '353px' : 'auto',
           }}
         >
           {introText}

@@ -20,10 +20,11 @@ export default function AboutPageVision({
   const titleMinWidth = isMobile ? 'auto' : isTablet ? '200px' : '333px';
   const contentFontSize = isMobile ? '14px' : isTablet ? '16px' : '18px';
   const chipFontSize = isMobile ? '12px' : isTablet ? '13px' : '14px';
-  const chipGap = isMobile ? '16px' : isTablet ? '20px' : '24px';
+  const chipGap = isMobile ? '6px' : isTablet ? '20px' : '24px';
   const containerFlexDirection = isMobile ? 'column' : 'row';
-  const containerGap = isMobile ? '20px' : isTablet ? '16px' : '10px';
+  const containerGap = isMobile ? '10px' : isTablet ? '16px' : '10px';
   const containerPaddingHorizontal = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : 0;
+  const contentWidth = isMobile ? '353px' : '100%';
 
   return (
     <div
@@ -32,7 +33,8 @@ export default function AboutPageVision({
         flexDirection: containerFlexDirection,
         gap: containerGap,
         width: '100%',
-        alignItems: 'flex-start',
+        alignItems: isMobile ? 'center' : 'flex-start',
+        justifyContent: isMobile ? 'center' : 'flex-start',
         paddingLeft: `${containerPaddingHorizontal}px`,
         paddingRight: `${containerPaddingHorizontal}px`,
       }}
@@ -61,6 +63,8 @@ export default function AboutPageVision({
           flexDirection: 'column',
           gap: '8px',
           flex: 1,
+          width: isMobile ? contentWidth : 'auto',
+          alignItems: isMobile ? 'center' : 'auto',
         }}
       >
         {/* Chips/Tags Container */}
@@ -69,6 +73,7 @@ export default function AboutPageVision({
             display: 'flex',
             gap: chipGap,
             flexWrap: 'wrap',
+            justifyContent: isMobile ? 'center' : 'flex-start',
           }}
         >
           {chips.map((chip) => (
@@ -112,6 +117,7 @@ export default function AboutPageVision({
             letterSpacing: '-0.619px',
             lineHeight: 1.5,
             wordBreak: 'keep-all',
+            textAlign: isMobile ? 'center' : 'left',
           }}
         >
           {content}

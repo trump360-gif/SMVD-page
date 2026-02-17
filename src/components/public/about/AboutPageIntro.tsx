@@ -17,21 +17,23 @@ export default function AboutPageIntro({
 }: AboutPageIntroProps) {
   const { isMobile, isTablet } = useResponsive();
 
-  const containerGap = isMobile ? '24px' : isTablet ? '32px' : '40px';
+  const containerGap = isMobile ? '10px' : isTablet ? '32px' : '40px';
   const titleFontSize = isMobile ? '24px' : isTablet ? '32px' : '48px';
   const descriptionFontSize = isMobile ? '14px' : isTablet ? '16px' : '18px';
-  const imageHeight = isMobile ? '240px' : isTablet ? '300px' : '500px';
+  const imageHeight = isMobile ? '196px' : isTablet ? '300px' : '500px';
   const containerWidth = isMobile ? '100%' : isTablet ? '100%' : '1360px';
-  const descriptionWidth = isMobile ? '100%' : isTablet ? '100%' : '848px';
+  const descriptionWidth = isMobile ? '353px' : isTablet ? '100%' : '848px';
 
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-end',
+        alignItems: isMobile ? 'center' : 'flex-end',
         gap: containerGap,
         width: '100%',
+        paddingLeft: isMobile ? `${PADDING.mobile}px` : 0,
+        paddingRight: isMobile ? `${PADDING.mobile}px` : 0,
       }}
     >
       {/* Top Section - Title & Description */}
