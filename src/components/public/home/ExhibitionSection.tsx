@@ -1,6 +1,8 @@
 'use client';
 
 import Image from 'next/image';
+import { useResponsive } from '@/lib/responsive';
+import { GAP } from '@/constants/responsive';
 
 interface ExhibitionItem {
   year: string;
@@ -31,15 +33,23 @@ export default function ExhibitionSection({
     },
   ],
 }: ExhibitionSectionProps) {
+  const { isMobile, isTablet } = useResponsive();
+
+  const sectionGap = isMobile ? GAP.mobile : isTablet ? GAP.tablet : GAP.desktop;
+  const sectionMarginBottom = isMobile ? '40px' : isTablet ? '60px' : '80px';
+  const gridColumns = isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)';
+  const gridGap = isMobile ? GAP.mobile : isTablet ? GAP.tablet : GAP.desktop;
+  const titleFontSize = isMobile ? '20px' : isTablet ? '24px' : '32px';
+
   return (
     <section
       id="exhibition"
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '40px',
+        gap: `${sectionGap}px`,
         width: '100%',
-        marginBottom: '80px',
+        marginBottom: sectionMarginBottom,
       }}
     >
       {/* Exhibition Header */}
@@ -54,7 +64,7 @@ export default function ExhibitionSection({
       >
         <h2
           style={{
-            fontSize: '32px',
+            fontSize: titleFontSize,
             fontWeight: '700',
             fontFamily: 'Helvetica',
             color: '#141414ff',
@@ -81,8 +91,8 @@ export default function ExhibitionSection({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '40px',
+          gridTemplateColumns: gridColumns,
+          gap: `${gridGap}px`,
           width: '100%',
         }}
       >
