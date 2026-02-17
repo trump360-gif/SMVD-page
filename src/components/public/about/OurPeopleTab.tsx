@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useResponsive } from '@/lib/responsive';
 
 interface Professor {
   id: string;
@@ -103,17 +104,46 @@ export default function OurPeopleTab({
   instructors = defaultInstructors,
 }: OurPeopleTabProps) {
   const router = useRouter();
+  const { isMobile, isTablet } = useResponsive();
 
   const handleProfessorClick = (profId: string) => {
     router.push(`/professor/${profId}`);
   };
+
+  // -- Responsive values --
+  const sectionGap = isMobile ? '30px' : isTablet ? '40px' : '60px';
+  const sectionPaddingBottom = isMobile ? '30px' : isTablet ? '40px' : '60px';
+  const headingFontSize = isMobile ? '28px' : isTablet ? '36px' : '48px';
+  const headingWidth = isMobile ? '100%' : isTablet ? '150px' : '333px';
+  const headingFlexShrink = isMobile ? undefined : 0;
+  const profSectionDirection = isMobile ? 'column' : 'row' as const;
+  const profListGap = isMobile ? '24px' : isTablet ? '12px' : '20px';
+  const profListWrap = isMobile ? 'wrap' : isTablet ? 'wrap' : 'nowrap' as const;
+  const cardWidth = isMobile ? '100%' : isTablet ? '160px' : '236px';
+  const cardFlexShrink = isMobile ? undefined : 0;
+  const imageHeight = isMobile ? '300px' : isTablet ? '240px' : '356px';
+  const imageSizes = isMobile ? '100vw' : isTablet ? '160px' : '236px';
+  const infoPadding = isMobile ? '20px 16px 0 16px' : isTablet ? '20px 12px 0 12px' : '37px 30px 0 30px';
+  const profNameFontSize = isMobile ? '16px' : '18px';
+  const profCourseFontSize = isMobile ? '14px' : '18px';
+  const profCourseMarginTop = isMobile ? '12px' : '20px';
+
+  // Instructor responsive
+  const instrSectionDirection = isMobile ? 'column' : 'row' as const;
+  const instrNameWidth = isMobile ? 'auto' : isTablet ? '200px' : '332px';
+  const instrNameFlexShrink = isMobile ? undefined : 0;
+  const instrGap = isMobile ? '8px' : isTablet ? '24px' : '40px';
+  const instrDirection = isMobile ? 'column' : 'row' as const;
+  const instrPaddingY = isMobile ? '20px' : isTablet ? '28px' : '34px';
+  const instrMinHeight = isMobile ? 'auto' : '95px';
+  const instrFontSize = isMobile ? '15px' : '18px';
 
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '60px',
+        gap: sectionGap,
         width: '100%',
       }}
     >
@@ -121,35 +151,37 @@ export default function OurPeopleTab({
       <div
         style={{
           display: 'flex',
-          flexDirection: 'row',
-          gap: '10px',
+          flexDirection: profSectionDirection,
+          gap: isMobile ? '20px' : '10px',
           alignItems: 'flex-start',
           width: '100%',
-          paddingBottom: '60px',
+          paddingBottom: sectionPaddingBottom,
           borderBottom: '1px solid #000000ff',
         }}
       >
         <h2
           style={{
-            fontSize: '48px',
+            fontSize: headingFontSize,
             fontWeight: '400',
             color: '#000000ff',
             fontFamily: 'Helvetica',
             margin: '0',
             letterSpacing: '-0.48px',
-            width: '333px',
-            flexShrink: 0,
+            width: headingWidth,
+            flexShrink: headingFlexShrink,
           }}
         >
           Professor
         </h2>
 
-        {/* Professor List - 1 row, 4 columns */}
+        {/* Professor List - Desktop 4col / Tablet 2col / Mobile 1col */}
         <div
           style={{
             display: 'flex',
-            gap: '20px',
+            flexWrap: profListWrap,
+            gap: profListGap,
             flex: 1,
+            width: isMobile ? '100%' : undefined,
           }}
         >
           {professors.map((prof) => (
@@ -161,8 +193,9 @@ export default function OurPeopleTab({
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0px',
-                width: '236px',
-                flexShrink: 0,
+                width: cardWidth,
+                flexShrink: cardFlexShrink,
+                flexBasis: isTablet ? 'calc(50% - 6px)' : undefined,
                 transition: 'transform 0.2s ease, opacity 0.2s ease',
               }}
               onMouseEnter={(e) => {
@@ -179,8 +212,8 @@ export default function OurPeopleTab({
                 style={{
                   cursor: 'pointer',
                   position: 'relative',
-                  width: '236px',
-                  height: '356px',
+                  width: '100%',
+                  height: imageHeight,
                   backgroundColor: '#ffffff',
                   borderRadius: '0px',
                   overflow: 'hidden',
@@ -192,7 +225,7 @@ export default function OurPeopleTab({
                     src={prof.profileImage}
                     alt={prof.name}
                     fill
-                    sizes="236px"
+                    sizes={imageSizes}
                     style={{
                       objectFit: 'cover',
                     }}
@@ -222,14 +255,14 @@ export default function OurPeopleTab({
                   flexDirection: 'column',
                   gap: '0px',
                   backgroundColor: '#ffffff',
-                  padding: '37px 30px 0 30px',
-                  width: '236px',
+                  padding: infoPadding,
+                  width: '100%',
                   boxSizing: 'border-box',
                 }}
               >
                 <h3
                   style={{
-                    fontSize: '18px',
+                    fontSize: profNameFontSize,
                     fontWeight: '400',
                     color: '#000000ff',
                     fontFamily: 'Helvetica',
@@ -243,11 +276,11 @@ export default function OurPeopleTab({
                 {prof.courses && (
                   <p
                     style={{
-                      fontSize: '18px',
+                      fontSize: profCourseFontSize,
                       fontWeight: '400',
                       color: '#353030ff',
                       fontFamily: 'Helvetica',
-                      margin: '20px 0 0 0',
+                      margin: `${profCourseMarginTop} 0 0 0`,
                       lineHeight: 1.4,
                       whiteSpace: 'pre-wrap',
                       wordBreak: 'keep-all',
@@ -268,23 +301,23 @@ export default function OurPeopleTab({
       <div
         style={{
           display: 'flex',
-          flexDirection: 'row',
-          gap: '10px',
+          flexDirection: instrSectionDirection,
+          gap: isMobile ? '20px' : '10px',
           alignItems: 'flex-start',
           width: '100%',
-          paddingBottom: '60px',
+          paddingBottom: sectionPaddingBottom,
         }}
       >
         <h2
           style={{
-            fontSize: '48px',
+            fontSize: headingFontSize,
             fontWeight: '400',
             color: '#000000ff',
             fontFamily: 'Helvetica',
             margin: '0',
             letterSpacing: '-0.48px',
-            width: '333px',
-            flexShrink: 0,
+            width: headingWidth,
+            flexShrink: headingFlexShrink,
           }}
         >
           Instructor
@@ -296,6 +329,7 @@ export default function OurPeopleTab({
             display: 'flex',
             flexDirection: 'column',
             flex: 1,
+            width: isMobile ? '100%' : undefined,
           }}
         >
           {instructors.map((instructor, index) => (
@@ -303,34 +337,35 @@ export default function OurPeopleTab({
               key={index}
               style={{
                 display: 'flex',
-                gap: '40px',
-                alignItems: 'center',
-                paddingBottom: '34px',
-                paddingTop: '34px',
+                flexDirection: instrDirection,
+                gap: instrGap,
+                alignItems: isMobile ? 'flex-start' : 'center',
+                paddingBottom: instrPaddingY,
+                paddingTop: instrPaddingY,
                 borderBottom: '1px solid #e5e5e5ff',
                 backgroundColor: '#ffffffff',
-                minHeight: '95px',
+                minHeight: instrMinHeight,
                 boxSizing: 'border-box',
               }}
             >
               <h3
                 style={{
-                  fontSize: '18px',
-                  fontWeight: '400',
+                  fontSize: instrFontSize,
+                  fontWeight: isMobile ? '500' : '400',
                   color: '#353030ff',
                   fontFamily: 'Helvetica',
                   margin: '0',
-                  width: '332px',
-                  flexShrink: 0,
+                  width: instrNameWidth,
+                  flexShrink: instrNameFlexShrink,
                 }}
               >
                 {instructor.name}
               </h3>
               <p
                 style={{
-                  fontSize: '18px',
+                  fontSize: isMobile ? '14px' : instrFontSize,
                   fontWeight: '400',
-                  color: '#353030ff',
+                  color: isMobile ? '#666666' : '#353030ff',
                   fontFamily: 'Helvetica',
                   margin: '0',
                   lineHeight: 1.4,
