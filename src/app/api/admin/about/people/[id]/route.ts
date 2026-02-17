@@ -59,7 +59,7 @@ export async function PUT(
 
     return NextResponse.json({ person: updatedPerson });
   } catch (error) {
-    console.error('PUT person error:', error);
+    logger.error({ err: error, context: 'PUT /api/admin/about/people/[id]' }, 'PUT person error');
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid data format', details: error.issues },
@@ -103,7 +103,7 @@ export async function DELETE(
 
     return NextResponse.json({ person: deletedPerson });
   } catch (error) {
-    console.error('DELETE person error:', error);
+    logger.error({ err: error, context: 'DELETE /api/admin/about/people/[id]' }, 'DELETE person error');
     return NextResponse.json(
       { error: 'Failed to delete person' },
       { status: 500 }

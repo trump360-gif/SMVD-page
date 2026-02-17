@@ -50,6 +50,18 @@ export async function GET(request: NextRequest) {
         profileImage: true,
         courses: true,
         biography: true,
+        mediaId: true,
+        media: {
+          select: {
+            id: true,
+            filename: true,
+            filepath: true,
+            mimeType: true,
+            altText: true,
+            width: true,
+            height: true,
+          },
+        },
         order: true,
       },
       orderBy: { order: 'asc' },
@@ -57,7 +69,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ people });
   } catch (error) {
-    console.error('GET people error:', error);
+    logger.error({ err: error, context: 'GET /api/admin/about/people' }, 'GET people error');
     return NextResponse.json(
       { error: 'Failed to fetch people' },
       { status: 500 }
@@ -102,7 +114,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ person: newPerson }, { status: 201 });
   } catch (error) {
-    console.error('POST people error:', error);
+    logger.error({ err: error, context: 'POST /api/admin/about/people' }, 'POST people error');
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid data format', details: error.issues },

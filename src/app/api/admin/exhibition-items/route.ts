@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
 
     return successResponse(item, '전시 아이템이 생성되었습니다', 201);
   } catch (error) {
-    console.error('전시 아이템 생성 오류:', error);
+    logger.error({ err: error, context: 'POST /api/admin/exhibition-items' }, '전시 아이템 생성 오류');
     return errorResponse('전시 아이템 생성 실패', 'CREATE_ERROR', 500);
   }
 }
@@ -126,7 +126,7 @@ export async function PUT(request: NextRequest) {
 
     return successResponse(updatedItem, '전시 아이템이 업데이트되었습니다');
   } catch (error) {
-    console.error('전시 아이템 업데이트 오류:', error);
+    logger.error({ err: error, context: 'PUT /api/admin/exhibition-items' }, '전시 아이템 업데이트 오류');
     return errorResponse('전시 아이템 업데이트 실패', 'UPDATE_ERROR', 500);
   }
 }
@@ -184,7 +184,7 @@ export async function DELETE(request: NextRequest) {
 
     return successResponse(null, '전시 아이템이 삭제되었습니다');
   } catch (error) {
-    console.error('전시 아이템 삭제 오류:', error);
+    logger.error({ err: error, context: 'DELETE /api/admin/exhibition-items' }, '전시 아이템 삭제 오류');
     return errorResponse('전시 아이템 삭제 실패', 'DELETE_ERROR', 500);
   }
 }

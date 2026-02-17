@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
 
     return successResponse(item, '작품이 추가되었습니다', 201);
   } catch (error) {
-    console.error('작품 포트폴리오 생성 오류:', error);
+    logger.error({ err: error, context: 'POST /api/admin/work-portfolios' }, '작품 포트폴리오 생성 오류');
     return errorResponse('작품 추가 실패', 'CREATE_ERROR', 500);
   }
 }
@@ -136,7 +136,7 @@ export async function PUT(request: NextRequest) {
 
     return successResponse(updatedItem, '작품이 업데이트되었습니다');
   } catch (error) {
-    console.error('작품 포트폴리오 업데이트 오류:', error);
+    logger.error({ err: error, context: 'PUT /api/admin/work-portfolios' }, '작품 포트폴리오 업데이트 오류');
     return errorResponse('작품 수정 실패', 'UPDATE_ERROR', 500);
   }
 }
@@ -194,7 +194,7 @@ export async function DELETE(request: NextRequest) {
 
     return successResponse(null, '작품이 삭제되었습니다');
   } catch (error) {
-    console.error('작품 포트폴리오 삭제 오류:', error);
+    logger.error({ err: error, context: 'DELETE /api/admin/work-portfolios' }, '작품 포트폴리오 삭제 오류');
     return errorResponse('작품 삭제 실패', 'DELETE_ERROR', 500);
   }
 }

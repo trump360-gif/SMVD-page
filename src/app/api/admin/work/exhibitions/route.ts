@@ -32,7 +32,7 @@ export async function GET() {
 
     return successResponse(exhibitions, '전시 목록 조회 성공');
   } catch (error) {
-    console.error('전시 조회 오류:', error);
+    logger.error({ err: error, context: 'GET /api/admin/work/exhibitions' }, '전시 조회 오류');
     return errorResponse('전시 목록을 불러오는 중 오류가 발생했습니다', 'FETCH_ERROR', 500);
   }
 }
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
 
     return successResponse(exhibition, '전시가 생성되었습니다', 201);
   } catch (error) {
-    console.error('전시 생성 오류:', error);
+    logger.error({ err: error, context: 'POST /api/admin/work/exhibitions' }, '전시 생성 오류');
     return errorResponse('전시를 생성하는 중 오류가 발생했습니다', 'CREATE_ERROR', 500);
   }
 }

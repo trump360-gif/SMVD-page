@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ sections: aboutPage.sections });
   } catch (error) {
-    console.error('GET About sections error:', error);
+    logger.error({ err: error, context: 'GET /api/admin/about/sections' }, 'GET About sections error');
     return NextResponse.json(
       { error: 'Failed to fetch About sections' },
       { status: 500 }
@@ -144,7 +144,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ section: updatedSection });
   } catch (error) {
-    console.error('PUT About section error:', error);
+    logger.error({ err: error, context: 'PUT /api/admin/about/sections' }, 'PUT About section error');
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid content format', details: error.issues },
