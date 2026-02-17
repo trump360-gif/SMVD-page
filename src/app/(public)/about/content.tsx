@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useResponsive } from '@/lib/responsive';
+import { PADDING } from '@/constants/responsive';
 import {
   AboutPageIntro,
   AboutPageVision,
@@ -57,7 +59,17 @@ export default function AboutContent({
   peopleData,
 }: AboutContentProps) {
   const searchParams = useSearchParams();
+  const { isMobile, isTablet } = useResponsive();
   const [activeTab, setActiveTab] = useState<'major' | 'people'>('major');
+
+  // Responsive variables
+  const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop;
+  const containerPaddingTop = isMobile ? '24px' : isTablet ? '32px' : '60px';
+  const containerPaddingVertical = isMobile ? '24px' : isTablet ? '32px' : '80px';
+  const containerPaddingBottom = isMobile ? '24px' : isTablet ? '32px' : '61px';
+  const tabButtonFontSize = isMobile ? '16px' : isTablet ? '18px' : '24px';
+  const tabButtonGap = isMobile ? '20px' : isTablet ? '30px' : '40px';
+  const sectionGap = isMobile ? '32px' : isTablet ? '40px' : '50px';
 
   useEffect(() => {
     const tab = searchParams.get('tab');
@@ -72,10 +84,10 @@ export default function AboutContent({
       <div
         style={{
           width: '100%',
-          paddingTop: '60px',
+          paddingTop: containerPaddingTop,
           paddingBottom: '0px',
-          paddingLeft: '40px',
-          paddingRight: '40px',
+          paddingLeft: `${containerPadding}px`,
+          paddingRight: `${containerPadding}px`,
           backgroundColor: '#ffffffff',
         }}
       >
@@ -90,7 +102,7 @@ export default function AboutContent({
           <div
             style={{
               display: 'flex',
-              gap: '40px',
+              gap: tabButtonGap,
               borderBottom: '1px solid #141414ff',
               paddingBottom: '10px',
             }}
@@ -100,7 +112,7 @@ export default function AboutContent({
               style={{
                 backgroundColor: 'transparent',
                 border: 'none',
-                fontSize: '24px',
+                fontSize: tabButtonFontSize,
                 fontWeight: activeTab === 'major' ? '700' : '400',
                 color: '#141414ff',
                 fontFamily: 'Inter',
@@ -112,14 +124,14 @@ export default function AboutContent({
                 marginBottom: '-10px',
               }}
             >
-              About Major
+              {isMobile ? 'Major' : 'About Major'}
             </button>
             <button
               onClick={() => setActiveTab('people')}
               style={{
                 backgroundColor: 'transparent',
                 border: 'none',
-                fontSize: '24px',
+                fontSize: tabButtonFontSize,
                 fontWeight: activeTab === 'people' ? '700' : '400',
                 color: '#141414ff',
                 fontFamily: 'Inter',
@@ -131,7 +143,7 @@ export default function AboutContent({
                 marginBottom: '-10px',
               }}
             >
-              Our People
+              {isMobile ? 'People' : 'Our People'}
             </button>
           </div>
         </div>
@@ -141,10 +153,10 @@ export default function AboutContent({
       <div
         style={{
           width: '100%',
-          paddingTop: '80px',
-          paddingBottom: '61px',
-          paddingLeft: '40px',
-          paddingRight: '40px',
+          paddingTop: containerPaddingVertical,
+          paddingBottom: containerPaddingBottom,
+          paddingLeft: `${containerPadding}px`,
+          paddingRight: `${containerPadding}px`,
           backgroundColor: '#ffffffff',
         }}
       >
@@ -162,7 +174,7 @@ export default function AboutContent({
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '50px',
+              gap: sectionGap,
             }}
           >
             {activeTab === 'major' && (

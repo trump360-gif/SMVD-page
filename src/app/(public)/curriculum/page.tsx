@@ -2,7 +2,7 @@ import {
   Header,
   Footer,
 } from '@/components/public/home';
-import { CurriculumTab } from '@/components/public/curriculum';
+import CurriculumContent from './content';
 import { prisma } from '@/lib/db';
 import { SectionType } from '@/generated/prisma';
 import type { UndergraduateContent, GraduateContent } from '@/lib/validation/curriculum';
@@ -55,32 +55,10 @@ export default async function CurriculumPage() {
       <Header />
 
       {/* Main Content Container */}
-      <div
-        style={{
-          width: '100%',
-          paddingTop: '80px',
-          paddingBottom: '61px',
-          paddingLeft: '40px',
-          paddingRight: '40px',
-          backgroundColor: '#ffffffff',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '1440px',
-            margin: '0 auto',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '100px',
-          }}
-        >
-          {/* Curriculum Tab Component */}
-          <CurriculumTab
-            undergraduateContent={undergraduate}
-            graduateContent={graduate}
-          />
-        </div>
-      </div>
+      <CurriculumContent
+        undergraduateContent={undergraduate}
+        graduateContent={graduate}
+      />
 
       {/* Footer */}
       <Footer />
