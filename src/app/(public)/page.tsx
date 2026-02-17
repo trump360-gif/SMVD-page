@@ -1,12 +1,6 @@
 import { prisma } from '@/lib/db';
-import {
-  Header,
-  VideoHero,
-  ExhibitionSection,
-  AboutSection,
-  WorkSection,
-  Footer,
-} from '@/components/public/home';
+import { Header, VideoHero } from '@/components/public/home';
+import HomePageContent from './HomePageContent';
 
 // ISR: regenerate every 60 seconds. Admin API calls revalidatePath() on mutations.
 export const revalidate = 60;
@@ -69,57 +63,21 @@ export default async function HomePage() {
       : '';
 
     return (
-      <div>
-        {/* Header */}
-        <Header />
-
-        {/* Video Hero */}
-        <VideoHero />
-
-        {/* Main Content Container */}
-        <div
-          style={{
-            maxWidth: '1360px',
-            margin: '0 auto',
-            paddingLeft: '40px',
-            paddingRight: '40px',
-          }}
-        >
-          {/* Exhibition Section */}
-          <ExhibitionSection items={exhibitionItems} />
-        </div>
-
-        {/* About Section (Full Width) */}
-        <AboutSection content={aboutContent} />
-
-        {/* Work Section (Full Width) */}
-        <WorkSection items={workItems} />
-
-        {/* Footer */}
-        <Footer />
-      </div>
+      <HomePageContent
+        exhibitionItems={exhibitionItems}
+        workItems={workItems}
+        aboutContent={aboutContent}
+      />
     );
   } catch (error) {
     console.error('Home page load error:', error);
 
     return (
-      <div>
-        <Header />
-        <VideoHero />
-        <div
-          style={{
-            maxWidth: '1360px',
-            margin: '0 auto',
-            paddingLeft: '40px',
-            paddingRight: '40px',
-          }}
-        >
-          <ExhibitionSection items={[]} />
-        </div>
-        <AboutSection />
-        <WorkSection items={[]} />
-        <Footer />
-      </div>
+      <HomePageContent
+        exhibitionItems={[]}
+        workItems={[]}
+        aboutContent=""
+      />
     );
   }
 }
