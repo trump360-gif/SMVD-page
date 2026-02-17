@@ -116,7 +116,7 @@ export function useAboutEditor() {
 
   // 섹션 수정
   const updateSection = useCallback(
-    async (sectionId: string, type: string, title: string, content: any) => {
+    async (sectionId: string, type: string, title: string, content: AboutIntro | AboutVision | AboutHistory | AboutPeople) => {
       try {
         setError(null);
         const res = await fetch('/api/admin/about/sections', {

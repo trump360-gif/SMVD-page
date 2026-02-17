@@ -9,12 +9,18 @@ import ExhibitionItemsList from '@/components/admin/ExhibitionItemsList';
 import WorkPortfolioList from '@/components/admin/WorkPortfolioList';
 import { useHomeEditor } from '@/hooks/home';
 
+interface HomeSectionContent {
+  title?: string;
+  visionLines?: string[];
+  [key: string]: unknown;
+}
+
 interface Section {
   id: string;
   pageId: string;
   type: string;
   title: string;
-  content: any;
+  content: HomeSectionContent | null;
   order: number;
   exhibitionItems?: ExhibitionItem[];
   workPortfolios?: WorkPortfolio[];
@@ -103,7 +109,7 @@ export default function HomeEditorPage() {
       });
       const pagesData = await pagesResponse.json();
 
-      const homePage = pagesData.data?.find((p: any) => p.slug === 'home');
+      const homePage = pagesData.data?.find((p: { slug: string; id: string }) => p.slug === 'home');
       if (!homePage?.id) {
         console.error('Failed to find Home page');
         setLoading(false);

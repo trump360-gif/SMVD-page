@@ -10,6 +10,7 @@ import {
   useSensors,
   DragOverlay,
   DragEndEvent,
+  DragStartEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -381,9 +382,9 @@ export default function ImageGridBlockEditor({
     }
   };
 
-  const handleDragStart = (event: any) => {
+  const handleDragStart = (event: DragStartEvent) => {
     if (process.env.DEBUG) console.log('[ImageGridBlockEditor] Drag started:', event.active.id);
-    setActiveId(event.active.id);
+    setActiveId(event.active.id as string);
   };
 
   const draggedImage = activeId && localBlock.images.find((img) => img.id === activeId);

@@ -49,7 +49,7 @@ export default function ImageRowBlockEditor({
     onChange(updated);
   };
 
-  const handleDistributionChange = (distribution: any) => {
+  const handleDistributionChange = (distribution: 'equal' | 'golden-left' | 'golden-center' | 'golden-right') => {
     const updated = { ...localBlock, distribution };
     setLocalBlock(updated);
     onChange(updated);
@@ -92,7 +92,7 @@ export default function ImageRowBlockEditor({
             <label className="text-xs font-medium text-gray-600">Distribution</label>
             <select
               value={localBlock.distribution ?? 'equal'}
-              onChange={(e) => handleDistributionChange(e.target.value)}
+              onChange={(e) => handleDistributionChange(e.target.value as 'equal' | 'golden-left' | 'golden-center' | 'golden-right')}
               className="w-full text-xs px-2 py-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-blue-400"
             >
               <option value="equal">Equal (1:1:1)</option>
