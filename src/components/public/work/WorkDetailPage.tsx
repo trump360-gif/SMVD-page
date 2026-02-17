@@ -4,6 +4,7 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { sanitizeContent } from '@/lib/sanitize';
+import { useResponsive } from '@/lib/responsive';
 import { WorkDetail } from '@/constants/work-details';
 import WorkHeader from './WorkHeader';
 import WorkDetailPreviewRenderer from '@/components/admin/shared/BlockEditor/renderers/WorkDetailPreviewRenderer';
@@ -147,6 +148,8 @@ interface WorkDetailPageProps {
 }
 
 export default function WorkDetailPage({ project }: WorkDetailPageProps) {
+  const { isMobile, isTablet } = useResponsive();
+
   // Try to parse block-based content from description
   const blockContent = parseBlockContent(project.description);
 
@@ -172,14 +175,29 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
   const descColor = blockContent?.mainDescriptionBlock?.color ?? '#1b1d1fff';
   const descLineHeight = blockContent?.mainDescriptionBlock?.lineHeight ?? 1.8;
 
+  // -- Responsive values --
+  const containerPaddingX = isMobile ? '16px' : isTablet ? '24px' : '40px';
+  const containerPaddingBottom = isMobile ? '40px' : '61px';
+  const sectionGap = isMobile ? '40px' : isTablet ? '60px' : '80px';
+  const contentGap = isMobile ? '40px' : isTablet ? '60px' : '100px';
+  const heroHeight = isMobile ? '300px' : isTablet ? '500px' : '860px';
+  const titleFontSize = isMobile ? '32px' : isTablet ? '44px' : '60px';
+  const textDirection = isMobile ? 'column' : 'row' as const;
+  const responsiveColumnGap = isMobile ? '24px' : isTablet ? `${Math.min(columnGap, 40)}px` : `${columnGap}px`;
+  const leftMinWidth = isMobile ? 'auto' : isTablet ? '280px' : '400px';
+  const leftFlex = isMobile ? '1' : '0 0 auto';
+  const responsiveDescFontSize = isMobile ? Math.min(descFontSize, 15) : descFontSize;
+  const navPadding = isMobile ? '10px 12px' : '12px 16px';
+  const navFontSize = isMobile ? '13px' : '14px';
+
   return (
     <div
       style={{
         width: '100%',
         paddingTop: '0px',
-        paddingBottom: '61px',
-        paddingLeft: '40px',
-        paddingRight: '40px',
+        paddingBottom: containerPaddingBottom,
+        paddingLeft: containerPaddingX,
+        paddingRight: containerPaddingX,
         backgroundColor: '#ffffffff',
       }}
     >
@@ -192,7 +210,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
-          gap: '80px',
+          gap: sectionGap,
           paddingTop: '0px',
         }}
       >
@@ -215,7 +233,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '100px',
+            gap: contentGap,
             width: '100%',
           }}
         >
@@ -224,7 +242,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
             <div
               style={{
                 width: '100%',
-                height: '860px',
+                height: heroHeight,
                 backgroundColor: '#d9d9d9ff',
                 borderRadius: '0px',
                 overflow: 'hidden',
@@ -248,7 +266,8 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
             <div
               style={{
                 display: 'flex',
-                gap: `${columnGap}px`,
+                flexDirection: textDirection,
+                gap: responsiveColumnGap,
                 width: '100%',
               }}
             >
@@ -257,34 +276,35 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '24px',
-                  flex: '0 0 auto',
-                  minWidth: '400px',
+                  gap: isMobile ? '16px' : '24px',
+                  flex: leftFlex,
+                  minWidth: leftMinWidth,
                 }}
               >
                 {/* Title */}
                 <h1
                   style={{
-                    fontSize: '60px',
+                    fontSize: titleFontSize,
                     fontWeight: '700',
                     color: '#1b1d1fff',
                     fontFamily: 'Satoshi',
                     margin: '0',
                     letterSpacing: '-0.6px',
                     lineHeight: '1.2',
+                    wordBreak: 'keep-all',
                   }}
                 >
                   {displayTitle}
                 </h1>
 
-                {/* Author and Email - Single Line */}
+                {/* Author and Email */}
                 <p
                   style={{
-                    fontSize: '14px',
+                    fontSize: isMobile ? '13px' : '14px',
                     fontFamily: 'Pretendard',
                     color: '#1b1d1fff',
                     margin: '0',
-                    whiteSpace: 'nowrap',
+                    whiteSpace: isMobile ? 'normal' : 'nowrap',
                   }}
                 >
                   <span style={{ fontWeight: '500' }}>
@@ -304,15 +324,15 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '24px',
-                  flex: textColumnWidth === 'narrow' ? '0 0 400px' : textColumnWidth === 'wide' ? '0 0 800px' : '1',
+                  gap: isMobile ? '16px' : '24px',
+                  flex: isMobile ? '1' : textColumnWidth === 'narrow' ? '0 0 400px' : textColumnWidth === 'wide' ? '0 0 800px' : '1',
                 }}
               >
                 {/* Description - Markdown or plain text */}
                 {hasMarkdownSyntax(displayDescription) ? (
                   <div
                     style={{
-                      fontSize: `${descFontSize}px`,
+                      fontSize: `${responsiveDescFontSize}px`,
                       fontWeight: descFontWeight,
                       fontFamily: 'Pretendard',
                       color: descColor,
@@ -329,7 +349,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                 ) : (
                   <p
                     style={{
-                      fontSize: `${descFontSize}px`,
+                      fontSize: `${responsiveDescFontSize}px`,
                       fontWeight: descFontWeight,
                       fontFamily: 'Pretendard',
                       color: descColor,
@@ -349,7 +369,8 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
             <div
               style={{
                 display: 'flex',
-                gap: `${columnGap}px`,
+                flexDirection: textDirection,
+                gap: responsiveColumnGap,
                 width: '100%',
               }}
             >
@@ -358,34 +379,35 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '24px',
-                  flex: '0 0 auto',
-                  minWidth: '400px',
+                  gap: isMobile ? '16px' : '24px',
+                  flex: leftFlex,
+                  minWidth: leftMinWidth,
                 }}
               >
                 {/* Title */}
                 <h1
                   style={{
-                    fontSize: '60px',
+                    fontSize: titleFontSize,
                     fontWeight: '700',
                     color: '#1b1d1fff',
                     fontFamily: 'Satoshi',
                     margin: '0',
                     letterSpacing: '-0.6px',
                     lineHeight: '1.2',
+                    wordBreak: 'keep-all',
                   }}
                 >
                   {displayTitle}
                 </h1>
 
-                {/* Author and Email - Single Line */}
+                {/* Author and Email */}
                 <p
                   style={{
-                    fontSize: '14px',
+                    fontSize: isMobile ? '13px' : '14px',
                     fontFamily: 'Pretendard',
                     color: '#1b1d1fff',
                     margin: '0',
-                    whiteSpace: 'nowrap',
+                    whiteSpace: isMobile ? 'normal' : 'nowrap',
                   }}
                 >
                   <span style={{ fontWeight: '500' }}>
@@ -405,14 +427,14 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '24px',
-                  flex: textColumnWidth === 'narrow' ? '0 0 400px' : textColumnWidth === 'wide' ? '0 0 800px' : '1',
+                  gap: isMobile ? '16px' : '24px',
+                  flex: isMobile ? '1' : textColumnWidth === 'narrow' ? '0 0 400px' : textColumnWidth === 'wide' ? '0 0 800px' : '1',
                 }}
               >
                 {hasMarkdownSyntax(displayDescription) ? (
                   <div
                     style={{
-                      fontSize: `${descFontSize}px`,
+                      fontSize: `${responsiveDescFontSize}px`,
                       fontWeight: descFontWeight,
                       fontFamily: 'Pretendard',
                       color: descColor,
@@ -429,7 +451,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                 ) : (
                   <p
                     style={{
-                      fontSize: `${descFontSize}px`,
+                      fontSize: `${responsiveDescFontSize}px`,
                       fontWeight: descFontWeight,
                       fontFamily: 'Pretendard',
                       color: descColor,
@@ -505,7 +527,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  padding: '12px 16px',
+                  padding: navPadding,
                   borderRadius: '4px',
                   backgroundColor: '#f5f5f5ff',
                   cursor: 'pointer',
@@ -526,7 +548,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
               >
                 <span
                   style={{
-                    fontSize: '14px',
+                    fontSize: navFontSize,
                     fontWeight: '500',
                     fontFamily: 'Pretendard',
                     color: '#1b1d1fff',
@@ -548,7 +570,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  padding: '12px 16px',
+                  padding: navPadding,
                   borderRadius: '4px',
                   backgroundColor: '#f5f5f5ff',
                   cursor: 'pointer',
@@ -569,7 +591,7 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
               >
                 <span
                   style={{
-                    fontSize: '14px',
+                    fontSize: navFontSize,
                     fontWeight: '500',
                     fontFamily: 'Pretendard',
                     color: '#1b1d1fff',
