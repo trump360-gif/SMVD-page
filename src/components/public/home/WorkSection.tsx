@@ -222,7 +222,7 @@ export default function WorkSection({
                   aspectRatio: '530 / 286',
                   backgroundColor: '#e1e1e1ff',
                   overflow: 'hidden',
-                  marginBottom: '16px',
+                  marginBottom: '12px',
                 }}
               >
                 <Image
