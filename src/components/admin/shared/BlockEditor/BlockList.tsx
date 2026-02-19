@@ -107,9 +107,9 @@ export default function BlockList({
     return (
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
         <FileText size={48} className="mx-auto text-gray-300 mb-4" />
-        <h3 className="text-lg font-medium text-gray-600 mb-2">No blocks yet</h3>
+        <h3 className="text-lg font-medium text-gray-600 mb-2">블록이 없습니다</h3>
         <p className="text-sm text-gray-400">
-          Click &quot;+ Add Block&quot; below to start creating your content
+          아래의 &quot;블록 추가&quot; 버튼을 클릭하여 콘텐츠를 만드세요
         </p>
       </div>
     );

@@ -34,24 +34,24 @@ interface BlockOption {
 }
 
 const GENERIC_BLOCK_OPTIONS: BlockOption[] = [
-  { type: 'text', label: 'Text Block', icon: <Type size={14} />, group: 'generic' },
-  { type: 'heading', label: 'Heading Block', icon: <Heading2 size={14} />, group: 'generic' },
-  { type: 'image', label: 'Image Block', icon: <ImageIcon size={14} />, group: 'generic' },
-  { type: 'gallery', label: 'Gallery Block', icon: <Grid3X3 size={14} />, group: 'generic' },
-  { type: 'spacer', label: 'Spacer', icon: <ArrowDownFromLine size={14} />, group: 'generic' },
-  { type: 'divider', label: 'Divider', icon: <Minus size={14} />, group: 'generic' },
-  { type: 'layout-row', label: 'Row Layout (2-3 cols)', icon: <Columns3 size={14} />, group: 'generic' },
-  { type: 'layout-grid', label: 'Grid Layout', icon: <LayoutGrid size={14} />, group: 'generic' },
-  { type: 'image-row', label: 'Image Row (1-3)', icon: <Columns3 size={14} />, group: 'generic' },
-  { type: 'image-grid', label: 'Image Grid', icon: <LayoutGrid size={14} />, group: 'generic' },
+  { type: 'text', label: '텍스트', icon: <Type size={14} />, group: 'generic' },
+  { type: 'heading', label: '제목', icon: <Heading2 size={14} />, group: 'generic' },
+  { type: 'image', label: '이미지', icon: <ImageIcon size={14} />, group: 'generic' },
+  { type: 'gallery', label: '갤러리', icon: <Grid3X3 size={14} />, group: 'generic' },
+  { type: 'spacer', label: '여백', icon: <ArrowDownFromLine size={14} />, group: 'generic' },
+  { type: 'divider', label: '구분선', icon: <Minus size={14} />, group: 'generic' },
+  { type: 'layout-row', label: '행 레이아웃 (2-3열)', icon: <Columns3 size={14} />, group: 'generic' },
+  { type: 'layout-grid', label: '그리드 레이아웃', icon: <LayoutGrid size={14} />, group: 'generic' },
+  { type: 'image-row', label: '이미지 행 (1-3)', icon: <Columns3 size={14} />, group: 'generic' },
+  { type: 'image-grid', label: '이미지 그리드', icon: <LayoutGrid size={14} />, group: 'generic' },
 ];
 
 const WORK_BLOCK_OPTIONS: BlockOption[] = [
-  { type: 'hero-image', label: 'Hero Image (860px)', icon: <Maximize size={14} />, group: 'work' },
-  { type: 'hero-section', label: 'Hero Section (Image + Text)', icon: <Maximize size={14} />, group: 'work' },
-  { type: 'work-title', label: 'Work Title + Author', icon: <Tag size={14} />, group: 'work' },
-  { type: 'work-metadata', label: 'Author / Email', icon: <User size={14} />, group: 'work' },
-  { type: 'work-layout-config', label: 'Layout Configuration', icon: <Grid3X3 size={14} />, group: 'work' },
+  { type: 'hero-image', label: '히어로 이미지 (860px)', icon: <Maximize size={14} />, group: 'work' },
+  { type: 'hero-section', label: '히어로 섹션 (이미지 + 텍스트)', icon: <Maximize size={14} />, group: 'work' },
+  { type: 'work-title', label: '작품명 + 작가', icon: <Tag size={14} />, group: 'work' },
+  { type: 'work-metadata', label: '작가 / 이메일', icon: <User size={14} />, group: 'work' },
+  { type: 'work-layout-config', label: '레이아웃 설정', icon: <Grid3X3 size={14} />, group: 'work' },
 ];
 
 /**
@@ -97,7 +97,7 @@ export default function BlockToolbar({ onAddBlock, showWorkBlocks = false, initi
         className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 hover:text-gray-800 transition-colors"
       >
         <Plus size={14} />
-        Add Block
+        블록 추가
       </button>
 
       {isOpen && (
@@ -125,7 +125,7 @@ export default function BlockToolbar({ onAddBlock, showWorkBlocks = false, initi
             <>
               <div className="border-t border-gray-200 my-2 pt-2">
                 <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider block mb-2">
-                  Work Detail
+                  작품 상세
                 </span>
                 <div className="grid grid-cols-3 gap-2">
                   {WORK_BLOCK_OPTIONS.map((opt) => (

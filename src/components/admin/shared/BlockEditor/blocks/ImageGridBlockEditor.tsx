@@ -21,6 +21,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { useDroppable } from '@dnd-kit/core';
 import { Trash2, Plus, X, ChevronDown, ChevronUp } from 'lucide-react';
+import ImageUploadField from '../../ImageUploadField';
 import type { ImageGridBlock, ImageData, ImageGridRow } from '../types';
 
 interface ImageGridBlockEditorProps {
@@ -78,36 +79,19 @@ function DraggableImageItem({
         <X size={12} />
       </button>
 
-      {/* Image Preview */}
-      {image.url ? (
-        <img
-          src={image.url}
-          alt={image.alt || 'Preview'}
-          className="w-full h-20 object-cover"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-          }}
+      {/* Image Upload Field with Drag & Drop */}
+      <div className="p-1.5 border-t border-gray-200">
+        <ImageUploadField
+          imageUrl={image.url || null}
+          onImageChange={(url) => onUpdateImage(image.id, 'url', url || '')}
+          label="이미지 (드래그앤드롭 또는 클릭)"
         />
-      ) : (
-        <div className="w-full h-20 bg-gray-100 flex items-center justify-center text-xs text-gray-400">
-          No image
-        </div>
-      )}
-
-      {/* URL Input */}
-      <input
-        type="text"
-        placeholder="URL"
-        value={image.url}
-        onChange={(e) => onUpdateImage(image.id, 'url', e.target.value)}
-        className="w-full text-xs px-1 py-0.5 border-t border-gray-200 focus:outline-none focus:border-blue-400"
-      />
+      </div>
 
       {/* Alt Text Input */}
       <input
         type="text"
-        placeholder="Alt"
+        placeholder="Alt 텍스트"
         value={image.alt || ''}
         onChange={(e) => onUpdateImage(image.id, 'alt', e.target.value)}
         className="w-full text-xs px-1 py-0.5 border-t border-gray-200 focus:outline-none focus:border-blue-400"
