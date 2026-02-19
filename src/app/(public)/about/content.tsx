@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useResponsive } from '@/lib/responsive';
 import { PADDING } from '@/constants/responsive';
 import {
@@ -58,6 +58,7 @@ export default function AboutContent({
   historyData,
   peopleData,
 }: AboutContentProps) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { isMobile, isTablet } = useResponsive();
   const [activeTab, setActiveTab] = useState<'major' | 'people'>('major');
@@ -108,7 +109,10 @@ export default function AboutContent({
             }}
           >
             <button
-              onClick={() => setActiveTab('major')}
+              onClick={() => {
+                setActiveTab('major');
+                router.push('/about');
+              }}
               style={{
                 backgroundColor: 'transparent',
                 border: 'none',
@@ -127,7 +131,10 @@ export default function AboutContent({
               About Major
             </button>
             <button
-              onClick={() => setActiveTab('people')}
+              onClick={() => {
+                setActiveTab('people');
+                router.push('/about?tab=people');
+              }}
               style={{
                 backgroundColor: 'transparent',
                 border: 'none',
