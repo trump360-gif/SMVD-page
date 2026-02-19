@@ -35,6 +35,8 @@ export default function TiptapEditor({
   editorId,
 }: TiptapEditorProps) {
   const uploadInProgressRef = useRef(false);
+  const previousContentStringRef = useRef<string>('');
+  const isInitializingRef = useRef(false);
 
   // Initialize editor with proper extensions
   const editor = useEditor({
@@ -83,15 +85,15 @@ export default function TiptapEditor({
     ],
     content: '',
     onUpdate: ({ editor }) => {
-      // Only emit changes if upload is not in progress
-      if (!uploadInProgressRef.current) {
+      // Only emit changes if upload is not in progress AND not initializing
+      if (!uploadInProgressRef.current && !isInitializingRef.current) {
         const json = editor.getJSON() as TiptapContent;
         onChange(json);
       }
     },
   });
 
-  // Handle initial content loading
+  // Handle initial content loading and external content changes
   useEffect(() => {
     if (!editor) return;
 
@@ -109,9 +111,23 @@ export default function TiptapEditor({
       tiptapContent = { type: 'doc', content: [] };
     }
 
-    // Set editor content without triggering update event
-    editor.commands.setContent(tiptapContent);
-  }, []); // Only on mount
+    // Compare JSON stringified content to detect external changes only
+    const currentContentString = JSON.stringify(tiptapContent);
+    if (previousContentStringRef.current !== currentContentString) {
+      // Content has changed externally (from parent prop)
+      // Only update if not currently initializing (prevent loops)
+      previousContentStringRef.current = currentContentString;
+
+      // Mark as initializing to prevent onChange firing during setContent
+      isInitializingRef.current = true;
+      editor.commands.setContent(tiptapContent);
+
+      // Reset flag after a tick
+      setTimeout(() => {
+        isInitializingRef.current = false;
+      }, 0);
+    }
+  }, [content, editor]); // ✅ Detects external content changes from parent modals
 
   // Expose uploadInProgress to toolbar
   const handleImageUploadStart = useCallback(() => {
