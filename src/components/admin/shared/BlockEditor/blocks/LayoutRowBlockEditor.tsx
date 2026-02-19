@@ -213,7 +213,7 @@ export default function LayoutRowBlockEditor({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-gray-700">Layout Mode:</span>
+          <span className="text-xs font-semibold text-gray-700">레이아웃 모드:</span>
           <button
             type="button"
             onClick={() => handleChangeColumns(2)}
@@ -223,7 +223,7 @@ export default function LayoutRowBlockEditor({
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
-            2 Cols
+            2열
           </button>
           <button
             type="button"
@@ -234,7 +234,7 @@ export default function LayoutRowBlockEditor({
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
-            3 Cols
+            3열
           </button>
         </div>
 
@@ -246,7 +246,7 @@ export default function LayoutRowBlockEditor({
               ? 'bg-blue-100 text-blue-600'
               : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
           }`}
-          title="Toggle settings"
+          title="설정 열기/닫기"
         >
           <Settings size={16} />
         </button>
@@ -256,11 +256,11 @@ export default function LayoutRowBlockEditor({
       {showSettings && (
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg space-y-3">
           <div className="text-xs font-semibold text-gray-700 mb-2 pb-2 border-b border-blue-200">
-            Column Distribution & Spacing
+            열 배치 및 간격
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
-              Distribution
+              배치 방식
             </label>
             <select
               value={block.distribution || 'equal'}
@@ -271,17 +271,17 @@ export default function LayoutRowBlockEditor({
               }
               className="w-full px-2 py-1.5 text-xs border border-gray-300 rounded bg-white"
             >
-              <option value="equal">Equal Width (1:1:1)</option>
-              <option value="golden-left">Golden Ratio Left (1.618:1:1)</option>
-              <option value="golden-center">Golden Ratio Center (1:1.618:1)</option>
-              <option value="golden-right">Golden Ratio Right (1:1:1.618)</option>
-              <option value="custom">Custom Widths</option>
+              <option value="equal">같은 너비 (1:1:1)</option>
+              <option value="golden-left">황금비 왼쪽 (1.618:1:1)</option>
+              <option value="golden-center">황금비 중앙 (1:1.618:1)</option>
+              <option value="golden-right">황금비 오른쪽 (1:1:1.618)</option>
+              <option value="custom">사용자 정의 너비</option>
             </select>
           </div>
 
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
-              Column Gap (px)
+              열 간격 (px)
             </label>
             <input
               type="number"
@@ -297,7 +297,7 @@ export default function LayoutRowBlockEditor({
           {block.distribution === 'custom' && (
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">
-                Custom Widths (%)
+                사용자 정의 너비 (%)
               </label>
               <div className="space-y-1.5">
                 {block.customWidths?.map((width, idx) => (
@@ -311,7 +311,7 @@ export default function LayoutRowBlockEditor({
                       onChange({ customWidths: newWidths });
                     }}
                     className="w-full px-2 py-1.5 text-xs border border-gray-300 rounded"
-                    placeholder={`Column ${idx + 1} width`}
+                    placeholder={`열 ${idx + 1} 너비`}
                     min="0"
                     max="100"
                     step="1"
@@ -326,7 +326,7 @@ export default function LayoutRowBlockEditor({
       {/* Column Tabs */}
       <div className="flex gap-1 border-b border-gray-200">
         {block.children.map((colBlocks, idx) => {
-          const columnLabel = idx === 0 ? 'Left' : idx === 1 ? 'Center' : 'Right';
+          const columnLabel = idx === 0 ? '왼쪽' : idx === 1 ? '중앙' : '오른쪽';
           return (
             <button
               key={idx}
@@ -351,7 +351,7 @@ export default function LayoutRowBlockEditor({
 
         {selectedColumnBlocks.length === 0 ? (
           <div className="p-4 text-center text-xs text-gray-400 bg-gray-50 rounded-lg">
-            No blocks in this column. Click "Add Block" above to start.
+            이 열에 블록이 없습니다. 위의 "블록 추가"를 클릭하여 시작하세요.
           </div>
         ) : (
           <BlockList
@@ -372,7 +372,7 @@ export default function LayoutRowBlockEditor({
             type="button"
             onClick={() => handleMoveUp(selectedBlockId)}
             className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
-            title="Move block up"
+            title="블록 위로 이동"
           >
             <ChevronUp size={14} />
           </button>
@@ -380,7 +380,7 @@ export default function LayoutRowBlockEditor({
             type="button"
             onClick={() => handleMoveDown(selectedBlockId)}
             className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
-            title="Move block down"
+            title="블록 아래로 이동"
           >
             <ChevronDown size={14} />
           </button>

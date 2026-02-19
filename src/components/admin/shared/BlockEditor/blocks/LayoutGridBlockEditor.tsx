@@ -18,11 +18,11 @@ const GRID_TEMPLATES: Record<
   LayoutGridBlock['template'],
   { label: string; rows: number; cols: number }
 > = {
-  '2x2': { label: '2×2 (4 cells)', rows: 2, cols: 2 },
-  '3x1': { label: '3×1 (3 cells)', rows: 3, cols: 1 },
-  '1x3': { label: '1×3 (3 cells)', rows: 1, cols: 3 },
-  '2x3': { label: '2×3 (6 cells)', rows: 2, cols: 3 },
-  auto: { label: 'Auto (flex)', rows: 2, cols: 2 },
+  '2x2': { label: '2×2 (4개 셀)', rows: 2, cols: 2 },
+  '3x1': { label: '3×1 (3개 셀)', rows: 3, cols: 1 },
+  '1x3': { label: '1×3 (3개 셀)', rows: 1, cols: 3 },
+  '2x3': { label: '2×3 (6개 셀)', rows: 2, cols: 3 },
+  auto: { label: '자동 (flex)', rows: 2, cols: 2 },
 };
 
 /**
@@ -198,7 +198,7 @@ export default function LayoutGridBlockEditor({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-gray-700">Template:</span>
+          <span className="text-xs font-semibold text-gray-700">템플릿:</span>
           <select
             value={block.template}
             onChange={(e) => handleChangeTemplate(e.target.value as LayoutGridBlock['template'])}
@@ -220,7 +220,7 @@ export default function LayoutGridBlockEditor({
               ? 'bg-blue-100 text-blue-600'
               : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
           }`}
-          title="Toggle settings"
+          title="설정 열기/닫기"
         >
           <Settings size={16} />
         </button>
@@ -231,7 +231,7 @@ export default function LayoutGridBlockEditor({
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg space-y-3">
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
-              Cell Gap (px)
+              셀 간격 (px)
             </label>
             <input
               type="number"
@@ -246,7 +246,7 @@ export default function LayoutGridBlockEditor({
 
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
-              Min Cell Height (px)
+              최소 셀 높이 (px)
             </label>
             <input
               type="number"
@@ -265,7 +265,7 @@ export default function LayoutGridBlockEditor({
 
       {/* Cell Selector Grid */}
       <div>
-        <div className="text-xs font-semibold text-gray-700 mb-2">Select Cell:</div>
+        <div className="text-xs font-semibold text-gray-700 mb-2">셀 선택:</div>
         <div
           style={{
             display: 'grid',
@@ -284,7 +284,7 @@ export default function LayoutGridBlockEditor({
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              <div>Cell {idx + 1}</div>
+              <div>셀 {idx + 1}</div>
               <div className="text-xs opacity-75">({cellBlocks.length})</div>
             </button>
           ))}
@@ -294,14 +294,14 @@ export default function LayoutGridBlockEditor({
       {/* Cell Content */}
       <div className="space-y-2 border-t border-gray-200 pt-3">
         <div className="text-xs font-semibold text-gray-700">
-          Editing: Cell {selectedCellIdx + 1}
+          편집 중: 셀 {selectedCellIdx + 1}
         </div>
 
         <BlockToolbar onAddBlock={handleAddBlock} showWorkBlocks={false} />
 
         {selectedCellBlocks.length === 0 ? (
           <div className="p-4 text-center text-xs text-gray-400 bg-gray-50 rounded-lg">
-            No blocks in this cell. Click "Add Block" above to start.
+            이 셀에 블록이 없습니다. 위의 "블록 추가"를 클릭하여 시작하세요.
           </div>
         ) : (
           <BlockList

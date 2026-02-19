@@ -150,9 +150,9 @@ const SortableBlockItem = memo(function SortableBlockItem({
             type="button"
             {...attributes}
             {...listeners}
-            aria-label={`Drag to reorder ${blockLabel} block`}
+            aria-label={`${blockLabel} 블록 순서 변경을 위해 드래그하세요`}
             className="p-0.5 cursor-grab active:cursor-grabbing hover:bg-gray-200 rounded transition-colors opacity-60 group-hover:opacity-100"
-            title="Drag to reorder"
+            title="드래그하여 순서 변경"
           >
             <GripVertical size={14} className="text-gray-400" />
           </button>
@@ -166,14 +166,14 @@ const SortableBlockItem = memo(function SortableBlockItem({
         {/* Delete button */}
         <div className="flex items-center gap-1">
           {showDeleteConfirm && (
-            <span className="text-xs text-red-500 mr-1">Delete?</span>
+            <span className="text-xs text-red-500 mr-1">삭제할까요?</span>
           )}
           <button
             type="button"
             aria-label={
               showDeleteConfirm
-                ? `Confirm delete ${blockLabel} block`
-                : `Delete ${blockLabel} block`
+                ? `${blockLabel} 블록 삭제 확인`
+                : `${blockLabel} 블록 삭제`
             }
             onClick={(e) => {
               e.stopPropagation();
@@ -185,7 +185,7 @@ const SortableBlockItem = memo(function SortableBlockItem({
                 ? 'bg-red-500 text-white hover:bg-red-600'
                 : 'text-gray-400 hover:text-red-500 hover:bg-red-50 opacity-60 group-hover:opacity-100'
             }`}
-            title={showDeleteConfirm ? 'Confirm delete' : 'Delete block'}
+            title={showDeleteConfirm ? '삭제 확인' : '블록 삭제'}
           >
             <Trash2 size={13} />
           </button>
