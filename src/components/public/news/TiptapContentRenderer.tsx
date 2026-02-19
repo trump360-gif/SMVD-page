@@ -112,9 +112,20 @@ function renderInlineContent(contents: TiptapContent[]): React.ReactNode {
 }
 
 /**
- * Render a single Tiptap node
+ * Render a single Tiptap node with recursion depth protection
  */
-function renderNode(node: TiptapNode, index: number): React.ReactNode {
+function renderNode(node: TiptapNode, index: number, depth: number = 0): React.ReactNode {
+  // ✅ Prevent infinite recursion
+  const MAX_DEPTH = 50;
+  if (depth > MAX_DEPTH) {
+    console.warn(`Max depth exceeded at node type: ${node.type}`);
+    return null;
+  }
+
+  // ✅ Validate node
+  if (!node || typeof node !== 'object' || !node.type) {
+    return null;
+  }
   switch (node.type) {
     case 'paragraph': {
       const textContent = extractTextFromNode(node);
@@ -215,7 +226,7 @@ function renderNode(node: TiptapNode, index: number): React.ReactNode {
         >
           {node.content?.map((item: any, idx) => {
             if (item.type) {
-              return renderNode(item as TiptapNode, idx);
+              return renderNode(item as TiptapNode, idx, depth + 1);
             }
             return null;
           })}
@@ -240,7 +251,7 @@ function renderNode(node: TiptapNode, index: number): React.ReactNode {
         >
           {node.content?.map((item: any, idx) => {
             if (item.type) {
-              return renderNode(item as TiptapNode, idx);
+              return renderNode(item as TiptapNode, idx, depth + 1);
             }
             return null;
           })}
@@ -262,7 +273,7 @@ function renderNode(node: TiptapNode, index: number): React.ReactNode {
               return renderInlineContent((item.content || []) as TiptapContent[]);
             }
             if (item.type) {
-              return renderNode(item as TiptapNode, idx);
+              return renderNode(item as TiptapNode, idx, depth + 1);
             }
             return null;
           })}
@@ -289,7 +300,7 @@ function renderNode(node: TiptapNode, index: number): React.ReactNode {
         >
           {node.content?.map((item: any, idx) => {
             if (item.type) {
-              return renderNode(item as TiptapNode, idx);
+              return renderNode(item as TiptapNode, idx, depth + 1);
             }
             return null;
           })}
@@ -307,7 +318,7 @@ function renderNode(node: TiptapNode, index: number): React.ReactNode {
         <div key={`doc-${index}`}>
           {(node.content || []).map((child: any, idx) => {
             if (child.type) {
-              return renderNode(child as TiptapNode, idx);
+              return renderNode(child as TiptapNode, idx, depth + 1);
             }
             return null;
           })}
