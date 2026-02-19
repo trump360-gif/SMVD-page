@@ -45,7 +45,7 @@ export function CursorGlassEffect() {
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      const particleCount = Math.random() * 2 + 2; // 2-4개
+      const particleCount = Math.random() * 4 + 4; // 4-8개
 
       for (let i = 0; i < particleCount; i++) {
         // 약간의 딜레이를 주어 자연스러운 효과
