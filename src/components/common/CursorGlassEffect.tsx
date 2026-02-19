@@ -1,127 +1,79 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-
-interface Particle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  opacity: number;
-  life: number;
-  maxLife: number;
-  size: number;
-}
+import gsap from 'gsap';
 
 export function CursorGlassEffect() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<Particle[]>([]);
-  const animationFrameId = useRef<number | undefined>(undefined);
-  const lastMousePos = useRef({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const createParticle = (x: number, y: number) => {
+      // 파티클 DOM 생성
+      const particle = document.createElement('div');
+      const size = Math.random() * 3 + 2; // 2-5px
+      const offsetX = (Math.random() - 0.5) * 60; // 좌우 분산
+      const offsetY = Math.random() * 30; // 아래로만
+      const duration = Math.random() * 0.8 + 0.6; // 0.6-1.4s
 
-    // Canvas 설정
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+      particle.style.position = 'fixed';
+      particle.style.left = x + 'px';
+      particle.style.top = y + 'px';
+      particle.style.width = size + 'px';
+      particle.style.height = size + 'px';
+      particle.style.borderRadius = '50%';
+      particle.style.backgroundColor = 'rgb(100, 220, 200)';
+      particle.style.pointerEvents = 'none';
+      particle.style.zIndex = '40';
+      particle.style.opacity = String(Math.random() * 0.3 + 0.2);
 
-    const createParticles = (x: number, y: number) => {
-      const particleCount = Math.random() * 2 + 2; // 2-4개
+      container.appendChild(particle);
 
-      for (let i = 0; i < particleCount; i++) {
-        const angle = (Math.random() * Math.PI * 2);
-        const velocity = Math.random() * 0.5 + 0.5;
-
-        particlesRef.current.push({
-          x,
-          y,
-          vx: Math.cos(angle) * velocity * 0.3,
-          vy: Math.sin(angle) * velocity + 0.8, // 아래쪽으로 강하게
-          opacity: Math.random() * 0.3 + 0.2, // 0.2-0.5 (투명한 유리)
-          life: 0,
-          maxLife: Math.random() * 40 + 60, // 60-100 프레임
-          size: Math.random() * 1.5 + 1.5, // 1.5-3px (섬세한 유리 입자)
-        });
-      }
-    };
-
-    const animate = () => {
-      // Canvas 초기화 (반투명)
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // 입자 업데이트 및 렌더링
-      for (let i = particlesRef.current.length - 1; i >= 0; i--) {
-        const particle = particlesRef.current[i];
-
-        // 생명주기 업데이트
-        particle.life++;
-        const lifeRatio = particle.life / particle.maxLife;
-
-        // 투명도 감소 (페이드아웃)
-        particle.opacity = (1 - lifeRatio) * particle.opacity;
-
-        // 위치 업데이트
-        particle.x += particle.vx;
-        particle.y += particle.vy;
-
-        // 중력 효과
-        particle.vy += 0.1;
-
-        // 렌더링 (투명한 청록색 유리 입자)
-        ctx.fillStyle = `rgba(100, 220, 200, ${particle.opacity})`;
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 생명이 다한 입자 제거
-        if (particle.life >= particle.maxLife) {
-          particlesRef.current.splice(i, 1);
-        }
-      }
-
-      animationFrameId.current = requestAnimationFrame(animate);
+      // GSAP 애니메이션 (부드러운 이징)
+      gsap.to(particle, {
+        duration,
+        y: offsetY + 100, // 아래로 떨어짐
+        x: offsetX, // 좌우 분산
+        opacity: 0, // 페이드아웃
+        ease: 'power2.out', // 부드러운 이징
+        onComplete: () => {
+          particle.remove(); // 애니메이션 끝나면 제거
+        },
+      });
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      lastMousePos.current = { x: e.clientX, y: e.clientY };
+      const particleCount = Math.random() * 2 + 2; // 2-4개
 
-      // 마우스 이동할 때마다 입자 생성
-      createParticles(e.clientX, e.clientY);
+      for (let i = 0; i < particleCount; i++) {
+        // 약간의 딜레이를 주어 자연스러운 효과
+        setTimeout(() => {
+          createParticle(e.clientX, e.clientY);
+        }, i * 15); // 15ms 간격
+      }
     };
 
-    // 이벤트 리스너 등록
     window.addEventListener('mousemove', handleMouseMove);
-
-    // 애니메이션 시작
-    animationFrameId.current = requestAnimationFrame(animate);
-
-    // 윈도우 리사이즈 처리
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationFrameId.current!);
+      // 남은 파티클 정리
+      gsap.killTweensOf('div');
+      container.innerHTML = '';
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
+    <div
+      ref={containerRef}
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
+        width: '100%',
+        height: '100%',
         pointerEvents: 'none',
         zIndex: 40,
       }}
