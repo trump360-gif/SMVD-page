@@ -111,19 +111,19 @@ export default function NavigationTable({
                   <span className="sr-only">순서 변경</span>
                 </th>
                 <th className="px-3 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Label
+                  메뉴명
                 </th>
                 <th className="px-3 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Href
+                  링크
                 </th>
                 <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Order
+                  순서
                 </th>
                 <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Active
+                  활성화
                 </th>
                 <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
+                  작업
                 </th>
               </tr>
             </thead>
