@@ -42,10 +42,10 @@ export function CursorGlassEffect() {
           y,
           vx: Math.cos(angle) * velocity * 0.3,
           vy: Math.sin(angle) * velocity + 0.8, // 아래쪽으로 강하게
-          opacity: Math.random() * 0.4 + 0.6, // 0.6-1.0 (더 선명함)
+          opacity: Math.random() * 0.3 + 0.2, // 0.2-0.5 (투명한 유리)
           life: 0,
           maxLife: Math.random() * 40 + 60, // 60-100 프레임
-          size: Math.random() * 3 + 3, // 3-6px (더 큼)
+          size: Math.random() * 1.5 + 1.5, // 1.5-3px (섬세한 유리 입자)
         });
       }
     };
@@ -72,14 +72,7 @@ export function CursorGlassEffect() {
         // 중력 효과
         particle.vy += 0.1;
 
-        // 렌더링 (청록색 유리 느낌)
-        // Glow 효과
-        ctx.fillStyle = `rgba(100, 220, 200, ${particle.opacity * 0.3})`;
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size * 1.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 메인 입자
+        // 렌더링 (투명한 청록색 유리 입자)
         ctx.fillStyle = `rgba(100, 220, 200, ${particle.opacity})`;
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
