@@ -2,6 +2,7 @@
 
 import { SessionProvider } from "next-auth/react";
 import { useEffect } from "react";
+import { CursorGlassEffect } from "@/components/common/CursorGlassEffect";
 
 function HashScroller({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -31,6 +32,7 @@ function HashScroller({ children }: { children: React.ReactNode }) {
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
+      <CursorGlassEffect />
       <HashScroller>{children}</HashScroller>
     </SessionProvider>
   );
