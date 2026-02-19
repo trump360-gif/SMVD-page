@@ -18,13 +18,13 @@ export function CursorGlassEffect() {
     glassIndicator.style.width = '30px';
     glassIndicator.style.height = '30px';
     glassIndicator.style.borderRadius = '50%';
-    glassIndicator.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+    glassIndicator.style.backgroundColor = 'rgba(120, 120, 120, 0.8)';
     glassIndicator.style.pointerEvents = 'none';
     glassIndicator.style.zIndex = '50';
     glassIndicator.style.opacity = '0';
     glassIndicator.style.transform = 'translate(-50%, -50%)';
     glassIndicator.style.backdropFilter = 'blur(12px) brightness(1.15)';
-    glassIndicator.style.boxShadow = 'inset 0 0 15px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.3)';
+    glassIndicator.style.boxShadow = 'inset 0 0 15px rgba(180, 180, 180, 0.4), 0 0 20px rgba(120, 120, 120, 0.3)';
     glassIndicator.style.transition = 'none';
 
     container.appendChild(glassIndicator);
@@ -61,7 +61,7 @@ export function CursorGlassEffect() {
       particle.style.width = size + 'px';
       particle.style.height = size + 'px';
       particle.style.borderRadius = '50%';
-      particle.style.backgroundColor = 'rgb(255, 255, 255)';
+      particle.style.backgroundColor = 'rgb(40, 160, 150)';
       particle.style.pointerEvents = 'none';
       particle.style.zIndex = '40';
       particle.style.opacity = String(Math.random() * 0.3 + 0.2);
@@ -82,7 +82,7 @@ export function CursorGlassEffect() {
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      const target = e.target as Element;
+      const target = e.target as HTMLElement;
       const clickable = isClickable(target);
       isClickableRef.current = clickable;
 
@@ -102,6 +102,7 @@ export function CursorGlassEffect() {
             overwrite: 'auto',
           });
           document.documentElement.style.cursor = 'none';
+          document.body.style.cursor = 'none';
         } else {
           // 클릭 불가능 → 글래스 숨김 + 커서 표시
           gsap.to(glassIndicatorRef.current, {
@@ -111,6 +112,7 @@ export function CursorGlassEffect() {
             overwrite: 'auto',
           });
           document.documentElement.style.cursor = 'auto';
+          document.body.style.cursor = 'auto';
         }
       }
 
@@ -134,6 +136,7 @@ export function CursorGlassEffect() {
       container.innerHTML = '';
       // 커서 복원
       document.documentElement.style.cursor = 'auto';
+      document.body.style.cursor = 'auto';
     };
   }, []);
 
