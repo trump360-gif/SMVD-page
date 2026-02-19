@@ -12,6 +12,16 @@ export function CursorGlassEffect() {
     const container = containerRef.current;
     if (!container) return;
 
+    // 커서 숨김 스타일 생성
+    const style = document.createElement('style');
+    style.id = 'cursor-glass-effect-style';
+    style.textContent = `
+      .cursor-glass-hidden * {
+        cursor: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+
     // 글래스 인디케이터 생성
     const glassIndicator = document.createElement('div');
     glassIndicator.style.position = 'fixed';
@@ -101,8 +111,7 @@ export function CursorGlassEffect() {
             ease: 'power2.out',
             overwrite: 'auto',
           });
-          document.documentElement.style.cursor = 'none';
-          document.body.style.cursor = 'none';
+          document.documentElement.classList.add('cursor-glass-hidden');
         } else {
           // 클릭 불가능 → 글래스 숨김 + 커서 표시
           gsap.to(glassIndicatorRef.current, {
@@ -111,8 +120,7 @@ export function CursorGlassEffect() {
             ease: 'power2.out',
             overwrite: 'auto',
           });
-          document.documentElement.style.cursor = 'auto';
-          document.body.style.cursor = 'auto';
+          document.documentElement.classList.remove('cursor-glass-hidden');
         }
       }
 
@@ -135,8 +143,11 @@ export function CursorGlassEffect() {
       gsap.killTweensOf('div');
       container.innerHTML = '';
       // 커서 복원
-      document.documentElement.style.cursor = 'auto';
-      document.body.style.cursor = 'auto';
+      document.documentElement.classList.remove('cursor-glass-hidden');
+      const styleElement = document.getElementById('cursor-glass-effect-style');
+      if (styleElement) {
+        styleElement.remove();
+      }
     };
   }, []);
 
