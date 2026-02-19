@@ -24,7 +24,7 @@ export function CursorGlassEffect() {
       particle.style.width = size + 'px';
       particle.style.height = size + 'px';
       particle.style.borderRadius = '50%';
-      particle.style.backgroundColor = 'rgb(100, 220, 200)';
+      particle.style.backgroundColor = 'rgb(40, 160, 150)';
       particle.style.pointerEvents = 'none';
       particle.style.zIndex = '40';
       particle.style.opacity = String(Math.random() * 0.3 + 0.2);
