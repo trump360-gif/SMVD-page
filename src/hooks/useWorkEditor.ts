@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { BlogContent } from '@/components/admin/shared/BlockEditor/types';
+import type { TiptapContent } from '@/components/admin/shared/BlockEditor/types';
 
 // ---- Types ----
 
@@ -21,7 +21,7 @@ export interface WorkProjectData {
   galleryImages: string[];
   order: number;
   published: boolean;
-  content?: BlogContent;
+  content?: TiptapContent | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -52,7 +52,7 @@ export interface CreateProjectInput {
   thumbnailImage: string;
   galleryImages: string[];
   published?: boolean;
-  content?: BlogContent; // BlockEditor content with blocks array
+  content?: TiptapContent | null; // Tiptap JSON content
 }
 
 export interface UpdateProjectInput {
@@ -68,7 +68,7 @@ export interface UpdateProjectInput {
   thumbnailImage?: string;
   galleryImages?: string[];
   published?: boolean;
-  content?: BlogContent; // BlockEditor content with blocks array
+  content?: TiptapContent | null; // Tiptap JSON content
 }
 
 export interface CreateExhibitionInput {

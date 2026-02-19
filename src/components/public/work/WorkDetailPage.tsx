@@ -3,7 +3,6 @@
 import { useResponsive } from '@/lib/responsive';
 import { WorkDetail } from '@/constants/work-details';
 import WorkHeader from './WorkHeader';
-import WorkDetailPreviewRenderer from '@/components/admin/shared/BlockEditor/renderers/WorkDetailPreviewRenderer';
 import WorkDetailContent from './WorkDetailContent';
 import WorkProjectNavigation from './WorkProjectNavigation';
 import { parseBlockContent } from './WorkDetailTypes';
@@ -68,41 +67,25 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
           paddingTop: '0px',
         }}
       >
-        {/* Use BlockEditor content if available */}
-        {project.content && project.content.blocks && project.content.blocks.length > 0 ? (
-          <WorkDetailPreviewRenderer
-            blocks={project.content.blocks}
-            rowConfig={project.content.rowConfig}
-            projectContext={{
-              title: displayTitle,
-              author: displayAuthor,
-              email: displayEmail,
-              heroImage: displayHero,
-            }}
-          />
-        ) : (
-          <>
-            <WorkDetailContent
-              displayHero={displayHero}
-              displayTitle={displayTitle}
-              displayAuthor={displayAuthor}
-              displayEmail={displayEmail}
-              displayDescription={displayDescription}
-              displayGalleryImages={displayGalleryImages}
-              columnLayout={columnLayout}
-              columnGap={columnGap}
-              textColumnWidth={textColumnWidth}
-              descFontSize={descFontSize}
-              descFontWeight={descFontWeight}
-              descColor={descColor}
-              descLineHeight={descLineHeight}
-            />
-            <WorkProjectNavigation
-              previousProject={project.previousProject}
-              nextProject={project.nextProject}
-            />
-          </>
-        )}
+        <WorkDetailContent
+          displayHero={displayHero}
+          displayTitle={displayTitle}
+          displayAuthor={displayAuthor}
+          displayEmail={displayEmail}
+          displayDescription={displayDescription}
+          displayGalleryImages={displayGalleryImages}
+          columnLayout={columnLayout}
+          columnGap={columnGap}
+          textColumnWidth={textColumnWidth}
+          descFontSize={descFontSize}
+          descFontWeight={descFontWeight}
+          descColor={descColor}
+          descLineHeight={descLineHeight}
+        />
+        <WorkProjectNavigation
+          previousProject={project.previousProject}
+          nextProject={project.nextProject}
+        />
       </div>
     </div>
   );

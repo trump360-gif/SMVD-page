@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import type { TiptapContent } from '@/components/admin/shared/BlockEditor/types';
 
 // ---- Types ----
 
@@ -26,10 +27,9 @@ export interface AttachmentData {
 }
 
 export interface NewsContentData {
-  // New block-based format
-  blocks?: import('@/components/admin/shared/BlockEditor/types').Block[];
-  rowConfig?: import('@/components/admin/shared/BlockEditor/types').RowConfig[];
-  version?: string;
+  // Tiptap JSON content format
+  type?: 'doc';
+  content?: any[];
   // Legacy fields (kept for backward compatibility)
   introTitle?: string;
   introText?: string;
@@ -43,7 +43,7 @@ export interface NewsArticleData {
   category: string;
   excerpt: string | null;
   thumbnailImage: string;
-  content: NewsContentData | null;
+  content: TiptapContent | NewsContentData | null;
   attachments?: AttachmentData[] | null; // NEW - 2026-02-16
   publishedAt: string;
   published: boolean;
@@ -57,7 +57,7 @@ export interface CreateArticleInput {
   category: string;
   excerpt?: string;
   thumbnailImage?: string;
-  content?: NewsContentData | null;
+  content?: TiptapContent | NewsContentData | null;
   attachments?: AttachmentData[] | null; // NEW - 2026-02-16 (Allow null to clear attachments)
   publishedAt?: string;
   published?: boolean;
@@ -68,7 +68,7 @@ export interface UpdateArticleInput {
   category?: string;
   excerpt?: string | null;
   thumbnailImage?: string;
-  content?: NewsContentData | null;
+  content?: TiptapContent | NewsContentData | null;
   attachments?: AttachmentData[] | null; // NEW - 2026-02-16
   publishedAt?: string;
   published?: boolean;
@@ -139,9 +139,7 @@ export function useNewsEditor() {
 
       if (input.content && typeof input.content === 'object') {
         if (process.env.DEBUG) console.log('[useNewsEditor] Content object keys:', Object.keys(input.content));
-        if (process.env.DEBUG) console.log('[useNewsEditor] Content.blocks exists?:', 'blocks' in input.content);
-        if (process.env.DEBUG) console.log('[useNewsEditor] Content.blocks type:', typeof (input.content as NewsContentData).blocks);
-        if (process.env.DEBUG) console.log('[useNewsEditor] Content.blocks length:', (input.content as NewsContentData).blocks?.length);
+        if (process.env.DEBUG) console.log('[useNewsEditor] Content type:', (input.content as any).type || 'unknown');
         if (process.env.DEBUG) console.log('[useNewsEditor] Full content object:', JSON.stringify(input.content, null, 2));
       }
 

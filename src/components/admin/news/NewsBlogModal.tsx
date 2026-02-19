@@ -1,16 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import NewsDetailPreviewRenderer from '@/components/admin/shared/BlockEditor/renderers/NewsDetailPreviewRenderer';
-import type { NewsArticleContext } from '@/components/admin/shared/BlockEditor/renderers/NewsDetailPreviewRenderer';
-import { ModalShell, ThreePanelLayout } from '@/components/admin/shared/BlogEditorModal';
-import { useBlockEditor } from '@/components/admin/shared/BlockEditor/useBlockEditor';
-import { useRowManager } from '@/components/admin/shared/BlockEditor/useRowManager';
-import type {
-  BlogContent,
-  RowConfig,
-} from '@/components/admin/shared/BlockEditor/types';
-import { parseNewsContent, type NewsContentShape } from '@/lib/content-parser';
+import { ModalShell } from '@/components/admin/shared/BlogEditorModal';
+import { TiptapEditor } from '@/components/admin/shared/TiptapEditor';
+import type { TiptapContent } from '@/components/admin/shared/BlockEditor/types';
+import { isTiptapContent } from '@/components/admin/shared/BlockEditor/types';
 import {
   newsArticleInputSchema,
   formatValidationError,
@@ -19,7 +13,6 @@ import type {
   NewsArticleData,
   CreateArticleInput,
   UpdateArticleInput,
-  NewsContentData,
   AttachmentData,
 } from '@/hooks/useNewsEditor';
 import ArticleInfoForm from './ArticleInfoForm';
@@ -51,10 +44,10 @@ export default function NewsBlogModal({
   const [publishedAt, setPublishedAt] = useState('');
   const [published, setPublished] = useState(true);
 
-  // Block editor content
-  const [editorContent, setEditorContent] = useState<BlogContent>({
-    blocks: [],
-    version: '1.0',
+  // Tiptap editor content
+  const [editorContent, setEditorContent] = useState<TiptapContent>({
+    type: 'doc',
+    content: [],
   });
 
   // Attachments
@@ -64,67 +57,16 @@ export default function NewsBlogModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Block Editor state (3-panel layout)
-  const {
-    blocks,
-    selectedId,
-    setSelectedId,
-    addBlock,
-    updateBlock,
-    deleteBlock,
-    reorderBlocks,
-    resetBlocks,
-    undo,
-    redo,
-    canUndo,
-    canRedo,
-  } = useBlockEditor(editorContent.blocks);
-
-  // Row-based layout configuration
-  const [rowConfig, setRowConfig] = useState<RowConfig[]>([]);
-
-  // Track if article data has been loaded to avoid overwriting loaded rowConfig
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  // ---- Row management callbacks ----
-  const {
-    handleRowLayoutChange,
-    handleAddRow,
-    handleDeleteRow,
-    handleAddBlockToRow,
-    handleDeleteBlock,
-    handleMoveBlockToRow,
-    handleReorderRows,
-  } = useRowManager(
-    rowConfig,
-    setRowConfig,
-    blocks,
-    addBlock,
-    deleteBlock,
-    reorderBlocks,
-    'NewsBlogModal'
-  );
-
-  // One-way sync: blocks/rowConfig changes -> editorContent update
-  useEffect(() => {
-    if (!isLoaded) return;
-    setEditorContent((prev) => ({ ...prev, blocks, rowConfig }));
-  }, [blocks, rowConfig, isLoaded]);
-
   // ---- Reset form ----
   useEffect(() => {
     if (isOpen) {
       if (article) {
-        if (process.env.DEBUG) console.log('[NewsBlogModal] Loading article:', article.title);
-
         setTitle(article.title);
         setCategory(article.category);
         setExcerpt(article.excerpt || '');
         setThumbnailImage(article.thumbnailImage);
         setPublishedAt(
-          article.publishedAt
-            ? new Date(article.publishedAt).toISOString().split('T')[0]
-            : ''
+          article.publishedAt ? new Date(article.publishedAt).toISOString().split('T')[0] : ''
         );
         setPublished(article.published);
 
@@ -134,50 +76,24 @@ export default function NewsBlogModal({
           setAttachments([]);
         }
 
-        const content = article.content as NewsContentShape | BlogContent | null;
-
-        let parsedContent: BlogContent | null = null;
-        let contentToConvert: NewsContentShape | BlogContent | null = content;
-
-        if (content) {
-          if (typeof content === 'string') {
+        // Parse Tiptap JSON content or default
+        let tiptapContent: TiptapContent = { type: 'doc', content: [] };
+        if (article.content) {
+          if (typeof article.content === 'string') {
             try {
-              contentToConvert = JSON.parse(content) as NewsContentShape | BlogContent;
-            } catch {
-              contentToConvert = null;
+              const parsed = JSON.parse(article.content);
+              if (isTiptapContent(parsed)) {
+                tiptapContent = parsed;
+              }
+            } catch (e) {
+              console.error('Failed to parse content:', e);
             }
-          }
-
-          if (
-            typeof contentToConvert === 'object' &&
-            contentToConvert !== null &&
-            'blocks' in contentToConvert &&
-            Array.isArray(contentToConvert.blocks) &&
-            contentToConvert.blocks.length > 0
-          ) {
-            parsedContent = contentToConvert as BlogContent;
+          } else if (isTiptapContent(article.content)) {
+            tiptapContent = article.content;
           }
         }
 
-        if (parsedContent && parsedContent.blocks && parsedContent.blocks.length > 0) {
-          setEditorContent(parsedContent);
-          const rowCfg = parsedContent.rowConfig || [];
-          if (rowCfg.length === 0 && parsedContent.blocks.length > 0) {
-            setRowConfig([{ layout: 1, blockCount: parsedContent.blocks.length }]);
-          } else {
-            setRowConfig(rowCfg);
-          }
-          resetBlocks(parsedContent.blocks);
-        } else {
-          const legacyContent = parseNewsContent(contentToConvert as NewsContentShape | null);
-          setEditorContent(legacyContent);
-          if (legacyContent.blocks && legacyContent.blocks.length > 0) {
-            setRowConfig([{ layout: 1, blockCount: legacyContent.blocks.length }]);
-            resetBlocks(legacyContent.blocks);
-          } else {
-            setRowConfig([]);
-          }
-        }
+        setEditorContent(tiptapContent);
       } else {
         setTitle('');
         setCategory('Notice');
@@ -185,15 +101,11 @@ export default function NewsBlogModal({
         setThumbnailImage('/Group-27.svg');
         setPublishedAt(new Date().toISOString().split('T')[0]);
         setPublished(true);
-        setEditorContent({ blocks: [], version: '1.0' });
-        setRowConfig([]);
+        setEditorContent({ type: 'doc', content: [] });
         setAttachments([]);
       }
       setError(null);
       setActiveTab('info');
-      setIsLoaded(true);
-    } else {
-      setIsLoaded(false);
     }
   }, [isOpen, article]);
 
@@ -218,37 +130,6 @@ export default function NewsBlogModal({
     setIsSubmitting(true);
 
     try {
-      const hasBlocks = blocks && blocks.length > 0;
-      let content: NewsContentData | null = null;
-
-      if (hasBlocks) {
-        const blocksCopy = JSON.parse(JSON.stringify(blocks));
-
-        if (!Array.isArray(blocksCopy) || blocksCopy.length === 0) {
-          throw new Error('블록 데이터가 손실되었습니다. 다시 시도해주세요.');
-        }
-
-        const rowConfigCopy = Array.isArray(rowConfig) && rowConfig.length > 0
-          ? [...rowConfig]
-          : [{ layout: 1 as const, blockCount: blocksCopy.length }];
-
-        content = {
-          blocks: blocksCopy,
-          rowConfig: rowConfigCopy,
-          version: '1.0',
-        };
-
-        if (!content || typeof content !== 'object' || !content.blocks || !Array.isArray(content.blocks)) {
-          throw new Error('콘텐츠 객체가 유효하지 않습니다.');
-        }
-
-        if (content.blocks.length === 0) {
-          throw new Error('최소 1개의 블록이 필요합니다.');
-        }
-      } else {
-        content = null;
-      }
-
       // Upload new file attachments
       const uploadedAttachments: AttachmentData[] = [];
 
@@ -299,18 +180,11 @@ export default function NewsBlogModal({
         category,
         excerpt: excerpt.trim() || undefined,
         thumbnailImage,
-        content,
+        content: editorContent, // Store Tiptap JSON directly
         attachments: uploadedAttachments.length > 0 ? uploadedAttachments : null,
         publishedAt: publishedAt || new Date().toISOString().split('T')[0],
         published,
       };
-
-      if (data.content && typeof data.content === 'object') {
-        const contentKeys = Object.keys(data.content);
-        if (contentKeys.length === 0) {
-          throw new Error('콘텐츠가 비어있습니다.');
-        }
-      }
 
       await onSubmit(data);
       onClose();
@@ -321,30 +195,14 @@ export default function NewsBlogModal({
     }
   };
 
-  // Auto-select first block when entering content tab
-  useEffect(() => {
-    if (activeTab === 'content' && blocks.length > 0 && !selectedId) {
-      setSelectedId(blocks[0]?.id);
-    }
-  }, [activeTab, blocks, selectedId, setSelectedId]);
-
-  // Undo/Redo keyboard handler
-  const handleUndoRedoKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
-        e.preventDefault();
-        if (canUndo) undo();
-      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
-        e.preventDefault();
-        if (canRedo) redo();
-      }
-    },
-    [canUndo, canRedo, undo, redo]
-  );
+  // Handle TiptapEditor content change
+  const handleTiptapChange = useCallback((content: TiptapContent) => {
+    setEditorContent(content);
+  }, []);
 
   const tabs = [
     { key: 'info', label: '기본정보' },
-    { key: 'content', label: '콘텐츠 (블록)' },
+    { key: 'content', label: '콘텐츠' },
     { key: 'attachments', label: '첨부파일' },
   ];
 
@@ -352,18 +210,17 @@ export default function NewsBlogModal({
     <ModalShell
       isOpen={isOpen}
       onClose={onClose}
-      title="News상세페이지 작성 모달"
+      title="News 상세페이지 작성"
       subtitle={isEditing ? `편집중: ${article?.title}` : '새로운 뉴스 기사 또는 행사를 만드세요'}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={(key) => setActiveTab(key as 'info' | 'content' | 'attachments')}
       error={error}
       onClearError={() => setError(null)}
-      footerInfo={`${editorContent.blocks.length} 콘텐츠 블록`}
+      footerInfo=""
       submitLabel={isSubmitting ? '저장중...' : isEditing ? '변경사항 저장' : '기사 생성'}
       isSubmitting={isSubmitting}
       onSubmit={handleSubmit}
-      onKeyDown={handleUndoRedoKeyDown}
     >
       {/* Tab: Basic Info */}
       {activeTab === 'info' && (
@@ -383,47 +240,25 @@ export default function NewsBlogModal({
         />
       )}
 
-      {/* Tab: Content (3-Panel Layout) */}
+      {/* Tab: Content (TiptapEditor) */}
       {activeTab === 'content' && (
-        <ThreePanelLayout
-          blocks={blocks}
-          rowConfig={rowConfig}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-          updateBlock={updateBlock}
-          reorderBlocks={reorderBlocks}
-          handleRowLayoutChange={handleRowLayoutChange}
-          handleAddRow={handleAddRow}
-          handleDeleteRow={handleDeleteRow}
-          handleReorderRows={handleReorderRows}
-          handleAddBlockToRow={handleAddBlockToRow}
-          handleDeleteBlock={handleDeleteBlock}
-          handleMoveBlockToRow={handleMoveBlockToRow}
-          undo={undo}
-          redo={redo}
-          canUndo={canUndo}
-          canRedo={canRedo}
-          previewSubtitle="News article preview"
-          previewPanel={
-            <NewsDetailPreviewRenderer
-              blocks={blocks}
-              rowConfig={rowConfig}
-              articleContext={{
-                title: title,
-                category: category,
-                publishedAt: publishedAt,
-              } satisfies NewsArticleContext}
-            />
-          }
-        />
+        <div className="p-6">
+          <TiptapEditor
+            content={editorContent}
+            contentFormat="tiptap"
+            onChange={handleTiptapChange}
+            placeholder="뉴스 기사 내용을 입력하세요..."
+            fontSize={16}
+            fontWeight="400"
+            color="#1b1d1f"
+            lineHeight={1.8}
+          />
+        </div>
       )}
 
       {/* Tab: Attachments */}
       {activeTab === 'attachments' && (
-        <AttachmentsTab
-          attachments={attachments}
-          onAttachmentsChange={setAttachments}
-        />
+        <AttachmentsTab attachments={attachments} onAttachmentsChange={setAttachments} />
       )}
     </ModalShell>
   );
