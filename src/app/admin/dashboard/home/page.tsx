@@ -283,7 +283,7 @@ export default function HomeEditorPage() {
                 : 'text-gray-700 hover:bg-gray-100'
             }`}
           >
-            🎨 작품 (Work)
+            작품 (Work)
           </button>
           <button
             onClick={() => setActiveSection('about')}

@@ -5,24 +5,34 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import { SessionProvider } from 'next-auth/react';
+import {
+  Home,
+  BookOpen,
+  GraduationCap,
+  Palette,
+  Newspaper,
+  Navigation as NavigationIcon,
+  Layers,
+  type LucideIcon,
+} from 'lucide-react';
 
 interface SidebarItem {
   href: string;
   label: string;
-  icon: string;
+  icon: LucideIcon;
   category?: string;
 }
 
 const sidebarItems: SidebarItem[] = [
   // 페이지 관리 섹션
-  { href: '/admin/dashboard/home', label: '홈', icon: '🏠', category: '페이지 관리' },
-  { href: '/admin/dashboard/about', label: 'About', icon: '📚', category: '페이지 관리' },
-  { href: '/admin/dashboard/curriculum', label: 'Curriculum', icon: '📖', category: '페이지 관리' },
-  { href: '/admin/dashboard/work', label: 'Work', icon: '🎨', category: '페이지 관리' },
-  { href: '/admin/dashboard/news', label: 'News&Event', icon: '📰', category: '페이지 관리' },
+  { href: '/admin/dashboard/home', label: '홈', icon: Home, category: '페이지 관리' },
+  { href: '/admin/dashboard/about', label: 'About', icon: BookOpen, category: '페이지 관리' },
+  { href: '/admin/dashboard/curriculum', label: 'Curriculum', icon: GraduationCap, category: '페이지 관리' },
+  { href: '/admin/dashboard/work', label: 'Work', icon: Palette, category: '페이지 관리' },
+  { href: '/admin/dashboard/news', label: 'News&Event', icon: Newspaper, category: '페이지 관리' },
 
-  { href: '/admin/navigation', label: '네비게이션', icon: '🔗' },
-  { href: '/admin/footer', label: '푸터', icon: '📌' },
+  { href: '/admin/navigation', label: '네비게이션', icon: NavigationIcon },
+  { href: '/admin/footer', label: '푸터', icon: Layers },
 ];
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
@@ -81,7 +91,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
                       : 'text-gray-400 hover:bg-gray-800 hover:text-white'
                   }`}
                 >
-                  <span className="text-xl flex-shrink-0">{item.icon}</span>
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
                   {sidebarOpen && <span className="text-sm font-medium">{item.label}</span>}
                 </Link>
               </div>
