@@ -24,7 +24,7 @@ function LoginForm() {
   const [email, setEmail] = useState('admin@smvd.ac.kr');
   const [password, setPassword] = useState('admin123');
 
-  const callbackUrl = searchParams.get('callbackUrl') || '/admin/dashboard';
+  const callbackUrl = searchParams.get('callbackUrl') || '/admin/dashboard/home';
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,20 +32,29 @@ function LoginForm() {
     setError(null);
 
     try {
+      console.log('[Login] Attempting sign in with:', { email });
       const result = await signIn('credentials', {
         email,
         password,
         redirect: false,
       });
 
+      console.log('[Login] SignIn result:', { ok: result?.ok, error: result?.error });
+
       if (result?.error) {
         setError(result.error);
+        console.error('[Login] SignIn error:', result.error);
       } else if (result?.ok) {
+        console.log('[Login] SignIn successful, redirecting to:', callbackUrl);
         router.push(callbackUrl);
+      } else {
+        setError('로그인에 실패했습니다. 다시 시도해주세요.');
+        console.error('[Login] Unexpected result:', result);
       }
     } catch (err) {
-      setError('로그인 중 오류가 발생했습니다');
-      console.error(err);
+      const errorMsg = err instanceof Error ? err.message : '로그인 중 오류가 발생했습니다';
+      setError(errorMsg);
+      console.error('[Login] Exception:', err);
     } finally {
       setIsLoading(false);
     }

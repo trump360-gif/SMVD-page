@@ -58,7 +58,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
       >
         {/* Logo */}
         <div className="p-6 border-b border-gray-800">
-          <Link href="/admin/dashboard" className="flex items-center gap-3">
+          <Link href="/admin/dashboard/home" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-sm">
               S
             </div>
