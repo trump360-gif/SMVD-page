@@ -1,5 +1,7 @@
 'use client';
 
+import ImageUploadField from '@/components/admin/shared/ImageUploadField';
+
 const CATEGORIES = ['Notice', 'Event', 'Awards', 'Recruiting'];
 
 interface ArticleInfoFormProps {
@@ -12,7 +14,7 @@ interface ArticleInfoFormProps {
   onTitleChange: (value: string) => void;
   onCategoryChange: (value: string) => void;
   onExcerptChange: (value: string) => void;
-  onThumbnailImageChange: (value: string) => void;
+  onThumbnailImageChange: (value: string | null) => void;
   onPublishedAtChange: (value: string) => void;
   onPublishedChange: (value: boolean) => void;
 }
@@ -78,27 +80,22 @@ export default function ArticleInfoForm({
           rows={2}
           className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-y"
         />
+        <p className="text-xs text-gray-500 mt-1">
+          💡 팁: 콘텐츠 탭에서 본문을 작성하면 요약란에 자동으로 반영됩니다. 직접 수정할 수도 있습니다.
+        </p>
       </div>
 
       {/* Thumbnail + Date */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="nb-thumbnail" className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             썸네일
           </label>
-          <input
-            id="nb-thumbnail"
-            type="text"
-            value={thumbnailImage}
-            onChange={(e) => onThumbnailImageChange(e.target.value)}
-            placeholder="/Group-27.svg"
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+          <ImageUploadField
+            imageUrl={thumbnailImage}
+            onImageChange={onThumbnailImageChange}
+            label="썸네일 이미지 (드래그앤드롭 또는 클릭)"
           />
-          {thumbnailImage && (
-            <div className="mt-2 w-20 h-20 bg-gray-100 rounded-lg overflow-hidden">
-              <img src={thumbnailImage} alt="Thumbnail" className="w-full h-full object-cover" />
-            </div>
-          )}
         </div>
         <div>
           <label htmlFor="nb-date" className="block text-sm font-medium text-gray-700 mb-1">

@@ -352,7 +352,7 @@ export default function NewsBlogModal({
     <ModalShell
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? '기사 수정' : '새 기사'}
+      title="News상세페이지 작성 모달"
       subtitle={isEditing ? `편집중: ${article?.title}` : '새로운 뉴스 기사 또는 행사를 만드세요'}
       tabs={tabs}
       activeTab={activeTab}
@@ -377,7 +377,7 @@ export default function NewsBlogModal({
           onTitleChange={setTitle}
           onCategoryChange={setCategory}
           onExcerptChange={setExcerpt}
-          onThumbnailImageChange={setThumbnailImage}
+          onThumbnailImageChange={(url) => setThumbnailImage(url || '')}
           onPublishedAtChange={setPublishedAt}
           onPublishedChange={setPublished}
         />

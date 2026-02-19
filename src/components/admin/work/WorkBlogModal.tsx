@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import WorkDetailPreviewRenderer from '@/components/admin/shared/BlockEditor/renderers/WorkDetailPreviewRenderer';
 import { ModalShell, ThreePanelLayout } from '@/components/admin/shared/BlogEditorModal';
+import WorkBasicInfoForm from './WorkBasicInfoForm';
 import { useBlockEditor } from '@/components/admin/shared/BlockEditor/useBlockEditor';
 import { useRowManager } from '@/components/admin/shared/BlockEditor/useRowManager';
 import type {
@@ -298,7 +299,7 @@ export default function WorkBlogModal({
     <ModalShell
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? '포트폴리오 수정' : '새 포트폴리오'}
+      title="Work상세페이지 작성 모달"
       subtitle={isEditing ? `편집중: ${project?.title}` : '새로운 포트폴리오 프로젝트를 만드세요'}
       tabs={tabs}
       activeTab={activeTab}
@@ -313,162 +314,27 @@ export default function WorkBlogModal({
     >
           {/* Tab: Basic Info */}
           {activeTab === 'info' && (
-            <div className="space-y-5 max-w-3xl p-6">
-              {/* Title + Category */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-2">
-                  <label htmlFor="wb-title" className="block text-sm font-medium text-gray-700 mb-1">
-                    제목 *
-                  </label>
-                  <input
-                    id="wb-title"
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="작품명"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="wb-category" className="block text-sm font-medium text-gray-700 mb-1">
-                    카테고리 *
-                  </label>
-                  <select
-                    id="wb-category"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                  >
-                    <option value="">선택하세요</option>
-                    {CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Subtitle */}
-              <div>
-                <label htmlFor="wb-subtitle" className="block text-sm font-medium text-gray-700 mb-1">
-                  부제목 *
-                </label>
-                <input
-                  id="wb-subtitle"
-                  type="text"
-                  value={subtitle}
-                  onChange={(e) => setSubtitle(e.target.value)}
-                  placeholder="작가명, 2025"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                />
-              </div>
-
-              {/* Author + Email + Year */}
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label htmlFor="wb-author" className="block text-sm font-medium text-gray-700 mb-1">
-                    작가 *
-                  </label>
-                  <input
-                    id="wb-author"
-                    type="text"
-                    value={author}
-                    onChange={(e) => setAuthor(e.target.value)}
-                    placeholder="작가명"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="wb-email" className="block text-sm font-medium text-gray-700 mb-1">
-                    이메일 *
-                  </label>
-                  <input
-                    id="wb-email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="contact@example.com"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="wb-year" className="block text-sm font-medium text-gray-700 mb-1">
-                    연도
-                  </label>
-                  <input
-                    id="wb-year"
-                    type="text"
-                    value={year}
-                    onChange={(e) => setYear(e.target.value)}
-                    placeholder="2025"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                  />
-                </div>
-              </div>
-
-              {/* Tags */}
-              <div>
-                <label htmlFor="wb-tags" className="block text-sm font-medium text-gray-700 mb-1">
-                  태그 (쉼표로 구분)
-                </label>
-                <input
-                  id="wb-tags"
-                  type="text"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                  placeholder="UX/UI, 브랜딩, 모션"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                />
-                {tags && (
-                  <div className="flex gap-1.5 mt-2 flex-wrap">
-                    {tags.split(',').map((t, i) => (
-                      <span
-                        key={i}
-                        className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full"
-                      >
-                        {t.trim()}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Thumbnail Image */}
-              <div>
-                <label htmlFor="wb-thumb" className="block text-sm font-medium text-gray-700 mb-1">
-                  썸네일 {!isEditing && '*'}
-                </label>
-                <input
-                  id="wb-thumb"
-                  type="text"
-                  value={thumbnailImage}
-                  onChange={(e) => setThumbnailImage(e.target.value)}
-                  placeholder="/images/work/portfolio-1.png"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                />
-                {thumbnailImage && (
-                  <div className="mt-2 w-28 h-28 bg-gray-100 rounded-lg overflow-hidden">
-                    <img src={thumbnailImage} alt="Thumbnail" className="w-full h-full object-cover" />
-                  </div>
-                )}
-                <p className="text-xs text-gray-400 mt-1">
-                  히어로 이미지는 콘텐츠 (블록) 탭에서 히어로 이미지 블록을 사용하여 관리됩니다.
-                </p>
-              </div>
-
-              {/* Published */}
-              <div className="flex items-center gap-2 pt-2">
-                <input
-                  id="wb-published"
-                  type="checkbox"
-                  checked={published}
-                  onChange={(e) => setPublished(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                />
-                <label htmlFor="wb-published" className="text-sm font-medium text-gray-700">
-                  공개 (공개 상태)
-                </label>
-              </div>
-            </div>
+            <WorkBasicInfoForm
+              title={title}
+              subtitle={subtitle}
+              category={category}
+              tags={tags}
+              author={author}
+              email={email}
+              year={year}
+              thumbnailImage={thumbnailImage}
+              published={published}
+              isEditing={isEditing}
+              onTitleChange={setTitle}
+              onSubtitleChange={setSubtitle}
+              onCategoryChange={setCategory}
+              onTagsChange={setTags}
+              onAuthorChange={setAuthor}
+              onEmailChange={setEmail}
+              onYearChange={setYear}
+              onThumbnailImageChange={(url) => setThumbnailImage(url || '')}
+              onPublishedChange={setPublished}
+            />
           )}
 
           {/* Tab: Content (3-Panel Layout) */}
