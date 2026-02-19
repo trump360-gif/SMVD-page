@@ -334,7 +334,12 @@ export default function HomeEditorPage() {
                     credentials: 'include',
                   }
                 );
-                if (!response.ok) throw new Error('순서 변경 실패');
+                if (!response.ok) {
+                  // 에러 시 서버 상태와 동기화
+                  if (homePageId) await fetchSections(homePageId);
+                  refreshPreview();
+                  throw new Error('순서 변경 실패');
+                }
                 refreshPreview();
               }}
               onDelete={async (itemId) => {
@@ -345,7 +350,12 @@ export default function HomeEditorPage() {
                     credentials: 'include',
                   }
                 );
-                if (!response.ok) throw new Error('삭제 실패');
+                if (!response.ok) {
+                  // 에러 시 서버 상태와 동기화
+                  if (homePageId) await fetchSections(homePageId);
+                  refreshPreview();
+                  throw new Error('삭제 실패');
+                }
                 refreshPreview();
               }}
             />
@@ -389,7 +399,12 @@ export default function HomeEditorPage() {
                     credentials: 'include',
                   }
                 );
-                if (!response.ok) throw new Error('순서 변경 실패');
+                if (!response.ok) {
+                  // 에러 시 서버 상태와 동기화
+                  if (homePageId) await fetchSections(homePageId);
+                  refreshPreview();
+                  throw new Error('순서 변경 실패');
+                }
                 refreshPreview();
               }}
               onDelete={async (itemId) => {
@@ -400,7 +415,12 @@ export default function HomeEditorPage() {
                     credentials: 'include',
                   }
                 );
-                if (!response.ok) throw new Error('삭제 실패');
+                if (!response.ok) {
+                  // 에러 시 서버 상태와 동기화
+                  if (homePageId) await fetchSections(homePageId);
+                  refreshPreview();
+                  throw new Error('삭제 실패');
+                }
                 refreshPreview();
               }}
             />

@@ -2,6 +2,42 @@
 // Defines all block types for the content editor.
 // Includes both generic blocks and Work-specific blocks.
 
+// ---------------------------------------------------------------------------
+// Tiptap WYSIWYG Editor Types
+// These types support the new Tiptap JSON format for rich text editing
+// ---------------------------------------------------------------------------
+
+/** Tiptap node mark (styling like bold, italic, link, etc.) */
+export interface TiptapMark {
+  type: string;  // 'bold', 'italic', 'underline', 'link', 'code', etc.
+  attrs?: Record<string, unknown>;
+}
+
+/** Tiptap node (document structure element) */
+export interface TiptapNode {
+  type: string;  // 'doc', 'paragraph', 'heading', 'image', 'text', 'bullet_list', etc.
+  attrs?: Record<string, unknown>;
+  content?: TiptapNode[];
+  marks?: TiptapMark[];
+  text?: string;
+}
+
+/** Tiptap document (root content structure) */
+export interface TiptapContent {
+  type: 'doc';
+  content: TiptapNode[];
+}
+
+/** Type guard to check if content is TiptapContent */
+export function isTiptapContent(content: unknown): content is TiptapContent {
+  return (
+    typeof content === 'object' &&
+    content !== null &&
+    (content as Record<string, unknown>).type === 'doc' &&
+    Array.isArray((content as Record<string, unknown>).content)
+  );
+}
+
 export type BlockType =
   | 'text'
   | 'heading'
@@ -29,7 +65,10 @@ export interface ContentBlock {
 /** Markdown-based text block with optional styling */
 export interface TextBlock extends ContentBlock {
   type: 'text';
-  content: string;
+  /** Content can be either markdown string (legacy) or Tiptap JSON (new) */
+  content: string | TiptapContent;
+  /** Format detection: 'markdown' for legacy markdown strings, 'tiptap' for JSON. Defaults to 'markdown' if undefined */
+  contentFormat?: 'markdown' | 'tiptap';
   /** Font size in pixels (default: 18) */
   fontSize?: number;
   /** Font weight (default: '400') */
@@ -316,7 +355,10 @@ export interface WorkProjectContext {
 }
 
 /** Current schema version */
-export const BLOG_CONTENT_VERSION = '1.0';
+export const BLOG_CONTENT_VERSION = '1.1';
+
+/** Previous schema version (for backward compatibility) */
+export const BLOG_CONTENT_VERSION_LEGACY = '1.0';
 
 /** Create an empty BlogContent object */
 export function createEmptyBlogContent(): BlogContent {
@@ -341,6 +383,7 @@ export function createDefaultBlock(type: BlockType, order: number): Block {
         ...base,
         type: 'text',
         content: '',
+        contentFormat: 'markdown',
         fontSize: 18,
         fontWeight: '400',
         color: '#1b1d1f',

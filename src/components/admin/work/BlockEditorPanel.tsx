@@ -33,21 +33,21 @@ interface BlockEditorPanelProps {
 
 // 블록 타입별 라벨
 const BLOCK_LABELS: Record<string, string> = {
-  text: 'Text',
-  heading: 'Heading',
-  image: 'Image',
-  gallery: 'Gallery',
-  spacer: 'Spacer',
-  divider: 'Divider',
-  'hero-image': 'Hero Image',
-  'hero-section': 'Hero Section',
-  'work-title': 'Work Title',
-  'work-metadata': 'Metadata',
-  'work-layout-config': 'Layout Config',
-  'layout-row': 'Row Layout',
-  'layout-grid': 'Grid Layout',
-  'image-row': 'Image Row',
-  'image-grid': 'Image Grid',
+  text: '텍스트',
+  heading: '제목',
+  image: '이미지',
+  gallery: '갤러리',
+  spacer: '여백',
+  divider: '구분선',
+  'hero-image': '히어로 이미지',
+  'hero-section': '히어로 섹션',
+  'work-title': '작품명 + 작가',
+  'work-metadata': '작가 정보',
+  'work-layout-config': '레이아웃 설정',
+  'layout-row': '행 레이아웃',
+  'layout-grid': '그리드 레이아웃',
+  'image-row': '이미지 행',
+  'image-grid': '이미지 그리드',
 };
 
 /**
@@ -57,9 +57,9 @@ const EmptyState = memo(function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center h-full p-8 text-center">
       <FileText size={64} className="text-gray-300 mb-4" />
-      <h3 className="text-lg font-medium text-gray-600 mb-2">No Block Selected</h3>
+      <h3 className="text-lg font-medium text-gray-600 mb-2">선택된 블록이 없습니다</h3>
       <p className="text-sm text-gray-400">
-        Click a block on the left to edit its properties
+        왼쪽의 블록을 클릭하여 편집하세요
       </p>
     </div>
   );
@@ -152,7 +152,7 @@ export default memo(function BlockEditorPanel({
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50 shrink-0">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-gray-700">Edit {blockLabel}</span>
+          <span className="text-sm font-semibold text-gray-700">편집: {blockLabel}</span>
         </div>
 
         {/* Undo/Redo & Delete Buttons */}
@@ -167,8 +167,8 @@ export default memo(function BlockEditorPanel({
                 ? 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
                 : 'text-gray-300 cursor-not-allowed'
             }`}
-            title="Undo (Ctrl+Z)"
-            aria-label="Undo"
+            title="되돌리기 (Ctrl+Z)"
+            aria-label="되돌리기"
           >
             <RotateCcw size={16} />
           </button>
@@ -183,8 +183,8 @@ export default memo(function BlockEditorPanel({
                 ? 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
                 : 'text-gray-300 cursor-not-allowed'
             }`}
-            title="Redo (Ctrl+Y)"
-            aria-label="Redo"
+            title="다시하기 (Ctrl+Y)"
+            aria-label="다시하기"
           >
             <RotateCw size={16} />
           </button>
@@ -194,7 +194,7 @@ export default memo(function BlockEditorPanel({
             type="button"
             onClick={handleDelete}
             onBlur={() => setShowDeleteConfirm(false)}
-          aria-label={showDeleteConfirm ? 'Confirm delete block' : 'Delete block'}
+          aria-label={showDeleteConfirm ? '블록 삭제 확인' : '블록 삭제'}
           className={`
             flex items-center gap-1.5 px-3 py-1.5 rounded transition-all duration-200
             ${
@@ -203,10 +203,10 @@ export default memo(function BlockEditorPanel({
                 : 'text-gray-600 hover:text-red-600 hover:bg-red-50'
             }
           `}
-          title={showDeleteConfirm ? 'Click again to confirm delete' : 'Delete block'}
+          title={showDeleteConfirm ? '다시 클릭하여 삭제 확인' : '블록 삭제'}
         >
           <Trash2 size={14} />
-          {showDeleteConfirm && <span className="text-xs font-medium">Confirm</span>}
+          {showDeleteConfirm && <span className="text-xs font-medium">확인</span>}
         </button>
         </div>
       </div>

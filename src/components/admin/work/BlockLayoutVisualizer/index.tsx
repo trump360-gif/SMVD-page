@@ -45,6 +45,7 @@ interface BlockLayoutVisualizerProps {
     targetRowIndex: number,
     positionInRow: number
   ) => void;
+  onPreview?: (blockId: string) => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -63,6 +64,7 @@ export default function BlockLayoutVisualizer({
   onReorderRows,
   onAddBlockToRow,
   onDeleteBlock,
+  onPreview,
 }: BlockLayoutVisualizerProps) {
   // Group blocks into rows based on rowConfig
   const groupedRows = groupBlocksByRows(blocks, rowConfig);
@@ -132,10 +134,10 @@ export default function BlockLayoutVisualizer({
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 bg-white shrink-0">
         <span className="text-xs font-semibold text-gray-700">
-          Layout
+          레이아웃
         </span>
         <span className="text-[10px] text-gray-400">
-          {effectiveRowConfig.length} row{effectiveRowConfig.length !== 1 ? 's' : ''} / {blocks.length} block{blocks.length !== 1 ? 's' : ''}
+          {effectiveRowConfig.length}개 행 / {blocks.length}개 블록
         </span>
       </div>
 
@@ -145,10 +147,10 @@ export default function BlockLayoutVisualizer({
           <div className="flex flex-col items-center justify-center p-6 text-center h-full">
             <FileText size={40} className="text-gray-300 mb-3" />
             <h3 className="text-sm font-medium text-gray-600 mb-1">
-              No content yet
+              아직 콘텐츠가 없습니다
             </h3>
             <p className="text-xs text-gray-400 mb-4">
-              Add a row to get started
+              행을 추가하여 시작하세요
             </p>
             <button
               type="button"
@@ -159,7 +161,7 @@ export default function BlockLayoutVisualizer({
               className="flex items-center gap-1.5 px-3 py-2 bg-blue-500 text-white text-xs font-medium rounded-lg hover:bg-blue-600 transition-colors"
             >
               <Plus size={14} />
-              Add First Row
+              첫 번째 행 추가
             </button>
           </div>
         ) : (
@@ -192,6 +194,7 @@ export default function BlockLayoutVisualizer({
                       onAddBlock={(type) => onAddBlockToRow(type, idx)}
                       onReorder={onReorder}
                       onDeleteBlock={onDeleteBlock}
+                      onPreview={onPreview}
                       autoOpenToolbar={idx === newRowIndex}
                     />
                   );
@@ -211,7 +214,7 @@ export default function BlockLayoutVisualizer({
             className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
           >
             <Plus size={14} />
-            Add Row
+            행 추가
             <ChevronDown
               size={12}
               className={`transition-transform ${showAddRowMenu ? 'rotate-180' : ''}`}
@@ -244,7 +247,7 @@ export default function BlockLayoutVisualizer({
                       />
                     ))}
                   </div>
-                  <span>{cols} Column{cols !== 1 ? 's' : ''}</span>
+                  <span>{cols}열</span>
                 </button>
               ))}
             </div>

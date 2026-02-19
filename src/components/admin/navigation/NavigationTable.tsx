@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -37,6 +37,7 @@ export default function NavigationTable({
   onReorder,
 }: NavigationTableProps) {
   const [items, setItems] = useState<NavigationItem[]>(initialItems || []);
+  const itemsBeforeDragRef = useRef<NavigationItem[]>([]);
 
   useEffect(() => {
     setItems(initialItems || []);
@@ -57,6 +58,7 @@ export default function NavigationTable({
       const newIndex = items.findIndex((item) => item.id === over.id);
 
       if (oldIndex !== -1 && newIndex !== -1) {
+        itemsBeforeDragRef.current = items;
         const newItems = arrayMove(items, oldIndex, newIndex);
         // Optimistic update
         setItems(newItems);
@@ -71,7 +73,7 @@ export default function NavigationTable({
           await onReorder(reorderPayload);
         } catch (err) {
           // Rollback on failure
-          setItems(items);
+          setItems(itemsBeforeDragRef.current);
           alert(err instanceof Error ? err.message : '순서 변경 실패');
         }
       }

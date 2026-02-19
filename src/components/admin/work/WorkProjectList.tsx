@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -18,7 +18,7 @@ import {
 } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Trash2, Pencil } from 'lucide-react';
+import { GripVertical, Trash2, Pencil, Link as LinkIcon } from 'lucide-react';
 import type { WorkProjectData } from '@/hooks/useWorkEditor';
 
 interface WorkProjectListProps {
@@ -92,6 +92,13 @@ function SortableProjectItem({
 
       <div className="flex items-center gap-2 shrink-0">
         <button
+          onClick={() => window.open(`/work/${item.slug}`, '_blank')}
+          className="p-2 text-gray-500 hover:text-purple-500 hover:bg-purple-50 rounded transition-colors"
+          title="미리보기"
+        >
+          <LinkIcon size={18} />
+        </button>
+        <button
           onClick={() => onEdit(item)}
           className="p-2 text-blue-500 hover:bg-blue-50 rounded transition-colors"
           title="수정"
@@ -124,6 +131,7 @@ export default function WorkProjectList({
   onReorder,
 }: WorkProjectListProps) {
   const [items, setItems] = useState<WorkProjectData[]>(initialItems || []);
+  const itemsBeforeDragRef = useRef<WorkProjectData[]>([]);
 
   useEffect(() => {
     setItems(initialItems || []);
@@ -144,13 +152,14 @@ export default function WorkProjectList({
       const newIndex = items.findIndex((item) => item.id === over.id);
 
       if (oldIndex !== -1 && newIndex !== -1) {
+        itemsBeforeDragRef.current = items;
         const newItems = arrayMove(items, oldIndex, newIndex);
         setItems(newItems);
 
         try {
           await onReorder(active.id as string, newIndex);
         } catch (err) {
-          setItems(items);
+          setItems(itemsBeforeDragRef.current);
           alert(err instanceof Error ? err.message : '순서 변경 실패');
         }
       }

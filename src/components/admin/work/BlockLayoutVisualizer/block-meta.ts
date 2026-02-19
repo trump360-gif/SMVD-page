@@ -75,7 +75,18 @@ export function getBlockPreviewText(block: Block): string {
   switch (block.type) {
     case 'text': {
       const b = block as TextBlock;
-      return b.content?.substring(0, 30) || '(Empty text)';
+      // Handle both markdown string and Tiptap JSON
+      let text: string;
+      if (typeof b.content === 'string') {
+        text = b.content;
+      } else if (b.content && typeof b.content === 'object' && (b.content as any).type === 'doc') {
+        // Tiptap JSON - extract plain text
+        const { tiptapJSONToText } = require('@/lib/tiptap/markdown-converter');
+        text = tiptapJSONToText(b.content);
+      } else {
+        text = '';
+      }
+      return text?.substring(0, 30) || '(Empty text)';
     }
     case 'heading': {
       const b = block as HeadingBlock;

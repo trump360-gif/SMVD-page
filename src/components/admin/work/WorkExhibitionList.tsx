@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -124,6 +124,7 @@ export default function WorkExhibitionList({
   onReorder,
 }: WorkExhibitionListProps) {
   const [items, setItems] = useState<WorkExhibitionData[]>(initialItems || []);
+  const itemsBeforeDragRef = useRef<WorkExhibitionData[]>([]);
 
   useEffect(() => {
     setItems(initialItems || []);
@@ -144,13 +145,14 @@ export default function WorkExhibitionList({
       const newIndex = items.findIndex((item) => item.id === over.id);
 
       if (oldIndex !== -1 && newIndex !== -1) {
+        itemsBeforeDragRef.current = items;
         const newItems = arrayMove(items, oldIndex, newIndex);
         setItems(newItems);
 
         try {
           await onReorder(active.id as string, newIndex);
         } catch (err) {
-          setItems(items);
+          setItems(itemsBeforeDragRef.current);
           alert(err instanceof Error ? err.message : '순서 변경 실패');
         }
       }

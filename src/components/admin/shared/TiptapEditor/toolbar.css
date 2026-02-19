@@ -1,0 +1,141 @@
+/* Tiptap Toolbar Styles */
+
+.tiptap-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  padding: 8px;
+}
+
+.toolbar-group {
+  display: flex;
+  gap: 0;
+  border-right: 1px solid #e5e7eb;
+  padding-right: 8px;
+  margin-right: 8px;
+
+  &:last-child {
+    border-right: none;
+    margin-right: 0;
+    padding-right: 0;
+  }
+}
+
+.toolbar-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  background-color: transparent;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  padding: 0;
+
+  &:hover:not(:disabled) {
+    background-color: #e5e7eb;
+    color: #1f2937;
+  }
+
+  &:active:not(:disabled) {
+    background-color: #d1d5db;
+  }
+
+  &.active {
+    background-color: #0845a7;
+    color: white;
+    border-color: #0845a7;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  svg {
+    stroke-width: 2px;
+  }
+}
+
+/* Link Input */
+.toolbar-link-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.link-input-wrapper {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: flex;
+  gap: 4px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  padding: 8px;
+  margin-top: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.link-input {
+  width: 200px;
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-family: monospace;
+
+  &:focus {
+    outline: none;
+    border-color: #0845a7;
+    box-shadow: 0 0 0 3px rgba(8, 69, 167, 0.1);
+  }
+}
+
+.link-submit {
+  padding: 6px 12px;
+  background-color: #0845a7;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #1a46e7;
+  }
+
+  &:active {
+    background-color: #0845a7;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tiptap-toolbar {
+    gap: 4px;
+  }
+
+  .toolbar-group {
+    padding-right: 4px;
+    margin-right: 4px;
+  }
+
+  .toolbar-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .link-input {
+    width: 150px;
+  }
+}

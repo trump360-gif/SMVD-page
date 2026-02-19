@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
-import type { TextBlock } from '../types';
+import React, { useState, useCallback } from 'react';
+import { isTiptapContent, type TextBlock, type TiptapContent } from '../types';
+import { TiptapEditor } from '../../TiptapEditor';
 
 interface TextBlockEditorProps {
   block: TextBlock;
@@ -9,8 +10,8 @@ interface TextBlockEditorProps {
 }
 
 /**
- * Text block editor.
- * Edits markdown content and styling for right column (description text).
+ * Text block editor with Tiptap WYSIWYG editor.
+ * Edits content (markdown or Tiptap JSON) and styling for right column.
  */
 export default function TextBlockEditor({ block, onChange }: TextBlockEditorProps) {
   const fontSize = block.fontSize ?? 18;
@@ -18,21 +19,47 @@ export default function TextBlockEditor({ block, onChange }: TextBlockEditorProp
   const color = block.color ?? '#1b1d1f';
   const lineHeight = block.lineHeight ?? 1.8;
 
+  const [showPreview, setShowPreview] = useState(false);
+
+  // Handle Tiptap editor changes
+  const handleTiptapChange = useCallback(
+    (tiptapContent: TiptapContent) => {
+      onChange({
+        content: tiptapContent,
+        contentFormat: 'tiptap',
+      });
+    },
+    [onChange]
+  );
+
   return (
     <div className="space-y-4">
       {/* Content Section */}
       <div className="border-b border-gray-200 pb-4">
-        <h3 className="text-xs font-semibold text-gray-700 mb-3">Content</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-xs font-semibold text-gray-700">Content</h3>
+          <button
+            onClick={() => setShowPreview(!showPreview)}
+            className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+          >
+            {showPreview ? 'Hide Preview' : 'Show Preview'}
+          </button>
+        </div>
+
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">
-            Text Content (Markdown supported)
+          <label className="block text-xs font-medium text-gray-600 mb-2">
+            Text Content (WYSIWYG Editor)
           </label>
-          <textarea
-            value={block.content}
-            onChange={(e) => onChange({ content: e.target.value })}
-            placeholder="Enter text content... Markdown syntax is supported."
-            rows={8}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none font-mono"
+          <TiptapEditor
+            content={block.content}
+            contentFormat={block.contentFormat}
+            onChange={handleTiptapChange}
+            placeholder="Start typing... Use formatting toolbar to style text."
+            fontSize={fontSize}
+            fontWeight={fontWeight}
+            color={color}
+            lineHeight={lineHeight}
+            className="border border-gray-300 rounded-md overflow-hidden"
           />
         </div>
       </div>
@@ -74,7 +101,7 @@ export default function TextBlockEditor({ block, onChange }: TextBlockEditorProp
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-3">
+        <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">
               Text Color
@@ -111,25 +138,13 @@ export default function TextBlockEditor({ block, onChange }: TextBlockEditorProp
         </div>
       </div>
 
-      {/* Live preview */}
-      {block.content && (
-        <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
-          <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-2">
-            Live Preview
-          </p>
-          <div
-            style={{
-              fontSize: `${fontSize}px`,
-              fontWeight: fontWeight,
-              color: color,
-              lineHeight: `${lineHeight}`,
-              fontFamily: 'Pretendard, sans-serif',
-            }}
-          >
-            {block.content.substring(0, 100)}{block.content.length > 100 ? '...' : ''}
-          </div>
-        </div>
-      )}
+      {/* Info Box */}
+      <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+        <p className="text-xs text-blue-800">
+          <strong>💡 Tip:</strong> Use the toolbar above to format text with bold, italic,
+          headings, lists, and more. Changes are saved automatically.
+        </p>
+      </div>
     </div>
   );
 }

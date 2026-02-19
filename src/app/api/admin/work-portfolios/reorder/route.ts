@@ -34,64 +34,40 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Use transaction with temporary order values to avoid constraint violations
+    // Use transaction with temporary negative values to avoid unique constraint violations
     await prisma.$transaction(async (tx) => {
-      // Get all items in the section sorted by order
+      // Get all items in the section sorted by current order
       const allItems = await tx.workPortfolio.findMany({
         where: { sectionId: currentItem.sectionId },
         orderBy: { order: 'asc' },
       });
 
-      // Create new order map with temporary negative values
-      const orderMap = new Map<string, number>();
-      let newIdx = 0;
+      // Build the new ordered list in a single pass:
+      // 1. Remove the moved item from the list
+      // 2. Insert it at the target position (newOrder index)
+      const otherItems = allItems.filter((item) => item.id !== itemId);
+      const clampedOrder = Math.min(newOrder, otherItems.length);
+      const reorderedIds: string[] = [
+        ...otherItems.slice(0, clampedOrder).map((item) => item.id),
+        itemId,
+        ...otherItems.slice(clampedOrder).map((item) => item.id),
+      ];
 
-      for (const item of allItems) {
-        if (item.id === itemId) {
-          continue;
-        }
-
-        if (newIdx === newOrder) {
-          newIdx++;
-        }
-
-        orderMap.set(item.id, -(newIdx + 100));
-        newIdx++;
-      }
-
-      orderMap.set(itemId, -(newOrder + 100));
-
-      // First pass: update all items with temporary negative values
-      for (const [id, tempOrder] of orderMap) {
+      // First pass: set all items to temporary negative values to avoid constraint conflicts
+      for (let i = 0; i < reorderedIds.length; i++) {
         await tx.workPortfolio.update({
-          where: { id },
-          data: { order: tempOrder },
+          where: { id: reorderedIds[i] },
+          data: { order: -(i + 1) },
         });
       }
 
-      // Second pass: update with final positive values
-      newIdx = 0;
-      for (const item of allItems) {
-        if (item.id === itemId) {
-          continue;
-        }
-
-        if (newIdx === newOrder) {
-          newIdx++;
-        }
-
+      // Second pass: set final positive order values
+      for (let i = 0; i < reorderedIds.length; i++) {
         await tx.workPortfolio.update({
-          where: { id: item.id },
-          data: { order: newIdx },
+          where: { id: reorderedIds[i] },
+          data: { order: i },
         });
-        newIdx++;
       }
-
-      // Update the moved item with final order
-      await tx.workPortfolio.update({
-        where: { id: itemId },
-        data: { order: newOrder },
-      });
     });
 
     const updated = await prisma.workPortfolio.findUnique({

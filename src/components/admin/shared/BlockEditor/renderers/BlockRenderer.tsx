@@ -4,6 +4,8 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { sanitizeContent } from '@/lib/sanitize';
+import { isTiptapContent } from '../types';
+import { tiptapJSONToText } from '@/lib/tiptap/markdown-converter';
 import type {
   Block,
   TextBlock,
@@ -42,10 +44,22 @@ function TextBlockRenderer({ block }: { block: TextBlock }) {
     );
   }
 
+  // Convert Tiptap JSON to markdown if needed
+  let markdownContent: string;
+  if (typeof block.content === 'string') {
+    markdownContent = block.content;
+  } else if (isTiptapContent(block.content)) {
+    markdownContent = tiptapJSONToText(block.content);
+  } else {
+    return (
+      <p className="text-gray-400 text-sm italic">Invalid content format</p>
+    );
+  }
+
   return (
     <div className="prose prose-sm max-w-none">
       <ReactMarkdown remarkPlugins={[remarkGfm]}>
-        {sanitizeContent(block.content)}
+        {sanitizeContent(markdownContent)}
       </ReactMarkdown>
     </div>
   );

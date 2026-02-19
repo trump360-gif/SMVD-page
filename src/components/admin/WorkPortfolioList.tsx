@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -118,6 +118,8 @@ export default function WorkPortfolioList({
 }: WorkPortfolioListProps) {
   const [items, setItems] = useState<WorkPortfolio[]>(initialItems || []);
   const [activeId, setActiveId] = useState<string | null>(null);
+  // 드래그 시작 시점의 상태를 저장 - 클로저 버그 방지용
+  const itemsBeforeDragRef = useRef<WorkPortfolio[]>(initialItems || []);
 
   // Sync with parent when items change
   React.useEffect(() => {
@@ -132,6 +134,8 @@ export default function WorkPortfolioList({
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
+    // 드래그 시작 시점의 상태를 ref에 저장 (클로저 버그 방지)
+    itemsBeforeDragRef.current = items;
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -144,6 +148,8 @@ export default function WorkPortfolioList({
 
       if (oldIndex !== -1 && newIndex !== -1) {
         const newOrder = items[newIndex].order;
+        // 복구용으로 ref에 저장된 드래그 전 상태를 사용
+        const previousItems = itemsBeforeDragRef.current;
 
         // 로컬 state 먼저 업데이트 (즉시 UI 반영)
         const newItems = arrayMove(items, oldIndex, newIndex);
@@ -152,8 +158,8 @@ export default function WorkPortfolioList({
         try {
           await onReorder(active.id as string, newOrder);
         } catch (err) {
-          // 에러 시 원래 상태로 복구
-          setItems(items);
+          // 에러 시 ref에 저장된 드래그 전 상태로 복구
+          setItems(previousItems);
           alert(err instanceof Error ? err.message : '순서 변경 실패');
         }
       }

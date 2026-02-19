@@ -78,6 +78,8 @@ export async function POST(request: NextRequest) {
     let width: number = 0;
     let height: number = 0;
     let fileSize: number;
+    let originalPath: string | undefined;
+    let thumbnailPath: string | undefined;
 
     if (file.type === "image/svg+xml") {
       // SVG 파일 직접 저장
@@ -93,6 +95,9 @@ export async function POST(request: NextRequest) {
       filepath = `/uploads/${yearMonth}/${filename}`;
       mimeType = "image/svg+xml";
       fileSize = buffer.length;
+      // SVG는 원본/썸네일이 없음
+      originalPath = undefined;
+      thumbnailPath = undefined;
     } else {
       // 이미지 처리 (WebP 변환)
       const processed = await processImage(buffer);
@@ -104,6 +109,8 @@ export async function POST(request: NextRequest) {
 
       filename = saved.filename;
       filepath = saved.path;
+      originalPath = saved.originalPath;
+      thumbnailPath = saved.thumbnailPath;
       mimeType = "image/webp";
       width = saved.width;
       height = saved.height;
@@ -132,8 +139,12 @@ export async function POST(request: NextRequest) {
         id: media.id,
         filename: media.filename,
         path: media.filepath,
+        originalPath,
+        thumbnailPath,
         width: media.width,
         height: media.height,
+        size: media.size,
+        mimeType: media.mimeType,
         altText: media.altText,
       },
       "이미지가 업로드되었습니다",

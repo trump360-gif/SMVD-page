@@ -1,14 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import WorkDetailPreviewRenderer from '@/components/admin/shared/BlockEditor/renderers/WorkDetailPreviewRenderer';
-import { ModalShell, ThreePanelLayout } from '@/components/admin/shared/BlogEditorModal';
+import { useRouter } from 'next/navigation';
+import { ModalShell, TwoPanelLayout } from '@/components/admin/shared/BlogEditorModal';
 import WorkBasicInfoForm from './WorkBasicInfoForm';
 import { useBlockEditor } from '@/components/admin/shared/BlockEditor/useBlockEditor';
 import { useRowManager } from '@/components/admin/shared/BlockEditor/useRowManager';
 import type {
   BlogContent,
-  WorkProjectContext,
   HeroImageBlock,
   HeroSectionBlock,
   RowConfig,
@@ -44,6 +43,7 @@ export default function WorkBlogModal({
   onSubmit,
 }: WorkBlogModalProps) {
   const isEditing = !!project;
+  const router = useRouter();
 
   // ---- State ----
   const [activeTab, setActiveTab] = useState<'info' | 'content'>('info');
@@ -295,6 +295,13 @@ export default function WorkBlogModal({
     { key: 'content', label: '콘텐츠 (블록)' },
   ];
 
+  // Handle preview button click - navigate to actual work page
+  const handlePreview = useCallback((blockId: string) => {
+    if (project?.slug) {
+      router.push(`/work/${project.slug}`);
+    }
+  }, [project?.slug, router]);
+
   return (
     <ModalShell
       isOpen={isOpen}
@@ -337,9 +344,9 @@ export default function WorkBlogModal({
             />
           )}
 
-          {/* Tab: Content (3-Panel Layout) */}
+          {/* Tab: Content (2-Panel Layout) */}
           {activeTab === 'content' && (
-            <ThreePanelLayout
+            <TwoPanelLayout
               blocks={blocks}
               rowConfig={rowConfig}
               selectedId={selectedId}
@@ -357,20 +364,7 @@ export default function WorkBlogModal({
               redo={redo}
               canUndo={canUndo}
               canRedo={canRedo}
-              previewSubtitle="실시간 미리보기"
-              previewPanel={
-                <WorkDetailPreviewRenderer
-                  blocks={blocks}
-                  rowConfig={rowConfig}
-                  projectContext={{
-                    title: title,
-                    author: author,
-                    email: email,
-                    heroImage: '',
-                    category: category,
-                  } satisfies WorkProjectContext}
-                />
-              }
+              onPreview={handlePreview}
             />
           )}
     </ModalShell>

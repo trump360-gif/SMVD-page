@@ -4,7 +4,8 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { sanitizeContent } from '@/lib/sanitize';
-import type { TextBlock } from '../types';
+import { isTiptapContent, type TextBlock } from '../types';
+import { tiptapJSONToText } from '@/lib/tiptap/markdown-converter';
 
 interface TextBlockRendererProps {
   block: TextBlock;
@@ -25,6 +26,7 @@ function hasMarkdownSyntax(text: string): boolean {
 /**
  * Renders a text block with optional markdown support.
  * Applies font styling (size, weight, color, line height) if specified.
+ * Supports both markdown (string) and Tiptap JSON formats.
  */
 export default function TextBlockRenderer({ block }: TextBlockRendererProps) {
   if (!block.content) {
@@ -40,6 +42,22 @@ export default function TextBlockRenderer({ block }: TextBlockRendererProps) {
   const color = block.color ?? '#1b1d1f';
   const lineHeight = block.lineHeight ?? 1.8;
 
+  // Handle both markdown (string) and Tiptap JSON formats
+  let markdownContent: string;
+  if (typeof block.content === 'string') {
+    markdownContent = block.content;
+  } else if (isTiptapContent(block.content)) {
+    // Convert Tiptap JSON to plain text for rendering
+    markdownContent = tiptapJSONToText(block.content);
+  } else {
+    // Fallback: empty content
+    return (
+      <p style={{ color: '#999', fontSize: '14px', fontStyle: 'italic' }}>
+        Invalid content format
+      </p>
+    );
+  }
+
   return (
     <div
       style={{
@@ -50,7 +68,7 @@ export default function TextBlockRenderer({ block }: TextBlockRendererProps) {
         fontFamily: 'Pretendard, sans-serif',
       }}
     >
-      {hasMarkdownSyntax(block.content) ? (
+      {hasMarkdownSyntax(markdownContent) ? (
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
@@ -86,7 +104,7 @@ export default function TextBlockRenderer({ block }: TextBlockRendererProps) {
             ),
           }}
         >
-          {sanitizeContent(block.content)}
+          {sanitizeContent(markdownContent)}
         </ReactMarkdown>
       ) : (
         <p style={{
@@ -97,7 +115,7 @@ export default function TextBlockRenderer({ block }: TextBlockRendererProps) {
           color: color,
           lineHeight: `${lineHeight}`,
         }}>
-          {block.content}
+          {markdownContent}
         </p>
       )}
     </div>

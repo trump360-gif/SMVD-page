@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -164,6 +164,7 @@ export default function NewsArticleList({
   onTogglePublish,
 }: NewsArticleListProps) {
   const [items, setItems] = useState<NewsArticleData[]>(initialItems || []);
+  const itemsBeforeDragRef = useRef<NewsArticleData[]>([]);
 
   useEffect(() => {
     setItems(initialItems || []);
@@ -184,13 +185,14 @@ export default function NewsArticleList({
       const newIndex = items.findIndex((item) => item.id === over.id);
 
       if (oldIndex !== -1 && newIndex !== -1) {
+        itemsBeforeDragRef.current = items;
         const newItems = arrayMove(items, oldIndex, newIndex);
         setItems(newItems);
 
         try {
           await onReorder(active.id as string, newIndex);
         } catch (err) {
-          setItems(items);
+          setItems(itemsBeforeDragRef.current);
           alert(err instanceof Error ? err.message : '순서 변경 실패');
         }
       }

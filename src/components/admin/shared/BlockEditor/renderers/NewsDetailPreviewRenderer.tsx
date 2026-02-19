@@ -4,6 +4,8 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { sanitizeContent } from '@/lib/sanitize';
+import { isTiptapContent } from '../types';
+import { tiptapJSONToText } from '@/lib/tiptap/markdown-converter';
 import type {
   Block,
   TextBlock,
@@ -74,12 +76,22 @@ function parseBlocks(blocks: Block[]): ParsedNewsContent {
       }
     } else if (block.type === 'text' && (block as TextBlock).content) {
       const textBlock = block as TextBlock;
+      // Convert content to string if it's Tiptap JSON
+      let contentText: string;
+      if (typeof textBlock.content === 'string') {
+        contentText = textBlock.content;
+      } else if (isTiptapContent(textBlock.content)) {
+        contentText = tiptapJSONToText(textBlock.content);
+      } else {
+        contentText = '';
+      }
+
       if (!foundIntroText) {
-        result.introText = textBlock.content;
+        result.introText = contentText;
         result.introTextBlock = textBlock;
         foundIntroText = true;
       } else {
-        result.additionalTexts.push(textBlock.content);
+        result.additionalTexts.push(contentText);
       }
     } else if (block.type === 'image-grid') {
       const b = block as ImageGridBlock;

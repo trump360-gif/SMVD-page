@@ -1,3 +1,5 @@
+import { isTiptapContent } from '../../types';
+import { tiptapJSONToText } from '@/lib/tiptap/markdown-converter';
 import type {
   Block,
   TextBlock,
@@ -64,16 +66,26 @@ export function parseBlocks(blocks: Block[]): ParsedPreviewContent {
       foundWorkTitle = true;
     } else if (block.type === 'text' && (block as TextBlock).content) {
       const textBlock = block as TextBlock;
+      // Convert content to string if it's Tiptap JSON
+      let contentText: string;
+      if (typeof textBlock.content === 'string') {
+        contentText = textBlock.content;
+      } else if (isTiptapContent(textBlock.content)) {
+        contentText = tiptapJSONToText(textBlock.content);
+      } else {
+        contentText = '';
+      }
+
       if (foundWorkTitle && !foundMainDescription) {
-        result.mainDescription = textBlock.content;
+        result.mainDescription = contentText;
         result.mainDescriptionBlock = textBlock;
         foundMainDescription = true;
       } else if (!foundWorkTitle) {
         if (!result.mainDescription) {
-          result.mainDescription = textBlock.content;
+          result.mainDescription = contentText;
           result.mainDescriptionBlock = textBlock;
         } else {
-          result.mainDescription += '\n\n' + textBlock.content;
+          result.mainDescription += '\n\n' + contentText;
         }
       }
     } else if (block.type === 'work-layout-config') {

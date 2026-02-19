@@ -38,13 +38,14 @@ export interface RowSectionProps {
   onAddBlock: (type: BlockType) => void;
   onReorder: (sourceId: string, destinationIndex: number) => void;
   onDeleteBlock: (id: string) => void;
+  onPreview?: (blockId: string) => void;
   autoOpenToolbar?: boolean;
 }
 
 const LAYOUT_LABELS: Record<number, string> = {
-  1: '1 Col',
-  2: '2 Col',
-  3: '3 Col',
+  1: '1열',
+  2: '2열',
+  3: '3열',
 };
 
 // ---------------------------------------------------------------------------
@@ -63,6 +64,7 @@ export const RowSection = memo(function RowSection({
   onAddBlock,
   onReorder,
   onDeleteBlock,
+  onPreview,
   autoOpenToolbar = false,
 }: RowSectionProps) {
   const [showToolbar, setShowToolbar] = React.useState(autoOpenToolbar);
@@ -99,7 +101,7 @@ export const RowSection = memo(function RowSection({
       {/* Row header */}
       <div className="flex items-center justify-between px-2.5 py-1.5 bg-white border-b border-gray-100">
         <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
-          Row {rowIndex + 1}
+          행 {rowIndex + 1}
         </span>
 
         <div className="flex items-center gap-1">
@@ -117,7 +119,7 @@ export const RowSection = memo(function RowSection({
                     : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                 }
               `}
-              title={`${cols} column layout`}
+              title={`${cols}열 레이아웃`}
             >
               {LAYOUT_LABELS[cols]}
             </button>
@@ -129,7 +131,7 @@ export const RowSection = memo(function RowSection({
               type="button"
               onClick={onDeleteRow}
               className="ml-1 p-0.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
-              title="Delete row"
+              title="행 삭제"
             >
               <Trash2 size={10} />
             </button>
@@ -142,7 +144,7 @@ export const RowSection = memo(function RowSection({
         {rowBlocks.length === 0 ? (
           <div className="flex items-center justify-center py-4 text-center">
             <p className="text-[10px] text-gray-400">
-              Empty row - add a block below
+              빈 행 - 아래에서 블록을 추가하세요
             </p>
           </div>
         ) : (
@@ -163,6 +165,7 @@ export const RowSection = memo(function RowSection({
                     isSelected={selectedId === block.id}
                     onSelect={() => onSelect(block.id)}
                     onDelete={() => onDeleteBlock(block.id)}
+                    onPreview={onPreview ? () => onPreview(block.id) : undefined}
                   />
                 ))}
               </div>
@@ -191,7 +194,7 @@ export const RowSection = memo(function RowSection({
             className="w-full flex items-center justify-center gap-1 py-1.5 text-[10px] text-gray-400 hover:text-blue-500 hover:bg-blue-50/50 transition-colors"
           >
             <Plus size={10} />
-            Add Block
+            블록 추가
           </button>
         )}
       </div>

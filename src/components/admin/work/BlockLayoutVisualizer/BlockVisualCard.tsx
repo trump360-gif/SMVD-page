@@ -5,7 +5,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { DraggableAttributes } from '@dnd-kit/core';
 import type { DraggableSyntheticListeners } from '@dnd-kit/core/dist/hooks/useDraggable';
-import { GripVertical, Type, Trash2 } from 'lucide-react';
+import { GripVertical, Eye, Type, Trash2 } from 'lucide-react';
 import type { Block } from '@/components/admin/shared/BlockEditor/types';
 import { BLOCK_META, getBlockPreviewText } from './block-meta';
 
@@ -24,6 +24,7 @@ export const BlockVisualCard = memo(function BlockVisualCard({
   transform,
   transition,
   onDelete,
+  onPreview,
 }: {
   block: Block;
   isSelected: boolean;
@@ -35,6 +36,7 @@ export const BlockVisualCard = memo(function BlockVisualCard({
   transform: { x: number; y: number; scaleX: number; scaleY: number } | null;
   transition: string | undefined;
   onDelete?: () => void;
+  onPreview?: () => void;
 }) {
   const meta = BLOCK_META[block.type] || {
     label: block.type,
@@ -85,6 +87,19 @@ export const BlockVisualCard = memo(function BlockVisualCard({
         <span className="text-[10px] font-medium text-gray-600 truncate flex-1 min-w-0">
           {meta.label}
         </span>
+        {onPreview && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onPreview();
+            }}
+            className="p-0.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded transition-colors opacity-0 group-hover:opacity-100 shrink-0"
+            title="미리보기"
+          >
+            <Eye size={10} />
+          </button>
+        )}
         {onDelete && (
           <button
             type="button"
@@ -93,7 +108,7 @@ export const BlockVisualCard = memo(function BlockVisualCard({
               onDelete();
             }}
             className="p-0.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors opacity-0 group-hover:opacity-100 shrink-0"
-            title="Delete block"
+            title="블록 삭제"
           >
             <Trash2 size={10} />
           </button>
@@ -115,11 +130,13 @@ export const SortableBlockVisualCard = memo(function SortableBlockVisualCard({
   isSelected,
   onSelect,
   onDelete,
+  onPreview,
 }: {
   block: Block;
   isSelected: boolean;
   onSelect: () => void;
   onDelete?: () => void;
+  onPreview?: () => void;
 }) {
   const {
     attributes,
@@ -142,6 +159,7 @@ export const SortableBlockVisualCard = memo(function SortableBlockVisualCard({
       transform={transform}
       transition={transition}
       onDelete={onDelete}
+      onPreview={onPreview}
     />
   );
 });
