@@ -321,6 +321,13 @@ export default function NewsBlogModal({
     }
   };
 
+  // Auto-select first block when entering content tab
+  useEffect(() => {
+    if (activeTab === 'content' && blocks.length > 0 && !selectedId) {
+      setSelectedId(blocks[0]?.id);
+    }
+  }, [activeTab, blocks, selectedId, setSelectedId]);
+
   // Undo/Redo keyboard handler
   const handleUndoRedoKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -336,24 +343,24 @@ export default function NewsBlogModal({
   );
 
   const tabs = [
-    { key: 'info', label: 'Basic Info' },
-    { key: 'content', label: 'Content (Blocks)' },
-    { key: 'attachments', label: 'Attachments' },
+    { key: 'info', label: '기본정보' },
+    { key: 'content', label: '콘텐츠 (블록)' },
+    { key: 'attachments', label: '첨부파일' },
   ];
 
   return (
     <ModalShell
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? 'Edit Article' : 'New Article'}
-      subtitle={isEditing ? `Editing: ${article?.title}` : 'Create a new news article or event'}
+      title={isEditing ? '기사 수정' : '새 기사'}
+      subtitle={isEditing ? `편집중: ${article?.title}` : '새로운 뉴스 기사 또는 행사를 만드세요'}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={(key) => setActiveTab(key as 'info' | 'content' | 'attachments')}
       error={error}
       onClearError={() => setError(null)}
-      footerInfo={`${editorContent.blocks.length} content block${editorContent.blocks.length !== 1 ? 's' : ''}`}
-      submitLabel={isSubmitting ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Article'}
+      footerInfo={`${editorContent.blocks.length} 콘텐츠 블록`}
+      submitLabel={isSubmitting ? '저장중...' : isEditing ? '변경사항 저장' : '기사 생성'}
       isSubmitting={isSubmitting}
       onSubmit={handleSubmit}
       onKeyDown={handleUndoRedoKeyDown}

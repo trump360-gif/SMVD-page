@@ -268,6 +268,13 @@ export default function WorkBlogModal({
     }
   };
 
+  // Auto-select first block when entering content tab
+  useEffect(() => {
+    if (activeTab === 'content' && blocks.length > 0 && !selectedId) {
+      setSelectedId(blocks[0]?.id);
+    }
+  }, [activeTab, blocks, selectedId, setSelectedId]);
+
   // Undo/Redo keyboard handler
   const handleUndoRedoKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -283,23 +290,23 @@ export default function WorkBlogModal({
   );
 
   const tabs = [
-    { key: 'info', label: 'Basic Info' },
-    { key: 'content', label: 'Content (Blocks)' },
+    { key: 'info', label: '기본정보' },
+    { key: 'content', label: '콘텐츠 (블록)' },
   ];
 
   return (
     <ModalShell
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? 'Edit Portfolio' : 'New Portfolio'}
-      subtitle={isEditing ? `Editing: ${project?.title}` : 'Create a new portfolio project'}
+      title={isEditing ? '포트폴리오 수정' : '새 포트폴리오'}
+      subtitle={isEditing ? `편집중: ${project?.title}` : '새로운 포트폴리오 프로젝트를 만드세요'}
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={(key) => setActiveTab(key as 'info' | 'content')}
       error={error}
       onClearError={() => setError(null)}
-      footerInfo={`${editorContent.blocks.length} content block${editorContent.blocks.length !== 1 ? 's' : ''}`}
-      submitLabel={isSubmitting ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Project'}
+      footerInfo={`${editorContent.blocks.length} 콘텐츠 블록`}
+      submitLabel={isSubmitting ? '저장중...' : isEditing ? '변경사항 저장' : '프로젝트 생성'}
       isSubmitting={isSubmitting}
       onSubmit={handleSubmit}
       onKeyDown={handleUndoRedoKeyDown}
@@ -311,20 +318,20 @@ export default function WorkBlogModal({
               <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2">
                   <label htmlFor="wb-title" className="block text-sm font-medium text-gray-700 mb-1">
-                    Title *
+                    제목 *
                   </label>
                   <input
                     id="wb-title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Vora"
+                    placeholder="작품명"
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                   />
                 </div>
                 <div>
                   <label htmlFor="wb-category" className="block text-sm font-medium text-gray-700 mb-1">
-                    Category *
+                    카테고리 *
                   </label>
                   <select
                     id="wb-category"
@@ -332,7 +339,7 @@ export default function WorkBlogModal({
                     onChange={(e) => setCategory(e.target.value)}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                   >
-                    <option value="">Select</option>
+                    <option value="">선택하세요</option>
                     {CATEGORIES.map((cat) => (
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
@@ -343,14 +350,14 @@ export default function WorkBlogModal({
               {/* Subtitle */}
               <div>
                 <label htmlFor="wb-subtitle" className="block text-sm font-medium text-gray-700 mb-1">
-                  Subtitle *
+                  부제목 *
                 </label>
                 <input
                   id="wb-subtitle"
                   type="text"
                   value={subtitle}
                   onChange={(e) => setSubtitle(e.target.value)}
-                  placeholder="Author Name, 2025"
+                  placeholder="작가명, 2025"
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                 />
               </div>
@@ -359,20 +366,20 @@ export default function WorkBlogModal({
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label htmlFor="wb-author" className="block text-sm font-medium text-gray-700 mb-1">
-                    Author *
+                    작가 *
                   </label>
                   <input
                     id="wb-author"
                     type="text"
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
-                    placeholder="Author name"
+                    placeholder="작가명"
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                   />
                 </div>
                 <div>
                   <label htmlFor="wb-email" className="block text-sm font-medium text-gray-700 mb-1">
-                    Email *
+                    이메일 *
                   </label>
                   <input
                     id="wb-email"
@@ -385,7 +392,7 @@ export default function WorkBlogModal({
                 </div>
                 <div>
                   <label htmlFor="wb-year" className="block text-sm font-medium text-gray-700 mb-1">
-                    Year
+                    연도
                   </label>
                   <input
                     id="wb-year"
@@ -401,14 +408,14 @@ export default function WorkBlogModal({
               {/* Tags */}
               <div>
                 <label htmlFor="wb-tags" className="block text-sm font-medium text-gray-700 mb-1">
-                  Tags (comma-separated)
+                  태그 (쉼표로 구분)
                 </label>
                 <input
                   id="wb-tags"
                   type="text"
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
-                  placeholder="UX/UI, Branding, Motion"
+                  placeholder="UX/UI, 브랜딩, 모션"
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                 />
                 {tags && (
@@ -428,7 +435,7 @@ export default function WorkBlogModal({
               {/* Thumbnail Image */}
               <div>
                 <label htmlFor="wb-thumb" className="block text-sm font-medium text-gray-700 mb-1">
-                  Thumbnail {!isEditing && '*'}
+                  썸네일 {!isEditing && '*'}
                 </label>
                 <input
                   id="wb-thumb"
@@ -444,7 +451,7 @@ export default function WorkBlogModal({
                   </div>
                 )}
                 <p className="text-xs text-gray-400 mt-1">
-                  Hero image is managed in the Content (Blocks) tab using the Hero Image block.
+                  히어로 이미지는 콘텐츠 (블록) 탭에서 히어로 이미지 블록을 사용하여 관리됩니다.
                 </p>
               </div>
 
@@ -458,7 +465,7 @@ export default function WorkBlogModal({
                   className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <label htmlFor="wb-published" className="text-sm font-medium text-gray-700">
-                  Published (visible to public)
+                  공개 (공개 상태)
                 </label>
               </div>
             </div>
