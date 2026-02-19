@@ -38,6 +38,7 @@ export default function TiptapEditor({
 
   // Initialize editor with proper extensions
   const editor = useEditor({
+    immediatelyRender: false, // ✅ Fix SSR hydration mismatch
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
