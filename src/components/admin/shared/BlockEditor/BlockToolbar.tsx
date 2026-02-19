@@ -22,6 +22,8 @@ interface BlockToolbarProps {
   onAddBlock: (type: BlockType) => void;
   /** When true, shows Work-specific block types */
   showWorkBlocks?: boolean;
+  /** When true, dropdown menu is initially open */
+  initialOpen?: boolean;
 }
 
 interface BlockOption {
@@ -57,8 +59,8 @@ const WORK_BLOCK_OPTIONS: BlockOption[] = [
  * Dropdown menu with all available block types.
  * When showWorkBlocks is true, also shows Work-specific blocks in a separate section.
  */
-export default function BlockToolbar({ onAddBlock, showWorkBlocks = false }: BlockToolbarProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function BlockToolbar({ onAddBlock, showWorkBlocks = false, initialOpen = false }: BlockToolbarProps) {
+  const [isOpen, setIsOpen] = useState(initialOpen);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside

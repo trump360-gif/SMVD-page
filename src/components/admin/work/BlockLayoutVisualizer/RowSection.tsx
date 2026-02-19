@@ -179,6 +179,7 @@ export const RowSection = memo(function RowSection({
                 setShowToolbar(false);
               }}
               showWorkBlocks={true}
+              initialOpen={true}
             />
           </div>
         ) : (
