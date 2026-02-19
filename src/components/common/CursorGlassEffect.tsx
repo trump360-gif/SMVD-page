@@ -36,17 +36,23 @@ export function CursorGlassEffect() {
     <div
       style={{
         position: 'fixed',
-        left: position.x - 100,
-        top: position.y - 100,
-        width: 200,
-        height: 200,
+        left: position.x - 40,
+        top: position.y - 40,
+        width: 80,
+        height: 80,
         pointerEvents: 'none',
         zIndex: 40,
 
         // ✨ 글래스모피즘 (유리 느낌)
-        backdropFilter: 'blur(20px) brightness(1.2)',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(12px) brightness(1.15)',
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
         borderRadius: '50%',
+
+        // 부드러운 엣지 (그라데이션)
+        boxShadow: `
+          inset 0 0 20px rgba(255, 255, 255, 0.3),
+          0 0 30px rgba(255, 255, 255, 0.1)
+        `,
 
         // 부드러운 애니메이션
         opacity: isActive ? 1 : 0,
