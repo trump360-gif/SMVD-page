@@ -15,16 +15,16 @@ export function CursorGlassEffect() {
     // 글래스 인디케이터 생성
     const glassIndicator = document.createElement('div');
     glassIndicator.style.position = 'fixed';
-    glassIndicator.style.width = '80px';
-    glassIndicator.style.height = '80px';
+    glassIndicator.style.width = '30px';
+    glassIndicator.style.height = '30px';
     glassIndicator.style.borderRadius = '50%';
-    glassIndicator.style.backgroundColor = 'rgb(40, 160, 150)';
+    glassIndicator.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
     glassIndicator.style.pointerEvents = 'none';
     glassIndicator.style.zIndex = '50';
     glassIndicator.style.opacity = '0';
     glassIndicator.style.transform = 'translate(-50%, -50%)';
     glassIndicator.style.backdropFilter = 'blur(12px) brightness(1.15)';
-    glassIndicator.style.boxShadow = 'inset 0 0 20px rgba(255, 255, 255, 0.3), 0 0 30px rgba(40, 160, 150, 0.2)';
+    glassIndicator.style.boxShadow = 'inset 0 0 15px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.3)';
     glassIndicator.style.transition = 'none';
 
     container.appendChild(glassIndicator);
@@ -61,7 +61,7 @@ export function CursorGlassEffect() {
       particle.style.width = size + 'px';
       particle.style.height = size + 'px';
       particle.style.borderRadius = '50%';
-      particle.style.backgroundColor = 'rgb(40, 160, 150)';
+      particle.style.backgroundColor = 'rgb(255, 255, 255)';
       particle.style.pointerEvents = 'none';
       particle.style.zIndex = '40';
       particle.style.opacity = String(Math.random() * 0.3 + 0.2);
@@ -94,21 +94,23 @@ export function CursorGlassEffect() {
         });
 
         if (clickable) {
-          // 클릭 가능 → 글래스 표시
+          // 클릭 가능 → 글래스 표시 + 커서 숨김
           gsap.to(glassIndicatorRef.current, {
             opacity: 0.5,
             duration: 0.2,
             ease: 'power2.out',
             overwrite: 'auto',
           });
+          document.documentElement.style.cursor = 'none';
         } else {
-          // 클릭 불가능 → 글래스 숨김
+          // 클릭 불가능 → 글래스 숨김 + 커서 표시
           gsap.to(glassIndicatorRef.current, {
             opacity: 0,
             duration: 0.2,
             ease: 'power2.out',
             overwrite: 'auto',
           });
+          document.documentElement.style.cursor = 'auto';
         }
       }
 
@@ -130,6 +132,8 @@ export function CursorGlassEffect() {
       // 남은 파티클 정리
       gsap.killTweensOf('div');
       container.innerHTML = '';
+      // 커서 복원
+      document.documentElement.style.cursor = 'auto';
     };
   }, []);
 
