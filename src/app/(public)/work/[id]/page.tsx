@@ -40,6 +40,11 @@ async function getProjectFromDB(slug: string): Promise<WorkDetail | null> {
       ? (project.galleryImages as string[])
       : [];
 
+    // Detect content format: Tiptap JSON or BlockEditor
+    const contentObj = project.content && typeof project.content === 'object' ? project.content as Record<string, unknown> : null;
+    const isTiptapContent = contentObj && contentObj.type === 'doc' && Array.isArray(contentObj.content);
+    const isBlocksContent = contentObj && 'blocks' in contentObj && Array.isArray((contentObj as any).blocks);
+
     return {
       id: project.slug,
       title: project.title,
@@ -51,7 +56,7 @@ async function getProjectFromDB(slug: string): Promise<WorkDetail | null> {
       email: project.email,
       heroImage: project.heroImage,
       galleryImages,
-      content: (project.content && typeof project.content === 'object' && 'blocks' in (project.content as object) ? project.content as unknown as BlogContent : null), // BlockEditor content if available
+      content: (isBlocksContent || isTiptapContent) ? contentObj as unknown as BlogContent : null, // BlockEditor or Tiptap content if available (NEW - 2026-02-19)
       previousProject: prevProject
         ? { id: prevProject.slug, title: prevProject.title }
         : undefined,

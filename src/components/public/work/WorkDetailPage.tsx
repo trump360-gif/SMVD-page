@@ -1,10 +1,11 @@
 'use client';
 
 import { useResponsive } from '@/lib/responsive';
-import { WorkDetail } from '@/constants/work-details';
+import { WorkDetail, type TiptapContent } from '@/constants/work-details';
 import WorkHeader from './WorkHeader';
 import WorkDetailContent from './WorkDetailContent';
 import WorkProjectNavigation from './WorkProjectNavigation';
+import TiptapWorkDetailView from './TiptapWorkDetailView'; // NEW - 2026-02-19
 import { parseBlockContent } from './WorkDetailTypes';
 
 interface WorkDetailPageProps {
@@ -13,6 +14,29 @@ interface WorkDetailPageProps {
 
 export default function WorkDetailPage({ project }: WorkDetailPageProps) {
   const { isMobile, isTablet } = useResponsive();
+
+  // NEW - 2026-02-19: Check if content is Tiptap format
+  const isTiptapContent = project.content &&
+    typeof project.content === 'object' &&
+    'type' in project.content &&
+    (project.content as unknown as Record<string, unknown>).type === 'doc' &&
+    'content' in project.content;
+
+  // If Tiptap content, render with TiptapWorkDetailView
+  if (isTiptapContent) {
+    return (
+      <TiptapWorkDetailView
+        title={project.title}
+        author={project.author}
+        email={project.email}
+        category={project.category}
+        heroImage={project.heroImage}
+        content={project.content as unknown as TiptapContent}
+        previousProject={project.previousProject}
+        nextProject={project.nextProject}
+      />
+    );
+  }
 
   // Try to parse block-based content from description
   const blockContent = parseBlockContent(project.description);

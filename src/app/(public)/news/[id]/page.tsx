@@ -6,6 +6,7 @@ import { NewsEventDetailContent } from '@/components/public/news';
 import AttachmentDownloadBox from '@/components/public/news/AttachmentDownloadBox'; // NEW - 2026-02-16
 import NewsDetailLayout from '@/components/public/news/NewsDetailLayout';
 import NewsBlockDetailView from '@/components/public/news/NewsBlockDetailView';
+import TiptapNewsDetailView from '@/components/public/news/TiptapNewsDetailView'; // NEW - 2026-02-19
 import { prisma } from '@/lib/db';
 
 // ISR: regenerate every 60 seconds. Admin API calls revalidatePath() on mutations.
@@ -50,9 +51,19 @@ interface NewsBlockData {
   attachments?: AttachmentData[] | null; // NEW - 2026-02-16
 }
 
+interface NewsTiptapData {
+  id: string;
+  category: string;
+  date: string;
+  title: string;
+  content: Record<string, unknown>;
+  attachments?: AttachmentData[] | null;
+}
+
 type NewsDetailResult =
   | { type: 'legacy'; data: NewsLegacyData }
   | { type: 'blocks'; data: NewsBlockData }
+  | { type: 'tiptap'; data: NewsTiptapData }
   | null;
 
 // ---- Data fetching ----
@@ -75,6 +86,23 @@ async function getNewsDetail(slug: string): Promise<NewsDetailResult> {
         title: article.title,
         attachments: article.attachments as AttachmentData[] | null | undefined, // NEW - 2026-02-16
       };
+
+      // Check if content is in Tiptap JSON format (NEW - 2026-02-19)
+      if (
+        content &&
+        'type' in content &&
+        content.type === 'doc' &&
+        'content' in content &&
+        Array.isArray(content.content)
+      ) {
+        return {
+          type: 'tiptap',
+          data: {
+            ...baseData,
+            content: content as Record<string, unknown>,
+          },
+        };
+      }
 
       // Check if content is in block format (has blocks[] array with items)
       if (
@@ -140,7 +168,10 @@ export default async function NewsDetailPage({
 
       {/* Main Content Container - Responsive via client component */}
       <NewsDetailLayout>
-        {result?.type === 'blocks' ? (
+        {result?.type === 'tiptap' ? (
+          // NEW - 2026-02-19: Tiptap JSON content rendering
+          <TiptapNewsDetailView data={result.data} />
+        ) : result?.type === 'blocks' ? (
           // Block-based content rendering (responsive client component)
           <NewsBlockDetailView data={result.data} />
         ) : (

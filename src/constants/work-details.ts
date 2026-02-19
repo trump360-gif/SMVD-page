@@ -1,5 +1,11 @@
 import type { BlogContent } from '@/components/admin/shared/BlockEditor/types';
 
+// NEW - 2026-02-19: Tiptap content format
+export interface TiptapContent {
+  type: 'doc';
+  content: Array<Record<string, unknown>>;
+}
+
 export interface WorkDetail {
   id: string;
   title: string;
@@ -11,7 +17,7 @@ export interface WorkDetail {
   email: string;
   heroImage: string;
   galleryImages: string[];
-  content?: BlogContent | null; // BlockEditor content with blocks array
+  content?: BlogContent | TiptapContent | null; // BlockEditor or Tiptap content
   nextProject?: {
     id: string;
     title: string;
