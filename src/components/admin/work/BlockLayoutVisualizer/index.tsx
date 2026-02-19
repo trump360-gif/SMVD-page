@@ -76,6 +76,15 @@ export default function BlockLayoutVisualizer({
         : [];
 
   const [showAddRowMenu, setShowAddRowMenu] = React.useState(false);
+  const [newRowIndex, setNewRowIndex] = React.useState<number | null>(null);
+
+  // Reset newRowIndex after row is added
+  React.useEffect(() => {
+    if (newRowIndex !== null && effectiveRowConfig.length > 0) {
+      const timer = setTimeout(() => setNewRowIndex(null), 100);
+      return () => clearTimeout(timer);
+    }
+  }, [effectiveRowConfig.length, newRowIndex]);
 
   // Sensors for row drag-and-drop
   const sensors = useSensors(
@@ -143,7 +152,10 @@ export default function BlockLayoutVisualizer({
             </p>
             <button
               type="button"
-              onClick={() => onAddRow(1)}
+              onClick={() => {
+                setNewRowIndex(0);
+                onAddRow(1);
+              }}
               className="flex items-center gap-1.5 px-3 py-2 bg-blue-500 text-white text-xs font-medium rounded-lg hover:bg-blue-600 transition-colors"
             >
               <Plus size={14} />
@@ -180,6 +192,7 @@ export default function BlockLayoutVisualizer({
                       onAddBlock={(type) => onAddBlockToRow(type, idx)}
                       onReorder={onReorder}
                       onDeleteBlock={onDeleteBlock}
+                      autoOpenToolbar={idx === newRowIndex}
                     />
                   );
                 })}
@@ -212,6 +225,7 @@ export default function BlockLayoutVisualizer({
                   key={cols}
                   type="button"
                   onClick={() => {
+                    setNewRowIndex(effectiveRowConfig.length);
                     onAddRow(cols);
                     setShowAddRowMenu(false);
                   }}

@@ -38,6 +38,7 @@ export interface RowSectionProps {
   onAddBlock: (type: BlockType) => void;
   onReorder: (sourceId: string, destinationIndex: number) => void;
   onDeleteBlock: (id: string) => void;
+  autoOpenToolbar?: boolean;
 }
 
 const LAYOUT_LABELS: Record<number, string> = {
@@ -62,8 +63,9 @@ export const RowSection = memo(function RowSection({
   onAddBlock,
   onReorder,
   onDeleteBlock,
+  autoOpenToolbar = false,
 }: RowSectionProps) {
-  const [showToolbar, setShowToolbar] = React.useState(false);
+  const [showToolbar, setShowToolbar] = React.useState(autoOpenToolbar);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
