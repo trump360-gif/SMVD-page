@@ -37,14 +37,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("이메일과 비밀번호를 입력하세요");
         }
 
-        // Rate limit check (by email to prevent brute-force per account)
-        const rateLimitKey = credentials.email.toLowerCase();
-        const { success: rateLimitOk } = await loginRatelimit.limit(rateLimitKey);
-        if (!rateLimitOk) {
-          throw new Error("로그인 시도가 너무 많습니다. 15분 후 다시 시도해주세요.");
-        }
-
-        // Validate credentials schema
+        // Validate credentials schema first
         const validatedCredentials = LoginSchema.safeParse(credentials);
         if (!validatedCredentials.success) {
           throw new Error("유효하지 않은 이메일 또는 비밀번호");
@@ -65,12 +58,15 @@ export const authOptions: NextAuthOptions = {
           user.passwordHash
         );
 
+        // Only apply rate limit on FAILED login attempts
+        const rateLimitKey = validatedCredentials.data.email.toLowerCase();
         if (!isPasswordValid) {
+          const { success: rateLimitOk } = await loginRatelimit.limit(rateLimitKey);
+          if (!rateLimitOk) {
+            throw new Error("로그인 시도가 너무 많습니다. 15분 후 다시 시도해주세요.");
+          }
           throw new Error("비밀번호가 일치하지 않습니다");
         }
-
-        // Reset rate limit on successful login
-        await loginRatelimit.reset(rateLimitKey);
 
         // Return user object if credentials are valid
         return {

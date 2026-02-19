@@ -87,6 +87,7 @@ export default function ProfessorDetailPage() {
               About Major
             </button>
             <button
+              onClick={() => router.push('/about?tab=people')}
               style={{
                 backgroundColor: 'transparent',
                 border: 'none',
@@ -94,11 +95,12 @@ export default function ProfessorDetailPage() {
                 fontWeight: '700',
                 color: '#141414ff',
                 fontFamily: 'Inter',
-                cursor: 'default',
+                cursor: 'pointer',
                 padding: '0',
                 borderBottom: '2px solid #141414ff',
                 paddingBottom: '10px',
                 marginBottom: '-10px',
+                transition: 'all 0.2s ease',
               }}
             >
               Our People
