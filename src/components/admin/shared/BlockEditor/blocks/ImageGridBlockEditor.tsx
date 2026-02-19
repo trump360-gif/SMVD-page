@@ -388,7 +388,7 @@ export default function ImageGridBlockEditor({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="text-sm font-medium text-gray-700">
-          Image Grid ({localBlock.images.length} images)
+          이미지 그리드 ({localBlock.images.length}개 이미지)
         </div>
         <button
           type="button"
@@ -420,8 +420,8 @@ export default function ImageGridBlockEditor({
                   {/* Row Header */}
                   <div className="flex items-center gap-2">
                     <div className="text-xs font-medium text-gray-600 flex-1">
-                      Row {rowIdx + 1} ({row.columns} col{row.columns > 1 ? 's' : ''},{' '}
-                      {rowImages.length} img{rowImages.length !== 1 ? 's' : ''})
+                      행 {rowIdx + 1} ({row.columns}열,{' '}
+                      {rowImages.length}개 이미지)
                     </div>
 
                     {/* Column Selector */}
@@ -432,9 +432,9 @@ export default function ImageGridBlockEditor({
                       }
                       className="text-xs px-1.5 py-0.5 border border-gray-300 rounded focus:outline-none focus:border-blue-400"
                     >
-                      <option value="1">1 Column</option>
-                      <option value="2">2 Columns</option>
-                      <option value="3">3 Columns</option>
+                      <option value="1">1열</option>
+                      <option value="2">2열</option>
+                      <option value="3">3열</option>
                     </select>
 
                     {/* Delete Row */}
@@ -469,7 +469,7 @@ export default function ImageGridBlockEditor({
                       ))
                     ) : (
                       <div className="text-center text-xs text-gray-400 py-2 col-span-full">
-                        Drag images here ⬇️
+                        이미지를 드래그하여 배치하세요 ⬇️
                       </div>
                     )}
                     </div>
@@ -483,7 +483,7 @@ export default function ImageGridBlockEditor({
           <DropZone rowId="available-images">
           <div className="bg-white p-2 rounded border border-gray-200 space-y-2">
               <div className="text-xs font-medium text-gray-700">
-                Available Images ({localBlock.images.filter((img) => {
+                이미지 풀 ({localBlock.images.filter((img) => {
                   return !localBlock.rows.some((row) => {
                     const rowImages = getRowImages(
                       localBlock.rows.findIndex((r) => r.id === row.id)
@@ -517,7 +517,7 @@ export default function ImageGridBlockEditor({
                   })}
                 </div>
               ) : (
-                <div className="text-xs text-gray-400 text-center py-3">No images yet</div>
+                <div className="text-xs text-gray-400 text-center py-3">이미지가 없습니다</div>
               )}
 
               {/* Add Image Button */}
@@ -527,7 +527,7 @@ export default function ImageGridBlockEditor({
                 className="w-full flex items-center justify-center gap-1 px-2 py-1 text-xs text-gray-600 border border-dashed border-gray-300 rounded hover:bg-gray-100 transition-colors"
               >
                 <Plus size={12} />
-                Add Image
+                이미지 추가
               </button>
           </div>
           </DropZone>
@@ -540,7 +540,7 @@ export default function ImageGridBlockEditor({
           className="w-full flex items-center justify-center gap-1 px-2 py-1.5 text-xs text-gray-600 border border-dashed border-gray-300 rounded hover:bg-gray-100 transition-colors"
         >
           <Plus size={14} />
-          Add Row
+          행 추가
         </button>
 
         <DragOverlay>

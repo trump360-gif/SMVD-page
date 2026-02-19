@@ -31,27 +31,28 @@ interface BlockOption {
   label: string;
   icon: React.ReactNode;
   group?: 'generic' | 'work';
+  description?: string;
 }
 
 const GENERIC_BLOCK_OPTIONS: BlockOption[] = [
-  { type: 'text', label: '텍스트', icon: <Type size={14} />, group: 'generic' },
-  { type: 'heading', label: '제목', icon: <Heading2 size={14} />, group: 'generic' },
-  { type: 'image', label: '이미지', icon: <ImageIcon size={14} />, group: 'generic' },
-  { type: 'gallery', label: '갤러리', icon: <Grid3X3 size={14} />, group: 'generic' },
-  { type: 'spacer', label: '여백', icon: <ArrowDownFromLine size={14} />, group: 'generic' },
-  { type: 'divider', label: '구분선', icon: <Minus size={14} />, group: 'generic' },
-  { type: 'layout-row', label: '행 레이아웃 (2-3열)', icon: <Columns3 size={14} />, group: 'generic' },
-  { type: 'layout-grid', label: '그리드 레이아웃', icon: <LayoutGrid size={14} />, group: 'generic' },
-  { type: 'image-row', label: '이미지 행 (1-3)', icon: <Columns3 size={14} />, group: 'generic' },
-  { type: 'image-grid', label: '이미지 그리드', icon: <LayoutGrid size={14} />, group: 'generic' },
+  { type: 'text', label: '텍스트', icon: <Type size={14} />, group: 'generic', description: '일반 텍스트 단락 추가' },
+  { type: 'heading', label: '제목', icon: <Heading2 size={14} />, group: 'generic', description: '섹션 제목 또는 부제목 추가' },
+  { type: 'image', label: '이미지', icon: <ImageIcon size={14} />, group: 'generic', description: '단일 이미지 추가' },
+  { type: 'gallery', label: '갤러리', icon: <Grid3X3 size={14} />, group: 'generic', description: '여러 이미지를 갤러리로 표시' },
+  { type: 'spacer', label: '여백', icon: <ArrowDownFromLine size={14} />, group: 'generic', description: '콘텐츠 사이 여백 추가' },
+  { type: 'divider', label: '구분선', icon: <Minus size={14} />, group: 'generic', description: '섹션을 구분하는 선 추가' },
+  { type: 'layout-row', label: '행 레이아웃 (2-3열)', icon: <Columns3 size={14} />, group: 'generic', description: '2개 또는 3개 열의 행 컨테이너' },
+  { type: 'layout-grid', label: '그리드 레이아웃', icon: <LayoutGrid size={14} />, group: 'generic', description: '2D 그리드로 복잡한 레이아웃 구성' },
+  { type: 'image-row', label: '이미지 행 (1-3)', icon: <Columns3 size={14} />, group: 'generic', description: '1~3개 이미지를 행으로 배치' },
+  { type: 'image-grid', label: '이미지 그리드', icon: <LayoutGrid size={14} />, group: 'generic', description: '여러 이미지를 유연한 그리드로 배치' },
 ];
 
 const WORK_BLOCK_OPTIONS: BlockOption[] = [
-  { type: 'hero-image', label: '히어로 이미지 (860px)', icon: <Maximize size={14} />, group: 'work' },
-  { type: 'hero-section', label: '히어로 섹션 (이미지 + 텍스트)', icon: <Maximize size={14} />, group: 'work' },
-  { type: 'work-title', label: '작품명 + 작가', icon: <Tag size={14} />, group: 'work' },
-  { type: 'work-metadata', label: '작가 / 이메일', icon: <User size={14} />, group: 'work' },
-  { type: 'work-layout-config', label: '레이아웃 설정', icon: <Grid3X3 size={14} />, group: 'work' },
+  { type: 'hero-image', label: '히어로 이미지 (860px)', icon: <Maximize size={14} />, group: 'work', description: '작품의 메인 이미지 (860px 너비)' },
+  { type: 'hero-section', label: '히어로 섹션 (이미지 + 텍스트)', icon: <Maximize size={14} />, group: 'work', description: '이미지와 텍스트를 함께 표시' },
+  { type: 'work-title', label: '작품명 + 작가', icon: <Tag size={14} />, group: 'work', description: '작품의 제목과 작가 정보 표시' },
+  { type: 'work-metadata', label: '작가 / 이메일', icon: <User size={14} />, group: 'work', description: '작가 정보 및 연락처 표시' },
+  { type: 'work-layout-config', label: '레이아웃 설정', icon: <Grid3X3 size={14} />, group: 'work', description: '작품 페이지 레이아웃 구성' },
 ];
 
 /**
@@ -113,6 +114,7 @@ export default function BlockToolbar({ onAddBlock, showWorkBlocks = false, initi
                   setIsOpen(false);
                 }}
                 className="flex flex-col items-center gap-1 px-2 py-2 text-[10px] text-gray-700 hover:bg-blue-50 hover:text-blue-900 border border-gray-200 rounded-md transition-colors"
+                title={opt.description}
               >
                 {opt.icon}
                 <span className="text-center line-clamp-2">{opt.label}</span>
@@ -137,6 +139,7 @@ export default function BlockToolbar({ onAddBlock, showWorkBlocks = false, initi
                         setIsOpen(false);
                       }}
                       className="flex flex-col items-center gap-1 px-2 py-2 text-[10px] text-blue-700 hover:bg-blue-50 hover:text-blue-900 border border-blue-200 rounded-md transition-colors"
+                      title={opt.description}
                     >
                       {opt.icon}
                       <span className="text-center line-clamp-2">{opt.label}</span>
