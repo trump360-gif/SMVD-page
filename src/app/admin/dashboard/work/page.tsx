@@ -109,9 +109,23 @@ export default function WorkDashboard() {
     setIsProjectModalOpen(true);
   };
 
-  const handleEditProject = (project: WorkProjectData) => {
-    setEditingProject(project);
-    setIsProjectModalOpen(true);
+  const handleEditProject = async (project: WorkProjectData) => {
+    try {
+      // Fetch latest project data from DB to ensure sync with any recent changes
+      const res = await fetch(`/api/admin/work/projects/${project.id}`, {
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || '프로젝트 조회 실패');
+      }
+      const data = await res.json();
+      setEditingProject(data.data);
+      setIsProjectModalOpen(true);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '프로젝트 조회 실패';
+      alert(message);
+    }
   };
 
   const handleProjectSubmit = async (data: CreateProjectInput | UpdateProjectInput) => {
