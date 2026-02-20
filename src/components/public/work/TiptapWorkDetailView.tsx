@@ -44,11 +44,23 @@ export default function TiptapWorkDetailView({
 }: TiptapWorkDetailViewProps) {
   const { isMobile, isTablet } = useResponsive();
 
-  // Ensure description is a string, not JSON object
-  const validDescription =
-    typeof description === 'string' && description.trim()
-      ? description
-      : null;
+  // Ensure description is a string, not JSON object or JSON string from DB
+  let validDescription: string | null = null;
+  if (typeof description === 'string' && description.trim()) {
+    try {
+      const parsed = JSON.parse(description);
+      // If it's a JSON object (blocks, version, etc), ignore it - it's block data
+      if (parsed && typeof parsed === 'object' && ('blocks' in parsed || 'version' in parsed)) {
+        validDescription = null;
+      } else {
+        // Valid string
+        validDescription = description;
+      }
+    } catch {
+      // Not JSON - use as is
+      validDescription = description;
+    }
+  }
 
   const containerPaddingX = isMobile ? '16px' : isTablet ? '24px' : '40px';
   const containerPaddingBottom = isMobile ? '40px' : '61px';

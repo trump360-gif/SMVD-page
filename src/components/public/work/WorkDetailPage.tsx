@@ -39,10 +39,23 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
     );
   }
 
-  // NEW - 2026-02-20: Ensure description is a string (not JSON object from DB)
-  const descriptionStr = typeof project.description === 'string' && project.description.trim()
-    ? project.description
-    : '';
+  // NEW - 2026-02-20: Ensure description is a string (not JSON object/JSON string from DB)
+  let descriptionStr = '';
+  if (typeof project.description === 'string' && project.description.trim()) {
+    try {
+      const parsed = JSON.parse(project.description);
+      // If it's a JSON object (blocks, version, etc), ignore it - it's block data
+      if (parsed && typeof parsed === 'object' && ('blocks' in parsed || 'version' in parsed)) {
+        descriptionStr = '';
+      } else {
+        // Valid string
+        descriptionStr = project.description;
+      }
+    } catch {
+      // Not JSON - use as is
+      descriptionStr = project.description;
+    }
+  }
 
   // Try to parse block-based content from description
   const blockContent = parseBlockContent(descriptionStr);
