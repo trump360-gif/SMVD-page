@@ -44,6 +44,7 @@ export default function WorkBlogModal({
   const [author, setAuthor] = useState('');
   const [email, setEmail] = useState('');
   const [year, setYear] = useState('2025');
+  const [description, setDescription] = useState(''); // NEW - 2026-02-20: description state
   const [published, setPublished] = useState(true);
 
   // Images (hero image is now managed via HeroImageBlock in the BlockEditor)
@@ -70,6 +71,7 @@ export default function WorkBlogModal({
         setAuthor(project.author);
         setEmail(project.email);
         setYear(project.year);
+        setDescription(project.description || ''); // NEW - 2026-02-20
         setThumbnailImage(project.thumbnailImage);
         setPublished(project.published);
 
@@ -99,6 +101,7 @@ export default function WorkBlogModal({
         setAuthor('');
         setEmail('');
         setYear('2025');
+        setDescription(''); // NEW - 2026-02-20: Reset description for new project
         setThumbnailImage('');
         setPublished(true);
         setEditorContent({ type: 'doc', content: [] });
@@ -148,7 +151,7 @@ export default function WorkBlogModal({
         tags: parsedTags,
         author: author.trim(),
         email: email.trim(),
-        description: '', // No longer used (content is in Tiptap JSON)
+        description: description.trim(), // NEW - 2026-02-20: Include plain text description
         year,
         heroImage: thumbnailImage.trim(), // Use thumbnail as hero image
         thumbnailImage: thumbnailImage.trim(),
@@ -202,6 +205,7 @@ export default function WorkBlogModal({
           author={author}
           email={email}
           year={year}
+          description={description} // NEW - 2026-02-20
           thumbnailImage={thumbnailImage}
           published={published}
           isEditing={isEditing}
@@ -212,6 +216,7 @@ export default function WorkBlogModal({
           onAuthorChange={setAuthor}
           onEmailChange={setEmail}
           onYearChange={setYear}
+          onDescriptionChange={setDescription} // NEW - 2026-02-20
           onThumbnailImageChange={(url) => setThumbnailImage(url || '')}
           onPublishedChange={setPublished}
         />

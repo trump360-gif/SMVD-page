@@ -12,6 +12,7 @@ interface WorkBasicInfoFormProps {
   author: string;
   email: string;
   year: string;
+  description: string; // NEW - 2026-02-20
   thumbnailImage: string;
   published: boolean;
   isEditing: boolean;
@@ -22,6 +23,7 @@ interface WorkBasicInfoFormProps {
   onAuthorChange: (value: string) => void;
   onEmailChange: (value: string) => void;
   onYearChange: (value: string) => void;
+  onDescriptionChange: (value: string) => void; // NEW - 2026-02-20
   onThumbnailImageChange: (value: string | null) => void;
   onPublishedChange: (value: boolean) => void;
 }
@@ -34,6 +36,7 @@ export default function WorkBasicInfoForm({
   author,
   email,
   year,
+  description, // NEW - 2026-02-20
   thumbnailImage,
   published,
   isEditing,
@@ -44,6 +47,7 @@ export default function WorkBasicInfoForm({
   onAuthorChange,
   onEmailChange,
   onYearChange,
+  onDescriptionChange, // NEW - 2026-02-20
   onThumbnailImageChange,
   onPublishedChange,
 }: WorkBasicInfoFormProps) {
@@ -165,6 +169,24 @@ export default function WorkBasicInfoForm({
             ))}
           </div>
         )}
+      </div>
+
+      {/* Description - NEW 2026-02-20 */}
+      <div>
+        <label htmlFor="wb-description" className="block text-sm font-medium text-gray-700 mb-1">
+          프로젝트 설명
+        </label>
+        <textarea
+          id="wb-description"
+          value={description}
+          onChange={(e) => onDescriptionChange(e.target.value)}
+          placeholder="프로젝트에 대한 간단한 설명을 입력하세요..."
+          rows={4}
+          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-vertical"
+        />
+        <p className="text-xs text-gray-400 mt-1">
+          공개 페이지의 우측 컬럼에 표시됩니다.
+        </p>
       </div>
 
       {/* Thumbnail Image */}
