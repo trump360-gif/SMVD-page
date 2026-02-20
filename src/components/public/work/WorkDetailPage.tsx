@@ -39,15 +39,20 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
     );
   }
 
+  // NEW - 2026-02-20: Ensure description is a string (not JSON object from DB)
+  const descriptionStr = typeof project.description === 'string' && project.description.trim()
+    ? project.description
+    : '';
+
   // Try to parse block-based content from description
-  const blockContent = parseBlockContent(project.description);
+  const blockContent = parseBlockContent(descriptionStr);
 
   // Resolve display values with fallbacks to legacy hardcoded data
   const displayHero = blockContent?.hero || project.heroImage;
   const displayTitle = blockContent?.title?.title || project.title;
   const displayAuthor = blockContent?.title?.author || project.author;
   const displayEmail = blockContent?.title?.email || project.email;
-  const displayDescription = blockContent?.mainDescription || project.description;
+  const displayDescription = blockContent?.mainDescription || descriptionStr;
   const displayGalleryImages =
     blockContent?.galleryImages && blockContent.galleryImages.length > 0
       ? blockContent.galleryImages

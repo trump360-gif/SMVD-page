@@ -44,6 +44,12 @@ export default function TiptapWorkDetailView({
 }: TiptapWorkDetailViewProps) {
   const { isMobile, isTablet } = useResponsive();
 
+  // Ensure description is a string, not JSON object
+  const validDescription =
+    typeof description === 'string' && description.trim()
+      ? description
+      : null;
+
   const containerPaddingX = isMobile ? '16px' : isTablet ? '24px' : '40px';
   const containerPaddingBottom = isMobile ? '40px' : '61px';
   const sectionGap = isMobile ? '40px' : isTablet ? '60px' : '80px';
@@ -149,7 +155,7 @@ export default function TiptapWorkDetailView({
           </div>
 
           {/* Right Column - Description */}
-          {description && (
+          {validDescription && (
             <div
               style={{
                 display: 'flex',
@@ -171,7 +177,7 @@ export default function TiptapWorkDetailView({
                   wordBreak: 'keep-all',
                 }}
               >
-                {description}
+                {validDescription}
               </p>
             </div>
           )}

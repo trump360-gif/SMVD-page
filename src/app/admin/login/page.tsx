@@ -32,22 +32,16 @@ function LoginForm() {
     setError(null);
 
     try {
-      console.log('[Login] Attempting sign in with:', { email });
-
-      // ✅ 변경: redirect: true 사용 → NextAuth가 자동으로 세션 동기화 후 리다이렉트
+      // NextAuth가 자동으로 세션 동기화 후 리다이렉트
       await signIn('credentials', {
         email,
         password,
         redirect: true,
         callbackUrl: callbackUrl,
       });
-
-      // ✅ redirect: true이면 이 코드는 실행되지 않음 (NextAuth가 직접 리다이렉트)
-      console.log('[Login] SignIn with redirect: true completed');
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : '로그인 중 오류가 발생했습니다';
       setError(errorMsg);
-      console.error('[Login] Exception:', err);
       setIsLoading(false);
     }
   };

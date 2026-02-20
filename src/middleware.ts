@@ -7,20 +7,8 @@ export const middleware = withAuth(
     if (req.nextUrl.pathname.startsWith("/admin")) {
       const token = req.nextauth.token;
 
-      // ✅ 디버깅: 토큰 상태 로깅
-      console.log('[Middleware] Admin route accessed', {
-        path: req.nextUrl.pathname,
-        hasToken: !!token,
-        tokenRole: token?.role,
-        tokenEmail: token?.email,
-      });
-
       // 관리자 역할 확인
       if (token?.role !== "admin") {
-        console.log('[Middleware] Unauthorized access - redirecting to login', {
-          tokenRole: token?.role,
-          expectedRole: 'admin',
-        });
         return NextResponse.redirect(new URL("/admin/login", req.url));
       }
     }
@@ -30,11 +18,6 @@ export const middleware = withAuth(
   {
     callbacks: {
       authorized({ token }) {
-        // ✅ 디버깅: 토큰 도착 확인
-        console.log('[Middleware] Authorized callback', {
-          hasToken: !!token,
-          tokenEmail: token?.email,
-        });
         // 관리자 경로 접근 시 토큰 확인
         return !!token;
       },
