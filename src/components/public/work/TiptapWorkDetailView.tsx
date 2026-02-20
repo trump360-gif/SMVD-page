@@ -21,6 +21,7 @@ interface TiptapWorkDetailViewProps {
   email?: string;
   category: string;
   heroImage: string;
+  description?: string; // NEW - 2026-02-20: Description text for right column
   content: TiptapContent;
   previousProject?: ProjectNavigation;
   nextProject?: ProjectNavigation;
@@ -36,6 +37,7 @@ export default function TiptapWorkDetailView({
   email,
   category,
   heroImage,
+  description,
   content,
   previousProject,
   nextProject,
@@ -97,7 +99,7 @@ export default function TiptapWorkDetailView({
           </div>
         )}
 
-        {/* Title and Author */}
+        {/* Title and Author + Description */}
         <div
           style={{
             display: 'flex',
@@ -106,6 +108,7 @@ export default function TiptapWorkDetailView({
             width: '100%',
           }}
         >
+          {/* Left Column - Title and Author */}
           <div
             style={{
               display: 'flex',
@@ -144,6 +147,34 @@ export default function TiptapWorkDetailView({
               )}
             </p>
           </div>
+
+          {/* Right Column - Description */}
+          {description && (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: isMobile ? '16px' : '24px',
+                flex: isMobile ? '1' : '1',
+              }}
+            >
+              <p
+                style={{
+                  fontSize: isMobile ? '15px' : '18px',
+                  fontWeight: '400',
+                  fontFamily: 'Pretendard',
+                  color: '#1b1d1f',
+                  margin: '0',
+                  lineHeight: '1.8',
+                  letterSpacing: '-0.18px',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'keep-all',
+                }}
+              >
+                {description}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Tiptap Content */}

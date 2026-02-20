@@ -183,7 +183,12 @@ function renderNode(node: TiptapNode, index: number, depth: number = 0): React.R
       const src = node.attrs?.src as string;
       const alt = (node.attrs?.alt as string) || 'Image';
 
-      if (!src) return null;
+      console.log('🖼️ Image node:', { src, alt, attrs: node.attrs });
+
+      if (!src) {
+        console.warn('⚠️ Image has no src:', node.attrs);
+        return null;
+      }
 
       return (
         <div
@@ -341,14 +346,18 @@ interface TiptapContentRendererProps {
  */
 export default function TiptapContentRenderer({ content }: TiptapContentRendererProps) {
   if (!content || typeof content !== 'object') {
+    console.warn('TiptapContentRenderer: Invalid content', content);
     return null;
   }
 
   const doc = content as TiptapDoc;
 
   if (doc.type !== 'doc' || !Array.isArray(doc.content) || doc.content.length === 0) {
+    console.warn('TiptapContentRenderer: Invalid doc structure', doc);
     return null;
   }
+
+  console.log('🎨 TiptapContentRenderer rendering', doc.content.length, 'nodes');
 
   return (
     <div
@@ -359,7 +368,13 @@ export default function TiptapContentRenderer({ content }: TiptapContentRenderer
         width: '100%',
       }}
     >
-      {doc.content.map((node, index) => renderNode(node, index))}
+      {doc.content.map((node, index) => {
+        const rendered = renderNode(node, index);
+        if (node.type === 'image') {
+          console.log(`  Node ${index}:`, node.type, rendered ? '✅ RENDERED' : '❌ NOT RENDERED');
+        }
+        return rendered;
+      })}
     </div>
   );
 }

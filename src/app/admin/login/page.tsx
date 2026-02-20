@@ -33,29 +33,21 @@ function LoginForm() {
 
     try {
       console.log('[Login] Attempting sign in with:', { email });
-      const result = await signIn('credentials', {
+
+      // ✅ 변경: redirect: true 사용 → NextAuth가 자동으로 세션 동기화 후 리다이렉트
+      await signIn('credentials', {
         email,
         password,
-        redirect: false,
+        redirect: true,
+        callbackUrl: callbackUrl,
       });
 
-      console.log('[Login] SignIn result:', { ok: result?.ok, error: result?.error });
-
-      if (result?.error) {
-        setError(result.error);
-        console.error('[Login] SignIn error:', result.error);
-      } else if (result?.ok) {
-        console.log('[Login] SignIn successful, redirecting to:', callbackUrl);
-        router.push(callbackUrl);
-      } else {
-        setError('로그인에 실패했습니다. 다시 시도해주세요.');
-        console.error('[Login] Unexpected result:', result);
-      }
+      // ✅ redirect: true이면 이 코드는 실행되지 않음 (NextAuth가 직접 리다이렉트)
+      console.log('[Login] SignIn with redirect: true completed');
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : '로그인 중 오류가 발생했습니다';
       setError(errorMsg);
       console.error('[Login] Exception:', err);
-    } finally {
       setIsLoading(false);
     }
   };
