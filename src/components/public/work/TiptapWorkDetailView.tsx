@@ -49,9 +49,14 @@ export default function TiptapWorkDetailView({
   if (typeof description === 'string' && description.trim()) {
     try {
       const parsed = JSON.parse(description);
-      // If it's a JSON object (blocks, version, etc), ignore it - it's block data
+      // If it's a JSON object (blocks, version, etc), extract text content
       if (parsed && typeof parsed === 'object' && ('blocks' in parsed || 'version' in parsed)) {
-        validDescription = null;
+        // Try to extract text from first text block
+        const blocks = (parsed as any).blocks || [];
+        const textBlock = blocks.find((b: any) => b.type === 'text' && b.content);
+        if (textBlock?.content) {
+          validDescription = textBlock.content;
+        }
       } else {
         // Valid string
         validDescription = description;
