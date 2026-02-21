@@ -17,7 +17,6 @@ export default function WorkHeader({
 }: WorkHeaderProps) {
   const { isMobile, isTablet } = useResponsive();
 
-  const titleFontSize = isMobile ? '18px' : isTablet ? '20px' : '24px';
   const categoryFontSize = isMobile ? '14px' : isTablet ? '15px' : '16px';
   const categoryGap = isMobile ? '12px' : '16px';
 
@@ -34,19 +33,6 @@ export default function WorkHeader({
         paddingBottom: '0px',
       }}
     >
-      <h1
-        style={{
-          fontSize: titleFontSize,
-          fontWeight: '700',
-          color: '#1b1d1fff',
-          fontFamily: 'Satoshi',
-          margin: '0',
-          letterSpacing: '-0.24px',
-        }}
-      >
-        Achieve
-      </h1>
-
       {/* Category Filter Tabs */}
       <div
         style={{
