@@ -105,7 +105,7 @@ export default function CurriculumTab({
             onClick={() => handleTabChange('undergraduate')}
             style={{
               fontSize: buttonFontSize,
-              fontWeight: '500',
+              fontWeight: '700',
               fontFamily: 'Satoshi',
               color: activeTab === 'undergraduate' ? '#141414ff' : '#7b828eff',
               backgroundColor: 'transparent',
@@ -122,7 +122,7 @@ export default function CurriculumTab({
             onClick={() => handleTabChange('graduate')}
             style={{
               fontSize: buttonFontSize,
-              fontWeight: '500',
+              fontWeight: '700',
               fontFamily: 'Satoshi',
               color: activeTab === 'graduate' ? '#141414ff' : '#7b828eff',
               backgroundColor: 'transparent',

@@ -65,7 +65,7 @@ export default function AboutContent({
 
   // Responsive variables
   const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop;
-  const tabButtonFontSize = isMobile ? '16px' : isTablet ? '18px' : '24px';
+  const tabButtonFontSize = isMobile ? '18px' : isTablet ? '20px' : '24px';
   const tabButtonGap = isMobile ? '20px' : isTablet ? '30px' : '40px';
   const sectionGap = isMobile ? '40px' : isTablet ? '40px' : '50px';
 
