@@ -247,7 +247,7 @@ export default function WorkArchive({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '5px',
+        gap: '16px',
         width: '100%',
         paddingLeft: `${containerPadding}px`,
         paddingRight: `${containerPadding}px`,

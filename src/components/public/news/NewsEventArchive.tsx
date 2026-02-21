@@ -111,7 +111,7 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
   const newsItems = items ?? defaultNewsItems;
 
   // Responsive variables
-  const containerGap = isMobile ? '32px' : isTablet ? '36px' : '40px';
+  const containerGap = '16px';
   const titleFontSize = isMobile ? '18px' : isTablet ? '20px' : '24px';
   const filterFontSize = isMobile ? '12px' : isTablet ? '14px' : '16px';
   const gridColumns = isMobile ? '1fr' : 'repeat(2, 1fr)';
