@@ -183,8 +183,6 @@ function renderNode(node: TiptapNode, index: number, depth: number = 0): React.R
       const src = node.attrs?.src as string;
       const alt = (node.attrs?.alt as string) || 'Image';
 
-      console.log('🖼️ Image node:', { src, alt, attrs: node.attrs });
-
       if (!src) {
         console.warn('⚠️ Image has no src:', node.attrs);
         return null;
@@ -195,7 +193,6 @@ function renderNode(node: TiptapNode, index: number, depth: number = 0): React.R
           key={`img-${index}`}
           style={{
             width: '100%',
-            height: '765px',
             backgroundColor: '#f0f0f0',
             borderRadius: '4px',
             overflow: 'hidden',
@@ -206,8 +203,8 @@ function renderNode(node: TiptapNode, index: number, depth: number = 0): React.R
             alt={alt}
             style={{
               width: '100%',
-              height: '100%',
-              objectFit: 'cover',
+              height: 'auto',
+              display: 'block',
             }}
           />
         </div>
@@ -317,6 +314,95 @@ function renderNode(node: TiptapNode, index: number, depth: number = 0): React.R
       return <br key={`br-${index}`} />;
     }
 
+    case 'columns': {
+      const widths = node.attrs?.widths as number[] | null;
+      const colChildren = (node.content || []).filter((c: any) => c.type === 'column');
+      const colCount = colChildren.length || 2;
+      const gap = 24;
+      const gapShare = (gap * (colCount - 1)) / colCount;
+
+      // Check if widths are nearly equal (within 2% of each other) → use flex: 1
+      const isEqualDistribution = widths
+        ? Math.max(...widths) - Math.min(...widths) <= 2
+        : true;
+
+      return (
+        <div
+          key={`columns-${index}`}
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: `${gap}px`,
+            width: '100%',
+          }}
+        >
+          {colChildren.map((col: any, idx: number) => {
+            const colWidth = widths?.[idx];
+            const vAlign = (col.attrs?.verticalAlign as string) || 'top';
+            const justifyContent =
+              vAlign === 'center'
+                ? 'center'
+                : vAlign === 'bottom'
+                  ? 'flex-end'
+                  : 'flex-start';
+
+            return (
+              <div
+                key={`column-${idx}`}
+                style={{
+                  flex: isEqualDistribution ? 1 : (colWidth ? `0 0 calc(${colWidth}% - ${gapShare}px)` : 1),
+                  minWidth: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                  justifyContent,
+                }}
+              >
+                {col.content?.map((child: any, childIdx: number) => {
+                  if (child.type) {
+                    return renderNode(child as TiptapNode, childIdx, depth + 1);
+                  }
+                  return null;
+                })}
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    case 'column': {
+      // Fallback for standalone column rendering
+      const vAlign = (node.attrs?.verticalAlign as string) || 'top';
+      const justifyContent =
+        vAlign === 'center'
+          ? 'center'
+          : vAlign === 'bottom'
+            ? 'flex-end'
+            : 'flex-start';
+
+      return (
+        <div
+          key={`column-${index}`}
+          style={{
+            flex: 1,
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            justifyContent,
+          }}
+        >
+          {node.content?.map((child: any, idx: number) => {
+            if (child.type) {
+              return renderNode(child as TiptapNode, idx, depth + 1);
+            }
+            return null;
+          })}
+        </div>
+      );
+    }
+
     case 'doc': {
       // doc type should be handled at root level, but handle it just in case
       return (
@@ -357,8 +443,6 @@ export default function TiptapContentRenderer({ content }: TiptapContentRenderer
     return null;
   }
 
-  console.log('🎨 TiptapContentRenderer rendering', doc.content.length, 'nodes');
-
   return (
     <div
       style={{
@@ -368,13 +452,7 @@ export default function TiptapContentRenderer({ content }: TiptapContentRenderer
         width: '100%',
       }}
     >
-      {doc.content.map((node, index) => {
-        const rendered = renderNode(node, index);
-        if (node.type === 'image') {
-          console.log(`  Node ${index}:`, node.type, rendered ? '✅ RENDERED' : '❌ NOT RENDERED');
-        }
-        return rendered;
-      })}
+      {doc.content.map((node, index) => renderNode(node, index))}
     </div>
   );
 }

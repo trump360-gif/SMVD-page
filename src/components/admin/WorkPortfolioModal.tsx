@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 interface UploadedImage {
@@ -38,23 +38,34 @@ export default function WorkPortfolioModal({
   onClose,
   onSubmit,
 }: WorkPortfolioModalProps) {
-  const [title, setTitle] = useState(item?.title || '');
-  const [category, setCategory] = useState(item?.category || '');
-  const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(
-    item?.media
-      ? {
-          id: item.media.id,
-          filename: item.media.filename,
-          path: item.media.filepath,
-          width: 0,
-          height: 0,
-        }
-      : null
-  );
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+
+  // Reset form state when modal opens or item changes
+  useEffect(() => {
+    if (isOpen) {
+      if (item) {
+        setTitle(item.title);
+        setCategory(item.category);
+        setUploadedImage(
+          item.media
+            ? { id: item.media.id, filename: item.media.filename, path: item.media.filepath, width: 0, height: 0 }
+            : null
+        );
+      } else {
+        setTitle('');
+        setCategory('');
+        setUploadedImage(null);
+      }
+      setError(null);
+      setIsSubmitting(false);
+    }
+  }, [isOpen, item]);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();

@@ -3,6 +3,7 @@
 .tiptap-toolbar {
   display: flex;
   flex-wrap: wrap;
+  flex-shrink: 0;
   gap: 0;
   border-bottom: 1px solid #e5e7eb;
   background-color: #f9fafb;
@@ -60,6 +61,16 @@
   svg {
     stroke-width: 2px;
   }
+}
+
+/* Toolbar Separator (within a group) */
+.toolbar-separator {
+  display: inline-block;
+  width: 1px;
+  height: 20px;
+  background-color: #d1d5db;
+  margin: 0 4px;
+  align-self: center;
 }
 
 /* Link Input */

@@ -197,6 +197,7 @@ export default function WorkBlogModal({
     >
       {/* Tab: Basic Info */}
       {activeTab === 'info' && (
+        <div className="flex-1 min-h-0 overflow-y-auto">
         <WorkBasicInfoForm
           title={title}
           subtitle={subtitle}
@@ -220,11 +221,12 @@ export default function WorkBlogModal({
           onThumbnailImageChange={(url) => setThumbnailImage(url || '')}
           onPublishedChange={setPublished}
         />
+        </div>
       )}
 
       {/* Tab: Content (TiptapEditor) */}
       {activeTab === 'content' && (
-        <div className="p-6">
+        <div className="p-6 flex-1 min-h-0 flex flex-col">
           <TiptapEditor
             content={editorContent}
             contentFormat="tiptap"
@@ -234,6 +236,7 @@ export default function WorkBlogModal({
             fontWeight="400"
             color="#1b1d1f"
             lineHeight={1.8}
+            className="flex-1"
           />
         </div>
       )}

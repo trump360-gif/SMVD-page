@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 interface UploadedImage {
@@ -31,22 +31,31 @@ export default function ExhibitionItemModal({
   onClose,
   onSubmit,
 }: ExhibitionItemModalProps) {
-  const [year, setYear] = useState(item?.year || '');
-  const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(
-    item?.media
-      ? {
-          id: item.media.id,
-          filename: item.media.filename,
-          path: item.media.filepath,
-          width: 0,
-          height: 0,
-        }
-      : null
-  );
+  const [year, setYear] = useState('');
+  const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+
+  // Reset form state when modal opens or item changes
+  useEffect(() => {
+    if (isOpen) {
+      if (item) {
+        setYear(item.year);
+        setUploadedImage(
+          item.media
+            ? { id: item.media.id, filename: item.media.filename, path: item.media.filepath, width: 0, height: 0 }
+            : null
+        );
+      } else {
+        setYear('');
+        setUploadedImage(null);
+      }
+      setError(null);
+      setIsSubmitting(false);
+    }
+  }, [isOpen, item]);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();

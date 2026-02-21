@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { checkAdminAuth } from '@/lib/auth-check';
+import { revalidatePath } from 'next/cache';
 import z from 'zod';
 import { logger } from "@/lib/logger";
 
@@ -111,6 +112,8 @@ export async function POST(request: NextRequest) {
         published: true,
       },
     });
+
+    revalidatePath('/about');
 
     return NextResponse.json({ person: newPerson }, { status: 201 });
   } catch (error) {

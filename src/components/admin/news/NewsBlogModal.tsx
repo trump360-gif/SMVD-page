@@ -242,7 +242,7 @@ export default function NewsBlogModal({
 
       {/* Tab: Content (TiptapEditor) */}
       {activeTab === 'content' && (
-        <div className="p-6">
+        <div className="p-6 flex-1 min-h-0 flex flex-col">
           <TiptapEditor
             content={editorContent}
             contentFormat="tiptap"
@@ -252,6 +252,7 @@ export default function NewsBlogModal({
             fontWeight="400"
             color="#1b1d1f"
             lineHeight={1.8}
+            className="flex-1"
           />
         </div>
       )}

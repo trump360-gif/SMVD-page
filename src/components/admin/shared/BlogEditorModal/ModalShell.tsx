@@ -98,7 +98,6 @@ export default function ModalShell({
           width: 'calc(100vw - 60px)',
           maxWidth: '1600px',
           height: 'calc(100vh - 60px)',
-          maxHeight: '960px',
         }}
       >
         {/* Header */}
@@ -135,7 +134,7 @@ export default function ModalShell({
         </div>
 
         {/* Content area */}
-        <div className="flex-1 overflow-hidden p-0">
+        <div className="flex-1 min-h-0 flex flex-col p-0">
           {/* Error */}
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm flex items-center justify-between">

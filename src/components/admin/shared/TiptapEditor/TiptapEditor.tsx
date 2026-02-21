@@ -17,6 +17,7 @@ import { TiptapContent, isTiptapContent } from '../BlockEditor/types';
 import { markdownToTiptapJSON, tiptapJSONToText } from '@/lib/tiptap/markdown-converter';
 import TiptapToolbar from './TiptapToolbar';
 import CustomImage from './CustomImage';
+import { Columns, Column } from './ColumnsExtension';
 import './styles.css';
 
 const lowlight = createLowlight(common);
@@ -37,6 +38,7 @@ export default function TiptapEditor({
   const uploadInProgressRef = useRef(false);
   const previousContentStringRef = useRef<string>('');
   const isInitializingRef = useRef(false);
+  const isInternalChangeRef = useRef(false);
 
   // Initialize editor with proper extensions
   const editor = useEditor({
@@ -82,11 +84,14 @@ export default function TiptapEditor({
       Placeholder.configure({
         placeholder,
       }),
+      Columns,
+      Column,
     ],
     content: '',
     onUpdate: ({ editor }) => {
       // Only emit changes if upload is not in progress AND not initializing
       if (!uploadInProgressRef.current && !isInitializingRef.current) {
+        isInternalChangeRef.current = true; // Mark as internal (user typing)
         const json = editor.getJSON() as TiptapContent;
         onChange(json);
       }
@@ -96,6 +101,17 @@ export default function TiptapEditor({
   // Handle initial content loading and external content changes
   useEffect(() => {
     if (!editor) return;
+
+    // Skip setContent for internal changes (user typing in the editor)
+    // This prevents scroll position reset on every keystroke
+    if (isInternalChangeRef.current) {
+      isInternalChangeRef.current = false;
+      // Update ref so future external changes are detected correctly
+      if (isTiptapContent(content)) {
+        previousContentStringRef.current = JSON.stringify(content);
+      }
+      return;
+    }
 
     let tiptapContent: TiptapContent;
 
@@ -115,7 +131,6 @@ export default function TiptapEditor({
     const currentContentString = JSON.stringify(tiptapContent);
     if (previousContentStringRef.current !== currentContentString) {
       // Content has changed externally (from parent prop)
-      // Only update if not currently initializing (prevent loops)
       previousContentStringRef.current = currentContentString;
 
       // Mark as initializing to prevent onChange firing during setContent
@@ -136,7 +151,12 @@ export default function TiptapEditor({
 
   const handleImageUploadEnd = useCallback(() => {
     uploadInProgressRef.current = false;
-  }, []);
+    // Re-emit current content since onUpdate was suppressed during upload
+    if (editor) {
+      const json = editor.getJSON() as TiptapContent;
+      onChange(json);
+    }
+  }, [editor, onChange]);
 
   if (!editor) {
     return <div className="tiptap-editor-loading">Loading editor...</div>;

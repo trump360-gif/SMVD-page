@@ -27,14 +27,19 @@ const LegacyContentSchema = z.object({
   gallery: GallerySchema,
 });
 
-// Content can be either legacy or block format
-// Use passthrough() to allow any JSON shape, since block content is complex and dynamic
-// IMPORTANT: Block format must come first in the union for proper validation
+// Content can be Tiptap JSON, block format, or legacy format
 const ContentSchema = z.union([
+  // Tiptap JSON format: { type: "doc", content: [...] }
+  z.object({
+    type: z.literal('doc'),
+    content: z.array(z.any()),
+  }).passthrough(),
+  // Block format: { blocks: [...], version: "1.0" }
   z.object({
     blocks: z.array(z.any()),
     version: z.string(),
   }).passthrough(),
+  // Legacy format: { introTitle, introText, gallery }
   LegacyContentSchema,
 ]).optional();
 

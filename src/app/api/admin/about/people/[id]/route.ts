@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { checkAdminAuth } from '@/lib/auth-check';
+import { revalidatePath } from 'next/cache';
 import z from 'zod';
 import { logger } from "@/lib/logger";
 
@@ -57,6 +58,8 @@ export async function PUT(
       },
     });
 
+    revalidatePath('/about');
+
     return NextResponse.json({ person: updatedPerson });
   } catch (error) {
     logger.error({ err: error, context: 'PUT /api/admin/about/people/[id]' }, 'PUT person error');
@@ -100,6 +103,8 @@ export async function DELETE(
         archivedAt: new Date(),
       },
     });
+
+    revalidatePath('/about');
 
     return NextResponse.json({ person: deletedPerson });
   } catch (error) {

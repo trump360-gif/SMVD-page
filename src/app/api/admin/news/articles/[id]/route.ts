@@ -32,17 +32,19 @@ const LegacyContentSchema = z.object({
   gallery: GallerySchema,
 });
 
-// Content can be either legacy or block format
-// Use passthrough() to allow any JSON shape, since block content is complex and dynamic
-// 🔧 FIX: Block format MUST come FIRST in union!
-// LegacyContentSchema has all optional fields, so if it's first, Zod matches it for everything
+// Content can be Tiptap JSON, block format, or legacy format
 const ContentSchema = z.union([
-  // Try block format FIRST (requires blocks + version)
+  // Tiptap JSON format: { type: "doc", content: [...] }
+  z.object({
+    type: z.literal('doc'),
+    content: z.array(z.any()),
+  }).passthrough(),
+  // Block format: { blocks: [...], version: "1.0" }
   z.object({
     blocks: z.array(z.any()),
     version: z.string(),
   }).passthrough(),
-  // Fall back to legacy format (all optional fields)
+  // Legacy format: { introTitle, introText, gallery }
   LegacyContentSchema,
 ]).optional();
 
@@ -150,12 +152,12 @@ export async function PUT(
         );
       }
 
-      // Check if content is valid (either block format or legacy format)
-      // FIX: Require blocks array to have length > 0 to prevent data loss
+      // Check if content is valid (Tiptap JSON, block format, or legacy format)
+      const isTiptapFormat = content?.type === 'doc' && Array.isArray(content?.content) && (content.content as unknown[]).length > 0;
       const blocks = content?.blocks;
       const isBlockFormat = Array.isArray(blocks) && blocks.length > 0;
       const isLegacyFormat = Boolean(content?.introTitle || content?.introText || content?.gallery);
-      const isValidContent = isBlockFormat || isLegacyFormat;
+      const isValidContent = isTiptapFormat || isBlockFormat || isLegacyFormat;
 
       // Save valid content or null
       updateData.content = isValidContent

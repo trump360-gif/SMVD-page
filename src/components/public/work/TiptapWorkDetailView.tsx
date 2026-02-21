@@ -21,7 +21,6 @@ interface TiptapWorkDetailViewProps {
   email?: string;
   category: string;
   heroImage: string;
-  description?: string; // NEW - 2026-02-20: Description text for right column
   content: TiptapContent;
   previousProject?: ProjectNavigation;
   nextProject?: ProjectNavigation;
@@ -32,48 +31,16 @@ interface TiptapWorkDetailViewProps {
  * Renders migrated Tiptap content for work portfolio items.
  */
 export default function TiptapWorkDetailView({
-  title,
-  author,
-  email,
   category,
-  heroImage,
-  description,
   content,
   previousProject,
   nextProject,
 }: TiptapWorkDetailViewProps) {
   const { isMobile, isTablet } = useResponsive();
 
-  // Ensure description is a string, not JSON object or JSON string from DB
-  let validDescription: string | null = null;
-  if (typeof description === 'string' && description.trim()) {
-    try {
-      const parsed = JSON.parse(description);
-      // If it's a JSON object (blocks, version, etc), extract text content
-      if (parsed && typeof parsed === 'object' && ('blocks' in parsed || 'version' in parsed)) {
-        // Try to extract text from first text block
-        const blocks = (parsed as any).blocks || [];
-        const textBlock = blocks.find((b: any) => b.type === 'text' && b.content);
-        if (textBlock?.content) {
-          validDescription = textBlock.content;
-        }
-      } else {
-        // Valid string
-        validDescription = description;
-      }
-    } catch {
-      // Not JSON - use as is
-      validDescription = description;
-    }
-  }
-
   const containerPaddingX = isMobile ? '16px' : isTablet ? '24px' : '40px';
   const containerPaddingBottom = isMobile ? '40px' : '61px';
   const sectionGap = isMobile ? '40px' : isTablet ? '60px' : '80px';
-
-  const heroHeight = isMobile ? '300px' : isTablet ? '500px' : '860px';
-  const titleFontSize = isMobile ? '32px' : isTablet ? '44px' : '60px';
-  const authorFontSize = isMobile ? '13px' : '14px';
 
   return (
     <div
@@ -99,108 +66,7 @@ export default function TiptapWorkDetailView({
           paddingTop: '0px',
         }}
       >
-        {/* Hero Image */}
-        {heroImage && (
-          <div
-            style={{
-              width: '100%',
-              height: heroHeight,
-              backgroundColor: '#d9d9d9ff',
-              borderRadius: '0px',
-              overflow: 'hidden',
-            }}
-          >
-            <img
-              src={heroImage}
-              alt={title}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-              }}
-            />
-          </div>
-        )}
-
-        {/* Title and Author + Description */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: isMobile ? 'column' : 'row',
-            gap: isMobile ? '16px' : '24px',
-            width: '100%',
-          }}
-        >
-          {/* Left Column - Title and Author */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: isMobile ? '16px' : '24px',
-              flex: isMobile ? '1' : '0 0 auto',
-              minWidth: isMobile ? 'auto' : '400px',
-            }}
-          >
-            <h1
-              style={{
-                fontSize: titleFontSize,
-                fontWeight: '700',
-                color: '#1b1d1fff',
-                fontFamily: 'Satoshi',
-                margin: '0',
-                letterSpacing: '-0.6px',
-                lineHeight: '1.2',
-                wordBreak: 'keep-all',
-              }}
-            >
-              {title}
-            </h1>
-            <p
-              style={{
-                fontSize: authorFontSize,
-                fontFamily: 'Pretendard',
-                color: '#1b1d1fff',
-                margin: '0',
-                whiteSpace: isMobile ? 'normal' : 'nowrap',
-              }}
-            >
-              <span style={{ fontWeight: '500' }}>{author}</span>
-              {email && (
-                <span style={{ fontWeight: '400', color: '#7b828eff' }}> {email}</span>
-              )}
-            </p>
-          </div>
-
-          {/* Right Column - Description */}
-          {validDescription && (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: isMobile ? '16px' : '24px',
-                flex: isMobile ? '1' : '1',
-              }}
-            >
-              <p
-                style={{
-                  fontSize: isMobile ? '15px' : '18px',
-                  fontWeight: '400',
-                  fontFamily: 'Pretendard',
-                  color: '#1b1d1f',
-                  margin: '0',
-                  lineHeight: '1.8',
-                  letterSpacing: '-0.18px',
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'keep-all',
-                }}
-              >
-                {validDescription}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Tiptap Content */}
+        {/* All content rendered from Tiptap JSON (hero image is included in content) */}
         <div
           style={{
             display: 'flex',

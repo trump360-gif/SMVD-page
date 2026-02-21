@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth/auth';
+import { revalidatePath } from 'next/cache';
 import z from 'zod';
 import { logger } from "@/lib/logger";
 
@@ -31,10 +32,10 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { personId, newOrder } = ReorderSchema.parse(body);
 
-    // 교수 존재 여부 확인
+    // 교수 존재 여부 확인 (role 포함)
     const person = await prisma.people.findUnique({
       where: { id: personId },
-      select: { id: true, order: true },
+      select: { id: true, order: true, role: true },
     });
 
     if (!person) {
@@ -42,6 +43,10 @@ export async function PUT(request: NextRequest) {
     }
 
     const oldOrder = person.order;
+    // 같은 role 내에서만 순서 변경 (교수↔강사 order 충돌 방지)
+    const roleFilter = person.role === 'instructor'
+      ? { role: 'instructor' }
+      : { OR: [{ role: 'professor' }, { role: null }] };
 
     // 트랜잭션을 사용하여 안전하게 순서 변경
     await prisma.$transaction(async (tx) => {
@@ -49,6 +54,7 @@ export async function PUT(request: NextRequest) {
         // 아래로 이동
         await tx.people.updateMany({
           where: {
+            ...roleFilter,
             order: {
               gt: oldOrder,
               lte: newOrder,
@@ -65,6 +71,7 @@ export async function PUT(request: NextRequest) {
         // 위로 이동
         await tx.people.updateMany({
           where: {
+            ...roleFilter,
             order: {
               gte: newOrder,
               lt: oldOrder,
@@ -86,7 +93,7 @@ export async function PUT(request: NextRequest) {
       });
     });
 
-    // 업데이트 후 모든 교수를 반환
+    // 업데이트 후 모든 교수를 반환 (전체 필드)
     const updatedPeople = await prisma.people.findMany({
       where: { archivedAt: null },
       orderBy: { order: 'asc' },
@@ -95,13 +102,25 @@ export async function PUT(request: NextRequest) {
         name: true,
         title: true,
         role: true,
+        office: true,
+        email: true,
+        phone: true,
+        major: true,
+        specialty: true,
+        badge: true,
+        profileImage: true,
+        courses: true,
+        biography: true,
         order: true,
       },
     });
 
+    // ISR 캐시 무효화
+    revalidatePath('/about');
+
     return NextResponse.json({ people: updatedPeople });
   } catch (error) {
-    console.error('PUT reorder people error:', error);
+    logger.error({ err: error, context: 'PUT /api/admin/about/people/reorder' }, 'PUT reorder people error');
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid data format', details: error.issues },

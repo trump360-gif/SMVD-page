@@ -19,10 +19,15 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
+  AlignVerticalJustifyStart,
+  AlignVerticalJustifyCenter,
+  AlignVerticalJustifyEnd,
   Undo2,
   Redo2,
+  Columns2,
+  Columns3,
 } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import './toolbar.css';
 
 interface TiptapToolbarProps {
@@ -38,6 +43,18 @@ export default function TiptapToolbar({
 }: TiptapToolbarProps) {
   const [linkInputVisible, setLinkInputVisible] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
+
+  // Force re-render on selection change so isActive('column') updates
+  const [, setSelectionTick] = useState(0);
+  useEffect(() => {
+    const handleUpdate = () => setSelectionTick((n) => n + 1);
+    editor.on('selectionUpdate', handleUpdate);
+    editor.on('transaction', handleUpdate);
+    return () => {
+      editor.off('selectionUpdate', handleUpdate);
+      editor.off('transaction', handleUpdate);
+    };
+  }, [editor]);
 
   const handleAddLink = useCallback(() => {
     if (!linkUrl) {
@@ -82,6 +99,8 @@ export default function TiptapToolbar({
               width: result.data.width,
               height: result.data.height,
             })
+            .createParagraphNear()
+            .scrollIntoView()
             .run();
         }
       } catch (error) {
@@ -276,6 +295,54 @@ export default function TiptapToolbar({
           title="Align Right"
         >
           <AlignRight size={18} />
+        </button>
+      </div>
+
+      {/* Column Layouts + Vertical Alignment */}
+      <div className="toolbar-group">
+        <button
+          onClick={() => (editor as any).chain().focus().insertColumns(2).run()}
+          className="toolbar-button"
+          title="2열 레이아웃"
+        >
+          <Columns2 size={18} />
+        </button>
+
+        <button
+          onClick={() => (editor as any).chain().focus().insertColumns(3).run()}
+          className="toolbar-button"
+          title="3열 레이아웃"
+        >
+          <Columns3 size={18} />
+        </button>
+
+        <span className="toolbar-separator" />
+
+        <button
+          onClick={() => (editor as any).chain().focus().setColumnVerticalAlign('top').run()}
+          disabled={!editor.isActive('column')}
+          className={`toolbar-button ${editor.isActive('column') && (editor.getAttributes('column').verticalAlign || 'top') === 'top' ? 'active' : ''}`}
+          title={editor.isActive('column') ? '세로 상단 정렬' : '컬럼 내부를 클릭하세요'}
+        >
+          <AlignVerticalJustifyStart size={18} />
+        </button>
+
+        <button
+          onClick={() => (editor as any).chain().focus().setColumnVerticalAlign('center').run()}
+          disabled={!editor.isActive('column')}
+          className={`toolbar-button ${editor.isActive('column') && editor.getAttributes('column').verticalAlign === 'center' ? 'active' : ''}`}
+          title={editor.isActive('column') ? '세로 가운데 정렬' : '컬럼 내부를 클릭하세요'}
+        >
+          <AlignVerticalJustifyCenter size={18} />
+        </button>
+
+        <button
+          onClick={() => (editor as any).chain().focus().setColumnVerticalAlign('bottom').run()}
+          disabled={!editor.isActive('column')}
+          className={`toolbar-button ${editor.isActive('column') && editor.getAttributes('column').verticalAlign === 'bottom' ? 'active' : ''}`}
+          title={editor.isActive('column') ? '세로 하단 정렬' : '컬럼 내부를 클릭하세요'}
+        >
+          <AlignVerticalJustifyEnd size={18} />
         </button>
       </div>
 

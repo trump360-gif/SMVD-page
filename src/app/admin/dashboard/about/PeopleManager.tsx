@@ -1,6 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+  DragStartEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { GripVertical } from 'lucide-react';
 import { AboutPerson } from '@/hooks/useAboutEditor';
 import PersonFormModal from './PersonFormModal';
 
@@ -13,12 +32,17 @@ interface PeopleManagerProps {
 }
 
 export default function PeopleManager({
-  people,
+  people: peopleProp,
   onAdd,
   onUpdate,
   onDelete,
   onReorder,
 }: PeopleManagerProps) {
+  const [professors, setProfessors] = useState<AboutPerson[]>([]);
+  const [instructors, setInstructors] = useState<AboutPerson[]>([]);
+  const profsBeforeDragRef = useRef<AboutPerson[]>([]);
+  const instrsBeforeDragRef = useRef<AboutPerson[]>([]);
+
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPerson, setEditingPerson] = useState<AboutPerson | null>(null);
@@ -26,6 +50,19 @@ export default function PeopleManager({
   const [newPersonRole, setNewPersonRole] = useState<
     'professor' | 'instructor' | null
   >(null);
+
+  // Sync from parent prop
+  useEffect(() => {
+    setProfessors(peopleProp.filter((p) => p.role === 'professor' || !p.role));
+    setInstructors(peopleProp.filter((p) => p.role === 'instructor'));
+  }, [peopleProp]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const handleEdit = (person: AboutPerson) => {
     setEditingPerson(person);
@@ -63,16 +100,6 @@ export default function PeopleManager({
     }
   };
 
-  const handleMoveUp = async (person: AboutPerson, idx: number) => {
-    if (idx === 0) return;
-    await onReorder(person.id, person.order - 1);
-  };
-
-  const handleMoveDown = async (person: AboutPerson, idx: number) => {
-    if (idx === people.length - 1) return;
-    await onReorder(person.id, person.order + 1);
-  };
-
   const handleSubmit = async (data: Omit<AboutPerson, 'id' | 'order'>) => {
     if (editingPerson) {
       await onUpdate(editingPerson.id, data);
@@ -83,8 +110,59 @@ export default function PeopleManager({
     setEditingPerson(null);
   };
 
-  const professors = people.filter((p) => p.role === 'professor' || !p.role);
-  const instructors = people.filter((p) => p.role === 'instructor');
+  // Professors drag handlers
+  const handleProfDragStart = (_event: DragStartEvent) => {
+    profsBeforeDragRef.current = professors;
+  };
+
+  const handleProfDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = professors.findIndex((p) => p.id === active.id);
+    const newIndex = professors.findIndex((p) => p.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const newOrder = professors[newIndex].order;
+    const previous = profsBeforeDragRef.current;
+
+    // Optimistic update
+    setProfessors(arrayMove(professors, oldIndex, newIndex));
+
+    try {
+      await onReorder(active.id as string, newOrder);
+    } catch (err) {
+      setProfessors(previous);
+      alert(err instanceof Error ? err.message : '순서 변경 실패');
+    }
+  };
+
+  // Instructors drag handlers
+  const handleInstrDragStart = (_event: DragStartEvent) => {
+    instrsBeforeDragRef.current = instructors;
+  };
+
+  const handleInstrDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = instructors.findIndex((p) => p.id === active.id);
+    const newIndex = instructors.findIndex((p) => p.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const newOrder = instructors[newIndex].order;
+    const previous = instrsBeforeDragRef.current;
+
+    // Optimistic update
+    setInstructors(arrayMove(instructors, oldIndex, newIndex));
+
+    try {
+      await onReorder(active.id as string, newOrder);
+    } catch (err) {
+      setInstructors(previous);
+      alert(err instanceof Error ? err.message : '순서 변경 실패');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -115,25 +193,33 @@ export default function PeopleManager({
           <h3 className="text-lg font-semibold text-gray-800 mb-3">
             교수 ({professors.length}명)
           </h3>
-          <div className="space-y-2">
-            {professors.map((person, idx) => (
-              <PersonCard
-                key={person.id}
-                person={person}
-                index={idx}
-                totalCount={professors.length}
-                isExpanded={expandedId === person.id}
-                isDeleting={deletingId === person.id}
-                onToggle={() =>
-                  setExpandedId(expandedId === person.id ? null : person.id)
-                }
-                onEdit={() => handleEdit(person)}
-                onDelete={() => handleDelete(person)}
-                onMoveUp={() => handleMoveUp(person, idx)}
-                onMoveDown={() => handleMoveDown(person, idx)}
-              />
-            ))}
-          </div>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleProfDragStart}
+            onDragEnd={handleProfDragEnd}
+          >
+            <SortableContext
+              items={professors.map((p) => p.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-2">
+                {professors.map((person) => (
+                  <SortablePersonCard
+                    key={person.id}
+                    person={person}
+                    isExpanded={expandedId === person.id}
+                    isDeleting={deletingId === person.id}
+                    onToggle={() =>
+                      setExpandedId(expandedId === person.id ? null : person.id)
+                    }
+                    onEdit={() => handleEdit(person)}
+                    onDelete={() => handleDelete(person)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         </div>
       )}
 
@@ -143,29 +229,37 @@ export default function PeopleManager({
           <h3 className="text-lg font-semibold text-gray-800 mb-3">
             강사 ({instructors.length}명)
           </h3>
-          <div className="space-y-2">
-            {instructors.map((person, idx) => (
-              <PersonCard
-                key={person.id}
-                person={person}
-                index={idx}
-                totalCount={instructors.length}
-                isExpanded={expandedId === person.id}
-                isDeleting={deletingId === person.id}
-                onToggle={() =>
-                  setExpandedId(expandedId === person.id ? null : person.id)
-                }
-                onEdit={() => handleEdit(person)}
-                onDelete={() => handleDelete(person)}
-                onMoveUp={() => handleMoveUp(person, idx)}
-                onMoveDown={() => handleMoveDown(person, idx)}
-              />
-            ))}
-          </div>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleInstrDragStart}
+            onDragEnd={handleInstrDragEnd}
+          >
+            <SortableContext
+              items={instructors.map((p) => p.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-2">
+                {instructors.map((person) => (
+                  <SortablePersonCard
+                    key={person.id}
+                    person={person}
+                    isExpanded={expandedId === person.id}
+                    isDeleting={deletingId === person.id}
+                    onToggle={() =>
+                      setExpandedId(expandedId === person.id ? null : person.id)
+                    }
+                    onEdit={() => handleEdit(person)}
+                    onDelete={() => handleDelete(person)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         </div>
       )}
 
-      {people.length === 0 && (
+      {peopleProp.length === 0 && (
         <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
           등록된 교수/강사가 없습니다. 위의 버튼을 클릭하여 추가해주세요.
         </div>
@@ -183,55 +277,52 @@ export default function PeopleManager({
   );
 }
 
-// -- Person Card --
+// -- Sortable Person Card --
 
-interface PersonCardProps {
+interface SortablePersonCardProps {
   person: AboutPerson;
-  index: number;
-  totalCount: number;
   isExpanded: boolean;
   isDeleting: boolean;
   onToggle: () => void;
   onEdit: () => void;
   onDelete: () => void;
-  onMoveUp: () => void;
-  onMoveDown: () => void;
 }
 
-function PersonCard({
+function SortablePersonCard({
   person,
-  index,
-  totalCount,
   isExpanded,
   isDeleting,
   onToggle,
   onEdit,
   onDelete,
-  onMoveUp,
-  onMoveDown,
-}: PersonCardProps) {
+}: SortablePersonCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: person.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div ref={setNodeRef} style={style} className="bg-white rounded-lg shadow">
       <div className="flex items-center">
-        {/* Order controls */}
-        <div className="flex flex-col border-r px-2 py-2">
-          <button
-            onClick={onMoveUp}
-            disabled={index === 0}
-            className="text-gray-400 hover:text-gray-600 disabled:opacity-30 p-1"
-            title="위로"
-          >
-            &#9650;
-          </button>
-          <button
-            onClick={onMoveDown}
-            disabled={index === totalCount - 1}
-            className="text-gray-400 hover:text-gray-600 disabled:opacity-30 p-1"
-            title="아래로"
-          >
-            &#9660;
-          </button>
-        </div>
+        {/* Drag handle */}
+        <button
+          {...attributes}
+          {...listeners}
+          className="p-3 cursor-grab active:cursor-grabbing hover:bg-gray-100 rounded-l-lg transition-colors shrink-0 border-r"
+          title="드래그해서 순서 변경"
+        >
+          <GripVertical size={20} className="text-gray-400" />
+        </button>
 
         {/* Main content */}
         <button

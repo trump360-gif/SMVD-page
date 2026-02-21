@@ -31,7 +31,6 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
         email={project.email}
         category={project.category}
         heroImage={project.heroImage}
-        description={project.description}
         content={project.content as unknown as TiptapContent}
         previousProject={project.previousProject}
         nextProject={project.nextProject}

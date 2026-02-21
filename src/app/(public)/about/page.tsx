@@ -10,21 +10,50 @@ import {
   type AboutIntroContent,
   type AboutVisionContent,
   type AboutHistoryContent,
-  type AboutPeopleContent,
 } from '@/types/domain/section-content';
 
-// ISR: regenerate every 5 minutes. About page changes infrequently.
-export const revalidate = 300;
+// ISR: regenerate every 60 seconds for faster reflection of changes.
+export const revalidate = 60;
 
 export default async function AboutPage() {
-  const page = await prisma.page.findUnique({
-    where: { slug: 'about' },
-    include: {
-      sections: {
-        orderBy: { order: 'asc' },
+  // Sections와 People을 병렬로 조회
+  const [page, professors, instructors] = await Promise.all([
+    prisma.page.findUnique({
+      where: { slug: 'about' },
+      include: {
+        sections: {
+          orderBy: { order: 'asc' },
+        },
       },
-    },
-  });
+    }),
+    prisma.people.findMany({
+      where: { archivedAt: null, role: { not: 'instructor' } },
+      orderBy: { order: 'asc' },
+      select: {
+        id: true,
+        name: true,
+        title: true,
+        role: true,
+        office: true,
+        email: true,
+        phone: true,
+        badge: true,
+        profileImage: true,
+        courses: true,
+      },
+    }),
+    prisma.people.findMany({
+      where: { archivedAt: null, role: 'instructor' },
+      orderBy: { order: 'asc' },
+      select: {
+        id: true,
+        name: true,
+        title: true,
+        role: true,
+        specialty: true,
+      },
+    }),
+  ]);
 
   // Extract sections
   const introSection = page?.sections.find((s) => s.type === 'ABOUT_INTRO');
@@ -32,15 +61,30 @@ export default async function AboutPage() {
   const historySection = page?.sections.find(
     (s) => s.type === 'ABOUT_HISTORY'
   );
-  const peopleSection = page?.sections.find(
-    (s) => s.type === 'ABOUT_PEOPLE'
-  );
 
   // Extract data from sections with proper types
   const introData = asSectionContent<AboutIntroContent>(introSection?.content);
   const visionData = asSectionContent<AboutVisionContent>(visionSection?.content);
   const historyData = asSectionContent<AboutHistoryContent>(historySection?.content);
-  const peopleData = asSectionContent<AboutPeopleContent>(peopleSection?.content);
+
+  // People 데이터는 DB 테이블에서 직접 조회 (Section.content JSON 대신)
+  const peopleData = {
+    professors: professors.map((p) => ({
+      id: p.id,
+      name: p.name,
+      title: p.title,
+      office: p.office ?? undefined,
+      email: p.email,
+      phone: p.phone ?? undefined,
+      badge: p.badge ?? undefined,
+      profileImage: p.profileImage ?? undefined,
+      courses: p.courses as { undergraduate: string[]; graduate: string[] } | undefined,
+    })),
+    instructors: instructors.map((i) => ({
+      name: i.name,
+      specialty: i.specialty ?? '',
+    })),
+  };
 
   return (
     <div>
