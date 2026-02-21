@@ -259,9 +259,8 @@ export default function WorkArchive({
           display: 'flex',
           gap: isMobile ? '16px' : '20px',
           width: '100%',
-          marginBottom: isMobile ? '16px' : '20px',
-          borderBottom: '1px solid #e5e7ebff',
-          paddingBottom: '0px',
+          paddingBottom: isMobile ? '16px' : '20px',
+          borderBottom: '2px solid #141414ff',
         }}
       >
         <button
@@ -277,8 +276,8 @@ export default function WorkArchive({
             backgroundColor: 'transparent',
             border: 'none',
             cursor: 'pointer',
-            paddingBottom: '8px',
-            borderBottom: activeTab === 'achieve' ? '2px solid #141414ff' : 'none',
+            padding: '8px 0',
+            margin: '0',
             transition: 'all 0.3s ease',
           }}
         >
@@ -297,8 +296,8 @@ export default function WorkArchive({
             backgroundColor: 'transparent',
             border: 'none',
             cursor: 'pointer',
-            paddingBottom: '8px',
-            borderBottom: activeTab === 'exhibition' ? '2px solid #141414ff' : 'none',
+            padding: '8px 0',
+            margin: '0',
             transition: 'all 0.3s ease',
           }}
         >

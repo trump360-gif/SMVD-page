@@ -91,7 +91,7 @@ export default function CurriculumTab({
           alignItems: 'flex-start',
           width: '100%',
           paddingBottom: isMobile ? '16px' : '20px',
-          borderBottom: '2.5px solid #000000ff',
+          borderBottom: '2px solid #141414ff',
         }}
       >
         {/* Tab Buttons */}
