@@ -143,17 +143,15 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
         paddingRight: `${containerPadding}px`,
       }}
     >
-      {/* Title and Filter Tabs */}
+      {/* Title */}
       <div
         style={{
           display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
-          justifyContent: 'space-between',
-          alignItems: isMobile ? 'flex-start' : 'center',
+          flexDirection: 'column',
           width: '100%',
           paddingBottom: isMobile ? '16px' : '20px',
           borderBottom: '2px solid #141414ff',
-          gap: isMobile ? '12px' : '0px',
+          gap: isMobile ? '12px' : '16px',
         }}
       >
         <h1

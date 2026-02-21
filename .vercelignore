@@ -1,0 +1,20 @@
+# Backups and archives
+backups/
+
+# Original source images (not public/)
+img/
+
+# Scripts (dev only)
+scripts/
+
+# Root-level screenshots only (not public/images/)
+/*.png
+
+# Documentation (not needed in deployment)
+/*.md
+!README.md
+
+# Local dev files
+.env
+.env.example
+prisma/seed.ts

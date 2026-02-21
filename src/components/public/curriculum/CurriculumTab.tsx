@@ -22,8 +22,7 @@ export default function CurriculumTab({
 
   // Responsive variables
   const containerGap = isMobile ? '20px' : isTablet ? '30px' : '40px';
-  const titleFontSize = isMobile ? '24px' : isTablet ? '22px' : '24px';
-  const buttonFontSize = isMobile ? '14px' : isTablet ? '16px' : '18px';
+  const buttonFontSize = isMobile ? '18px' : isTablet ? '20px' : '24px';
   const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : 0;
 
   // Handle hash navigation
@@ -89,30 +88,12 @@ export default function CurriculumTab({
       <div
         style={{
           display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
-          alignItems: isMobile ? 'flex-start' : 'flex-start',
-          justifyContent: 'space-between',
+          alignItems: 'flex-start',
           width: '100%',
           paddingBottom: isMobile ? '16px' : '20px',
           borderBottom: '2.5px solid #000000ff',
-          gap: isMobile ? '12px' : '0px',
         }}
       >
-        {/* Curriculum Title */}
-        <h2
-          style={{
-            fontSize: titleFontSize,
-            fontWeight: '700',
-            color: '#1b1d1fff',
-            fontFamily: 'Satoshi',
-            margin: '0',
-            letterSpacing: '-0.24px',
-            flexShrink: 0,
-          }}
-        >
-          Curriculum
-        </h2>
-
         {/* Tab Buttons */}
         <div
           style={{
@@ -127,8 +108,8 @@ export default function CurriculumTab({
               fontWeight: '500',
               fontFamily: 'Satoshi',
               color: activeTab === 'undergraduate' ? '#141414ff' : '#7b828eff',
-              backgroundColor: activeTab === 'undergraduate' ? '#ffffffff' : 'transparent',
-              border: activeTab === 'undergraduate' ? 'none' : 'none',
+              backgroundColor: 'transparent',
+              border: 'none',
               padding: '8px 0',
               cursor: 'pointer',
               margin: '0',
@@ -144,8 +125,8 @@ export default function CurriculumTab({
               fontWeight: '500',
               fontFamily: 'Satoshi',
               color: activeTab === 'graduate' ? '#141414ff' : '#7b828eff',
-              backgroundColor: activeTab === 'graduate' ? '#ffffffff' : 'transparent',
-              border: activeTab === 'graduate' ? 'none' : 'none',
+              backgroundColor: 'transparent',
+              border: 'none',
               padding: '8px 0',
               cursor: 'pointer',
               margin: '0',
