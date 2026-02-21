@@ -146,12 +146,9 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
       {/* Title */}
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
           width: '100%',
           paddingBottom: isMobile ? '16px' : '20px',
           borderBottom: '2px solid #141414ff',
-          gap: isMobile ? '12px' : '16px',
         }}
       >
         <h1
@@ -165,41 +162,37 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
         >
           News&Event
         </h1>
+      </div>
 
-        {/* Filter Tabs */}
-        <div
-          style={{
-            display: 'flex',
-            gap: isMobile ? '8px' : '12px',
-            flexWrap: 'wrap',
-          }}
-        >
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => handleCategoryChange(category)}
-              style={{
-                fontSize: filterFontSize,
-                fontWeight: selectedCategory === category ? '600' : '400',
-                fontFamily: 'Satoshi',
-                color:
-                  selectedCategory === category ? '#141414ff' : '#7b828eff',
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                borderBottom:
-                  selectedCategory === category
-                    ? '2px solid #141414ff'
-                    : 'none',
-                paddingBottom: '4px',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
+      {/* Filter Tabs */}
+      <div
+        style={{
+          display: 'flex',
+          gap: isMobile ? '8px' : '12px',
+          flexWrap: 'wrap',
+        }}
+      >
+        {categories.map((category) => (
+          <button
+            key={category}
+            onClick={() => handleCategoryChange(category)}
+            style={{
+              fontSize: filterFontSize,
+              fontWeight: selectedCategory === category ? '600' : '400',
+              fontFamily: 'Satoshi',
+              color:
+                selectedCategory === category ? '#141414ff' : '#7b828eff',
+              backgroundColor: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              paddingBottom: '4px',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {category}
+          </button>
+        ))}
       </div>
 
       {/* Cards Grid */}
