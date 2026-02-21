@@ -251,7 +251,7 @@ model NewsEvent {
   id             String   @id @default(cuid())
   slug           String   @unique // URL용 (기존 '1'~'10')
   title          String // 목록 제목
-  category       String   @default("Notice") // 'Notice', 'Event', 'Awards', 'Recruiting'
+  category       String   @default("Notice") // 'Notice', 'Event', 'Lecture', 'Exhibition', 'Awards', 'Recruiting'
   excerpt        String? // 목록 설명 (2줄 요약)
   thumbnailImage String   @default("/Group-27.svg") @map("thumbnail_image") // 썸네일 경로
   content        Json? // 상세 페이지 데이터

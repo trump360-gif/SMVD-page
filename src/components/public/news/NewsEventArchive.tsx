@@ -98,7 +98,7 @@ const defaultNewsItems: NewsItem[] = [
   },
 ];
 
-const categories = ['ALL', 'Notice', 'Event', 'Awards', 'Recruiting'];
+const categories = ['ALL', 'Notice', 'Event', 'Lecture', 'Exhibition', 'Awards', 'Recruiting'];
 
 interface NewsEventArchiveProps {
   items?: NewsItem[] | null;

@@ -85,7 +85,7 @@ export default function AttachmentDownloadBox({ attachments }: { attachments?: A
       >
         {attachments.map((attachment, index) => (
           <a
-            key={attachment.id}
+            key={attachment.id || `attachment-${index}`}
             href={attachment.filepath}
             download={attachment.filename}
             style={{

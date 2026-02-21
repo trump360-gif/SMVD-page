@@ -2,7 +2,7 @@
 
 import ImageUploadField from '@/components/admin/shared/ImageUploadField';
 
-const CATEGORIES = ['Notice', 'Event', 'Awards', 'Recruiting'];
+const CATEGORIES = ['Notice', 'Event', 'Lecture', 'Exhibition', 'Awards', 'Recruiting'];
 
 interface ArticleInfoFormProps {
   title: string;

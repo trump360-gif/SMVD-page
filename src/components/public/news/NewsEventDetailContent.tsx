@@ -60,7 +60,7 @@ const fallbackDetailData: { [key: string]: NewsDetailItem } = {
   },
 };
 
-const categories = ['ALL', 'Notice', 'Event', 'Awards', 'Recruiting'];
+const categories = ['ALL', 'Notice', 'Event', 'Lecture', 'Exhibition', 'Awards', 'Recruiting'];
 
 interface NewsEventDetailContentProps {
   itemId: string;

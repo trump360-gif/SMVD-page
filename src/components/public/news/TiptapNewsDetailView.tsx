@@ -26,7 +26,7 @@ interface TiptapNewsDetailViewProps {
   data: NewsTiptapData;
 }
 
-const categories = ['ALL', 'Notice', 'Event', 'Awards', 'Recruiting'];
+const categories = ['ALL', 'Notice', 'Event', 'Lecture', 'Exhibition', 'Awards', 'Recruiting'];
 
 /**
  * Responsive Tiptap JSON content detail view for news articles.

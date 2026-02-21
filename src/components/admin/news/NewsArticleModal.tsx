@@ -17,7 +17,7 @@ interface NewsArticleModalProps {
   onSubmit: (data: CreateArticleInput | UpdateArticleInput) => Promise<void>;
 }
 
-const CATEGORIES = ['Notice', 'Event', 'Awards', 'Recruiting'];
+const CATEGORIES = ['Notice', 'Event', 'Lecture', 'Exhibition', 'Awards', 'Recruiting'];
 
 const emptyGallery: GalleryData = {
   main: '',

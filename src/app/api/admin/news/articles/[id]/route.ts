@@ -54,7 +54,7 @@ const AttachmentSchema = z.object({}).passthrough().optional();
 
 const UpdateArticleSchema = z.object({
   title: z.string().min(1).optional(),
-  category: z.enum(['Notice', 'Event', 'Awards', 'Recruiting']).optional(),
+  category: z.enum(['Notice', 'Event', 'Lecture', 'Exhibition', 'Awards', 'Recruiting']).optional(),
   excerpt: z.string().nullable().optional(),
   thumbnailImage: z.string().optional(),
   content: ContentSchema.nullable(),

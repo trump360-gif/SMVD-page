@@ -49,7 +49,7 @@ const AttachmentSchema = z.object({}).passthrough().optional();
 
 const CreateArticleSchema = z.object({
   title: z.string().min(1, '제목은 필수입니다'),
-  category: z.enum(['Notice', 'Event', 'Awards', 'Recruiting']),
+  category: z.enum(['Notice', 'Event', 'Lecture', 'Exhibition', 'Awards', 'Recruiting']),
   excerpt: z.string().optional(),
   thumbnailImage: z.string().default('/Group-27.svg'),
   content: ContentSchema,
