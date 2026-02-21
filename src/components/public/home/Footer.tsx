@@ -70,8 +70,6 @@ export function Footer({ data, socialLinks }: FooterProps) {
         width: '100%',
         backgroundColor: '#ebeef4ff',
         borderTop: '1px solid #e5e7ebff',
-        paddingTop: footerPadding,
-        paddingBottom: footerPadding,
         paddingLeft: `${padding}px`,
         paddingRight: `${padding}px`,
       }}
@@ -80,10 +78,11 @@ export function Footer({ data, socialLinks }: FooterProps) {
         style={{
           maxWidth: '1440px',
           margin: '0 auto',
+          paddingTop: footerPadding,
+          paddingBottom: footerPadding,
           display: 'flex',
           flexDirection: 'column',
           gap: footerGap,
-          width: '100%',
         }}
       >
         {/* Left Section - Icon & Info */}
