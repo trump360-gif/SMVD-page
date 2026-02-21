@@ -24,9 +24,9 @@ import type { NewsArticleData } from '@/hooks/useNewsEditor';
 interface NewsArticleListProps {
   items: NewsArticleData[];
   onEdit: (article: NewsArticleData) => void;
-  onDelete: (id: string) => Promise<void>;
-  onReorder: (articleId: string, newOrder: number) => Promise<void>;
-  onTogglePublish: (article: NewsArticleData) => Promise<void>;
+  onDelete: (id: string) => void;
+  onReorder: (articleId: string, newOrder: number) => void;
+  onTogglePublish: (article: NewsArticleData) => void;
 }
 
 function SortableArticleItem({
@@ -37,8 +37,8 @@ function SortableArticleItem({
 }: {
   item: NewsArticleData;
   onEdit: (article: NewsArticleData) => void;
-  onDelete: (id: string) => Promise<void>;
-  onTogglePublish: (article: NewsArticleData) => Promise<void>;
+  onDelete: (id: string) => void;
+  onTogglePublish: (article: NewsArticleData) => void;
 }) {
   const {
     attributes,
@@ -138,10 +138,10 @@ function SortableArticleItem({
           <Pencil size={18} />
         </button>
         <button
-          onClick={async () => {
+          onClick={() => {
             if (!confirm(`"${item.title}" 뉴스를 삭제하시겠습니까?`)) return;
             try {
-              await onDelete(item.id);
+              onDelete(item.id);
             } catch (err) {
               alert(err instanceof Error ? err.message : '삭제 실패');
             }
@@ -190,7 +190,7 @@ export default function NewsArticleList({
         setItems(newItems);
 
         try {
-          await onReorder(active.id as string, newIndex);
+          onReorder(active.id as string, newIndex);
         } catch (err) {
           setItems(itemsBeforeDragRef.current);
           alert(err instanceof Error ? err.message : '순서 변경 실패');

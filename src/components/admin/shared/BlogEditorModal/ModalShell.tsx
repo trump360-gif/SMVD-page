@@ -37,6 +37,10 @@ interface ModalShellProps {
   /** Additional keyboard handler for undo/redo etc. */
   onKeyDown?: (e: KeyboardEvent) => void;
 
+  /** Dirty state for revert button in footer */
+  isDirty?: boolean;
+  onRevert?: () => void;
+
   /** Content to render (tab content) */
   children: ReactNode;
 }
@@ -60,6 +64,8 @@ export default function ModalShell({
   isSubmitting,
   onSubmit,
   onKeyDown,
+  isDirty,
+  onRevert,
   children,
 }: ModalShellProps) {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -156,6 +162,15 @@ export default function ModalShell({
         <div className="border-t border-gray-200 px-6 py-4 flex items-center justify-between shrink-0 bg-gray-50 rounded-b-xl">
           <div className="text-xs text-gray-400">{footerInfo}</div>
           <div className="flex gap-3">
+            {isDirty && onRevert && (
+              <button
+                type="button"
+                onClick={onRevert}
+                className="px-5 py-2.5 border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-50 transition-colors font-medium text-sm"
+              >
+                되돌리기
+              </button>
+            )}
             <button
               type="button"
               onClick={onClose}

@@ -5,12 +5,11 @@ import { AboutSection } from '@/hooks/useAboutEditor';
 
 interface SectionEditorProps {
   section: AboutSection;
-  onSave: (
+  onChange: (
     sectionId: string,
-    type: string,
     title: string,
-    content: Record<string, unknown>
-  ) => Promise<void>;
+    content: Record<string, unknown>,
+  ) => void;
 }
 
 const SECTION_TITLES: Record<string, string> = {
@@ -20,20 +19,18 @@ const SECTION_TITLES: Record<string, string> = {
   ABOUT_PEOPLE: '교수/강사 (People)',
 };
 
-export default function SectionEditor({ section, onSave }: SectionEditorProps) {
+export default function SectionEditor({ section, onChange }: SectionEditorProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [title, setTitle] = useState(section.title || '');
 
-  const handleSave = async (content: Record<string, unknown>) => {
-    try {
-      setIsSaving(true);
-      await onSave(section.id, section.type, title, content);
-    } catch {
-      // Error is handled in parent
-    } finally {
-      setIsSaving(false);
-    }
+  const content = (section.content ?? {}) as Record<string, unknown>;
+  const title = section.title || '';
+
+  const handleContentChange = (newContent: Record<string, unknown>) => {
+    onChange(section.id, title, newContent);
+  };
+
+  const handleTitleChange = (newTitle: string) => {
+    onChange(section.id, newTitle, content);
   };
 
   return (
@@ -65,7 +62,7 @@ export default function SectionEditor({ section, onSave }: SectionEditorProps) {
               <input
                 type="text"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => handleTitleChange(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                 placeholder="섹션 제목"
               />
@@ -73,10 +70,8 @@ export default function SectionEditor({ section, onSave }: SectionEditorProps) {
 
             <ContentEditor
               type={section.type}
-              content={section.content}
-              isSaving={isSaving}
-              onSave={handleSave}
-              onCancel={() => setIsExpanded(false)}
+              content={content}
+              onChange={handleContentChange}
             />
           </div>
         </div>
@@ -89,47 +84,18 @@ export default function SectionEditor({ section, onSave }: SectionEditorProps) {
 
 interface ContentEditorProps {
   type: string;
-  content: AboutSection['content'];
-  isSaving: boolean;
-  onSave: (content: Record<string, unknown>) => Promise<void>;
-  onCancel: () => void;
+  content: Record<string, unknown>;
+  onChange: (content: Record<string, unknown>) => void;
 }
 
-function ContentEditor({
-  type,
-  content,
-  isSaving,
-  onSave,
-  onCancel,
-}: ContentEditorProps) {
+function ContentEditor({ type, content, onChange }: ContentEditorProps) {
   switch (type) {
     case 'ABOUT_INTRO':
-      return (
-        <IntroEditor
-          content={content as Record<string, unknown> | null}
-          isSaving={isSaving}
-          onSave={onSave}
-          onCancel={onCancel}
-        />
-      );
+      return <IntroEditor content={content} onChange={onChange} />;
     case 'ABOUT_VISION':
-      return (
-        <VisionEditor
-          content={content as Record<string, unknown> | null}
-          isSaving={isSaving}
-          onSave={onSave}
-          onCancel={onCancel}
-        />
-      );
+      return <VisionEditor content={content} onChange={onChange} />;
     case 'ABOUT_HISTORY':
-      return (
-        <HistoryEditor
-          content={content as Record<string, unknown> | null}
-          isSaving={isSaving}
-          onSave={onSave}
-          onCancel={onCancel}
-        />
-      );
+      return <HistoryEditor content={content} onChange={onChange} />;
     default:
       return (
         <div className="text-gray-500 p-4">
@@ -139,28 +105,18 @@ function ContentEditor({
   }
 }
 
-// -- Intro Section Editor --
+// -- Intro Section Editor (controlled) --
 
 function IntroEditor({
   content,
-  isSaving,
-  onSave,
-  onCancel,
+  onChange,
 }: {
-  content: Record<string, unknown> | null;
-  isSaving: boolean;
-  onSave: (content: Record<string, unknown>) => Promise<void>;
-  onCancel: () => void;
+  content: Record<string, unknown>;
+  onChange: (content: Record<string, unknown>) => void;
 }) {
-  const [description, setDescription] = useState(
-    (content?.description as string) || ''
-  );
-  const [imageSrc, setImageSrc] = useState(
-    (content?.imageSrc as string) || ''
-  );
-  const [introTitle, setIntroTitle] = useState(
-    (content?.title as string) || ''
-  );
+  const introTitle = (content?.title as string) || '';
+  const description = (content?.description as string) || '';
+  const imageSrc = (content?.imageSrc as string) || '';
 
   return (
     <>
@@ -171,7 +127,7 @@ function IntroEditor({
         <input
           type="text"
           value={introTitle}
-          onChange={(e) => setIntroTitle(e.target.value)}
+          onChange={(e) => onChange({ ...content, title: e.target.value })}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
           placeholder="학과 소개 제목"
         />
@@ -182,7 +138,7 @@ function IntroEditor({
         </label>
         <textarea
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(e) => onChange({ ...content, description: e.target.value })}
           rows={6}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
           placeholder="학과 소개 설명"
@@ -195,48 +151,28 @@ function IntroEditor({
         <input
           type="text"
           value={imageSrc}
-          onChange={(e) => setImageSrc(e.target.value)}
+          onChange={(e) => onChange({ ...content, imageSrc: e.target.value })}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
           placeholder="/images/about/image 32.png"
         />
       </div>
-      <SaveCancelButtons
-        isSaving={isSaving}
-        onSave={() =>
-          onSave({
-            title: introTitle,
-            description,
-            imageSrc,
-          })
-        }
-        onCancel={onCancel}
-      />
     </>
   );
 }
 
-// -- Vision Section Editor --
+// -- Vision Section Editor (controlled) --
 
 function VisionEditor({
   content,
-  isSaving,
-  onSave,
-  onCancel,
+  onChange,
 }: {
-  content: Record<string, unknown> | null;
-  isSaving: boolean;
-  onSave: (content: Record<string, unknown>) => Promise<void>;
-  onCancel: () => void;
+  content: Record<string, unknown>;
+  onChange: (content: Record<string, unknown>) => void;
 }) {
-  const [visionTitle, setVisionTitle] = useState(
-    (content?.title as string) || ''
-  );
-  const [visionContent, setVisionContent] = useState(
-    (content?.content as string) || ''
-  );
-  const [chipsText, setChipsText] = useState(
-    ((content?.chips as string[]) || []).join(', ')
-  );
+  const visionTitle = (content?.title as string) || '';
+  const visionContent = (content?.content as string) || '';
+  const chips = (content?.chips as string[]) || [];
+  const chipsText = chips.join(', ');
 
   return (
     <>
@@ -247,7 +183,7 @@ function VisionEditor({
         <input
           type="text"
           value={visionTitle}
-          onChange={(e) => setVisionTitle(e.target.value)}
+          onChange={(e) => onChange({ ...content, title: e.target.value })}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
           placeholder="비전 제목"
         />
@@ -258,7 +194,7 @@ function VisionEditor({
         </label>
         <textarea
           value={visionContent}
-          onChange={(e) => setVisionContent(e.target.value)}
+          onChange={(e) => onChange({ ...content, content: e.target.value })}
           rows={6}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
           placeholder="비전 내용"
@@ -271,33 +207,27 @@ function VisionEditor({
         <input
           type="text"
           value={chipsText}
-          onChange={(e) => setChipsText(e.target.value)}
+          onChange={(e) =>
+            onChange({
+              ...content,
+              chips: e.target.value
+                .split(',')
+                .map((c) => c.trim())
+                .filter(Boolean),
+            })
+          }
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
           placeholder="UX/UI, Graphic, Editorial, Illustration, Branding"
         />
         <p className="text-xs text-gray-500 mt-1">
-          현재: {chipsText.split(',').filter((c) => c.trim()).length}개
+          현재: {chips.length}개
         </p>
       </div>
-      <SaveCancelButtons
-        isSaving={isSaving}
-        onSave={() =>
-          onSave({
-            title: visionTitle,
-            content: visionContent,
-            chips: chipsText
-              .split(',')
-              .map((c) => c.trim())
-              .filter(Boolean),
-          })
-        }
-        onCancel={onCancel}
-      />
     </>
   );
 }
 
-// -- History Section Editor --
+// -- History Section Editor (controlled) --
 
 interface TimelineItem {
   year: string;
@@ -306,41 +236,38 @@ interface TimelineItem {
 
 function HistoryEditor({
   content,
-  isSaving,
-  onSave,
-  onCancel,
+  onChange,
 }: {
-  content: Record<string, unknown> | null;
-  isSaving: boolean;
-  onSave: (content: Record<string, unknown>) => Promise<void>;
-  onCancel: () => void;
+  content: Record<string, unknown>;
+  onChange: (content: Record<string, unknown>) => void;
 }) {
-  const [historyTitle, setHistoryTitle] = useState(
-    (content?.title as string) || ''
-  );
-  const [introText, setIntroText] = useState(
-    (content?.introText as string) || ''
-  );
-  const [timelineItems, setTimelineItems] = useState<TimelineItem[]>(
-    (content?.timelineItems as TimelineItem[]) || []
-  );
+  const historyTitle = (content?.title as string) || '';
+  const introText = (content?.introText as string) || '';
+  const timelineItems = (content?.timelineItems as TimelineItem[]) || [];
 
   const updateTimelineItem = (
     idx: number,
     field: keyof TimelineItem,
-    value: string
+    value: string,
   ) => {
-    setTimelineItems((prev) =>
-      prev.map((item, i) => (i === idx ? { ...item, [field]: value } : item))
+    const newItems = timelineItems.map((item, i) =>
+      i === idx ? { ...item, [field]: value } : item,
     );
+    onChange({ ...content, timelineItems: newItems });
   };
 
   const addTimelineItem = () => {
-    setTimelineItems((prev) => [...prev, { year: '', description: '' }]);
+    onChange({
+      ...content,
+      timelineItems: [...timelineItems, { year: '', description: '' }],
+    });
   };
 
   const removeTimelineItem = (idx: number) => {
-    setTimelineItems((prev) => prev.filter((_, i) => i !== idx));
+    onChange({
+      ...content,
+      timelineItems: timelineItems.filter((_, i) => i !== idx),
+    });
   };
 
   return (
@@ -352,7 +279,7 @@ function HistoryEditor({
         <input
           type="text"
           value={historyTitle}
-          onChange={(e) => setHistoryTitle(e.target.value)}
+          onChange={(e) => onChange({ ...content, title: e.target.value })}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
           placeholder="역사 제목"
         />
@@ -363,12 +290,12 @@ function HistoryEditor({
         </label>
         <textarea
           value={introText}
-          onChange={(e) => setIntroText(e.target.value)}
+          onChange={(e) => onChange({ ...content, introText: e.target.value })}
           rows={4}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
           placeholder="역사 소개 (줄바꿈은 Enter로 입력)"
         />
-        <p className="text-xs text-gray-500 mt-1">💡 Enter를 눌러 줄바꿈하세요</p>
+        <p className="text-xs text-gray-500 mt-1">Enter를 눌러 줄바꿈하세요</p>
       </div>
       <div>
         <div className="flex justify-between items-center mb-2">
@@ -418,50 +345,6 @@ function HistoryEditor({
           ))}
         </div>
       </div>
-      <SaveCancelButtons
-        isSaving={isSaving}
-        onSave={() =>
-          onSave({
-            title: historyTitle,
-            introText,
-            timelineItems,
-          })
-        }
-        onCancel={onCancel}
-      />
     </>
-  );
-}
-
-// -- Save/Cancel Buttons --
-
-function SaveCancelButtons({
-  isSaving,
-  onSave,
-  onCancel,
-}: {
-  isSaving: boolean;
-  onSave: () => void;
-  onCancel: () => void;
-}) {
-  return (
-    <div className="flex justify-end gap-3 pt-4 border-t">
-      <button
-        type="button"
-        onClick={onCancel}
-        disabled={isSaving}
-        className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors font-medium disabled:opacity-50"
-      >
-        취소
-      </button>
-      <button
-        type="button"
-        onClick={onSave}
-        disabled={isSaving}
-        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium disabled:opacity-50"
-      >
-        {isSaving ? '저장 중...' : '저장'}
-      </button>
-    </div>
   );
 }

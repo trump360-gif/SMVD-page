@@ -1,123 +1,68 @@
 "use client";
 
 import { useCallback } from "react";
-import type { ThesisCardData } from "@/lib/validation/curriculum";
-import type { ApiResponse, CurriculumSection } from "./types";
+import type { ThesisCardData, GraduateContent } from "@/lib/validation/curriculum";
+import type { CurriculumSection } from "./types";
 
 interface UseThesisEditorDeps {
-  updateState: (partial: { isSaving: boolean }) => void;
-  showSuccess: (message: string) => void;
-  showError: (message: string) => void;
-  updateSectionInState: (sectionId: string, data: CurriculumSection | undefined) => void;
+  sections: CurriculumSection[];
+  updateContent: (
+    sectionId: string,
+    content: GraduateContent
+  ) => void;
 }
 
 /**
- * Thesis CRUD operations for graduate curriculum.
+ * Thesis CRUD operations (local-only) for graduate curriculum.
  */
 export function useThesisEditor({
-  updateState,
-  showSuccess,
-  showError,
-  updateSectionInState,
+  sections,
+  updateContent,
 }: UseThesisEditorDeps) {
-  const addThesis = useCallback(
-    async (sectionId: string, thesis: ThesisCardData): Promise<boolean> => {
-      try {
-        updateState({ isSaving: true });
-
-        const response = await fetch("/api/admin/curriculum/theses", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ sectionId, thesis }),
-        });
-
-        const data: ApiResponse = await response.json();
-
-        if (!response.ok || !data.success) {
-          throw new Error(data.message || "논문 추가에 실패했습니다");
-        }
-
-        updateSectionInState(sectionId, data.data);
-        showSuccess("논문이 추가되었습니다");
-        return true;
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "논문 추가에 실패했습니다";
-        updateState({ isSaving: false });
-        showError(message);
-        return false;
-      }
+  const getContent = useCallback(
+    (sectionId: string): GraduateContent | null => {
+      const section = sections.find((s) => s.id === sectionId);
+      return section ? (section.content as GraduateContent) : null;
     },
-    [updateState, showSuccess, showError, updateSectionInState]
+    [sections]
+  );
+
+  const addThesis = useCallback(
+    (sectionId: string, thesis: ThesisCardData) => {
+      const content = getContent(sectionId);
+      if (!content) return;
+      updateContent(sectionId, {
+        ...content,
+        theses: [...(content.theses || []), thesis],
+      });
+    },
+    [getContent, updateContent]
   );
 
   const updateThesis = useCallback(
-    async (
-      sectionId: string,
-      thesisIndex: number,
-      thesis: ThesisCardData
-    ): Promise<boolean> => {
-      try {
-        updateState({ isSaving: true });
-
-        const response = await fetch("/api/admin/curriculum/theses", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ sectionId, thesisIndex, thesis }),
-        });
-
-        const data: ApiResponse = await response.json();
-
-        if (!response.ok || !data.success) {
-          throw new Error(data.message || "논문 수정에 실패했습니다");
-        }
-
-        updateSectionInState(sectionId, data.data);
-        showSuccess("논문이 수정되었습니다");
-        return true;
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "논문 수정에 실패했습니다";
-        updateState({ isSaving: false });
-        showError(message);
-        return false;
-      }
+    (sectionId: string, thesisIndex: number, thesis: ThesisCardData) => {
+      const content = getContent(sectionId);
+      if (!content) return;
+      updateContent(sectionId, {
+        ...content,
+        theses: (content.theses || []).map((t, i) =>
+          i === thesisIndex ? thesis : t
+        ),
+      });
     },
-    [updateState, showSuccess, showError, updateSectionInState]
+    [getContent, updateContent]
   );
 
   const deleteThesis = useCallback(
-    async (sectionId: string, thesisIndex: number): Promise<boolean> => {
-      try {
-        updateState({ isSaving: true });
-
-        const response = await fetch("/api/admin/curriculum/theses", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ sectionId, thesisIndex }),
-        });
-
-        const data: ApiResponse = await response.json();
-
-        if (!response.ok || !data.success) {
-          throw new Error(data.message || "논문 삭제에 실패했습니다");
-        }
-
-        updateSectionInState(sectionId, data.data);
-        showSuccess("논문이 삭제되었습니다");
-        return true;
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "논문 삭제에 실패했습니다";
-        updateState({ isSaving: false });
-        showError(message);
-        return false;
-      }
+    (sectionId: string, thesisIndex: number) => {
+      const content = getContent(sectionId);
+      if (!content) return;
+      updateContent(sectionId, {
+        ...content,
+        theses: (content.theses || []).filter((_, i) => i !== thesisIndex),
+      });
     },
-    [updateState, showSuccess, showError, updateSectionInState]
+    [getContent, updateContent]
   );
 
   return {

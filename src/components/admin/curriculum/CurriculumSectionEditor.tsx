@@ -16,7 +16,7 @@ interface CurriculumSectionData {
 
 interface CurriculumSectionEditorProps {
   section?: CurriculumSectionData | null;
-  onSave?: (courses: { leftCourses: GraduateCourseItemData[]; rightCourses: GraduateCourseItemData[] }) => Promise<void>;
+  onSave?: (courses: { leftCourses: GraduateCourseItemData[]; rightCourses: GraduateCourseItemData[] }) => void | Promise<void>;
   isSaving?: boolean;
 }
 

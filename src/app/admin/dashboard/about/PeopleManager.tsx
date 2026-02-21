@@ -25,10 +25,10 @@ import PersonFormModal from './PersonFormModal';
 
 interface PeopleManagerProps {
   people: AboutPerson[];
-  onAdd: (data: Omit<AboutPerson, 'id' | 'order'>) => Promise<void>;
-  onUpdate: (id: string, data: Partial<AboutPerson>) => Promise<void>;
-  onDelete: (id: string) => Promise<void>;
-  onReorder: (id: string, newOrder: number) => Promise<void>;
+  onAdd: (data: Omit<AboutPerson, 'id' | 'order'>) => void;
+  onUpdate: (id: string, data: Partial<AboutPerson>) => void;
+  onDelete: (id: string) => void;
+  onReorder: (id: string, newOrder: number) => void;
 }
 
 export default function PeopleManager({
@@ -88,23 +88,18 @@ export default function PeopleManager({
     setNewPersonRole(null);
   };
 
-  const handleDelete = async (person: AboutPerson) => {
+  const handleDelete = (person: AboutPerson) => {
     if (!confirm(`"${person.name}" 교수/강사를 삭제하시겠습니까?`)) return;
-    try {
-      setDeletingId(person.id);
-      await onDelete(person.id);
-    } catch {
-      // Error handled in parent
-    } finally {
-      setDeletingId(null);
-    }
+    setDeletingId(person.id);
+    onDelete(person.id);
+    setDeletingId(null);
   };
 
-  const handleSubmit = async (data: Omit<AboutPerson, 'id' | 'order'>) => {
+  const handleSubmit = (data: Omit<AboutPerson, 'id' | 'order'>) => {
     if (editingPerson) {
-      await onUpdate(editingPerson.id, data);
+      onUpdate(editingPerson.id, data);
     } else {
-      await onAdd(data);
+      onAdd(data);
     }
     setIsModalOpen(false);
     setEditingPerson(null);
@@ -115,7 +110,7 @@ export default function PeopleManager({
     profsBeforeDragRef.current = professors;
   };
 
-  const handleProfDragEnd = async (event: DragEndEvent) => {
+  const handleProfDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
@@ -124,17 +119,9 @@ export default function PeopleManager({
     if (oldIndex === -1 || newIndex === -1) return;
 
     const newOrder = professors[newIndex].order;
-    const previous = profsBeforeDragRef.current;
 
-    // Optimistic update
     setProfessors(arrayMove(professors, oldIndex, newIndex));
-
-    try {
-      await onReorder(active.id as string, newOrder);
-    } catch (err) {
-      setProfessors(previous);
-      alert(err instanceof Error ? err.message : '순서 변경 실패');
-    }
+    onReorder(active.id as string, newOrder);
   };
 
   // Instructors drag handlers
@@ -142,7 +129,7 @@ export default function PeopleManager({
     instrsBeforeDragRef.current = instructors;
   };
 
-  const handleInstrDragEnd = async (event: DragEndEvent) => {
+  const handleInstrDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
@@ -151,17 +138,9 @@ export default function PeopleManager({
     if (oldIndex === -1 || newIndex === -1) return;
 
     const newOrder = instructors[newIndex].order;
-    const previous = instrsBeforeDragRef.current;
 
-    // Optimistic update
     setInstructors(arrayMove(instructors, oldIndex, newIndex));
-
-    try {
-      await onReorder(active.id as string, newOrder);
-    } catch (err) {
-      setInstructors(previous);
-      alert(err instanceof Error ? err.message : '순서 변경 실패');
-    }
+    onReorder(active.id as string, newOrder);
   };
 
   return (

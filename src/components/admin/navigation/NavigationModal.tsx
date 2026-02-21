@@ -8,7 +8,7 @@ interface NavigationModalProps {
   item?: NavigationItem | null;
   allItems: NavigationItem[];
   onClose: () => void;
-  onSubmit: (data: CreateNavigationInput | UpdateNavigationInput) => Promise<void>;
+  onSubmit: (data: CreateNavigationInput | UpdateNavigationInput) => void | Promise<void>;
 }
 
 export default function NavigationModal({

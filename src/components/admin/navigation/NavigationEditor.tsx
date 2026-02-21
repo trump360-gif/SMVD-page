@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Plus, AlertCircle, RefreshCw } from 'lucide-react';
 import { useNavigationEditor } from '@/hooks/useNavigationEditor';
+import { useBeforeUnload } from '@/hooks/useBeforeUnload';
+import { SaveBar } from '@/components/admin/shared/SaveBar';
 import NavigationTable from './NavigationTable';
 import NavigationModal from './NavigationModal';
 import type { NavigationItem, CreateNavigationInput, UpdateNavigationInput } from '@/hooks/useNavigationEditor';
@@ -11,6 +13,9 @@ export default function NavigationEditor() {
   const {
     navigations,
     isLoading,
+    isSaving,
+    isDirty,
+    changeCount,
     error,
     fetchNavigations,
     addNavigation,
@@ -18,11 +23,15 @@ export default function NavigationEditor() {
     deleteNavigation,
     reorderNavigations,
     toggleNavigation,
+    saveChanges,
+    revert,
     clearError,
   } = useNavigationEditor();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<NavigationItem | null>(null);
+
+  useBeforeUnload(isDirty);
 
   useEffect(() => {
     fetchNavigations();
@@ -43,11 +52,19 @@ export default function NavigationEditor() {
     setEditingItem(null);
   };
 
-  const handleModalSubmit = async (data: CreateNavigationInput | UpdateNavigationInput) => {
+  const handleModalSubmit = (data: CreateNavigationInput | UpdateNavigationInput) => {
     if (editingItem) {
-      await updateNavigation(editingItem.id, data as UpdateNavigationInput);
+      updateNavigation(editingItem.id, data as UpdateNavigationInput);
     } else {
-      await addNavigation(data as CreateNavigationInput);
+      addNavigation(data as CreateNavigationInput);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      await saveChanges();
+    } catch {
+      // error is already set in hook
     }
   };
 
@@ -72,6 +89,17 @@ export default function NavigationEditor() {
           <Plus size={16} />
           메뉴 추가
         </button>
+      </div>
+
+      {/* SaveBar */}
+      <div className="px-6 pt-4">
+        <SaveBar
+          isDirty={isDirty}
+          changeCount={changeCount}
+          isSaving={isSaving}
+          onSave={handleSave}
+          onRevert={revert}
+        />
       </div>
 
       {/* Error banner */}
@@ -110,7 +138,7 @@ export default function NavigationEditor() {
             items={navigations}
             onEdit={handleOpenEditModal}
             onDelete={deleteNavigation}
-            onToggle={(id) => toggleNavigation(id)}
+            onToggle={toggleNavigation}
             onReorder={reorderNavigations}
           />
         )}

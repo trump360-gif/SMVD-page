@@ -5,6 +5,8 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useNewsEditor } from '@/hooks/useNewsEditor';
+import { useBeforeUnload } from '@/hooks/useBeforeUnload';
+import { SaveBar } from '@/components/admin/shared/SaveBar';
 import {
   NewsArticleList,
   NewsBlogModal,
@@ -32,15 +34,22 @@ export default function NewsDashboard() {
   const {
     articles,
     isLoading,
+    isSaving,
+    isDirty,
+    changeCount,
     error,
     fetchArticles,
     addArticle,
     updateArticle,
     deleteArticle,
     reorderArticle,
+    saveChanges,
+    revert,
     initializeData,
     clearError,
   } = useNewsEditor();
+
+  useBeforeUnload(isDirty);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -87,7 +96,7 @@ export default function NewsDashboard() {
       ? articles
       : articles.filter((a) => a.category === activeCategory);
 
-  // ---- Article handlers ----
+  // ---- Article handlers (local-only) ----
 
   const handleAddArticle = () => {
     setEditingArticle(null);
@@ -99,32 +108,32 @@ export default function NewsDashboard() {
     setIsModalOpen(true);
   };
 
-  const handleArticleSubmit = async (data: CreateArticleInput | UpdateArticleInput) => {
+  const handleArticleSubmit = (data: CreateArticleInput | UpdateArticleInput) => {
     if (editingArticle) {
-      await updateArticle(editingArticle.id, data as UpdateArticleInput);
-      showSuccess('뉴스가 수정되었습니다');
+      updateArticle(editingArticle.id, data as UpdateArticleInput);
     } else {
-      await addArticle(data as CreateArticleInput);
-      showSuccess('뉴스가 추가되었습니다');
+      addArticle(data as CreateArticleInput);
     }
-    refreshPreview();
   };
 
-  const handleDeleteArticle = async (id: string) => {
-    await deleteArticle(id);
-    showSuccess('뉴스가 삭제되었습니다');
-    refreshPreview();
+  const handleDeleteArticle = (id: string) => {
+    deleteArticle(id);
   };
 
-  const handleReorderArticle = async (articleId: string, newOrder: number) => {
-    await reorderArticle(articleId, newOrder);
-    refreshPreview();
+  const handleReorderArticle = (articleId: string, newOrder: number) => {
+    reorderArticle(articleId, newOrder);
   };
 
-  const handleTogglePublish = async (article: NewsArticleData) => {
-    await updateArticle(article.id, { published: !article.published });
-    showSuccess(article.published ? '비공개로 변경되었습니다' : '공개로 변경되었습니다');
+  const handleTogglePublish = (article: NewsArticleData) => {
+    updateArticle(article.id, { published: !article.published });
+  };
+
+  // ---- Save ----
+
+  const handleSave = async () => {
+    await saveChanges();
     refreshPreview();
+    showSuccess('변경사항이 저장되었습니다');
   };
 
   // ---- Initialize ----
@@ -150,6 +159,15 @@ export default function NewsDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
+      {/* SaveBar */}
+      <SaveBar
+        isDirty={isDirty}
+        changeCount={changeCount}
+        isSaving={isSaving}
+        onSave={handleSave}
+        onRevert={revert}
+      />
+
       {/* Header */}
       <header className="bg-white shadow">
         <div className="max-w-full px-4 sm:px-6 lg:px-8 py-4">

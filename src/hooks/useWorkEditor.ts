@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useDirtyState } from './useDirtyState';
+import { deepEqual } from '@/lib/diffUtils';
 import type { TiptapContent } from '@/components/admin/shared/BlockEditor/types';
 
 // ---- Types ----
@@ -52,7 +54,7 @@ export interface CreateProjectInput {
   thumbnailImage: string;
   galleryImages: string[];
   published?: boolean;
-  content?: TiptapContent | null; // Tiptap JSON content
+  content?: TiptapContent | null;
 }
 
 export interface UpdateProjectInput {
@@ -68,7 +70,7 @@ export interface UpdateProjectInput {
   thumbnailImage?: string;
   galleryImages?: string[];
   published?: boolean;
-  content?: TiptapContent | null; // Tiptap JSON content
+  content?: TiptapContent | null;
 }
 
 export interface CreateExhibitionInput {
@@ -91,15 +93,44 @@ export interface UpdateExhibitionInput {
 
 // ---- Hook ----
 
+let tempIdCounter = 0;
+
 export function useWorkEditor() {
-  const [projects, setProjects] = useState<WorkProjectData[]>([]);
-  const [exhibitions, setExhibitions] = useState<WorkExhibitionData[]>([]);
+  const {
+    localState: projects,
+    setLocalState: setProjects,
+    snapshot: projectsSnapshot,
+    isDirty: projectsDirty,
+    changeCount: projectsChangeCount,
+    resetSnapshot: resetProjectsSnapshot,
+    revert: revertProjects,
+  } = useDirtyState<WorkProjectData[]>([]);
+
+  const {
+    localState: exhibitions,
+    setLocalState: setExhibitions,
+    snapshot: exhibitionsSnapshot,
+    isDirty: exhibitionsDirty,
+    changeCount: exhibitionsChangeCount,
+    resetSnapshot: resetExhibitionsSnapshot,
+    revert: revertExhibitions,
+  } = useDirtyState<WorkExhibitionData[]>([]);
+
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isDirty = projectsDirty || exhibitionsDirty;
+  const changeCount = projectsChangeCount + exhibitionsChangeCount;
 
   const clearError = useCallback(() => setError(null), []);
 
-  // ---- Projects ----
+  const revert = useCallback(() => {
+    revertProjects();
+    revertExhibitions();
+  }, [revertProjects, revertExhibitions]);
+
+  // ---- Fetch ----
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -110,96 +141,13 @@ export function useWorkEditor() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || '프로젝트 조회 실패');
-      setProjects(data.data || []);
+      resetProjectsSnapshot(data.data || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : '프로젝트 조회 실패');
     } finally {
       setIsLoading(false);
     }
-  }, []);
-
-  const addProject = useCallback(async (input: CreateProjectInput) => {
-    try {
-      setError(null);
-      const res = await fetch('/api/admin/work/projects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(input),
-        credentials: 'include',
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || '프로젝트 생성 실패');
-      setProjects((prev) => [...prev, data.data]);
-      return data.data as WorkProjectData;
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : '프로젝트 생성 실패';
-      setError(msg);
-      throw new Error(msg);
-    }
-  }, []);
-
-  const updateProject = useCallback(async (id: string, input: UpdateProjectInput) => {
-    try {
-      setError(null);
-      const res = await fetch(`/api/admin/work/projects/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(input),
-        credentials: 'include',
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || '프로젝트 수정 실패');
-      setProjects((prev) =>
-        prev.map((p) => (p.id === id ? data.data : p))
-      );
-      return data.data as WorkProjectData;
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : '프로젝트 수정 실패';
-      setError(msg);
-      throw new Error(msg);
-    }
-  }, []);
-
-  const deleteProject = useCallback(async (id: string) => {
-    try {
-      setError(null);
-      const res = await fetch(`/api/admin/work/projects/${id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || '프로젝트 삭제 실패');
-      }
-      setProjects((prev) => prev.filter((p) => p.id !== id));
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : '프로젝트 삭제 실패';
-      setError(msg);
-      throw new Error(msg);
-    }
-  }, []);
-
-  const reorderProject = useCallback(async (projectId: string, newOrder: number) => {
-    try {
-      setError(null);
-      const res = await fetch('/api/admin/work/projects/reorder', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectId, newOrder }),
-        credentials: 'include',
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || '순서 변경 실패');
-      // Refetch to get accurate order
-      await fetchProjects();
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : '순서 변경 실패';
-      setError(msg);
-      throw new Error(msg);
-    }
-  }, [fetchProjects]);
-
-  // ---- Exhibitions ----
+  }, [resetProjectsSnapshot]);
 
   const fetchExhibitions = useCallback(async () => {
     try {
@@ -210,93 +158,130 @@ export function useWorkEditor() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || '전시 조회 실패');
-      setExhibitions(data.data || []);
+      resetExhibitionsSnapshot(data.data || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : '전시 조회 실패');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [resetExhibitionsSnapshot]);
 
-  const addExhibition = useCallback(async (input: CreateExhibitionInput) => {
+  // ---- Projects: local-only mutations ----
+
+  const addProject = useCallback((input: CreateProjectInput) => {
+    const tempId = `temp_${Date.now()}_${++tempIdCounter}`;
+    const newProject: WorkProjectData = {
+      id: tempId,
+      slug: '',
+      title: input.title,
+      subtitle: input.subtitle,
+      category: input.category,
+      tags: input.tags,
+      author: input.author,
+      email: input.email,
+      description: input.description,
+      year: input.year,
+      heroImage: input.heroImage,
+      thumbnailImage: input.thumbnailImage,
+      galleryImages: input.galleryImages,
+      order: 0,
+      published: input.published ?? true,
+      content: input.content ?? null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    setProjects((prev) => {
+      newProject.order = prev.length;
+      return [...prev, newProject];
+    });
+    return newProject;
+  }, [setProjects]);
+
+  const updateProject = useCallback((id: string, input: UpdateProjectInput) => {
+    setProjects((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, ...input, updatedAt: new Date().toISOString() } : p))
+    );
+  }, [setProjects]);
+
+  const deleteProject = useCallback((id: string) => {
+    setProjects((prev) => prev.filter((p) => p.id !== id));
+  }, [setProjects]);
+
+  const reorderProject = useCallback((projectId: string, newOrder: number) => {
+    setProjects((prev) => {
+      const items = [...prev];
+      const idx = items.findIndex((p) => p.id === projectId);
+      if (idx === -1) return prev;
+      const [moved] = items.splice(idx, 1);
+      items.splice(newOrder, 0, moved);
+      return items.map((item, i) => ({ ...item, order: i }));
+    });
+  }, [setProjects]);
+
+  // ---- Exhibitions: local-only mutations ----
+
+  const addExhibition = useCallback((input: CreateExhibitionInput) => {
+    const tempId = `temp_${Date.now()}_${++tempIdCounter}`;
+    const newExhibition: WorkExhibitionData = {
+      id: tempId,
+      title: input.title,
+      subtitle: input.subtitle,
+      artist: input.artist,
+      image: input.image,
+      year: input.year || new Date().getFullYear().toString(),
+      order: 0,
+      published: input.published ?? true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    setExhibitions((prev) => {
+      newExhibition.order = prev.length;
+      return [...prev, newExhibition];
+    });
+    return newExhibition;
+  }, [setExhibitions]);
+
+  const updateExhibition = useCallback((id: string, input: UpdateExhibitionInput) => {
+    setExhibitions((prev) =>
+      prev.map((e) => (e.id === id ? { ...e, ...input, updatedAt: new Date().toISOString() } : e))
+    );
+  }, [setExhibitions]);
+
+  const deleteExhibition = useCallback((id: string) => {
+    setExhibitions((prev) => prev.filter((e) => e.id !== id));
+  }, [setExhibitions]);
+
+  const reorderExhibition = useCallback((exhibitionId: string, newOrder: number) => {
+    setExhibitions((prev) => {
+      const items = [...prev];
+      const idx = items.findIndex((e) => e.id === exhibitionId);
+      if (idx === -1) return prev;
+      const [moved] = items.splice(idx, 1);
+      items.splice(newOrder, 0, moved);
+      return items.map((item, i) => ({ ...item, order: i }));
+    });
+  }, [setExhibitions]);
+
+  // ---- Save all changes ----
+
+  const saveChanges = useCallback(async () => {
     try {
+      setIsSaving(true);
       setError(null);
-      const res = await fetch('/api/admin/work/exhibitions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(input),
-        credentials: 'include',
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || '전시 생성 실패');
-      setExhibitions((prev) => [...prev, data.data]);
-      return data.data as WorkExhibitionData;
+
+      await syncProjects(projectsSnapshot, projects);
+      await syncExhibitions(exhibitionsSnapshot, exhibitions);
+
+      // Re-fetch to sync snapshot with server state
+      await Promise.all([fetchProjects(), fetchExhibitions()]);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : '전시 생성 실패';
+      const msg = err instanceof Error ? err.message : '저장 실패';
       setError(msg);
       throw new Error(msg);
+    } finally {
+      setIsSaving(false);
     }
-  }, []);
-
-  const updateExhibition = useCallback(async (id: string, input: UpdateExhibitionInput) => {
-    try {
-      setError(null);
-      const res = await fetch(`/api/admin/work/exhibitions/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(input),
-        credentials: 'include',
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || '전시 수정 실패');
-      setExhibitions((prev) =>
-        prev.map((e) => (e.id === id ? data.data : e))
-      );
-      return data.data as WorkExhibitionData;
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : '전시 수정 실패';
-      setError(msg);
-      throw new Error(msg);
-    }
-  }, []);
-
-  const deleteExhibition = useCallback(async (id: string) => {
-    try {
-      setError(null);
-      const res = await fetch(`/api/admin/work/exhibitions/${id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || '전시 삭제 실패');
-      }
-      setExhibitions((prev) => prev.filter((e) => e.id !== id));
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : '전시 삭제 실패';
-      setError(msg);
-      throw new Error(msg);
-    }
-  }, []);
-
-  const reorderExhibition = useCallback(async (exhibitionId: string, newOrder: number) => {
-    try {
-      setError(null);
-      const res = await fetch('/api/admin/work/exhibitions/reorder', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ exhibitionId, newOrder }),
-        credentials: 'include',
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || '순서 변경 실패');
-      await fetchExhibitions();
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : '순서 변경 실패';
-      setError(msg);
-      throw new Error(msg);
-    }
-  }, [fetchExhibitions]);
+  }, [projects, exhibitions, projectsSnapshot, exhibitionsSnapshot, fetchProjects, fetchExhibitions]);
 
   // ---- Initialize ----
 
@@ -310,7 +295,6 @@ export function useWorkEditor() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || '초기화 실패');
-      // Refetch after initialization
       await Promise.all([fetchProjects(), fetchExhibitions()]);
       return data.data;
     } catch (err) {
@@ -323,25 +307,196 @@ export function useWorkEditor() {
   }, [fetchProjects, fetchExhibitions]);
 
   return {
-    // State
     projects,
     exhibitions,
     isLoading,
+    isSaving,
+    isDirty,
+    changeCount,
     error,
-    // Projects
     fetchProjects,
     addProject,
     updateProject,
     deleteProject,
     reorderProject,
-    // Exhibitions
     fetchExhibitions,
     addExhibition,
     updateExhibition,
     deleteExhibition,
     reorderExhibition,
-    // Utility
+    saveChanges,
+    revert,
     initializeData,
     clearError,
   };
+}
+
+// ---- Helpers for saveChanges ----
+
+async function syncProjects(
+  snapItems: WorkProjectData[],
+  localItems: WorkProjectData[]
+) {
+  const localIds = new Set(localItems.map((i) => i.id));
+  const snapMap = new Map(snapItems.map((i) => [i.id, i]));
+
+  // 1. Delete: in snapshot but not in local
+  for (const item of snapItems) {
+    if (!localIds.has(item.id)) {
+      const res = await fetch(`/api/admin/work/projects/${item.id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!res.ok) throw new Error('프로젝트 삭제 실패');
+    }
+  }
+
+  // 2. Create: temp IDs (new items)
+  for (const item of localItems) {
+    if (item.id.startsWith('temp_')) {
+      const res = await fetch('/api/admin/work/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: item.title,
+          subtitle: item.subtitle,
+          category: item.category,
+          tags: item.tags,
+          author: item.author,
+          email: item.email,
+          description: item.description,
+          year: item.year,
+          heroImage: item.heroImage,
+          thumbnailImage: item.thumbnailImage,
+          galleryImages: item.galleryImages,
+          published: item.published,
+          content: item.content,
+        }),
+        credentials: 'include',
+      });
+      if (!res.ok) throw new Error('프로젝트 생성 실패');
+    }
+  }
+
+  // 3. Update: existing items with changed fields
+  for (const item of localItems) {
+    if (item.id.startsWith('temp_')) continue;
+    const orig = snapMap.get(item.id);
+    if (!orig) continue;
+    if (!deepEqual(orig, item)) {
+      const res = await fetch(`/api/admin/work/projects/${item.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: item.title,
+          subtitle: item.subtitle,
+          category: item.category,
+          tags: item.tags,
+          author: item.author,
+          email: item.email,
+          description: item.description,
+          year: item.year,
+          heroImage: item.heroImage,
+          thumbnailImage: item.thumbnailImage,
+          galleryImages: item.galleryImages,
+          published: item.published,
+          content: item.content,
+        }),
+        credentials: 'include',
+      });
+      if (!res.ok) throw new Error('프로젝트 수정 실패');
+    }
+  }
+
+  // 4. Reorder
+  for (let i = 0; i < localItems.length; i++) {
+    const item = localItems[i];
+    if (item.id.startsWith('temp_')) continue;
+    const orig = snapMap.get(item.id);
+    if (orig && orig.order !== i) {
+      await fetch('/api/admin/work/projects/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId: item.id, newOrder: i }),
+        credentials: 'include',
+      });
+    }
+  }
+}
+
+async function syncExhibitions(
+  snapItems: WorkExhibitionData[],
+  localItems: WorkExhibitionData[]
+) {
+  const localIds = new Set(localItems.map((i) => i.id));
+  const snapMap = new Map(snapItems.map((i) => [i.id, i]));
+
+  // 1. Delete
+  for (const item of snapItems) {
+    if (!localIds.has(item.id)) {
+      const res = await fetch(`/api/admin/work/exhibitions/${item.id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!res.ok) throw new Error('전시 삭제 실패');
+    }
+  }
+
+  // 2. Create (temp IDs)
+  for (const item of localItems) {
+    if (item.id.startsWith('temp_')) {
+      const res = await fetch('/api/admin/work/exhibitions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: item.title,
+          subtitle: item.subtitle,
+          artist: item.artist,
+          image: item.image,
+          year: item.year,
+          published: item.published,
+        }),
+        credentials: 'include',
+      });
+      if (!res.ok) throw new Error('전시 생성 실패');
+    }
+  }
+
+  // 3. Update
+  for (const item of localItems) {
+    if (item.id.startsWith('temp_')) continue;
+    const orig = snapMap.get(item.id);
+    if (!orig) continue;
+    if (!deepEqual(orig, item)) {
+      const res = await fetch(`/api/admin/work/exhibitions/${item.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: item.title,
+          subtitle: item.subtitle,
+          artist: item.artist,
+          image: item.image,
+          year: item.year,
+          published: item.published,
+        }),
+        credentials: 'include',
+      });
+      if (!res.ok) throw new Error('전시 수정 실패');
+    }
+  }
+
+  // 4. Reorder
+  for (let i = 0; i < localItems.length; i++) {
+    const item = localItems[i];
+    if (item.id.startsWith('temp_')) continue;
+    const orig = snapMap.get(item.id);
+    if (orig && orig.order !== i) {
+      await fetch('/api/admin/work/exhibitions/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ exhibitionId: item.id, newOrder: i }),
+        credentials: 'include',
+      });
+    }
+  }
 }

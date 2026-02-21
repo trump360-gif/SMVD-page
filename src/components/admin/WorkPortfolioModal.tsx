@@ -26,7 +26,8 @@ interface WorkPortfolioModalProps {
     title: string;
     category: string;
     mediaId: string;
-  }) => Promise<void>;
+    media?: { id: string; filename: string; filepath: string };
+  }) => void | Promise<void>;
 }
 
 const CATEGORIES = ['UX/UI', 'Motion', 'Branding', 'Game design', 'Graphic'];
@@ -152,6 +153,11 @@ export default function WorkPortfolioModal({
         title: title.trim(),
         category,
         mediaId: uploadedImage.id,
+        media: {
+          id: uploadedImage.id,
+          filename: uploadedImage.filename,
+          filepath: uploadedImage.path,
+        },
       });
       onClose();
     } catch (err) {

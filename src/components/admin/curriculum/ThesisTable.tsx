@@ -10,9 +10,9 @@ import ThesisModal from './ThesisModal';
 
 interface ThesisTableProps {
   theses?: ThesisCardData[];
-  onAddThesis?: (thesis: ThesisCardData) => Promise<void>;
-  onEditThesis?: (index: number, thesis: ThesisCardData) => Promise<void>;
-  onDeleteThesis?: (index: number) => Promise<void>;
+  onAddThesis?: (thesis: ThesisCardData) => void | Promise<void>;
+  onEditThesis?: (index: number, thesis: ThesisCardData) => void | Promise<void>;
+  onDeleteThesis?: (index: number) => void | Promise<void>;
   isSaving?: boolean;
 }
 

@@ -5,6 +5,8 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useWorkEditor } from '@/hooks/useWorkEditor';
+import { useBeforeUnload } from '@/hooks/useBeforeUnload';
+import { SaveBar } from '@/components/admin/shared/SaveBar';
 import {
   WorkProjectList,
   WorkBlogModal,
@@ -40,6 +42,9 @@ export default function WorkDashboard() {
     projects,
     exhibitions,
     isLoading,
+    isSaving,
+    isDirty,
+    changeCount,
     error,
     fetchProjects,
     addProject,
@@ -51,9 +56,13 @@ export default function WorkDashboard() {
     updateExhibition,
     deleteExhibition,
     reorderExhibition,
+    saveChanges,
+    revert,
     initializeData,
     clearError,
   } = useWorkEditor();
+
+  useBeforeUnload(isDirty);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -102,55 +111,35 @@ export default function WorkDashboard() {
     setTimeout(() => setSuccessMessage(null), 3000);
   }, []);
 
-  // ---- Project handlers ----
+  // ---- Project handlers (local-only) ----
 
   const handleAddProject = () => {
     setEditingProject(null);
     setIsProjectModalOpen(true);
   };
 
-  const handleEditProject = async (project: WorkProjectData) => {
-    try {
-      // Fetch latest project data from DB to ensure sync with any recent changes
-      const res = await fetch(`/api/admin/work/projects/${project.id}`, {
-        credentials: 'include',
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || '프로젝트 조회 실패');
-      }
-      const data = await res.json();
-      setEditingProject(data.data);
-      setIsProjectModalOpen(true);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : '프로젝트 조회 실패';
-      alert(message);
-    }
+  const handleEditProject = (project: WorkProjectData) => {
+    setEditingProject(project);
+    setIsProjectModalOpen(true);
   };
 
-  const handleProjectSubmit = async (data: CreateProjectInput | UpdateProjectInput) => {
+  const handleProjectSubmit = (data: CreateProjectInput | UpdateProjectInput) => {
     if (editingProject) {
-      await updateProject(editingProject.id, data as UpdateProjectInput);
-      showSuccess('프로젝트가 수정되었습니다');
+      updateProject(editingProject.id, data as UpdateProjectInput);
     } else {
-      await addProject(data as CreateProjectInput);
-      showSuccess('프로젝트가 추가되었습니다');
+      addProject(data as CreateProjectInput);
     }
-    refreshPreview();
   };
 
-  const handleDeleteProject = async (id: string) => {
-    await deleteProject(id);
-    showSuccess('프로젝트가 삭제되었습니다');
-    refreshPreview();
+  const handleDeleteProject = (id: string) => {
+    deleteProject(id);
   };
 
-  const handleReorderProject = async (projectId: string, newOrder: number) => {
-    await reorderProject(projectId, newOrder);
-    refreshPreview();
+  const handleReorderProject = (projectId: string, newOrder: number) => {
+    reorderProject(projectId, newOrder);
   };
 
-  // ---- Exhibition handlers ----
+  // ---- Exhibition handlers (local-only) ----
 
   const handleAddExhibition = () => {
     setEditingExhibition(null);
@@ -162,26 +151,28 @@ export default function WorkDashboard() {
     setIsExhibitionModalOpen(true);
   };
 
-  const handleExhibitionSubmit = async (data: CreateExhibitionInput | UpdateExhibitionInput) => {
+  const handleExhibitionSubmit = (data: CreateExhibitionInput | UpdateExhibitionInput) => {
     if (editingExhibition) {
-      await updateExhibition(editingExhibition.id, data as UpdateExhibitionInput);
-      showSuccess('전시가 수정되었습니다');
+      updateExhibition(editingExhibition.id, data as UpdateExhibitionInput);
     } else {
-      await addExhibition(data as CreateExhibitionInput);
-      showSuccess('전시가 추가되었습니다');
+      addExhibition(data as CreateExhibitionInput);
     }
-    refreshPreview();
   };
 
-  const handleDeleteExhibition = async (id: string) => {
-    await deleteExhibition(id);
-    showSuccess('전시가 삭제되었습니다');
-    refreshPreview();
+  const handleDeleteExhibition = (id: string) => {
+    deleteExhibition(id);
   };
 
-  const handleReorderExhibition = async (exhibitionId: string, newOrder: number) => {
-    await reorderExhibition(exhibitionId, newOrder);
+  const handleReorderExhibition = (exhibitionId: string, newOrder: number) => {
+    reorderExhibition(exhibitionId, newOrder);
+  };
+
+  // ---- Save ----
+
+  const handleSave = async () => {
+    await saveChanges();
     refreshPreview();
+    showSuccess('변경사항이 저장되었습니다');
   };
 
   // ---- Initialize ----
@@ -207,6 +198,15 @@ export default function WorkDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
+      {/* SaveBar */}
+      <SaveBar
+        isDirty={isDirty}
+        changeCount={changeCount}
+        isSaving={isSaving}
+        onSave={handleSave}
+        onRevert={revert}
+      />
+
       {/* Header */}
       <header className="bg-white shadow">
         <div className="max-w-full px-4 sm:px-6 lg:px-8 py-4">

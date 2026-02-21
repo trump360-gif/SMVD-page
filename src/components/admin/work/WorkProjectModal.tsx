@@ -7,7 +7,7 @@ interface WorkProjectModalProps {
   isOpen: boolean;
   project?: WorkProjectData | null;
   onClose: () => void;
-  onSubmit: (data: CreateProjectInput | UpdateProjectInput) => Promise<void>;
+  onSubmit: (data: CreateProjectInput | UpdateProjectInput) => void;
 }
 
 const CATEGORIES = ['UX/UI', 'Motion', 'Branding', 'Game', 'Graphics'];
@@ -129,7 +129,7 @@ export default function WorkProjectModal({
         published,
       };
 
-      await onSubmit(data);
+      onSubmit(data);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : '저장 실패');

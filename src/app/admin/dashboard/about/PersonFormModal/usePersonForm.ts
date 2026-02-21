@@ -1,16 +1,17 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { AboutPerson } from '@/hooks/useAboutEditor';
 import type { PersonFormData } from './types';
 import { EMPTY_PROFESSOR_FORM, EMPTY_INSTRUCTOR_FORM } from './types';
+import { useModalDirtyState } from '@/hooks/useModalDirtyState';
 
 export function usePersonForm(
   isOpen: boolean,
   person: AboutPerson | null,
   role: 'professor' | 'instructor',
   onClose: () => void,
-  onSubmit: (data: PersonFormData) => Promise<void>
+  onSubmit: (data: PersonFormData) => void
 ) {
   const emptyForm =
     role === 'professor' ? EMPTY_PROFESSOR_FORM : EMPTY_INSTRUCTOR_FORM;
@@ -33,6 +34,39 @@ export function usePersonForm(
   const cvInputRef = useRef<HTMLInputElement>(null);
 
   const isEditing = !!person;
+
+  // ---- Dirty State ----
+  const formState = useMemo(() => ({
+    form, emailText, undergraduateText, graduateText,
+    educationText, experienceText,
+  }), [form, emailText, undergraduateText, graduateText,
+    educationText, experienceText]);
+
+  const {
+    isDirty,
+    revert,
+    showCloseConfirm,
+    setShowCloseConfirm,
+    handleClose,
+  } = useModalDirtyState(formState, isOpen);
+
+  const handleCloseAttempt = useCallback(() => {
+    handleClose(onClose);
+  }, [handleClose, onClose]);
+
+  const handleRevert = useCallback(() => {
+    const snapshot = revert();
+    setForm(snapshot.form);
+    setEmailText(snapshot.emailText);
+    setUndergraduateText(snapshot.undergraduateText);
+    setGraduateText(snapshot.graduateText);
+    setEducationText(snapshot.educationText);
+    setExperienceText(snapshot.experienceText);
+    // Reset file upload state
+    setProfileImageFile(null);
+    setCvFile(null);
+    setProfileImagePreview(snapshot.form.profileImage || '');
+  }, [revert]);
 
   // Init form when modal opens
   useEffect(() => {
@@ -79,12 +113,12 @@ export function usePersonForm(
     }
   }, [isOpen, person, role, emptyForm]);
 
-  // Escape key handler
+  // Escape key handler - use handleCloseAttempt
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') handleCloseAttempt();
     },
-    [onClose]
+    [handleCloseAttempt]
   );
 
   useEffect(() => {
@@ -279,9 +313,7 @@ export function usePersonForm(
                   .filter(Boolean),
               },
             };
-      await onSubmit(data);
-    } catch {
-      // Error handled in parent
+      onSubmit(data);
     } finally {
       setIsSaving(false);
     }
@@ -315,5 +347,11 @@ export function usePersonForm(
     handleCvFileChange,
     uploadCvFile,
     handleSubmit,
+    // Dirty state
+    isDirty,
+    handleCloseAttempt,
+    handleRevert,
+    showCloseConfirm,
+    setShowCloseConfirm,
   };
 }

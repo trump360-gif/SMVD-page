@@ -34,8 +34,8 @@ interface ExhibitionItem {
 interface ExhibitionItemsListProps {
   items: ExhibitionItem[];
   sectionId: string;
-  onReorder: (itemId: string, newOrder: number) => Promise<void>;
-  onDelete: (itemId: string) => Promise<void>;
+  onReorder: (itemId: string, newOrder: number) => void | Promise<void>;
+  onDelete: (itemId: string) => void | Promise<void>;
 }
 
 function SortableItem({
@@ -43,7 +43,7 @@ function SortableItem({
   onDelete,
 }: {
   item: ExhibitionItem;
-  onDelete: (itemId: string) => Promise<void>;
+  onDelete: (itemId: string) => void | Promise<void>;
 }) {
   const {
     attributes,

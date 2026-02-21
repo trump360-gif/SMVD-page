@@ -7,7 +7,7 @@ export interface PersonFormModalProps {
   person: AboutPerson | null;
   role: 'professor' | 'instructor';
   onClose: () => void;
-  onSubmit: (data: PersonFormData) => Promise<void>;
+  onSubmit: (data: PersonFormData) => void;
 }
 
 export const EMPTY_PROFESSOR_FORM: PersonFormData = {

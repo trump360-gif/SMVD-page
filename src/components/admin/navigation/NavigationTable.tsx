@@ -24,9 +24,9 @@ import type { NavigationItem, ReorderItem } from '@/hooks/useNavigationEditor';
 interface NavigationTableProps {
   items: NavigationItem[];
   onEdit: (item: NavigationItem) => void;
-  onDelete: (id: string) => Promise<void>;
-  onToggle: (id: string) => Promise<void | NavigationItem>;
-  onReorder: (items: ReorderItem[]) => Promise<void>;
+  onDelete: (id: string) => void | Promise<void>;
+  onToggle: (id: string) => void | Promise<void | NavigationItem>;
+  onReorder: (items: ReorderItem[]) => void | Promise<void>;
 }
 
 export default function NavigationTable({

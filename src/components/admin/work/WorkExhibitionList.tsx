@@ -24,8 +24,8 @@ import type { WorkExhibitionData } from '@/hooks/useWorkEditor';
 interface WorkExhibitionListProps {
   items: WorkExhibitionData[];
   onEdit: (exhibition: WorkExhibitionData) => void;
-  onDelete: (id: string) => Promise<void>;
-  onReorder: (exhibitionId: string, newOrder: number) => Promise<void>;
+  onDelete: (id: string) => void;
+  onReorder: (exhibitionId: string, newOrder: number) => void;
 }
 
 function SortableExhibitionItem({
@@ -35,7 +35,7 @@ function SortableExhibitionItem({
 }: {
   item: WorkExhibitionData;
   onEdit: (exhibition: WorkExhibitionData) => void;
-  onDelete: (id: string) => Promise<void>;
+  onDelete: (id: string) => void;
 }) {
   const {
     attributes,
@@ -99,10 +99,10 @@ function SortableExhibitionItem({
           <Pencil size={18} />
         </button>
         <button
-          onClick={async () => {
+          onClick={() => {
             if (!confirm(`"${item.title}" 전시를 삭제하시겠습니까?`)) return;
             try {
-              await onDelete(item.id);
+              onDelete(item.id);
             } catch (err) {
               alert(err instanceof Error ? err.message : '삭제 실패');
             }
@@ -150,7 +150,7 @@ export default function WorkExhibitionList({
         setItems(newItems);
 
         try {
-          await onReorder(active.id as string, newIndex);
+          onReorder(active.id as string, newIndex);
         } catch (err) {
           setItems(itemsBeforeDragRef.current);
           alert(err instanceof Error ? err.message : '순서 변경 실패');

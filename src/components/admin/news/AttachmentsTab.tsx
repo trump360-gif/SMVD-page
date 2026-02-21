@@ -19,11 +19,12 @@ export default function AttachmentsTab({
     const files = e.target.files;
     if (!files) return;
 
+    const now = Date.now();
     const newAttachments: AttachmentData[] = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       newAttachments.push({
-        id: `temp-${Date.now()}-${i}`,
+        id: `temp-${now}-${i}-${Math.random().toString(36).slice(2, 8)}`,
         filename: file.name,
         size: file.size,
         uploadedAt: new Date().toISOString(),
@@ -56,11 +57,12 @@ export default function AttachmentsTab({
     const files = e.dataTransfer.files;
     if (!files) return;
 
+    const now = Date.now();
     const newAttachments: AttachmentData[] = [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       newAttachments.push({
-        id: `temp-${Date.now()}-${i}`,
+        id: `temp-${now}-${i}-${Math.random().toString(36).slice(2, 8)}`,
         filename: file.name,
         size: file.size,
         uploadedAt: new Date().toISOString(),
@@ -115,11 +117,11 @@ export default function AttachmentsTab({
             {attachments.length} file{attachments.length !== 1 ? 's' : ''}
           </h3>
           <div className="space-y-2 max-h-60 overflow-y-auto">
-            {attachments.map((attachment) => (
-              <div
-                key={attachment.id}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
-              >
+            {attachments.map((attachment, index) => {
+              const itemKey = attachment.id || `attachment-${index}`;
+              return (
+              <div key={itemKey} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
+
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">
                     {attachment.filename}
@@ -139,7 +141,8 @@ export default function AttachmentsTab({
                   <Trash2 size={16} />
                 </button>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       ) : (

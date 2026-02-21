@@ -14,7 +14,7 @@ interface NewsArticleModalProps {
   isOpen: boolean;
   article?: NewsArticleData | null;
   onClose: () => void;
-  onSubmit: (data: CreateArticleInput | UpdateArticleInput) => Promise<void>;
+  onSubmit: (data: CreateArticleInput | UpdateArticleInput) => void;
 }
 
 const CATEGORIES = ['Notice', 'Event', 'Lecture', 'Exhibition', 'Awards', 'Recruiting'];
@@ -144,7 +144,7 @@ export default function NewsArticleModal({
         published,
       };
 
-      await onSubmit(data);
+      onSubmit(data);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : '저장 실패');

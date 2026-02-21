@@ -20,7 +20,7 @@ interface SocialLinkModalProps {
   existingLink: SocialLinkItem | null;
   takenPlatforms: SocialPlatform[];
   onClose: () => void;
-  onSubmit: (platform: SocialPlatform, input: UpsertSocialLinkInput) => Promise<void>;
+  onSubmit: (platform: SocialPlatform, input: UpsertSocialLinkInput) => void | Promise<void>;
 }
 
 export default function SocialLinkModal({

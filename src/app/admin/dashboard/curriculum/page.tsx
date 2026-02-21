@@ -5,8 +5,10 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { UndergraduateEditor, GraduateEditor } from '@/components/admin/curriculum';
-import type { UndergraduateContent, GraduateContent } from '@/lib/validation/curriculum';
+import type { GraduateContent } from '@/lib/validation/curriculum';
 import { useCurriculumEditor } from '@/hooks/curriculum';
+import { SaveBar } from '@/components/admin/shared/SaveBar';
+import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 
 type ActiveTab = 'undergraduate' | 'graduate';
 
@@ -21,13 +23,16 @@ export default function CurriculumDashboard() {
     sections,
     isLoading,
     isSaving,
+    isDirty,
+    changeCount,
     error,
-    successMessage,
     getUndergraduateContent,
     getGraduateContent,
     getSection,
     fetchSections,
-    updateSection,
+    saveChanges,
+    revert,
+    updateContent,
     addCourse,
     updateCourse,
     deleteCourse,
@@ -39,6 +44,8 @@ export default function CurriculumDashboard() {
     deleteThesis,
     clearError,
   } = useCurriculumEditor();
+
+  useBeforeUnload(isDirty);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -81,7 +88,12 @@ export default function CurriculumDashboard() {
     }
   }, [activeSubTab, activeTab, refreshPreview]);
 
-  // Get sections for API calls
+  const handleSave = useCallback(async () => {
+    const ok = await saveChanges();
+    if (ok) refreshPreview();
+  }, [saveChanges, refreshPreview]);
+
+  // Get sections for editor props
   const undergradSection = getSection('CURRICULUM_UNDERGRADUATE');
   const undergradContent = getUndergraduateContent();
   const gradSection = getSection('CURRICULUM_GRADUATE');
@@ -119,17 +131,19 @@ export default function CurriculumDashboard() {
         </div>
       </header>
 
+      {/* SaveBar */}
+      <SaveBar
+        isDirty={isDirty}
+        changeCount={changeCount}
+        isSaving={isSaving}
+        onSave={handleSave}
+        onRevert={revert}
+      />
+
       {/* Main Content */}
       <main className="flex-1 flex overflow-hidden">
         {/* Left Side - Editor */}
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Success message */}
-          {successMessage && (
-            <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-              {successMessage}
-            </div>
-          )}
-
           {/* Error message */}
           {error && (
             <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center justify-between">
@@ -171,40 +185,34 @@ export default function CurriculumDashboard() {
           {activeTab === 'undergraduate' && (
             <UndergraduateEditor
               content={undergradContent}
-              onSaveCourse={async (semIdx, course) => {
+              onSaveCourse={(semIdx, course) => {
                 if (undergradSection) {
-                  const ok = await addCourse(undergradSection.id, semIdx, course);
-                  if (ok) refreshPreview();
+                  addCourse(undergradSection.id, semIdx, course);
                 }
               }}
-              onEditCourse={async (semIdx, cIdx, course) => {
+              onEditCourse={(semIdx, cIdx, course) => {
                 if (undergradSection) {
-                  const ok = await updateCourse(undergradSection.id, semIdx, cIdx, course);
-                  if (ok) refreshPreview();
+                  updateCourse(undergradSection.id, semIdx, cIdx, course);
                 }
               }}
-              onDeleteCourse={async (semIdx, cIdx) => {
+              onDeleteCourse={(semIdx, cIdx) => {
                 if (undergradSection) {
-                  const ok = await deleteCourse(undergradSection.id, semIdx, cIdx);
-                  if (ok) refreshPreview();
+                  deleteCourse(undergradSection.id, semIdx, cIdx);
                 }
               }}
-              onReorderCourses={async (semIdx, courses) => {
+              onReorderCourses={(semIdx, courses) => {
                 if (undergradSection) {
-                  const ok = await reorderCourses(undergradSection.id, semIdx, courses);
-                  if (ok) refreshPreview();
+                  reorderCourses(undergradSection.id, semIdx, courses);
                 }
               }}
-              onSaveTracks={async (tracks) => {
+              onSaveTracks={(tracks) => {
                 if (undergradSection) {
-                  const ok = await updateTracks(undergradSection.id, tracks);
-                  if (ok) refreshPreview();
+                  updateTracks(undergradSection.id, tracks);
                 }
               }}
-              onSaveModules={async (modules) => {
+              onSaveModules={(modules) => {
                 if (undergradSection) {
-                  const ok = await updateModules(undergradSection.id, modules);
-                  if (ok) refreshPreview();
+                  updateModules(undergradSection.id, modules);
                 }
               }}
               isSaving={isSaving}
@@ -216,7 +224,7 @@ export default function CurriculumDashboard() {
             <GraduateEditor
               content={gradContent}
               onSubTabChange={setActiveSubTab}
-              onSaveMaster={async (courses) => {
+              onSaveMaster={(courses) => {
                 if (gradSection && gradContent) {
                   const updatedContent: GraduateContent = {
                     ...gradContent,
@@ -226,11 +234,10 @@ export default function CurriculumDashboard() {
                       rightCourses: courses.rightCourses,
                     },
                   };
-                  const ok = await updateSection(gradSection.id, 'CURRICULUM_GRADUATE', updatedContent);
-                  if (ok) refreshPreview();
+                  updateContent(gradSection.id, updatedContent);
                 }
               }}
-              onSaveDoctor={async (courses) => {
+              onSaveDoctor={(courses) => {
                 if (gradSection && gradContent) {
                   const updatedContent: GraduateContent = {
                     ...gradContent,
@@ -240,26 +247,22 @@ export default function CurriculumDashboard() {
                       rightCourses: courses.rightCourses,
                     },
                   };
-                  const ok = await updateSection(gradSection.id, 'CURRICULUM_GRADUATE', updatedContent);
-                  if (ok) refreshPreview();
+                  updateContent(gradSection.id, updatedContent);
                 }
               }}
-              onAddThesis={async (thesis) => {
+              onAddThesis={(thesis) => {
                 if (gradSection) {
-                  const ok = await addThesis(gradSection.id, thesis);
-                  if (ok) refreshPreview();
+                  addThesis(gradSection.id, thesis);
                 }
               }}
-              onEditThesis={async (index, thesis) => {
+              onEditThesis={(index, thesis) => {
                 if (gradSection) {
-                  const ok = await updateThesis(gradSection.id, index, thesis);
-                  if (ok) refreshPreview();
+                  updateThesis(gradSection.id, index, thesis);
                 }
               }}
-              onDeleteThesis={async (index) => {
+              onDeleteThesis={(index) => {
                 if (gradSection) {
-                  const ok = await deleteThesis(gradSection.id, index);
-                  if (ok) refreshPreview();
+                  deleteThesis(gradSection.id, index);
                 }
               }}
               isSaving={isSaving}

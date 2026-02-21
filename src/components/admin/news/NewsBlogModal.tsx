@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { ModalShell } from '@/components/admin/shared/BlogEditorModal';
 import { TiptapEditor } from '@/components/admin/shared/TiptapEditor';
 import type { TiptapContent } from '@/components/admin/shared/BlockEditor/types';
@@ -17,12 +17,14 @@ import type {
 } from '@/hooks/useNewsEditor';
 import ArticleInfoForm from './ArticleInfoForm';
 import AttachmentsTab from './AttachmentsTab';
+import { useModalDirtyState } from '@/hooks/useModalDirtyState';
+import { UnsavedChangesDialog } from '@/components/admin/shared/UnsavedChangesDialog';
 
 interface NewsBlogModalProps {
   isOpen: boolean;
   article?: NewsArticleData | null;
   onClose: () => void;
-  onSubmit: (data: CreateArticleInput | UpdateArticleInput) => Promise<void>;
+  onSubmit: (data: CreateArticleInput | UpdateArticleInput) => void;
 }
 
 export default function NewsBlogModal({
@@ -57,6 +59,37 @@ export default function NewsBlogModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // ---- Dirty State ----
+  const formState = useMemo(() => ({
+    title, category, excerpt, thumbnailImage, publishedAt,
+    published, editorContent, attachments,
+  }), [title, category, excerpt, thumbnailImage, publishedAt,
+    published, editorContent, attachments]);
+
+  const {
+    isDirty,
+    revert,
+    showCloseConfirm,
+    setShowCloseConfirm,
+    handleClose,
+  } = useModalDirtyState(formState, isOpen);
+
+  const handleCloseAttempt = useCallback(() => {
+    handleClose(onClose);
+  }, [handleClose, onClose]);
+
+  const handleRevert = useCallback(() => {
+    const snapshot = revert();
+    setTitle(snapshot.title);
+    setCategory(snapshot.category);
+    setExcerpt(snapshot.excerpt);
+    setThumbnailImage(snapshot.thumbnailImage);
+    setPublishedAt(snapshot.publishedAt);
+    setPublished(snapshot.published);
+    setEditorContent(snapshot.editorContent);
+    setAttachments(snapshot.attachments);
+  }, [revert]);
+
   // ---- Reset form ----
   useEffect(() => {
     if (isOpen) {
@@ -76,7 +109,6 @@ export default function NewsBlogModal({
           setAttachments([]);
         }
 
-        // Parse Tiptap JSON content or default
         let tiptapContent: TiptapContent = { type: 'doc', content: [] };
         if (article.content) {
           if (typeof article.content === 'string') {
@@ -180,13 +212,13 @@ export default function NewsBlogModal({
         category,
         excerpt: excerpt.trim() || undefined,
         thumbnailImage,
-        content: editorContent, // Store Tiptap JSON directly
+        content: editorContent,
         attachments: uploadedAttachments.length > 0 ? uploadedAttachments : null,
         publishedAt: publishedAt || new Date().toISOString().split('T')[0],
         published,
       };
 
-      await onSubmit(data);
+      onSubmit(data);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Save failed');
@@ -195,7 +227,6 @@ export default function NewsBlogModal({
     }
   };
 
-  // Handle TiptapEditor content change
   const handleTiptapChange = useCallback((content: TiptapContent) => {
     setEditorContent(content);
   }, []);
@@ -207,60 +238,70 @@ export default function NewsBlogModal({
   ];
 
   return (
-    <ModalShell
-      isOpen={isOpen}
-      onClose={onClose}
-      title="News 상세페이지 작성"
-      subtitle={isEditing ? `편집중: ${article?.title}` : '새로운 뉴스 기사 또는 행사를 만드세요'}
-      tabs={tabs}
-      activeTab={activeTab}
-      onTabChange={(key) => setActiveTab(key as 'info' | 'content' | 'attachments')}
-      error={error}
-      onClearError={() => setError(null)}
-      footerInfo=""
-      submitLabel={isSubmitting ? '저장중...' : isEditing ? '변경사항 저장' : '기사 생성'}
-      isSubmitting={isSubmitting}
-      onSubmit={handleSubmit}
-    >
-      {/* Tab: Basic Info */}
-      {activeTab === 'info' && (
-        <ArticleInfoForm
-          title={title}
-          category={category}
-          excerpt={excerpt}
-          thumbnailImage={thumbnailImage}
-          publishedAt={publishedAt}
-          published={published}
-          onTitleChange={setTitle}
-          onCategoryChange={setCategory}
-          onExcerptChange={setExcerpt}
-          onThumbnailImageChange={(url) => setThumbnailImage(url || '')}
-          onPublishedAtChange={setPublishedAt}
-          onPublishedChange={setPublished}
-        />
-      )}
-
-      {/* Tab: Content (TiptapEditor) */}
-      {activeTab === 'content' && (
-        <div className="p-6 flex-1 min-h-0 flex flex-col">
-          <TiptapEditor
-            content={editorContent}
-            contentFormat="tiptap"
-            onChange={handleTiptapChange}
-            placeholder="뉴스 기사 내용을 입력하세요..."
-            fontSize={16}
-            fontWeight="400"
-            color="#1b1d1f"
-            lineHeight={1.8}
-            className="flex-1"
+    <>
+      <ModalShell
+        isOpen={isOpen}
+        onClose={handleCloseAttempt}
+        title="News 상세페이지 작성"
+        subtitle={isEditing ? `편집중: ${article?.title}` : '새로운 뉴스 기사 또는 행사를 만드세요'}
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={(key) => setActiveTab(key as 'info' | 'content' | 'attachments')}
+        error={error}
+        onClearError={() => setError(null)}
+        footerInfo=""
+        submitLabel={isSubmitting ? '저장중...' : isEditing ? '변경사항 저장' : '기사 생성'}
+        isSubmitting={isSubmitting}
+        onSubmit={handleSubmit}
+        isDirty={isDirty}
+        onRevert={handleRevert}
+      >
+        {activeTab === 'info' && (
+          <ArticleInfoForm
+            title={title}
+            category={category}
+            excerpt={excerpt}
+            thumbnailImage={thumbnailImage}
+            publishedAt={publishedAt}
+            published={published}
+            onTitleChange={setTitle}
+            onCategoryChange={setCategory}
+            onExcerptChange={setExcerpt}
+            onThumbnailImageChange={(url) => setThumbnailImage(url || '')}
+            onPublishedAtChange={setPublishedAt}
+            onPublishedChange={setPublished}
           />
-        </div>
-      )}
+        )}
 
-      {/* Tab: Attachments */}
-      {activeTab === 'attachments' && (
-        <AttachmentsTab attachments={attachments} onAttachmentsChange={setAttachments} />
-      )}
-    </ModalShell>
+        {activeTab === 'content' && (
+          <div className="p-6 flex-1 min-h-0 flex flex-col">
+            <TiptapEditor
+              content={editorContent}
+              contentFormat="tiptap"
+              onChange={handleTiptapChange}
+              placeholder="뉴스 기사 내용을 입력하세요..."
+              fontSize={16}
+              fontWeight="400"
+              color="#1b1d1f"
+              lineHeight={1.8}
+              className="flex-1"
+            />
+          </div>
+        )}
+
+        {activeTab === 'attachments' && (
+          <AttachmentsTab attachments={attachments} onAttachmentsChange={setAttachments} />
+        )}
+      </ModalShell>
+
+      <UnsavedChangesDialog
+        isOpen={showCloseConfirm}
+        onKeepEditing={() => setShowCloseConfirm(false)}
+        onDiscard={() => {
+          setShowCloseConfirm(false);
+          onClose();
+        }}
+      />
+    </>
   );
 }

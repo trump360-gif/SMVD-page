@@ -21,7 +21,11 @@ interface ExhibitionItemModalProps {
     media?: { id: string; filename: string; filepath: string };
   };
   onClose: () => void;
-  onSubmit: (data: { year: string; mediaId: string }) => Promise<void>;
+  onSubmit: (data: {
+    year: string;
+    mediaId: string;
+    media?: { id: string; filename: string; filepath: string };
+  }) => void | Promise<void>;
 }
 
 export default function ExhibitionItemModal({
@@ -136,6 +140,11 @@ export default function ExhibitionItemModal({
       await onSubmit({
         year: year.trim(),
         mediaId: uploadedImage.id,
+        media: {
+          id: uploadedImage.id,
+          filename: uploadedImage.filename,
+          filepath: uploadedImage.path,
+        },
       });
       onClose();
     } catch (err) {

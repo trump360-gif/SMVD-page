@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Plus, AlertCircle, RefreshCw } from 'lucide-react';
 import { useFooterEditor } from '@/hooks/useFooterEditor';
+import { useBeforeUnload } from '@/hooks/useBeforeUnload';
+import { SaveBar } from '@/components/admin/shared/SaveBar';
 import { SOCIAL_PLATFORMS } from '@/types/schemas';
 import FooterTextForm from './FooterTextForm';
 import SocialLinkTable from './SocialLinkTable';
@@ -13,17 +15,24 @@ export default function FooterEditor() {
   const {
     footer,
     isLoading,
+    isSaving,
+    isDirty,
+    changeCount,
     error,
     fetchFooter,
-    updateFooter,
+    updateFooterText,
     upsertSocialLink,
     deleteSocialLink,
     toggleSocialLink,
+    saveChanges,
+    revert,
     clearError,
   } = useFooterEditor();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlatform, setEditingPlatform] = useState<SocialPlatform | null>(null);
+
+  useBeforeUnload(isDirty);
 
   useEffect(() => {
     fetchFooter();
@@ -49,19 +58,19 @@ export default function FooterEditor() {
     setEditingPlatform(null);
   };
 
-  const handleModalSubmit = async (
+  const handleModalSubmit = (
     platform: SocialPlatform,
-    input: { url: string; isActive: boolean }
+    input: { url: string; isActive: boolean },
   ) => {
-    await upsertSocialLink(platform, input);
+    upsertSocialLink(platform, input);
   };
 
-  const handleToggle = async (platform: SocialPlatform) => {
-    await toggleSocialLink(platform);
-  };
-
-  const handleDelete = async (platform: SocialPlatform) => {
-    await deleteSocialLink(platform);
+  const handleSave = async () => {
+    try {
+      await saveChanges();
+    } catch {
+      // error is already set in hook
+    }
   };
 
   return (
@@ -69,6 +78,15 @@ export default function FooterEditor() {
       className="space-y-6"
       data-testid="footer-editor"
     >
+      {/* SaveBar */}
+      <SaveBar
+        isDirty={isDirty}
+        changeCount={changeCount}
+        isSaving={isSaving}
+        onSave={handleSave}
+        onRevert={revert}
+      />
+
       {/* Global error banner */}
       {error && (
         <div
@@ -113,7 +131,15 @@ export default function FooterEditor() {
               </p>
             </div>
             <div className="px-6 py-5">
-              <FooterTextForm footer={footer} onSave={updateFooter} />
+              <FooterTextForm
+                title={footer.title ?? ''}
+                description={footer.description ?? ''}
+                address={footer.address ?? ''}
+                phone={footer.phone ?? ''}
+                email={footer.email ?? ''}
+                copyright={footer.copyright ?? ''}
+                onChange={updateFooterText}
+              />
             </div>
           </div>
 
@@ -145,8 +171,8 @@ export default function FooterEditor() {
               <SocialLinkTable
                 socialLinks={socialLinks}
                 onEdit={handleOpenEditModal}
-                onDelete={handleDelete}
-                onToggle={handleToggle}
+                onDelete={deleteSocialLink}
+                onToggle={toggleSocialLink}
               />
             </div>
           </div>

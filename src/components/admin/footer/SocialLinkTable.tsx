@@ -7,8 +7,8 @@ import type { SocialLinksMap } from '@/hooks/useFooterEditor';
 interface SocialLinkTableProps {
   socialLinks: SocialLinksMap;
   onEdit: (platform: SocialPlatform) => void;
-  onDelete: (platform: SocialPlatform) => Promise<void>;
-  onToggle: (platform: SocialPlatform) => Promise<void>;
+  onDelete: (platform: SocialPlatform) => void;
+  onToggle: (platform: SocialPlatform) => void;
 }
 
 export default function SocialLinkTable({

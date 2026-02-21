@@ -82,11 +82,11 @@ const DEFAULT_THESES: ThesisCardData[] = [
 
 export interface GraduateEditorProps {
   content?: GraduateContent | null;
-  onSaveMaster?: (courses: { leftCourses: GraduateCourseItemData[]; rightCourses: GraduateCourseItemData[] }) => Promise<void>;
-  onSaveDoctor?: (courses: { leftCourses: GraduateCourseItemData[]; rightCourses: GraduateCourseItemData[] }) => Promise<void>;
-  onAddThesis?: (thesis: ThesisCardData) => Promise<void>;
-  onEditThesis?: (index: number, thesis: ThesisCardData) => Promise<void>;
-  onDeleteThesis?: (index: number) => Promise<void>;
+  onSaveMaster?: (courses: { leftCourses: GraduateCourseItemData[]; rightCourses: GraduateCourseItemData[] }) => void | Promise<void>;
+  onSaveDoctor?: (courses: { leftCourses: GraduateCourseItemData[]; rightCourses: GraduateCourseItemData[] }) => void | Promise<void>;
+  onAddThesis?: (thesis: ThesisCardData) => void | Promise<void>;
+  onEditThesis?: (index: number, thesis: ThesisCardData) => void | Promise<void>;
+  onDeleteThesis?: (index: number) => void | Promise<void>;
   onSubTabChange?: (subTab: 'master' | 'doctor' | 'thesis') => void;
   isSaving?: boolean;
 }

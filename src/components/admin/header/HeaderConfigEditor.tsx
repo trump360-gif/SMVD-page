@@ -3,25 +3,31 @@
 import { useEffect, useState } from 'react';
 import { AlertCircle, RefreshCw, Upload, X } from 'lucide-react';
 import { useHeaderConfigEditor } from '@/hooks/useHeaderConfigEditor';
-import type { Media } from '@/types/schemas';
+import { useBeforeUnload } from '@/hooks/useBeforeUnload';
+import { SaveBar } from '@/components/admin/shared/SaveBar';
 
 export default function HeaderConfigEditor() {
   const {
-    headerConfig,
+    editState,
     isLoading,
+    isSaving,
+    isDirty,
+    changeCount,
     error: hookError,
     fetchHeaderConfig,
-    updateHeaderConfig,
+    updateLocal,
+    saveChanges,
+    revert,
     clearError,
   } = useHeaderConfigEditor();
 
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isUploadingFavicon, setIsUploadingFavicon] = useState(false);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [faviconPreview, setFaviconPreview] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   const error = uploadError || hookError;
+
+  useBeforeUnload(isDirty);
 
   const handleClearError = () => {
     setUploadError(null);
@@ -31,15 +37,6 @@ export default function HeaderConfigEditor() {
   useEffect(() => {
     fetchHeaderConfig();
   }, [fetchHeaderConfig]);
-
-  useEffect(() => {
-    if (headerConfig?.logoImage?.filepath) {
-      setLogoPreview(headerConfig.logoImage.filepath);
-    }
-    if (headerConfig?.faviconImage?.filepath) {
-      setFaviconPreview(headerConfig.faviconImage.filepath);
-    }
-  }, [headerConfig]);
 
   const handleLogoUpload = async (file: File) => {
     if (!file) return;
@@ -63,12 +60,11 @@ export default function HeaderConfigEditor() {
       const response = await res.json();
       const uploadedMedia = response.data;
 
-      // Update header config with new logo
-      await updateHeaderConfig({
+      // Local-only: update edit state (no API call)
+      updateLocal({
         logoImageId: uploadedMedia.id,
+        logoPreview: uploadedMedia.path,
       });
-
-      setLogoPreview(uploadedMedia.path);
     } catch (err) {
       const msg = err instanceof Error ? err.message : '로고 업로드 실패';
       setUploadError(msg);
@@ -100,12 +96,11 @@ export default function HeaderConfigEditor() {
       const response = await res.json();
       const uploadedMedia = response.data;
 
-      // Update header config with new favicon
-      await updateHeaderConfig({
+      // Local-only: update edit state (no API call)
+      updateLocal({
         faviconImageId: uploadedMedia.id,
+        faviconPreview: uploadedMedia.path,
       });
-
-      setFaviconPreview(uploadedMedia.path);
     } catch (err) {
       const msg = err instanceof Error ? err.message : '파비콘 업로드 실패';
       setUploadError(msg);
@@ -115,25 +110,19 @@ export default function HeaderConfigEditor() {
     }
   };
 
-  const handleRemoveLogo = async () => {
-    try {
-      await updateHeaderConfig({
-        logoImageId: null,
-      });
-      setLogoPreview(null);
-    } catch (err) {
-      console.error('로고 제거 실패');
-    }
+  const handleRemoveLogo = () => {
+    updateLocal({ logoImageId: null, logoPreview: null });
   };
 
-  const handleRemoveFavicon = async () => {
+  const handleRemoveFavicon = () => {
+    updateLocal({ faviconImageId: null, faviconPreview: null });
+  };
+
+  const handleSave = async () => {
     try {
-      await updateHeaderConfig({
-        faviconImageId: null,
-      });
-      setFaviconPreview(null);
-    } catch (err) {
-      console.error('파비콘 제거 실패');
+      await saveChanges();
+    } catch {
+      // error is already set in hook
     }
   };
 
@@ -150,6 +139,17 @@ export default function HeaderConfigEditor() {
             메인페이지 헤더에 표시될 로고와 브라우저 탭에 표시될 파비콘을 관리합니다.
           </p>
         </div>
+      </div>
+
+      {/* SaveBar */}
+      <div className="px-6 pt-4">
+        <SaveBar
+          isDirty={isDirty}
+          changeCount={changeCount}
+          isSaving={isSaving}
+          onSave={handleSave}
+          onRevert={revert}
+        />
       </div>
 
       {/* Error banner */}
@@ -196,9 +196,9 @@ export default function HeaderConfigEditor() {
 
               {/* Logo Preview */}
               <div className="flex items-center justify-center w-full h-32 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden">
-                {logoPreview ? (
+                {editState.logoPreview ? (
                   <img
-                    src={logoPreview}
+                    src={editState.logoPreview}
                     alt="Logo preview"
                     className="max-w-full max-h-full object-contain"
                   />
@@ -228,7 +228,7 @@ export default function HeaderConfigEditor() {
               </div>
 
               {/* Remove Logo */}
-              {logoPreview && (
+              {editState.logoPreview && (
                 <button
                   onClick={handleRemoveLogo}
                   className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors"
@@ -251,9 +251,9 @@ export default function HeaderConfigEditor() {
 
               {/* Favicon Preview */}
               <div className="flex items-center justify-center w-full h-32 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden">
-                {faviconPreview ? (
+                {editState.faviconPreview ? (
                   <img
-                    src={faviconPreview}
+                    src={editState.faviconPreview}
                     alt="Favicon preview"
                     className="max-w-full max-h-full object-contain"
                   />
@@ -283,7 +283,7 @@ export default function HeaderConfigEditor() {
               </div>
 
               {/* Remove Favicon */}
-              {faviconPreview && (
+              {editState.faviconPreview && (
                 <button
                   onClick={handleRemoveFavicon}
                   className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors"

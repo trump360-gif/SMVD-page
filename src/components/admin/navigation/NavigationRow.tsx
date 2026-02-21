@@ -8,8 +8,8 @@ import type { NavigationItem } from '@/hooks/useNavigationEditor';
 interface NavigationRowProps {
   item: NavigationItem;
   onEdit: (item: NavigationItem) => void;
-  onDelete: (id: string) => Promise<void>;
-  onToggle: (id: string) => Promise<void | NavigationItem>;
+  onDelete: (id: string) => void | Promise<void>;
+  onToggle: (id: string) => void | Promise<void | NavigationItem>;
 }
 
 export default function NavigationRow({

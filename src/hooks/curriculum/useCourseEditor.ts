@@ -1,178 +1,98 @@
 "use client";
 
 import { useCallback } from "react";
-import type { CourseData } from "@/lib/validation/curriculum";
-import type { ApiResponse, CurriculumSection } from "./types";
+import type {
+  CourseData,
+  UndergraduateContent,
+} from "@/lib/validation/curriculum";
+import type { CurriculumSection } from "./types";
 
 interface UseCourseEditorDeps {
-  updateState: (partial: { isSaving: boolean }) => void;
-  showSuccess: (message: string) => void;
-  showError: (message: string) => void;
-  updateSectionInState: (sectionId: string, data: CurriculumSection | undefined) => void;
+  sections: CurriculumSection[];
+  updateContent: (
+    sectionId: string,
+    content: UndergraduateContent
+  ) => void;
 }
 
 /**
- * Course CRUD operations for undergraduate curriculum.
+ * Course CRUD operations (local-only) for undergraduate curriculum.
  */
 export function useCourseEditor({
-  updateState,
-  showSuccess,
-  showError,
-  updateSectionInState,
+  sections,
+  updateContent,
 }: UseCourseEditorDeps) {
-  const addCourse = useCallback(
-    async (
-      sectionId: string,
-      semesterIndex: number,
-      course: CourseData
-    ): Promise<boolean> => {
-      try {
-        updateState({ isSaving: true });
-
-        const response = await fetch("/api/admin/curriculum/courses", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ sectionId, semesterIndex, course }),
-        });
-
-        const data: ApiResponse = await response.json();
-
-        if (!response.ok || !data.success) {
-          throw new Error(data.message || "과목 추가에 실패했습니다");
-        }
-
-        updateSectionInState(sectionId, data.data);
-        showSuccess("과목이 추가되었습니다");
-        return true;
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "과목 추가에 실패했습니다";
-        updateState({ isSaving: false });
-        showError(message);
-        return false;
-      }
+  const getContent = useCallback(
+    (sectionId: string): UndergraduateContent | null => {
+      const section = sections.find((s) => s.id === sectionId);
+      return section ? (section.content as UndergraduateContent) : null;
     },
-    [updateState, showSuccess, showError, updateSectionInState]
+    [sections]
+  );
+
+  const addCourse = useCallback(
+    (sectionId: string, semesterIndex: number, course: CourseData) => {
+      const content = getContent(sectionId);
+      if (!content) return;
+      const newSemesters = content.semesters.map((sem, idx) => {
+        if (idx !== semesterIndex) return sem;
+        return { ...sem, courses: [...sem.courses, course] };
+      });
+      updateContent(sectionId, { ...content, semesters: newSemesters });
+    },
+    [getContent, updateContent]
   );
 
   const updateCourse = useCallback(
-    async (
+    (
       sectionId: string,
       semesterIndex: number,
       courseIndex: number,
       course: CourseData
-    ): Promise<boolean> => {
-      try {
-        updateState({ isSaving: true });
-
-        const response = await fetch("/api/admin/curriculum/courses", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            sectionId,
-            semesterIndex,
-            courseIndex,
-            course,
-          }),
-        });
-
-        const data: ApiResponse = await response.json();
-
-        if (!response.ok || !data.success) {
-          throw new Error(data.message || "과목 수정에 실패했습니다");
-        }
-
-        updateSectionInState(sectionId, data.data);
-        showSuccess("과목이 수정되었습니다");
-        return true;
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "과목 수정에 실패했습니다";
-        updateState({ isSaving: false });
-        showError(message);
-        return false;
-      }
+    ) => {
+      const content = getContent(sectionId);
+      if (!content) return;
+      const newSemesters = content.semesters.map((sem, idx) => {
+        if (idx !== semesterIndex) return sem;
+        return {
+          ...sem,
+          courses: sem.courses.map((c, ci) =>
+            ci === courseIndex ? course : c
+          ),
+        };
+      });
+      updateContent(sectionId, { ...content, semesters: newSemesters });
     },
-    [updateState, showSuccess, showError, updateSectionInState]
+    [getContent, updateContent]
   );
 
   const deleteCourse = useCallback(
-    async (
-      sectionId: string,
-      semesterIndex: number,
-      courseIndex: number
-    ): Promise<boolean> => {
-      try {
-        updateState({ isSaving: true });
-
-        const response = await fetch("/api/admin/curriculum/courses", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ sectionId, semesterIndex, courseIndex }),
-        });
-
-        const data: ApiResponse = await response.json();
-
-        if (!response.ok || !data.success) {
-          throw new Error(data.message || "과목 삭제에 실패했습니다");
-        }
-
-        updateSectionInState(sectionId, data.data);
-        showSuccess("과목이 삭제되었습니다");
-        return true;
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "과목 삭제에 실패했습니다";
-        updateState({ isSaving: false });
-        showError(message);
-        return false;
-      }
+    (sectionId: string, semesterIndex: number, courseIndex: number) => {
+      const content = getContent(sectionId);
+      if (!content) return;
+      const newSemesters = content.semesters.map((sem, idx) => {
+        if (idx !== semesterIndex) return sem;
+        return {
+          ...sem,
+          courses: sem.courses.filter((_, ci) => ci !== courseIndex),
+        };
+      });
+      updateContent(sectionId, { ...content, semesters: newSemesters });
     },
-    [updateState, showSuccess, showError, updateSectionInState]
+    [getContent, updateContent]
   );
 
   const reorderCourses = useCallback(
-    async (
-      sectionId: string,
-      semesterIndex: number,
-      courses: CourseData[]
-    ): Promise<boolean> => {
-      try {
-        updateState({ isSaving: true });
-
-        const response = await fetch(
-          "/api/admin/curriculum/courses/reorder",
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({ sectionId, semesterIndex, courses }),
-          }
-        );
-
-        const data: ApiResponse = await response.json();
-
-        if (!response.ok || !data.success) {
-          throw new Error(data.message || "과목 순서 변경에 실패했습니다");
-        }
-
-        updateSectionInState(sectionId, data.data);
-        showSuccess("과목 순서가 변경되었습니다");
-        return true;
-      } catch (err) {
-        const message =
-          err instanceof Error
-            ? err.message
-            : "과목 순서 변경에 실패했습니다";
-        updateState({ isSaving: false });
-        showError(message);
-        return false;
-      }
+    (sectionId: string, semesterIndex: number, courses: CourseData[]) => {
+      const content = getContent(sectionId);
+      if (!content) return;
+      const newSemesters = content.semesters.map((sem, idx) => {
+        if (idx !== semesterIndex) return sem;
+        return { ...sem, courses };
+      });
+      updateContent(sectionId, { ...content, semesters: newSemesters });
     },
-    [updateState, showSuccess, showError, updateSectionInState]
+    [getContent, updateContent]
   );
 
   return {

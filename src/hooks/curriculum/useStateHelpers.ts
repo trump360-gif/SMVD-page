@@ -2,59 +2,41 @@
 
 import { useState, useCallback } from "react";
 import type { UndergraduateContent, GraduateContent } from "@/lib/validation/curriculum";
+import { useDirtyState } from "../useDirtyState";
 import type {
   CurriculumSection,
-  CurriculumEditorState,
   ApiListResponse,
 } from "./types";
 
 /**
- * Core state management and helper functions for the curriculum editor.
- * Provides state, section lookup, fetch, and generic section update.
+ * Core state management for the curriculum editor.
+ * Uses useDirtyState for snapshot/local state tracking.
  */
 export function useStateHelpers() {
-  const [state, setState] = useState<CurriculumEditorState>({
-    sections: [],
-    isLoading: false,
-    isSaving: false,
-    error: null,
-    successMessage: null,
-  });
+  const {
+    localState: sections,
+    setLocalState: setSections,
+    snapshot: sectionsSnapshot,
+    isDirty,
+    changeCount,
+    resetSnapshot,
+    revert,
+  } = useDirtyState<CurriculumSection[]>([]);
 
-  // Helper: partial state update
-  const updateState = useCallback(
-    (partial: Partial<CurriculumEditorState>) => {
-      setState((prev) => ({ ...prev, ...partial }));
-    },
-    []
-  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Helper: show success message (auto-dismiss after 3s)
-  const showSuccess = useCallback(
-    (message: string) => {
-      updateState({ successMessage: message, error: null });
-      setTimeout(() => updateState({ successMessage: null }), 3000);
-    },
-    [updateState]
-  );
-
-  // Helper: show error message
-  const showError = useCallback(
-    (message: string) => {
-      updateState({ error: message, successMessage: null });
-    },
-    [updateState]
-  );
+  const clearError = useCallback(() => setError(null), []);
 
   // Helper: get section by type
   const getSection = useCallback(
     (type: "CURRICULUM_UNDERGRADUATE" | "CURRICULUM_GRADUATE") => {
-      return state.sections.find((s) => s.type === type) || null;
+      return sections.find((s) => s.type === type) || null;
     },
-    [state.sections]
+    [sections]
   );
 
-  // Helper: get undergraduate content
   const getUndergraduateContent =
     useCallback((): UndergraduateContent | null => {
       const section = getSection("CURRICULUM_UNDERGRADUATE");
@@ -62,7 +44,6 @@ export function useStateHelpers() {
       return section.content as UndergraduateContent;
     }, [getSection]);
 
-  // Helper: get graduate content
   const getGraduateContent = useCallback((): GraduateContent | null => {
     const section = getSection("CURRICULUM_GRADUATE");
     if (!section) return null;
@@ -72,7 +53,8 @@ export function useStateHelpers() {
   // Fetch all sections
   const fetchSections = useCallback(async (): Promise<boolean> => {
     try {
-      updateState({ isLoading: true, error: null });
+      setIsLoading(true);
+      setError(null);
       const response = await fetch("/api/admin/curriculum/sections", {
         credentials: "include",
       });
@@ -83,53 +65,46 @@ export function useStateHelpers() {
         throw new Error(data.message || "섹션 조회에 실패했습니다");
       }
 
-      updateState({ sections: data.data || [], isLoading: false });
+      resetSnapshot(data.data || []);
       return true;
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다";
-      updateState({ isLoading: false });
-      showError(message);
+      setError(message);
       return false;
+    } finally {
+      setIsLoading(false);
     }
-  }, [updateState, showError]);
+  }, [resetSnapshot]);
 
-  // Update section in local state after API response
-  const updateSectionInState = useCallback(
-    (sectionId: string, newData: CurriculumSection | undefined) => {
-      if (!newData) return;
-      setState((prev) => ({
-        ...prev,
-        sections: prev.sections.map((s) =>
-          s.id === sectionId ? newData : s
-        ),
-        isSaving: false,
-      }));
+  // Local-only: update section content
+  const updateContent = useCallback(
+    (sectionId: string, newContent: UndergraduateContent | GraduateContent) => {
+      setSections((prev) =>
+        prev.map((s) =>
+          s.id === sectionId ? { ...s, content: newContent } : s
+        )
+      );
     },
-    []
+    [setSections]
   );
 
-  // Clear messages
-  const clearError = useCallback(() => {
-    updateState({ error: null });
-  }, [updateState]);
-
-  const clearSuccessMessage = useCallback(() => {
-    updateState({ successMessage: null });
-  }, [updateState]);
-
   return {
-    state,
-    setState,
-    updateState,
-    showSuccess,
-    showError,
+    sections,
+    sectionsSnapshot,
+    isDirty,
+    changeCount,
+    isLoading,
+    isSaving,
+    setIsSaving,
+    error,
+    setError,
     getSection,
     getUndergraduateContent,
     getGraduateContent,
     fetchSections,
-    updateSectionInState,
+    updateContent,
+    revert,
     clearError,
-    clearSuccessMessage,
   };
 }

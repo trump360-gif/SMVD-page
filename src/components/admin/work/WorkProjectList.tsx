@@ -24,8 +24,8 @@ import type { WorkProjectData } from '@/hooks/useWorkEditor';
 interface WorkProjectListProps {
   items: WorkProjectData[];
   onEdit: (project: WorkProjectData) => void;
-  onDelete: (id: string) => Promise<void>;
-  onReorder: (projectId: string, newOrder: number) => Promise<void>;
+  onDelete: (id: string) => void;
+  onReorder: (projectId: string, newOrder: number) => void;
 }
 
 function SortableProjectItem({
@@ -35,7 +35,7 @@ function SortableProjectItem({
 }: {
   item: WorkProjectData;
   onEdit: (project: WorkProjectData) => void;
-  onDelete: (id: string) => Promise<void>;
+  onDelete: (id: string) => void;
 }) {
   const {
     attributes,
@@ -106,10 +106,10 @@ function SortableProjectItem({
           <Pencil size={18} />
         </button>
         <button
-          onClick={async () => {
+          onClick={() => {
             if (!confirm(`"${item.title}" 프로젝트를 삭제하시겠습니까?`)) return;
             try {
-              await onDelete(item.id);
+              onDelete(item.id);
             } catch (err) {
               alert(err instanceof Error ? err.message : '삭제 실패');
             }
@@ -157,7 +157,7 @@ export default function WorkProjectList({
         setItems(newItems);
 
         try {
-          await onReorder(active.id as string, newIndex);
+          onReorder(active.id as string, newIndex);
         } catch (err) {
           setItems(itemsBeforeDragRef.current);
           alert(err instanceof Error ? err.message : '순서 변경 실패');

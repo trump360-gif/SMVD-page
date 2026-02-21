@@ -35,8 +35,8 @@ interface WorkPortfolio {
 interface WorkPortfolioListProps {
   items: WorkPortfolio[];
   sectionId: string;
-  onReorder: (itemId: string, newOrder: number) => Promise<void>;
-  onDelete: (itemId: string) => Promise<void>;
+  onReorder: (itemId: string, newOrder: number) => void | Promise<void>;
+  onDelete: (itemId: string) => void | Promise<void>;
 }
 
 function SortableWorkItem({
@@ -44,7 +44,7 @@ function SortableWorkItem({
   onDelete,
 }: {
   item: WorkPortfolio;
-  onDelete: (itemId: string) => Promise<void>;
+  onDelete: (itemId: string) => void | Promise<void>;
 }) {
   const {
     attributes,

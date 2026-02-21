@@ -3,10 +3,12 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useAboutEditor, AboutSection, AboutPerson } from '@/hooks/useAboutEditor';
+import { useAboutEditor } from '@/hooks/useAboutEditor';
+import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import Link from 'next/link';
 import SectionEditor from './SectionEditor';
 import PeopleManager from './PeopleManager';
+import { SaveBar } from '@/components/admin/shared/SaveBar';
 
 export default function AboutDashboard() {
   const { data: session, status } = useSession();
@@ -15,18 +17,28 @@ export default function AboutDashboard() {
   const {
     sections,
     people,
+    isDirty,
+    changeCount,
     isLoading,
+    isSaving,
     error,
     fetchSections,
+    updateSectionLocal,
+    reorderSections,
+    revertSections,
     fetchPeople,
-    updateSection,
     addPerson,
     updatePerson,
     deletePerson,
     reorderPeople,
+    revertPeople,
+    saveChanges,
+    revert,
   } = useAboutEditor();
   const [activeTab, setActiveTab] = useState<'sections' | 'people'>('sections');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  useBeforeUnload(isDirty);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -44,11 +56,9 @@ export default function AboutDashboard() {
   const refreshPreview = useCallback(() => {
     if (iframeRef.current) {
       try {
-        // contentWindow.location.reload()를 사용해 더 안정적으로 리로드
         if (iframeRef.current.contentWindow) {
           iframeRef.current.contentWindow.location.reload();
         } else {
-          // contentWindow가 없으면 src 재할당으로 폴백
           const url = iframeRef.current.src;
           if (url) {
             const baseUrl = url.split('?')[0];
@@ -56,7 +66,6 @@ export default function AboutDashboard() {
           }
         }
       } catch (error) {
-        // 크로스-오리진 에러가 나면 src 재할당으로 폴백
         const url = iframeRef.current.src;
         if (url) {
           const baseUrl = url.split('?')[0];
@@ -71,6 +80,14 @@ export default function AboutDashboard() {
     setTimeout(() => setSuccessMessage(null), 3000);
   }, []);
 
+  // ---- Save ----
+
+  const handleSave = async () => {
+    await saveChanges();
+    refreshPreview();
+    showSuccess('변경사항이 저장되었습니다.');
+  };
+
   if (status === 'loading' || isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -81,6 +98,15 @@ export default function AboutDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
+      {/* SaveBar - unified for both tabs */}
+      <SaveBar
+        isDirty={isDirty}
+        changeCount={changeCount}
+        isSaving={isSaving}
+        onSave={handleSave}
+        onRevert={revert}
+      />
+
       {/* Header */}
       <header className="bg-white shadow">
         <div className="max-w-full px-4 sm:px-6 lg:px-8 py-4">
@@ -149,7 +175,7 @@ export default function AboutDashboard() {
           {activeTab === 'sections' && (
             <div className="space-y-4">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-700 text-sm">
-                💡 교수/강사 정보는 "<strong>교수/강사 관리</strong>" 탭에서 관리하세요.
+                교수/강사 정보는 "<strong>교수/강사 관리</strong>" 탭에서 관리하세요.
               </div>
 
               {sections.length === 0 ? (
@@ -163,11 +189,7 @@ export default function AboutDashboard() {
                   <SectionEditor
                     key={section.id}
                     section={section}
-                    onSave={async (sectionId, type, title, content) => {
-                      await updateSection(sectionId, type, title, content);
-                      refreshPreview();
-                      showSuccess('섹션이 저장되었습니다.');
-                    }}
+                    onChange={updateSectionLocal}
                   />
                 ))
               )}
@@ -178,24 +200,17 @@ export default function AboutDashboard() {
           {activeTab === 'people' && (
             <PeopleManager
               people={people}
-              onAdd={async (data) => {
-                await addPerson(data);
-                refreshPreview();
-                showSuccess('새로운 교수/강사가 추가되었습니다.');
+              onAdd={(data) => {
+                addPerson(data);
               }}
-              onUpdate={async (id, data) => {
-                await updatePerson(id, data);
-                refreshPreview();
-                showSuccess('교수/강사 정보가 수정되었습니다.');
+              onUpdate={(id, data) => {
+                updatePerson(id, data);
               }}
-              onDelete={async (id) => {
-                await deletePerson(id);
-                refreshPreview();
-                showSuccess('교수/강사가 삭제되었습니다.');
+              onDelete={(id) => {
+                deletePerson(id);
               }}
-              onReorder={async (id, newOrder) => {
-                await reorderPeople(id, newOrder);
-                refreshPreview();
+              onReorder={(id, newOrder) => {
+                reorderPeople(id, newOrder);
               }}
             />
           )}
