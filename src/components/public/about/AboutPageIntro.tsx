@@ -21,7 +21,7 @@ export default function AboutPageIntro({
   const titleFontSize = isMobile ? '24px' : isTablet ? '32px' : '48px';
   const descriptionFontSize = isMobile ? '14px' : isTablet ? '16px' : '18px';
   const imageHeight = isMobile ? '196px' : isTablet ? '300px' : '500px';
-  const containerWidth = isMobile ? '100%' : isTablet ? '100%' : '1360px';
+  const containerWidth = '100%';
   const descriptionWidth = isMobile ? '353px' : isTablet ? '100%' : '848px';
 
   return (
@@ -29,7 +29,7 @@ export default function AboutPageIntro({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        alignItems: isMobile ? 'center' : 'flex-end',
+        alignItems: isMobile ? 'center' : 'flex-start',
         gap: containerGap,
         width: '100%',
         paddingLeft: isMobile ? `${PADDING.mobile}px` : 0,
