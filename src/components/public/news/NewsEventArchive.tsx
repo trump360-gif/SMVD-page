@@ -158,6 +158,7 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
             fontFamily: 'Satoshi',
             color: '#1b1d1fff',
             margin: '0',
+            padding: '8px 0',
           }}
         >
           News&Event
