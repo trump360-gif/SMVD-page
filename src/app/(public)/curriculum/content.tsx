@@ -18,16 +18,13 @@ export default function CurriculumContent({
 
   // Responsive variables
   const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop;
-  const containerPaddingVertical = isMobile ? '24px' : isTablet ? '32px' : '80px';
-  const containerPaddingBottom = isMobile ? '24px' : isTablet ? '32px' : '61px';
-  const sectionGap = isMobile ? '30px' : isTablet ? '60px' : '100px';
 
   return (
     <div
       style={{
         width: '100%',
-        paddingTop: containerPaddingVertical,
-        paddingBottom: containerPaddingBottom,
+        paddingTop: '0px',
+        paddingBottom: '61px',
         paddingLeft: `${containerPadding}px`,
         paddingRight: `${containerPadding}px`,
         backgroundColor: '#ffffffff',
@@ -39,7 +36,7 @@ export default function CurriculumContent({
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
-          gap: sectionGap,
+          gap: '40px',
         }}
       >
         {/* Curriculum Tab Component */}
