@@ -65,9 +65,6 @@ export default function AboutContent({
 
   // Responsive variables
   const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop;
-  const containerPaddingTop = isMobile ? '24px' : isTablet ? '32px' : '60px';
-  const containerPaddingVertical = isMobile ? '24px' : isTablet ? '32px' : '80px';
-  const containerPaddingBottom = isMobile ? '24px' : isTablet ? '32px' : '61px';
   const tabButtonFontSize = isMobile ? '16px' : isTablet ? '18px' : '24px';
   const tabButtonGap = isMobile ? '20px' : isTablet ? '30px' : '40px';
   const sectionGap = isMobile ? '40px' : isTablet ? '40px' : '50px';
@@ -80,102 +77,78 @@ export default function AboutContent({
   }, [searchParams]);
 
   return (
-    <>
-      {/* Tab Header Section */}
+    <div
+      style={{
+        width: '100%',
+        paddingTop: '0px',
+        paddingBottom: '61px',
+        paddingLeft: `${containerPadding}px`,
+        paddingRight: `${containerPadding}px`,
+        backgroundColor: '#ffffffff',
+      }}
+    >
       <div
         style={{
-          width: '100%',
-          paddingTop: containerPaddingTop,
-          paddingBottom: '0px',
-          paddingLeft: `${containerPadding}px`,
-          paddingRight: `${containerPadding}px`,
-          backgroundColor: '#ffffffff',
+          maxWidth: '1440px',
+          margin: '0 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: sectionGap,
         }}
       >
+        {/* Tab Buttons */}
         <div
           style={{
             display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
+            gap: tabButtonGap,
+            borderBottom: '2px solid #141414ff',
+            paddingBottom: isMobile ? '16px' : '20px',
           }}
         >
-          {/* Tab Buttons */}
-          <div
+          <button
+            onClick={() => {
+              setActiveTab('major');
+              router.push('/about');
+            }}
             style={{
-              display: 'flex',
-              gap: tabButtonGap,
-              borderBottom: '1px solid #141414ff',
-              paddingBottom: '10px',
+              backgroundColor: 'transparent',
+              border: 'none',
+              fontSize: tabButtonFontSize,
+              fontWeight: activeTab === 'major' ? '700' : '400',
+              color: activeTab === 'major' ? '#141414ff' : '#7b828eff',
+              fontFamily: 'Satoshi',
+              cursor: 'pointer',
+              padding: '8px 0',
+              margin: '0',
+              transition: 'all 0.2s ease',
             }}
           >
-            <button
-              onClick={() => {
-                setActiveTab('major');
-                router.push('/about');
-              }}
-              style={{
-                backgroundColor: 'transparent',
-                border: 'none',
-                fontSize: tabButtonFontSize,
-                fontWeight: activeTab === 'major' ? '700' : '400',
-                color: '#141414ff',
-                fontFamily: 'Inter',
-                cursor: 'pointer',
-                padding: '0',
-                transition: 'all 0.2s ease',
-                borderBottom: activeTab === 'major' ? '2px solid #141414ff' : 'none',
-                paddingBottom: '10px',
-                marginBottom: '-10px',
-              }}
-            >
-              About Major
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab('people');
-                router.push('/about?tab=people');
-              }}
-              style={{
-                backgroundColor: 'transparent',
-                border: 'none',
-                fontSize: tabButtonFontSize,
-                fontWeight: activeTab === 'people' ? '700' : '400',
-                color: '#141414ff',
-                fontFamily: 'Inter',
-                cursor: 'pointer',
-                padding: '0',
-                transition: 'all 0.2s ease',
-                borderBottom: activeTab === 'people' ? '2px solid #141414ff' : 'none',
-                paddingBottom: '10px',
-                marginBottom: '-10px',
-              }}
-            >
-              Our People
-            </button>
-          </div>
+            About Major
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('people');
+              router.push('/about?tab=people');
+            }}
+            style={{
+              backgroundColor: 'transparent',
+              border: 'none',
+              fontSize: tabButtonFontSize,
+              fontWeight: activeTab === 'people' ? '700' : '400',
+              color: activeTab === 'people' ? '#141414ff' : '#7b828eff',
+              fontFamily: 'Satoshi',
+              cursor: 'pointer',
+              padding: '8px 0',
+              margin: '0',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            Our People
+          </button>
         </div>
-      </div>
 
-      {/* Main Content Container */}
-      <div
-        style={{
-          width: '100%',
-          paddingTop: containerPaddingVertical,
-          paddingBottom: containerPaddingBottom,
-          paddingLeft: `${containerPadding}px`,
-          paddingRight: `${containerPadding}px`,
-          backgroundColor: '#ffffffff',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '1440px',
-            margin: '0 auto',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {/* About Major Tab */}
+        {/* About Major Tab */}
+        {activeTab === 'major' && (
           <div
             id="sections"
             style={{
@@ -184,38 +157,34 @@ export default function AboutContent({
               gap: sectionGap,
             }}
           >
-            {activeTab === 'major' && (
-              <>
-                <AboutPageIntro
-                  title={introData?.title}
-                  description={introData?.description}
-                  imageSrc={introData?.imageSrc}
-                />
-                <AboutPageVision
-                  title={visionData?.title}
-                  content={visionData?.content}
-                  chips={visionData?.chips}
-                />
-                <AboutPageHistory
-                  title={historyData?.title}
-                  introText={historyData?.introText}
-                  timelineItems={historyData?.timelineItems}
-                />
-              </>
-            )}
+            <AboutPageIntro
+              title={introData?.title}
+              description={introData?.description}
+              imageSrc={introData?.imageSrc}
+            />
+            <AboutPageVision
+              title={visionData?.title}
+              content={visionData?.content}
+              chips={visionData?.chips}
+            />
+            <AboutPageHistory
+              title={historyData?.title}
+              introText={historyData?.introText}
+              timelineItems={historyData?.timelineItems}
+            />
           </div>
+        )}
 
-          {/* Our People Tab */}
+        {/* Our People Tab */}
+        {activeTab === 'people' && (
           <div id="people">
-            {activeTab === 'people' && (
-              <OurPeopleTab
-                professors={peopleData?.professors}
-                instructors={peopleData?.instructors}
-              />
-            )}
+            <OurPeopleTab
+              professors={peopleData?.professors}
+              instructors={peopleData?.instructors}
+            />
           </div>
-        </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }
