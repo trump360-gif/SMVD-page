@@ -160,13 +160,19 @@ export function Header({ navigation, headerConfig }: HeaderProps) {
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
                 style={{
-                  fontSize: '24px',
-                  fontWeight: isActive(item.href) ? '700' : '500',
-                  color: isActive(item.href) ? '#1A46E7' : '#141414ff',
-                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  height: '48px',
+                  padding: '0 20px',
+                  fontSize: '18px',
+                  fontWeight: '500',
                   fontFamily: 'Helvetica',
-                  paddingBottom: '8px',
-                  borderBottom: '1px solid #f3f4f6ff',
+                  textDecoration: 'none',
+                  border: '1px solid #141414ff',
+                  backgroundColor: isActive(item.href) ? '#141414ff' : '#ffffffff',
+                  color: isActive(item.href) ? '#ffffffff' : '#141414ff',
+                  borderRadius: '0px',
+                  width: 'fit-content',
                 }}
               >
                 {item.label}
