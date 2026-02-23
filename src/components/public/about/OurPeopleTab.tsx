@@ -229,6 +229,7 @@ export default function OurPeopleTab({
                       objectFit: 'contain',
                     }}
                     priority={false}
+                    quality={80}
                   />
                 ) : (
                   <div
