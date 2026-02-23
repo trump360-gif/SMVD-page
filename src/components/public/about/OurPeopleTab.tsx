@@ -1,7 +1,7 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Professor {
   id: string;
@@ -102,12 +102,6 @@ export default function OurPeopleTab({
   professors = defaultProfessors,
   instructors = defaultInstructors,
 }: OurPeopleTabProps) {
-  const router = useRouter();
-
-  const handleProfessorClick = (profId: string) => {
-    router.push(`/professor/${profId}`);
-  };
-
   return (
     <div className="flex flex-col gap-[30px] sm:gap-10 lg:gap-[60px] w-full">
       {/* Professor Section */}
@@ -119,10 +113,10 @@ export default function OurPeopleTab({
         {/* Professor List - Fluid Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-5 sm:gap-3 lg:gap-5 flex-1 w-full">
           {professors.map((prof) => (
-            <div
+            <Link
               key={prof.id}
-              onClick={() => handleProfessorClick(prof.id)}
-              className="cursor-pointer flex flex-col gap-0 w-full transition-all duration-200 hover:-translate-y-1 hover:opacity-80"
+              href={`/professor/${prof.id}`}
+              className="cursor-pointer flex flex-col gap-0 w-full transition-all duration-200 hover:-translate-y-1 hover:opacity-80 no-underline"
             >
               <div className="cursor-pointer relative w-full h-auto aspect-236/356 bg-white rounded-none border-none">
                 {prof.profileImage ? (
@@ -155,7 +149,7 @@ export default function OurPeopleTab({
                   </p>
                 )}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
