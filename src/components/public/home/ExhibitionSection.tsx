@@ -321,6 +321,7 @@ export default function ExhibitionSection({
                     }}
                     priority={idx === 0}
                     draggable={false}
+                    quality={80}
                   />
                 </div>
               </div>

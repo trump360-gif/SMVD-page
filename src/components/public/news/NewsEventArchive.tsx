@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useResponsive } from '@/lib/responsive';
 import { PADDING } from '@/constants/responsive';
 
@@ -228,25 +229,22 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
             {/* Thumbnail Image */}
             <div
               style={{
+                position: 'relative',
                 width: imageThumbnailSize,
                 height: imageThumbnailSize,
                 minWidth: imageThumbnailSize,
                 backgroundColor: '#ebecf0ff',
                 borderRadius: '4px',
                 overflow: 'hidden',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
               }}
             >
-              <img
+              <Image
                 src={item.image}
                 alt={item.title}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
+                fill
+                sizes="160px"
+                style={{ objectFit: 'cover' }}
+                quality={75}
               />
             </div>
 
