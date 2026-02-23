@@ -11,6 +11,17 @@ import { notFound } from 'next/navigation';
 // ISR: regenerate every 60 seconds. Admin API calls revalidatePath() on mutations.
 export const revalidate = 60;
 
+export async function generateStaticParams() {
+  const projects = await prisma.workProject.findMany({
+    select: { slug: true },
+    where: { published: true },
+  });
+  
+  return projects.map((project) => ({
+    id: project.slug,
+  }));
+}
+
 async function getProjectFromDB(slug: string): Promise<WorkDetail | null> {
   try {
     const project = await prisma.workProject.findFirst({

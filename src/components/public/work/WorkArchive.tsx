@@ -265,7 +265,7 @@ export default function WorkArchive({
       {activeTab === 'achieve' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full">
           {displayedItems.map((item) => (
-            <Link key={item.id} href={`/work/${item.id}`}>
+            <Link key={item.id} href={`/work/${item.id}`} prefetch={true}>
               <div className="flex flex-col gap-[10px] cursor-pointer transition-transform duration-300 ease-in-out hover:-translate-y-1">
                 {/* Portfolio Item Image */}
                 <div className="relative w-full aspect-4/3 bg-[#f0f0f0] rounded overflow-hidden">

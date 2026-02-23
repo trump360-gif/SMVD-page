@@ -146,7 +146,7 @@ export default function NewsEventArchive({ items }: NewsEventArchiveProps) {
       {/* Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 w-full">
         {displayedItems.map((item) => (
-          <Link key={item.id} href={`/news/${item.id}`}>
+          <Link key={item.id} href={`/news/${item.id}`} prefetch={true}>
             <div
               className="flex gap-5 pb-5 border-b border-[#d6d8dc] cursor-pointer transition-transform duration-300 hover:-translate-y-1"
             >

@@ -5,6 +5,17 @@ import ProfessorDetailContent from './content';
 
 export const revalidate = 60;
 
+export async function generateStaticParams() {
+  const professors = await prisma.people.findMany({
+    select: { id: true },
+    where: { archivedAt: null, role: { not: 'instructor' } },
+  });
+  
+  return professors.map((prof) => ({
+    id: prof.id,
+  }));
+}
+
 export default async function ProfessorDetailPage({
   params,
 }: {

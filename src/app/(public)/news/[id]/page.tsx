@@ -12,6 +12,17 @@ import { prisma } from '@/lib/db';
 // ISR: regenerate every 60 seconds. Admin API calls revalidatePath() on mutations.
 export const revalidate = 60;
 
+export async function generateStaticParams() {
+  const articles = await prisma.newsEvent.findMany({
+    select: { slug: true },
+    where: { published: true },
+  });
+  
+  return articles.map((article) => ({
+    id: article.slug,
+  }));
+}
+
 // ---- Types ----
 
 interface AttachmentData {

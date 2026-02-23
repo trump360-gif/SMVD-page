@@ -116,6 +116,7 @@ export default function OurPeopleTab({
             <Link
               key={prof.id}
               href={`/professor/${prof.id}`}
+              prefetch={true}
               className="cursor-pointer flex flex-col gap-0 w-full transition-all duration-200 hover:-translate-y-1 hover:opacity-80 no-underline"
             >
               <div className="cursor-pointer relative w-full h-auto aspect-236/356 bg-white rounded-none border-none">
