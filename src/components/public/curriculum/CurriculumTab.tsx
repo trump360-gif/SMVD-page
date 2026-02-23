@@ -70,32 +70,23 @@ export default function CurriculumTab({
   return (
     <div className="flex flex-col gap-5 sm:gap-[30px] lg:gap-10 w-full box-border">
       {/* Tab Header */}
-      <div className="flex items-start w-full pb-4 sm:pb-5 border-b-2 border-[#141414]">
-        {/* Tab Buttons */}
-        <div className="flex gap-4 sm:gap-[30px] border-b-[3px] border-neutral-1450 mb-0 pb-0">
-          <button
-            onClick={() => handleTabChange('undergraduate')}
-            className={`pb-4 sm:pb-5 text-[24px] sm:text-[28px] lg:text-[32px] font-bold transition-all ${
-              activeTab === 'undergraduate'
-                ? 'text-neutral-1450 border-b-4 border-neutral-1450 -mb-[3px]'
-                : 'text-[#d9d9d9]'
-            }`}
-          >
-            <span className="sm:hidden">Under</span>
-            <span className="hidden sm:inline">Undergraduate</span>
-          </button>
-          <button
-            onClick={() => handleTabChange('graduate')}
-            className={`pb-4 sm:pb-5 text-[24px] sm:text-[28px] lg:text-[32px] font-bold transition-all ${
-              activeTab === 'graduate'
-                ? 'text-neutral-1450 border-b-4 border-neutral-1450 -mb-[3px]'
-                : 'text-[#d9d9d9]'
-            }`}
-          >
-            <span className="sm:hidden">Grad</span>
-            <span className="hidden sm:inline">Graduate School</span>
-          </button>
-        </div>
+      <div className="flex gap-5 sm:gap-[30px] lg:gap-10 border-b-2 border-neutral-1450 pb-4 sm:pb-5">
+        <button
+          onClick={() => handleTabChange('undergraduate')}
+          className={`bg-transparent border-none text-[18px] sm:text-[20px] lg:text-[24px] font-satoshi cursor-pointer py-2 m-0 transition-all duration-200 ease-in ${
+            activeTab === 'undergraduate' ? 'font-bold text-neutral-1450' : 'font-normal text-[#7b828eff]'
+          }`}
+        >
+          Undergraduate
+        </button>
+        <button
+          onClick={() => handleTabChange('graduate')}
+          className={`bg-transparent border-none text-[18px] sm:text-[20px] lg:text-[24px] font-satoshi cursor-pointer py-2 m-0 transition-all duration-200 ease-in ${
+            activeTab === 'graduate' ? 'font-bold text-neutral-1450' : 'font-normal text-[#7b828eff]'
+          }`}
+        >
+          Graduate School
+        </button>
       </div>
 
       {/* Tab Content */}
