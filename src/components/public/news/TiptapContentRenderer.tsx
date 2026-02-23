@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { sanitizeContent } from '@/lib/sanitize';
@@ -198,14 +199,17 @@ function renderNode(node: TiptapNode, index: number, depth: number = 0): React.R
             overflow: 'hidden',
           }}
         >
-          <img
+          <Image
             src={src}
             alt={alt}
+            width={1200}
+            height={800}
             style={{
               width: '100%',
               height: 'auto',
               display: 'block',
             }}
+            sizes="100vw"
           />
         </div>
       );

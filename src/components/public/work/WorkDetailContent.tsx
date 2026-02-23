@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { sanitizeContent } from '@/lib/sanitize';
@@ -65,8 +66,8 @@ export default function WorkDetailContent({
     <div className="flex flex-col gap-10 sm:gap-[60px] lg:gap-[100px] w-full" style={cssVariables}>
       {/* Hero Image */}
       {displayHero && (
-        <div className="w-full h-[300px] sm:h-[500px] lg:h-[860px] bg-[#d9d9d9] rounded-none overflow-hidden">
-          <img src={displayHero} alt={displayTitle} className="w-full h-full object-cover" />
+        <div className="relative w-full h-[300px] sm:h-[500px] lg:h-[860px] bg-[#d9d9d9] rounded-none overflow-hidden">
+          <Image src={displayHero} alt={displayTitle} fill className="object-cover" priority sizes="100vw" />
         </div>
       )}
 
@@ -103,10 +104,13 @@ export default function WorkDetailContent({
               key={index}
               className={`w-full bg-[#f0f0f0] rounded-none overflow-hidden leading-none p-0 text-[0px] ${index > 0 ? '-mt-px' : 'mt-0'}`}
             >
-              <img
+              <Image
                 src={image}
                 alt={`Gallery image ${index + 1}`}
+                width={1440}
+                height={960}
                 className="w-full h-auto block m-0 p-0"
+                sizes="100vw"
               />
             </div>
           ))}
