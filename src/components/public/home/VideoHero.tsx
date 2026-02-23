@@ -1,33 +1,13 @@
 'use client';
 
-import { useResponsive } from '@/lib/responsive';
-
 export default function VideoHero() {
-  const { isMobile, isTablet } = useResponsive();
-
-  const heroHeight = isMobile ? '40vh' : isTablet ? '50vh' : '949px';
-  const heroMarginBottom = isMobile ? '24px' : isTablet ? '32px' : '40px';
-
   return (
     <div
-      style={{
-        width: '100%',
-        height: heroHeight,
-        backgroundColor: '#000000ff',
-        borderRadius: '0',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: heroMarginBottom,
-      }}
+      className="w-full h-[40vh] sm:h-[50vh] lg:h-[949px] bg-[#000000ff] rounded-none flex items-center justify-center mb-6 sm:mb-8 lg:mb-10"
     >
       {/* 비디오 영역 - 나중에 추가 예정 */}
       <p
-        style={{
-          color: '#ffffff80',
-          fontSize: '14px',
-          fontFamily: 'Helvetica',
-        }}
+        className="text-[#ffffff80] text-[14px] font-helvetica"
       >
         Video coming soon...
       </p>

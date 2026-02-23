@@ -1,8 +1,6 @@
 'use client';
 
 import { Instagram, Youtube, Facebook, Twitter, Linkedin } from 'lucide-react';
-import { useResponsive } from '@/lib/responsive';
-import { PADDING } from '@/constants/responsive';
 
 interface FooterData {
   title?: string;
@@ -42,15 +40,6 @@ const SOCIAL_ICON_MAP = {
 type SocialPlatform = keyof typeof SOCIAL_ICON_MAP;
 
 export function Footer({ data, socialLinks }: FooterProps) {
-  const { isMobile, isTablet } = useResponsive();
-
-  const footerPadding = isMobile ? '32px' : isTablet ? '48px' : '81px';
-  const padding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop;
-  const footerGap = isMobile ? '24px' : '40px';
-  const fontSize = isMobile ? '14px' : isTablet ? '15px' : '16px';
-  const iconSize = isMobile ? '24px' : '31px';
-  const iconHeight = isMobile ? '24px' : '32px';
-
   const title = data?.title ?? '숙명여자대학교 미술대학 시각영상디자인학과';
   const description = data?.description ?? 'University of Sookmyung Women, Visual Media Design';
   const address = data?.address ?? '서울 특별시 용산구 청파로 47길 100 숙명여자대학교 시각영상디자인과 (미술대학 201호)';
@@ -66,74 +55,35 @@ export function Footer({ data, socialLinks }: FooterProps) {
 
   return (
     <footer
-      style={{
-        width: '100%',
-        backgroundColor: '#ebeef4ff',
-        borderTop: '1px solid #e5e7ebff',
-        paddingLeft: `${padding}px`,
-        paddingRight: `${padding}px`,
-      }}
+      className="w-full bg-[#ebeef4ff] border-t border-[#e5e7ebff] px-5 sm:px-10 lg:px-[55.5px]"
     >
       <div
-        style={{
-          maxWidth: '1440px',
-          margin: '0 auto',
-          paddingTop: footerPadding,
-          paddingBottom: footerPadding,
-          display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
-          justifyContent: isMobile ? 'flex-start' : 'space-between',
-          gap: footerGap,
-        }}
+        className="max-w-[1440px] mx-auto py-8 sm:py-12 lg:py-[81px] flex flex-col sm:flex-row justify-start sm:justify-between gap-6 sm:gap-10"
       >
         {/* Left Section - Icon & Info */}
         <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px',
-          }}
+          className="flex flex-col gap-3"
         >
           {/* Icon */}
-          <img
-            src={logoSrc}
-            alt="logo"
-            width={isMobile ? 24 : 31}
-            height={isMobile ? 24 : 32}
-            style={{ display: 'block' }}
-          />
+          <div className="w-6 h-6 sm:w-[31px] sm:h-[32px] block relative">
+            <img
+              src={logoSrc}
+              alt="logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
 
           {/* Text */}
           <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0px',
-            }}
+            className="flex flex-col gap-0"
           >
             <p
-              style={{
-                fontSize,
-                fontWeight: '700',
-                color: '#434850ff',
-                fontFamily: 'Inter',
-                margin: '0',
-                lineHeight: 1.6,
-                letterSpacing: '-0.3125px',
-              }}
+              className="font-inter font-bold text-[#434850ff] m-0 leading-[1.6] tracking-[-0.3125px] text-[14px] sm:text-[15px] lg:text-[16px]"
             >
               {title}
             </p>
             <p
-              style={{
-                fontSize,
-                fontWeight: '400',
-                color: '#434850ff',
-                fontFamily: 'Inter',
-                margin: '0',
-                lineHeight: 1.6,
-                letterSpacing: '-0.3125px',
-              }}
+              className="font-inter font-normal text-[#434850ff] m-0 leading-[1.6] tracking-[-0.3125px] text-[14px] sm:text-[15px] lg:text-[16px]"
             >
               {description}
             </p>
@@ -142,35 +92,15 @@ export function Footer({ data, socialLinks }: FooterProps) {
 
         {/* Right Section - Contact */}
         <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-          }}
+          className="flex flex-col gap-2"
         >
           <p
-            style={{
-              fontSize: '16px',
-              fontWeight: '700',
-              color: '#434850ff',
-              fontFamily: 'Inter',
-              margin: '0',
-              lineHeight: 1.6,
-              letterSpacing: '-0.3125px',
-            }}
+            className="text-[16px] font-bold text-[#434850ff] font-inter m-0 leading-[1.6] tracking-[-0.3125px]"
           >
             Contact
           </p>
           <p
-            style={{
-              fontSize: '16px',
-              fontWeight: '400',
-              color: '#434850ff',
-              fontFamily: 'Inter',
-              margin: '0',
-              lineHeight: 1.6,
-              letterSpacing: '-0.3125px',
-            }}
+            className="text-[16px] font-normal text-[#434850ff] font-inter m-0 leading-[1.6] tracking-[-0.3125px]"
           >
             {phone}
             {email && (
@@ -191,33 +121,15 @@ export function Footer({ data, socialLinks }: FooterProps) {
           {/* SNS Links */}
           {activeSocialLinks.length > 0 && (
             <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
-                marginTop: '8px',
-              }}
+              className="flex flex-col gap-2 mt-2"
             >
               <p
-                style={{
-                  fontSize: '16px',
-                  fontWeight: '700',
-                  color: '#434850ff',
-                  fontFamily: 'Inter',
-                  margin: '0',
-                  lineHeight: 1.6,
-                  letterSpacing: '-0.3125px',
-                }}
+                className="text-[16px] font-bold text-[#434850ff] font-inter m-0 leading-[1.6] tracking-[-0.3125px]"
               >
                 Follow Us
               </p>
               <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: '16px',
-                  flexWrap: 'wrap',
-                }}
+                className="flex flex-row gap-4 flex-wrap"
               >
                 {activeSocialLinks.map(([platform, link]) => {
                   const IconComponent = SOCIAL_ICON_MAP[platform];
@@ -228,23 +140,10 @@ export function Footer({ data, socialLinks }: FooterProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={platform}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#434850ff',
-                        transition: 'color 0.2s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLAnchorElement).style.color = '#1A46E7';
-                      }}
-                      onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLAnchorElement).style.color = '#434850ff';
-                      }}
+                      className="flex items-center justify-center text-[#434850ff] transition-colors duration-200 ease-in hover:text-[#1A46E7]"
                     >
                       <IconComponent
-                        width={iconSize}
-                        height={iconHeight}
+                        className="w-6 h-6 sm:w-[31px] sm:h-[32px]"
                         strokeWidth={1.5}
                       />
                     </a>

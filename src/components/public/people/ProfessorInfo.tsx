@@ -1,6 +1,5 @@
 'use client';
 
-import { useResponsive } from '@/lib/responsive';
 import type { Professor } from './types';
 
 interface ProfessorInfoProps {
@@ -8,148 +7,64 @@ interface ProfessorInfoProps {
 }
 
 export default function ProfessorInfo({ professor }: ProfessorInfoProps) {
-  const { isMobile } = useResponsive();
-
-  const nameFontSize = isMobile ? '36px' : '60px';
-  const nameHeight = isMobile ? 'auto' : '66px';
-  const labelGap = isMobile ? '12px' : '30px';
-  const detailFontSize = isMobile ? '15px' : '18px';
-  const labelFontSize = isMobile ? '12px' : '14px';
-
   return (
     <>
       {/* Name */}
       <div
-        style={{
-          height: nameHeight,
-          display: 'flex',
-          alignItems: 'flex-end',
-        }}
+        className="h-auto sm:h-[66px] flex items-end"
       >
         <h1
-          style={{
-            fontSize: nameFontSize,
-            fontWeight: 'normal',
-            color: '#0a0a0aff',
-            fontFamily: 'Helvetica',
-            margin: '0',
-            letterSpacing: '-0.6px',
-            lineHeight: 1.1,
-          }}
+          className="text-[36px] sm:text-[60px] font-normal text-[#0a0a0aff] font-helvetica m-0 tracking-[-0.6px] leading-[1.1]"
         >
           {professor.name}
         </h1>
       </div>
 
       {/* Office */}
-      <div style={{ display: 'flex', gap: labelGap, alignItems: 'center' }}>
+      <div className="flex gap-3 sm:gap-[30px] items-center">
         <div
-          style={{
-            backgroundColor: '#ebecf0ff',
-            padding: '0 12px',
-            borderRadius: '0px',
-            width: isMobile ? '70px' : '80px',
-            flexShrink: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '28px',
-          }}
+          className="bg-[#ebecf0ff] px-3 rounded-none w-[70px] sm:w-[80px] shrink-0 flex items-center justify-center min-h-[28px]"
         >
           <span
-            style={{
-              fontSize: labelFontSize,
-              fontWeight: 'normal',
-              color: '#141414ff',
-              fontFamily: 'Helvetica',
-              lineHeight: 1.5,
-            }}
+            className="text-[12px] sm:text-[14px] font-normal text-[#141414] font-helvetica leading-[1.5]"
           >
             연구실
           </span>
         </div>
         <p
-          style={{
-            fontSize: detailFontSize,
-            fontWeight: 'normal',
-            color: '#141414ff',
-            fontFamily: 'Inter',
-            margin: '0',
-            letterSpacing: '-0.44px',
-            lineHeight: 1.5,
-          }}
+          className="text-[15px] sm:text-[18px] font-normal text-[#141414] font-inter m-0 tracking-[-0.44px] leading-[1.5]"
         >
           {professor.office}
         </p>
       </div>
 
       {/* Email */}
-      <div style={{ display: 'flex', gap: labelGap, alignItems: isMobile ? 'flex-start' : 'center', flexDirection: isMobile ? 'column' : 'row' }}>
+      <div className="flex gap-3 sm:gap-[30px] flex-col sm:flex-row items-start sm:items-center">
         <div
-          style={{
-            backgroundColor: '#ebecf0ff',
-            padding: '0 12px',
-            borderRadius: '0px',
-            width: isMobile ? '70px' : '80px',
-            flexShrink: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '28px',
-          }}
+          className="bg-[#ebecf0ff] px-3 rounded-none w-[70px] sm:w-[80px] shrink-0 flex items-center justify-center min-h-[28px]"
         >
           <span
-            style={{
-              fontSize: labelFontSize,
-              fontWeight: 'normal',
-              color: '#141414ff',
-              fontFamily: 'Helvetica',
-              lineHeight: 1.5,
-            }}
+            className="text-[12px] sm:text-[14px] font-normal text-[#141414] font-helvetica leading-[1.5]"
           >
             이메일
           </span>
         </div>
         <p
-          style={{
-            fontSize: isMobile ? '14px' : detailFontSize,
-            fontWeight: 'normal',
-            color: '#141414ff',
-            fontFamily: 'Inter',
-            margin: '0',
-            letterSpacing: '-0.44px',
-            lineHeight: 1.5,
-            wordBreak: isMobile ? 'break-all' : undefined,
-          }}
+          className="text-[14px] sm:text-[18px] font-normal text-[#141414] font-inter m-0 tracking-[-0.44px] leading-[1.5] break-all sm:break-normal"
         >
-          {professor.email.join(isMobile ? '\n' : ' ')}
+          <span className="sm:hidden">{professor.email.join('\n')}</span>
+          <span className="hidden sm:inline">{professor.email.join(' ')}</span>
         </p>
       </div>
 
       {/* Homepage */}
       {professor.homepage && (
-        <div style={{ display: 'flex', gap: labelGap, alignItems: isMobile ? 'flex-start' : 'center', flexDirection: isMobile ? 'column' : 'row' }}>
+        <div className="flex gap-3 sm:gap-[30px] flex-col sm:flex-row items-start sm:items-center">
           <div
-            style={{
-              backgroundColor: '#ebecf0ff',
-              padding: '0 12px',
-              borderRadius: '0px',
-              width: isMobile ? '70px' : '80px',
-              flexShrink: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              minHeight: '28px',
-            }}
+            className="bg-[#ebecf0ff] px-3 rounded-none w-[70px] sm:w-[80px] shrink-0 flex items-center justify-center min-h-[28px]"
           >
             <span
-              style={{
-                fontSize: labelFontSize,
-                fontWeight: 'normal',
-                color: '#141414ff',
-                fontFamily: 'Helvetica',
-                lineHeight: 1.5,
-              }}
+              className="text-[12px] sm:text-[14px] font-normal text-[#141414] font-helvetica leading-[1.5]"
             >
               홈페이지
             </span>
@@ -158,18 +73,7 @@ export default function ProfessorInfo({ professor }: ProfessorInfoProps) {
             href={professor.homepage}
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              fontSize: isMobile ? '14px' : detailFontSize,
-              fontWeight: 'normal',
-              color: '#141414ff',
-              fontFamily: 'Inter',
-              margin: '0',
-              letterSpacing: '-0.44px',
-              lineHeight: 1.5,
-              textDecoration: 'underline',
-              cursor: 'pointer',
-              wordBreak: isMobile ? 'break-all' : undefined,
-            }}
+            className="text-[14px] sm:text-[18px] font-normal text-[#141414] font-inter m-0 tracking-[-0.44px] leading-[1.5] underline cursor-pointer break-all sm:break-normal"
           >
             {professor.homepage}
           </a>

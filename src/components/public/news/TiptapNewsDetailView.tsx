@@ -1,6 +1,5 @@
 'use client';
 
-import { useResponsive } from '@/lib/responsive';
 import TiptapContentRenderer from './TiptapContentRenderer';
 import AttachmentDownloadBox from './AttachmentDownloadBox';
 
@@ -33,128 +32,56 @@ const categories = ['ALL', 'Notice', 'Event', 'Lecture', 'Exhibition', 'Awards',
  * Renders migrated Tiptap content with proper styling.
  */
 export default function TiptapNewsDetailView({ data }: TiptapNewsDetailViewProps) {
-  const { isMobile, isTablet } = useResponsive();
-
-  const blockGap = isMobile ? '24px' : isTablet ? '32px' : '40px';
-  const titleFontSize = isMobile ? '24px' : isTablet ? '32px' : '48px';
-  const titleLineHeight = isMobile ? '1.3' : '1.45';
-  const headerFontSize = isMobile ? '18px' : '24px';
-  const metaFontSize = isMobile ? '12px' : '14px';
 
   return (
     <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: blockGap,
-        width: '100%',
-        maxWidth: '1440px',
-        margin: '0 auto',
-      }}
+      className="flex flex-col gap-6 sm:gap-8 lg:gap-10 w-full max-w-[1440px] mx-auto"
     >
       {/* Title and Filter Tabs */}
       <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          width: '100%',
-          paddingBottom: isMobile ? '12px' : '20px',
-          borderBottom: '2px solid #141414ff',
-        }}
+        className="flex justify-between items-center w-full pb-3 sm:pb-5 border-b-2 border-neutral-1450"
       >
         <h1
-          style={{
-            fontSize: headerFontSize,
-            fontWeight: '700',
-            fontFamily: 'Satoshi',
-            color: '#1b1d1fff',
-            margin: '0',
-          }}
+          className="text-[18px] sm:text-[24px] font-bold font-satoshi text-[#1b1d1f] m-0"
         >
           News&Event
         </h1>
 
         {/* Filter Tabs - Hidden on mobile */}
-        {!isMobile && (
-          <div
-            style={{
-              display: 'flex',
-              gap: '20px',
-            }}
-          >
+        <div
+          className="hidden sm:flex gap-5"
+        >
             {categories.map((category) => (
               <span
                 key={category}
-                style={{
-                  fontSize: metaFontSize,
-                  fontWeight: category === 'ALL' ? '600' : '400',
-                  fontFamily: 'Satoshi',
-                  color: category === 'ALL' ? '#141414ff' : '#7b828eff',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  borderBottom: category === 'ALL' ? '2px solid #141414ff' : 'none',
-                  paddingBottom: '4px',
-                }}
+                className={`text-[12px] sm:text-[14px] font-satoshi cursor-pointer transition-all duration-300 ease-in
+                  ${category === 'ALL' ? 'font-semibold text-neutral-1450 border-b-2 border-neutral-1450 pb-1' : 'font-normal text-[#7b828e] pb-1'}`}
               >
                 {category}
               </span>
             ))}
           </div>
-        )}
       </div>
 
       {/* Detail Content */}
       <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: blockGap,
-          width: '100%',
-          paddingBottom: isMobile ? '40px' : '80px',
-        }}
+        className="flex flex-col gap-6 sm:gap-8 lg:gap-10 w-full pb-10 sm:pb-20"
       >
         {/* Header Section */}
         <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: isMobile ? '8px' : '12px',
-            width: '100%',
-            paddingBottom: isMobile ? '12px' : '20px',
-            borderBottom: '2px solid #e5e7ebff',
-          }}
+          className="flex flex-col gap-2 sm:gap-3 w-full pb-3 sm:pb-5 border-b-2 border-[#e5e7eb]"
         >
           {/* Meta Info */}
           <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
+            className="flex items-center gap-2"
           >
             <span
-              style={{
-                fontSize: metaFontSize,
-                fontWeight: '500',
-                fontFamily: 'Satoshi',
-                color: '#141414ff',
-                backgroundColor: '#ebecf0ff',
-                padding: isMobile ? '3px 6px' : '4px 8px',
-                borderRadius: '4px',
-                minWidth: 'fit-content',
-              }}
+              className="text-[12px] sm:text-[14px] font-medium font-satoshi text-neutral-1450 bg-[#ebecf0] py-[3px] px-[6px] sm:py-1 sm:px-2 rounded min-w-max"
             >
               {data.category}
             </span>
             <span
-              style={{
-                fontSize: metaFontSize,
-                fontWeight: '500',
-                fontFamily: 'Pretendard',
-                color: '#626872ff',
-                letterSpacing: '-0.14px',
-              }}
+              className="text-[12px] sm:text-[14px] font-medium font-pretendard text-[#626872] tracking-[-0.14px]"
             >
               {data.date}
             </span>
@@ -162,16 +89,7 @@ export default function TiptapNewsDetailView({ data }: TiptapNewsDetailViewProps
 
           {/* Title */}
           <h1
-            style={{
-              fontSize: titleFontSize,
-              fontWeight: '700',
-              fontFamily: 'Pretendard',
-              color: '#000000ff',
-              margin: '0',
-              lineHeight: titleLineHeight,
-              letterSpacing: '-0.48px',
-              wordBreak: 'keep-all',
-            }}
+            className="text-[24px] sm:text-[32px] lg:text-[48px] font-bold font-pretendard text-black m-0 leading-[1.3] sm:leading-[1.45] tracking-[-0.48px] break-keep"
           >
             {data.title}
           </h1>

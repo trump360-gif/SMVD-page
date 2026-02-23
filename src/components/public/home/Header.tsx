@@ -4,8 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import { useResponsive } from '@/lib/responsive';
-import { PADDING } from '@/constants/responsive';
 
 interface NavigationItem {
   id: string;
@@ -36,7 +34,6 @@ const DEFAULT_NAV_ITEMS = [
 
 export function Header({ navigation, headerConfig }: HeaderProps) {
   const pathname = usePathname();
-  const { isMobile, isTablet } = useResponsive();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isActive = (href: string) => {
@@ -49,39 +46,14 @@ export function Header({ navigation, headerConfig }: HeaderProps) {
     ? navigation.map(item => ({ label: item.label, href: item.href }))
     : DEFAULT_NAV_ITEMS;
 
-  // 반응형 값 계산
-  const headerHeight = isMobile ? '64px' : isTablet ? '72px' : '80px';
-  const headerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop;
-  const headerPaddingLeft = isMobile ? `${PADDING.mobile}px` : isTablet ? `${PADDING.tablet}px` : '55.5px';
-  const headerPaddingRight = isMobile ? `${PADDING.mobile}px` : isTablet ? `${PADDING.tablet}px` : '55.5px';
-  const logoSize = isMobile ? '36px' : '42px';
-  const navGap = isMobile ? '8px' : isTablet ? '12px' : '18px';
-
   return (
     <header
-      style={{
-        width: '100%',
-        height: headerHeight,
-        backgroundColor: '#ffffffff',
-        display: 'flex',
-        alignItems: 'center',
-        paddingLeft: headerPaddingLeft,
-        paddingRight: headerPaddingRight,
-      }}
+      className="w-full h-[64px] sm:h-[72px] lg:h-[80px] bg-[#ffffffff] flex items-center px-5 sm:px-10 lg:px-[55.5px]"
     >
       {/* Logo */}
       <Link
         href="/"
-        style={{
-          width: logoSize,
-          height: logoSize,
-          marginRight: 'auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-          textDecoration: 'none',
-        }}
+        className="w-[36px] h-[36px] sm:w-[42px] sm:h-[42px] mr-auto flex items-center justify-center relative no-underline border-none outline-none"
       >
         {headerConfig?.logoImagePath ? (
           <img
@@ -123,15 +95,9 @@ export function Header({ navigation, headerConfig }: HeaderProps) {
       </Link>
 
       {/* Desktop Navigation (Hidden on Mobile/Tablet) */}
-      {!(isMobile || isTablet) && (
-        <nav
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: navGap,
-            height: '38px',
-          }}
-        >
+      <nav
+        className="hidden lg:flex items-center gap-[18px] h-[38px]"
+      >
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -156,68 +122,28 @@ export function Header({ navigation, headerConfig }: HeaderProps) {
             </Link>
           ))}
         </nav>
-      )}
 
       {/* Mobile/Tablet Hamburger Menu Toggle */}
-      {(isMobile || isTablet) && (
-        <button
-          onClick={() => setIsMobileMenuOpen(true)}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#141414ff',
-          }}
-          aria-label="Open Mobile Menu"
-        >
-          <Menu size={28} />
-        </button>
-      )}
+      <button
+        onClick={() => setIsMobileMenuOpen(true)}
+        className="lg:hidden bg-transparent border-none cursor-pointer p-2 flex items-center justify-center text-[#141414]"
+        aria-label="Open Mobile Menu"
+      >
+        <Menu size={28} />
+      </button>
 
       {/* Mobile/Tablet Fullscreen Overlay */}
-      {isMobileMenuOpen && (isMobile || isTablet) && (
+      {isMobileMenuOpen && (
         <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: '#ffffffff',
-            zIndex: 9999,
-            display: 'flex',
-            flexDirection: 'column',
-          }}
+          className="lg:hidden fixed inset-0 w-screen h-screen bg-[#ffffffff] z-[9999] flex flex-col"
         >
           {/* Overlay Header */}
           <div
-            style={{
-              width: '100%',
-              height: headerHeight,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              paddingLeft: headerPaddingLeft,
-              paddingRight: headerPaddingRight,
-              borderBottom: '1px solid #e5e7ebff',
-            }}
+            className="w-full h-[64px] sm:h-[72px] flex items-center justify-end px-5 sm:px-10 border-b border-[#e5e7eb]"
           >
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#141414ff',
-              }}
+              className="bg-transparent border-none cursor-pointer p-2 flex items-center justify-center text-[#141414]"
               aria-label="Close Mobile Menu"
             >
               <X size={28} />
@@ -226,12 +152,7 @@ export function Header({ navigation, headerConfig }: HeaderProps) {
 
           {/* Overlay Navigation Links */}
           <nav
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              padding: `${headerPadding}px`,
-              gap: '24px',
-            }}
+            className="flex flex-col p-5 sm:p-10 gap-6"
           >
             {navItems.map((item) => (
               <Link

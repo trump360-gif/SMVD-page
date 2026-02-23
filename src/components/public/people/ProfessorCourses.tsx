@@ -1,6 +1,5 @@
 'use client';
 
-import { useResponsive } from '@/lib/responsive';
 import type { Professor } from './types';
 
 interface ProfessorCoursesProps {
@@ -8,89 +7,36 @@ interface ProfessorCoursesProps {
 }
 
 export default function ProfessorCourses({ courses }: ProfessorCoursesProps) {
-  const { isMobile } = useResponsive();
-
-  const labelGap = isMobile ? '12px' : '30px';
-  const detailFontSize = isMobile ? '15px' : '18px';
-  const labelFontSize = isMobile ? '12px' : '14px';
-
   return (
-    <div style={{ display: 'flex', gap: labelGap, alignItems: 'flex-start' }}>
+    <div className="flex gap-3 sm:gap-[30px] items-start">
       <div
-        style={{
-          backgroundColor: '#ebecf0ff',
-          padding: '0 12px',
-          borderRadius: '0px',
-          width: isMobile ? '70px' : '90px',
-          flexShrink: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '28px',
-        }}
+        className="bg-[#ebecf0ff] px-3 rounded-none w-[70px] sm:w-[90px] shrink-0 flex items-center justify-center min-h-[28px]"
       >
         <span
-          style={{
-            fontSize: labelFontSize,
-            fontWeight: 'normal',
-            color: '#141414ff',
-            fontFamily: 'Helvetica',
-            lineHeight: 1.5,
-          }}
+          className="text-[12px] sm:text-[14px] font-normal text-[#141414ff] font-helvetica leading-[1.5]"
         >
           담당과목
         </span>
       </div>
       <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0px',
-        }}
+        className="flex flex-col gap-0"
       >
         {/* Undergraduate */}
         <div
-          style={{
-            display: 'flex',
-            gap: '12px',
-            alignItems: 'flex-start',
-            marginBottom: '8px',
-          }}
+          className="flex gap-3 items-start mb-2"
         >
           <p
-            style={{
-              fontSize: detailFontSize,
-              fontWeight: 'normal',
-              color: '#353030ff',
-              fontFamily: 'Inter',
-              margin: '0',
-              letterSpacing: '-0.44px',
-              lineHeight: 1.5,
-              minWidth: '30px',
-              flexShrink: 0,
-            }}
+            className="text-[15px] sm:text-[18px] font-normal text-[#353030ff] font-inter m-0 tracking-[-0.44px] leading-[1.5] min-w-[30px] shrink-0"
           >
             학사
           </p>
           <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0px',
-            }}
+            className="flex flex-col gap-0"
           >
             {courses.undergraduate.map((course, idx) => (
               <p
                 key={idx}
-                style={{
-                  fontSize: detailFontSize,
-                  fontWeight: 'normal',
-                  color: '#141414ff',
-                  fontFamily: 'Inter',
-                  margin: '0',
-                  letterSpacing: '-0.44px',
-                  lineHeight: 1.5,
-                }}
+                className="text-[15px] sm:text-[18px] font-normal text-[#141414ff] font-inter m-0 tracking-[-0.44px] leading-[1.5]"
               >
                 {course}
               </p>
@@ -100,46 +46,20 @@ export default function ProfessorCourses({ courses }: ProfessorCoursesProps) {
 
         {/* Graduate */}
         <div
-          style={{
-            display: 'flex',
-            gap: '12px',
-            alignItems: 'flex-start',
-          }}
+          className="flex gap-3 items-start"
         >
           <p
-            style={{
-              fontSize: detailFontSize,
-              fontWeight: 'normal',
-              color: '#353030ff',
-              fontFamily: 'Inter',
-              margin: '0',
-              letterSpacing: '-0.44px',
-              lineHeight: 1.5,
-              minWidth: '30px',
-              flexShrink: 0,
-            }}
+            className="text-[15px] sm:text-[18px] font-normal text-[#353030ff] font-inter m-0 tracking-[-0.44px] leading-[1.5] min-w-[30px] shrink-0"
           >
             석사
           </p>
           <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0px',
-            }}
+            className="flex flex-col gap-0"
           >
             {courses.graduate.map((course, idx) => (
               <p
                 key={idx}
-                style={{
-                  fontSize: detailFontSize,
-                  fontWeight: 'normal',
-                  color: '#141414ff',
-                  fontFamily: 'Inter',
-                  margin: '0',
-                  letterSpacing: '-0.44px',
-                  lineHeight: 1.5,
-                }}
+                className="text-[15px] sm:text-[18px] font-normal text-[#141414ff] font-inter m-0 tracking-[-0.44px] leading-[1.5]"
               >
                 {course}
               </p>

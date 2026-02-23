@@ -1,6 +1,5 @@
 'use client';
 
-import { useResponsive } from '@/lib/responsive';
 import type { Professor } from './types';
 
 interface ProfessorBiographyProps {
@@ -8,76 +7,32 @@ interface ProfessorBiographyProps {
 }
 
 export default function ProfessorBiography({ biography }: ProfessorBiographyProps) {
-  const { isMobile } = useResponsive();
-
-  const labelGap = isMobile ? '12px' : '30px';
-  const detailFontSize = isMobile ? '15px' : '18px';
-  const labelFontSize = isMobile ? '12px' : '14px';
-
   return (
-    <div style={{ display: 'flex', gap: labelGap, alignItems: 'flex-start' }}>
+    <div className="flex gap-[12px] sm:gap-[30px] items-start">
       <div
-        style={{
-          backgroundColor: '#ebecf0ff',
-          padding: '0 12px',
-          borderRadius: '0px',
-          width: isMobile ? '60px' : '70px',
-          flexShrink: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '28px',
-        }}
+        className="bg-[#ebecf0ff] px-3 rounded-none w-[60px] sm:w-[70px] shrink-0 flex items-center justify-center min-h-[28px]"
       >
         <span
-          style={{
-            fontSize: labelFontSize,
-            fontWeight: 'normal',
-            color: '#141414ff',
-            fontFamily: 'Helvetica',
-            lineHeight: 1.5,
-          }}
+          className="text-[12px] sm:text-[14px] font-normal text-[#141414] font-helvetica leading-[1.5]"
         >
           약력
         </span>
       </div>
 
       <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-        }}
+        className="flex flex-col gap-3"
       >
         {/* CV Download */}
         <a
           href="#"
-          style={{
-            fontSize: detailFontSize,
-            fontWeight: 'normal',
-            color: '#141414ff',
-            fontFamily: 'Inter',
-            margin: '0',
-            letterSpacing: '-0.44px',
-            lineHeight: 1.5,
-            textDecoration: 'underline',
-            cursor: 'pointer',
-          }}
+          className="text-[15px] sm:text-[18px] font-normal text-[#141414] font-inter m-0 tracking-[-0.44px] leading-[1.5] underline cursor-pointer"
         >
           {biography.cvText}
         </a>
 
         {/* Position */}
         <p
-          style={{
-            fontSize: detailFontSize,
-            fontWeight: 'normal',
-            color: '#141414ff',
-            fontFamily: 'Inter',
-            margin: '0',
-            letterSpacing: '-0.44px',
-            lineHeight: 1.5,
-          }}
+          className="text-[15px] sm:text-[18px] font-normal text-[#141414] font-inter m-0 tracking-[-0.44px] leading-[1.5]"
         >
           {biography.position}
         </p>
@@ -87,15 +42,7 @@ export default function ProfessorBiography({ biography }: ProfessorBiographyProp
           {biography.education.map((edu, idx) => (
             <p
               key={idx}
-              style={{
-                fontSize: detailFontSize,
-                fontWeight: 'normal',
-                color: '#141414ff',
-                fontFamily: 'Inter',
-                margin: '0',
-                letterSpacing: '-0.44px',
-                lineHeight: 1.5,
-              }}
+              className="text-[15px] sm:text-[18px] font-normal text-[#141414] font-inter m-0 tracking-[-0.44px] leading-[1.5]"
             >
               {edu}
             </p>
@@ -107,15 +54,7 @@ export default function ProfessorBiography({ biography }: ProfessorBiographyProp
           {biography.experience.map((exp, idx) => (
             <p
               key={idx}
-              style={{
-                fontSize: detailFontSize,
-                fontWeight: 'normal',
-                color: '#141414ff',
-                fontFamily: 'Inter',
-                margin: '0',
-                letterSpacing: '-0.44px',
-                lineHeight: 1.5,
-              }}
+              className="text-[15px] sm:text-[18px] font-normal text-[#141414] font-inter m-0 tracking-[-0.44px] leading-[1.5]"
             >
               {exp}
             </p>

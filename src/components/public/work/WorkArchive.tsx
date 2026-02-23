@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -177,26 +177,27 @@ interface WorkArchiveProps {
   exhibitionItemsFromDB?: ExhibitionItem[];
 }
 
+function WorkTabController({ onTabSelect }: { onTabSelect: (tab: 'achieve' | 'exhibition') => void }) {
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'achieve' || tabParam === 'exhibition') {
+      onTabSelect(tabParam);
+    }
+  }, [searchParams, onTabSelect]);
+  return null;
+}
+
 export default function WorkArchive({
   portfolioItemsFromDB,
   exhibitionItemsFromDB,
 }: WorkArchiveProps = {}) {
   const portfolioItems = portfolioItemsFromDB ?? defaultPortfolioItems;
   const exhibitionItems = exhibitionItemsFromDB ?? defaultExhibitionItems;
-  const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState<'achieve' | 'exhibition'>('achieve');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [currentPage, setCurrentPage] = useState<number>(1);
-
-  // 쿼리 파라미터에 따라 activeTab 설정
-  useEffect(() => {
-    const tabParam = searchParams.get('tab');
-    if (tabParam === 'achieve' || tabParam === 'exhibition') {
-      // eslint-disable-next-line
-      setActiveTab(tabParam);
-    }
-  }, [searchParams]);
 
   // Dynamic categories from actual data
   const dynamicCategories = ['All', ...Array.from(new Set(portfolioItems.map((item) => item.category)))];
@@ -222,6 +223,9 @@ export default function WorkArchive({
 
   return (
     <div className="flex flex-col gap-4 w-full px-4 sm:px-6 lg:px-0">
+      <Suspense fallback={null}>
+        <WorkTabController onTabSelect={setActiveTab} />
+      </Suspense>
       {/* Achieve / Exhibition Tabs */}
       <div className="flex gap-4 sm:gap-5 w-full pb-4 sm:pb-5 border-b-2 border-neutral-1450">
         <button

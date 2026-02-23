@@ -1,7 +1,5 @@
 'use client';
 
-import { useResponsive } from '@/lib/responsive';
-import { PADDING } from '@/constants/responsive';
 import {
   Header,
   VideoHero,
@@ -54,10 +52,6 @@ export default function HomePageContent({
   footerData,
   socialLinks,
 }: HomePageContentProps) {
-  const { isMobile, isTablet } = useResponsive();
-
-  const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop;
-
   return (
     <div>
       {/* Header */}
@@ -68,12 +62,7 @@ export default function HomePageContent({
 
       {/* Main Content Container - Responsive */}
       <div
-        style={{
-          maxWidth: '1360px',
-          margin: '0 auto',
-          paddingLeft: `${containerPadding}px`,
-          paddingRight: `${containerPadding}px`,
-        }}
+        className="max-w-[1360px] mx-auto px-5 sm:px-10 lg:px-[55.5px]"
       >
         {/* Exhibition Section */}
         <ExhibitionSection items={exhibitionItems} />

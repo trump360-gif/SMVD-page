@@ -1,9 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useResponsive } from '@/lib/responsive';
-import { PADDING } from '@/constants/responsive';
 import {
   AboutPageIntro,
   AboutPageVision,
@@ -52,6 +50,17 @@ interface AboutContentProps {
   };
 }
 
+function TabController({ onTabSelect }: { onTabSelect: (tab: 'major' | 'people') => void }) {
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'people') {
+      onTabSelect('people');
+    }
+  }, [searchParams, onTabSelect]);
+  return null;
+}
+
 export default function AboutContent({
   introData,
   visionData,
@@ -59,69 +68,24 @@ export default function AboutContent({
   peopleData,
 }: AboutContentProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const { isMobile, isTablet } = useResponsive();
   const [activeTab, setActiveTab] = useState<'major' | 'people'>('major');
 
-  // Responsive variables
-  const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop;
-  const tabButtonFontSize = isMobile ? '18px' : isTablet ? '20px' : '24px';
-  const tabButtonGap = isMobile ? '20px' : isTablet ? '30px' : '40px';
-  const sectionGap = isMobile ? '40px' : isTablet ? '40px' : '50px';
-
-  useEffect(() => {
-    const tab = searchParams.get('tab');
-    if (tab === 'people') {
-      setActiveTab('people');
-    }
-  }, [searchParams]);
-
   return (
-    <div
-      style={{
-        width: '100%',
-        paddingTop: '0px',
-        paddingBottom: '61px',
-        paddingLeft: `${containerPadding}px`,
-        paddingRight: `${containerPadding}px`,
-        backgroundColor: '#ffffffff',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: '1440px',
-          margin: '0 auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: sectionGap,
-        }}
-      >
+    <div className="w-full pt-0 pb-[61px] px-5 sm:px-10 lg:px-[55.5px] bg-[#ffffffff]">
+      <Suspense fallback={null}>
+        <TabController onTabSelect={setActiveTab} />
+      </Suspense>
+      <div className="max-w-[1440px] mx-auto flex flex-col gap-10 lg:gap-[50px]">
         {/* Tab Buttons */}
-        <div
-          style={{
-            display: 'flex',
-            gap: tabButtonGap,
-            borderBottom: '2px solid #141414ff',
-            paddingBottom: isMobile ? '16px' : '20px',
-          }}
-        >
+        <div className="flex gap-5 sm:gap-[30px] lg:gap-10 border-b-2 border-neutral-1450 pb-4 sm:pb-5">
           <button
             onClick={() => {
               setActiveTab('major');
               router.push('/about');
             }}
-            style={{
-              backgroundColor: 'transparent',
-              border: 'none',
-              fontSize: tabButtonFontSize,
-              fontWeight: activeTab === 'major' ? '700' : '400',
-              color: activeTab === 'major' ? '#141414ff' : '#7b828eff',
-              fontFamily: 'Satoshi',
-              cursor: 'pointer',
-              padding: '8px 0',
-              margin: '0',
-              transition: 'all 0.2s ease',
-            }}
+            className={`bg-transparent border-none text-[18px] sm:text-[20px] lg:text-[24px] font-satoshi cursor-pointer py-2 m-0 transition-all duration-200 ease-in ${
+              activeTab === 'major' ? 'font-bold text-neutral-1450' : 'font-normal text-[#7b828eff]'
+            }`}
           >
             About Major
           </button>
@@ -130,18 +94,9 @@ export default function AboutContent({
               setActiveTab('people');
               router.push('/about?tab=people');
             }}
-            style={{
-              backgroundColor: 'transparent',
-              border: 'none',
-              fontSize: tabButtonFontSize,
-              fontWeight: activeTab === 'people' ? '700' : '400',
-              color: activeTab === 'people' ? '#141414ff' : '#7b828eff',
-              fontFamily: 'Satoshi',
-              cursor: 'pointer',
-              padding: '8px 0',
-              margin: '0',
-              transition: 'all 0.2s ease',
-            }}
+            className={`bg-transparent border-none text-[18px] sm:text-[20px] lg:text-[24px] font-satoshi cursor-pointer py-2 m-0 transition-all duration-200 ease-in ${
+              activeTab === 'people' ? 'font-bold text-neutral-1450' : 'font-normal text-[#7b828eff]'
+            }`}
           >
             Our People
           </button>
@@ -149,14 +104,7 @@ export default function AboutContent({
 
         {/* About Major Tab */}
         {activeTab === 'major' && (
-          <div
-            id="sections"
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: sectionGap,
-            }}
-          >
+          <div id="sections" className="flex flex-col gap-10 lg:gap-[50px]">
             <AboutPageIntro
               title={introData?.title}
               description={introData?.description}

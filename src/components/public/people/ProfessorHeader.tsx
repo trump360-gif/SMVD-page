@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { useResponsive } from '@/lib/responsive';
 import type { Professor } from './types';
 
 interface ProfessorHeaderProps {
@@ -9,41 +8,19 @@ interface ProfessorHeaderProps {
 }
 
 export default function ProfessorHeader({ professor }: ProfessorHeaderProps) {
-  const { isMobile, isTablet } = useResponsive();
-
-  const imageWidth = isMobile ? '100%' : isTablet ? '200px' : '333px';
-  const imageHeight = isMobile ? 'auto' : isTablet ? '280px' : '468px';
-  const imageFlexShrink = isMobile ? undefined : 0;
-  const badgeFontSize = isMobile ? '14px' : '18px';
-  const contentPaddingTop = isMobile ? '40px' : '100px';
-
   return (
     <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: imageWidth,
-        flexShrink: imageFlexShrink,
-        paddingTop: contentPaddingTop,
-        position: 'relative',
-      }}
+      className="flex flex-col w-full sm:w-[200px] lg:w-[333px] shrink sm:shrink-0 pt-[40px] sm:pt-[100px] relative"
     >
       {/* Profile Image */}
       <div
-        style={{
-          position: 'relative',
-          width: '100%',
-          height: imageHeight,
-          aspectRatio: isMobile ? '236/356' : undefined,
-          backgroundColor: '#f3f4f6ff',
-          marginBottom: '0px',
-        }}
+        className="relative w-full h-auto sm:h-[280px] lg:h-[468px] aspect-[236/356] sm:aspect-auto bg-[#f3f4f6ff] mb-0"
       >
         <Image
           src={professor.profileImage}
           alt={professor.name}
           fill
-          sizes={isMobile ? '100vw' : isTablet ? '200px' : '333px'}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 200px, 333px"
           style={{
             objectFit: 'cover',
           }}
@@ -53,25 +30,10 @@ export default function ProfessorHeader({ professor }: ProfessorHeaderProps) {
 
       {/* Badge - Overlay on image */}
       <div
-        style={{
-          position: 'absolute',
-          bottom: '0',
-          left: '0',
-          right: '0',
-          backgroundColor: '#141414ff',
-          padding: isMobile ? '10px 0' : '12px 0',
-          textAlign: 'center',
-          width: '100%',
-        }}
+        className="absolute bottom-0 left-0 right-0 bg-[#141414ff] py-[10px] sm:py-[12px] text-center w-full"
       >
         <span
-          style={{
-            fontSize: badgeFontSize,
-            fontWeight: 'normal',
-            color: '#ffffffff',
-            fontFamily: 'Helvetica',
-            letterSpacing: '-0.27px',
-          }}
+          className="text-[14px] sm:text-[18px] font-normal text-[#ffffffff] font-helvetica tracking-[-0.27px]"
         >
           {professor.badge}
         </span>

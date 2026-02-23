@@ -1,6 +1,5 @@
 'use client';
 
-import { useResponsive } from '@/lib/responsive';
 
 interface NewsDetailLayoutProps {
   children: React.ReactNode;
@@ -12,30 +11,13 @@ interface NewsDetailLayoutProps {
  * since the News detail page itself is a server component.
  */
 export default function NewsDetailLayout({ children }: NewsDetailLayoutProps) {
-  const { isMobile, isTablet } = useResponsive();
-
-  const paddingX = isMobile ? '16px' : isTablet ? '24px' : '40px';
-  const contentGap = isMobile ? '40px' : isTablet ? '60px' : '100px';
 
   return (
     <div
-      style={{
-        width: '100%',
-        paddingTop: '0px',
-        paddingBottom: isMobile ? '40px' : '61px',
-        paddingLeft: paddingX,
-        paddingRight: paddingX,
-        backgroundColor: '#ffffffff',
-      }}
+      className="w-full pt-0 pb-10 sm:pb-[61px] px-4 sm:px-6 lg:px-10 bg-[#ffffffff]"
     >
       <div
-        style={{
-          maxWidth: '1440px',
-          margin: '0 auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: contentGap,
-        }}
+        className="max-w-[1440px] mx-auto flex flex-col gap-10 sm:gap-[60px] lg:gap-[100px]"
       >
         {children}
       </div>

@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import { prisma } from '@/lib/db';
 import {
   Header,
@@ -91,15 +90,13 @@ export default async function AboutPage() {
       {/* Header */}
       <Header />
 
-      {/* Content with Suspense */}
-      <Suspense fallback={<div style={{ padding: '40px' }}>로딩 중...</div>}>
-        <AboutContent
-          introData={introData}
-          visionData={visionData}
-          historyData={historyData}
-          peopleData={peopleData}
-        />
-      </Suspense>
+      {/* Content */}
+      <AboutContent
+        introData={introData}
+        visionData={visionData}
+        historyData={historyData}
+        peopleData={peopleData}
+      />
 
       {/* Footer */}
       <Footer />

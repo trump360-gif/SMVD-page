@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import {
   Header,
   Footer,
@@ -79,13 +78,11 @@ export default async function WorkPage() {
             gap: '100px',
           }}
         >
-          {/* Work Archive Component with Suspense for useSearchParams */}
-          <Suspense fallback={<div>Loading...</div>}>
-            <WorkArchive
-              portfolioItemsFromDB={workData?.projects}
-              exhibitionItemsFromDB={workData?.exhibitions}
-            />
-          </Suspense>
+          {/* Work Archive Component */}
+          <WorkArchive
+            portfolioItemsFromDB={workData?.projects}
+            exhibitionItemsFromDB={workData?.exhibitions}
+          />
         </div>
       </div>
 
