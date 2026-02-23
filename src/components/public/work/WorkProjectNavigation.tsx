@@ -26,7 +26,7 @@ export default function WorkProjectNavigation({ previousProject, nextProject }: 
           className="flex items-center gap-[15px] sm:gap-[30px] group text-left max-w-[45%]"
         >
           <div className="w-10 h-10 sm:w-[60px] sm:h-[60px] rounded-full border border-[#1b1d1f] flex items-center justify-center shrink-0 group-hover:bg-[#1b1d1f] transition-colors overflow-hidden relative">
-            <Image src="/arrow-left.svg" alt="Previous" width={24} height={24} className="sm:w-8 sm:h-8 group-hover:invert transition-all" />
+            <Image src="/arrow-left.svg" alt="Previous" width={24} height={24} unoptimized className="sm:w-8 sm:h-8 group-hover:invert transition-all" />
           </div>
           <div className="flex flex-col gap-1 sm:gap-2">
             <span className="text-[12px] sm:text-[14px] text-[#666666] font-medium tracking-[1.4px]">PREV</span>
@@ -42,7 +42,7 @@ export default function WorkProjectNavigation({ previousProject, nextProject }: 
         onClick={() => router.push('/work')}
         className="w-[18px] h-[18px] sm:w-[24px] sm:h-[24px] shrink-0 hover:opacity-70 transition-opacity"
       >
-        <Image src="/grid-icon.svg" alt="List" width={24} height={24} className="w-full h-full" />
+        <Image src="/grid-icon.svg" alt="List" width={24} height={24} unoptimized className="w-full h-full" />
       </button>
 
       {nextProject ? (
@@ -56,7 +56,7 @@ export default function WorkProjectNavigation({ previousProject, nextProject }: 
             <span className="text-[16px] sm:text-[24px] font-bold text-[#1b1d1f] font-pretendard line-clamp-2 md:line-clamp-1 break-keep">{nextProject.title}</span>
           </div>
           <div className="w-10 h-10 sm:w-[60px] sm:h-[60px] rounded-full border border-[#1b1d1f] flex items-center justify-center shrink-0 group-hover:bg-[#1b1d1f] transition-colors overflow-hidden relative">
-            <Image src="/arrow-right.svg" alt="Next" width={24} height={24} className="sm:w-8 sm:h-8 group-hover:invert transition-all" />
+            <Image src="/arrow-right.svg" alt="Next" width={24} height={24} unoptimized className="sm:w-8 sm:h-8 group-hover:invert transition-all" />
           </div>
         </button>
       ) : (
