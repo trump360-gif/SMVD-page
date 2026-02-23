@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { useResponsive } from '@/lib/responsive';
 
 interface Professor {
   id: string;
@@ -104,188 +103,52 @@ export default function OurPeopleTab({
   instructors = defaultInstructors,
 }: OurPeopleTabProps) {
   const router = useRouter();
-  const { isMobile, isTablet } = useResponsive();
 
   const handleProfessorClick = (profId: string) => {
     router.push(`/professor/${profId}`);
   };
 
-  // -- Responsive values --
-  const sectionGap = isMobile ? '30px' : isTablet ? '40px' : '60px';
-  const sectionPaddingBottom = isMobile ? '30px' : isTablet ? '40px' : '60px';
-  const headingFontSize = isMobile ? '28px' : isTablet ? '36px' : '48px';
-  const headingWidth = isMobile ? '100%' : isTablet ? '150px' : '333px';
-  const headingFlexShrink = isMobile ? undefined : 0;
-  const profSectionDirection = isMobile ? 'column' : 'row' as const;
-  const profListGap = isMobile ? '40px' : isTablet ? '12px' : '20px';
-  const profListWrap = isMobile || isTablet ? 'wrap' : 'nowrap' as const;
-  const cardWidth = isMobile ? 'calc(50% - 20px)' : isTablet ? 'calc(50% - 6px)' : '236px';
-  const cardFlexShrink = isMobile ? undefined : 0;
-  const imageHeight = '356px';
-  const imageSizes = isMobile ? '100vw' : isTablet ? '160px' : '236px';
-  const infoPadding = isMobile ? '20px 16px 0 16px' : isTablet ? '20px 12px 0 12px' : '37px 30px 0 30px';
-  const profNameFontSize = isMobile ? '16px' : '18px';
-  const profCourseFontSize = isMobile ? '14px' : '18px';
-  const profCourseMarginTop = isMobile ? '12px' : '20px';
-
-  // Instructor responsive
-  const instrSectionDirection = isMobile ? 'column' : 'row' as const;
-  const instrNameWidth = isMobile ? 'auto' : isTablet ? '200px' : '332px';
-  const instrNameFlexShrink = isMobile ? undefined : 0;
-  const instrGap = isMobile ? '8px' : isTablet ? '24px' : '40px';
-  const instrDirection = isMobile ? 'column' : 'row' as const;
-  const instrPaddingY = isMobile ? '20px' : isTablet ? '28px' : '34px';
-  const instrMinHeight = isMobile ? 'auto' : '95px';
-  const instrFontSize = isMobile ? '15px' : '18px';
-
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: sectionGap,
-        width: '100%',
-      }}
-    >
+    <div className="flex flex-col gap-[30px] sm:gap-10 lg:gap-[60px] w-full">
       {/* Professor Section */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: profSectionDirection,
-          gap: isMobile ? '20px' : '10px',
-          alignItems: 'flex-start',
-          width: '100%',
-          paddingBottom: sectionPaddingBottom,
-          borderBottom: '1px solid #000000ff',
-        }}
-      >
-        <h2
-          style={{
-            fontSize: headingFontSize,
-            fontWeight: '400',
-            color: '#000000ff',
-            fontFamily: 'Helvetica',
-            margin: '0',
-            letterSpacing: '-0.48px',
-            width: headingWidth,
-            flexShrink: headingFlexShrink,
-          }}
-        >
+      <div className="flex flex-col sm:flex-row gap-5 sm:gap-[10px] items-start w-full pb-[30px] sm:pb-10 lg:pb-[60px] border-b border-black">
+        <h2 className="text-[28px] sm:text-[36px] lg:text-[48px] font-normal text-black font-helvetica m-0 tracking-[-0.48px] w-full sm:w-[150px] lg:w-[333px] shrink sm:shrink-0">
           Professor
         </h2>
 
-        {/* Professor List - Desktop 4col / Tablet 2col / Mobile 1col */}
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: profListWrap,
-            gap: profListGap,
-            flex: 1,
-            width: isMobile ? '100%' : undefined,
-          }}
-        >
+        {/* Professor List - Fluid Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-5 sm:gap-3 lg:gap-5 flex-1 w-full">
           {professors.map((prof) => (
             <div
               key={prof.id}
               onClick={() => handleProfessorClick(prof.id)}
-              style={{
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0px',
-                width: cardWidth,
-                flexShrink: cardFlexShrink,
-                flexBasis: isTablet ? 'calc(50% - 6px)' : undefined,
-                transition: 'transform 0.2s ease, opacity 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.opacity = '0.8';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.opacity = '1';
-              }}
+              className="cursor-pointer flex flex-col gap-0 w-full transition-all duration-200 hover:-translate-y-1 hover:opacity-80"
             >
-              {/* Image Container */}
-              <div
-                style={{
-                  cursor: 'pointer',
-                  position: 'relative',
-                  width: '100%',
-                  height: imageHeight,
-                  backgroundColor: '#ffffff',
-                  borderRadius: '0px',
-                  border: 'none',
-                }}
-              >
+              <div className="cursor-pointer relative w-full h-auto aspect-236/356 bg-white rounded-none border-none">
                 {prof.profileImage ? (
                   <Image
                     src={prof.profileImage}
                     alt={prof.name}
                     fill
-                    sizes={imageSizes}
-                    style={{
-                      objectFit: 'contain',
-                    }}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-contain"
                     priority={false}
                     quality={80}
                   />
                 ) : (
-                  <div
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      backgroundColor: '#e5e5e5',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#999',
-                    }}
-                  >
+                  <div className="w-full h-full bg-[#e5e5e5] flex items-center justify-center text-[#999]">
                     No Image
                   </div>
                 )}
               </div>
 
               {/* Info Container */}
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0px',
-                  backgroundColor: '#ffffff',
-                  padding: infoPadding,
-                  width: '100%',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: profNameFontSize,
-                    fontWeight: '400',
-                    color: '#000000ff',
-                    fontFamily: 'Helvetica',
-                    margin: '0',
-                    letterSpacing: '-0.18px',
-                    lineHeight: 1.5,
-                  }}
-                >
+              <div className="flex flex-col gap-0 bg-white px-2 py-4 sm:px-3 sm:py-5 lg:px-[30px] lg:pt-[37px] lg:pb-6 w-full box-border">
+                <h3 className="text-[16px] sm:text-[18px] font-normal text-black font-helvetica m-0 tracking-[-0.18px] leading-relaxed">
                   {prof.name}
                 </h3>
                 {prof.courses && (
-                  <p
-                    style={{
-                      fontSize: profCourseFontSize,
-                      fontWeight: '400',
-                      color: '#353030ff',
-                      fontFamily: 'Helvetica',
-                      margin: `${profCourseMarginTop} 0 0 0`,
-                      lineHeight: 1.4,
-                      whiteSpace: 'pre-wrap',
-                      wordBreak: 'keep-all',
-                    }}
-                  >
+                  <p className="text-[14px] sm:text-[18px] font-normal text-[#353030] font-helvetica mt-3 sm:mt-5 mb-0 leading-[1.4] whitespace-pre-wrap wrap-break-word">
                     {prof.courses.undergraduate?.join('\n') ||
                       prof.courses.graduate?.join('\n') ||
                       ''}
@@ -298,79 +161,22 @@ export default function OurPeopleTab({
       </div>
 
       {/* Instructor Section */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: instrSectionDirection,
-          gap: isMobile ? '20px' : '10px',
-          alignItems: 'flex-start',
-          width: '100%',
-          paddingBottom: sectionPaddingBottom,
-        }}
-      >
-        <h2
-          style={{
-            fontSize: headingFontSize,
-            fontWeight: '400',
-            color: '#000000ff',
-            fontFamily: 'Helvetica',
-            margin: '0',
-            letterSpacing: '-0.48px',
-            width: headingWidth,
-            flexShrink: headingFlexShrink,
-          }}
-        >
+      <div className="flex flex-col sm:flex-row gap-5 sm:gap-[10px] items-start w-full pb-[30px] sm:pb-10 lg:pb-[60px]">
+        <h2 className="text-[28px] sm:text-[36px] lg:text-[48px] font-normal text-black font-helvetica m-0 tracking-[-0.48px] w-full sm:w-[150px] lg:w-[333px] shrink sm:shrink-0">
           Instructor
         </h2>
 
         {/* Instructor List - 1 column */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            flex: 1,
-            width: isMobile ? '100%' : undefined,
-          }}
-        >
+        <div className="flex flex-col flex-1 w-full sm:w-auto">
           {instructors.map((instructor, index) => (
             <div
               key={index}
-              style={{
-                display: 'flex',
-                flexDirection: instrDirection,
-                gap: instrGap,
-                alignItems: isMobile ? 'flex-start' : 'center',
-                paddingBottom: instrPaddingY,
-                paddingTop: instrPaddingY,
-                borderBottom: '1px solid #e5e5e5ff',
-                backgroundColor: '#ffffffff',
-                minHeight: instrMinHeight,
-                boxSizing: 'border-box',
-              }}
+              className="flex flex-col sm:flex-row gap-2 sm:gap-6 lg:gap-10 items-start sm:items-center py-3 sm:py-7 lg:py-[34px] border-b border-[#e5e5e5] bg-white min-h-auto sm:min-h-[95px] box-border"
             >
-              <h3
-                style={{
-                  fontSize: instrFontSize,
-                  fontWeight: isMobile ? '500' : '400',
-                  color: '#353030ff',
-                  fontFamily: 'Helvetica',
-                  margin: '0',
-                  width: instrNameWidth,
-                  flexShrink: instrNameFlexShrink,
-                }}
-              >
+              <h3 className="text-[15px] sm:text-[18px] font-medium sm:font-normal text-[#353030] font-helvetica m-0 w-auto sm:w-[200px] lg:w-[332px] shrink sm:shrink-0">
                 {instructor.name}
               </h3>
-              <p
-                style={{
-                  fontSize: isMobile ? '14px' : instrFontSize,
-                  fontWeight: '400',
-                  color: isMobile ? '#666666' : '#353030ff',
-                  fontFamily: 'Helvetica',
-                  margin: '0',
-                  lineHeight: 1.4,
-                }}
-              >
+              <p className="text-[14px] sm:text-[18px] font-normal text-[#666] sm:text-[#353030] font-helvetica m-0 leading-[1.4]">
                 {instructor.specialty}
               </p>
             </div>

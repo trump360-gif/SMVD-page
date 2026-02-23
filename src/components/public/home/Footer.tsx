@@ -81,7 +81,8 @@ export function Footer({ data, socialLinks }: FooterProps) {
           paddingTop: footerPadding,
           paddingBottom: footerPadding,
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: isMobile ? 'column' : 'row',
+          justifyContent: isMobile ? 'flex-start' : 'space-between',
           gap: footerGap,
         }}
       >

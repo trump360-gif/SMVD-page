@@ -1,6 +1,5 @@
 'use client';
 
-import { useResponsive } from '@/lib/responsive';
 import { WorkDetail, type TiptapContent } from '@/constants/work-details';
 import WorkHeader from './WorkHeader';
 import WorkDetailContent from './WorkDetailContent';
@@ -13,7 +12,6 @@ interface WorkDetailPageProps {
 }
 
 export default function WorkDetailPage({ project }: WorkDetailPageProps) {
-  const { isMobile, isTablet } = useResponsive();
 
   // NEW - 2026-02-19: Check if content is Tiptap format
   const isTiptapContent = project.content &&
@@ -81,34 +79,12 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
   const descColor = blockContent?.mainDescriptionBlock?.color ?? '#1b1d1fff';
   const descLineHeight = blockContent?.mainDescriptionBlock?.lineHeight ?? 1.8;
 
-  const containerPaddingX = isMobile ? '16px' : isTablet ? '24px' : '40px';
-  const containerPaddingBottom = isMobile ? '40px' : '61px';
-  const sectionGap = isMobile ? '40px' : isTablet ? '60px' : '80px';
-
   return (
-    <div
-      style={{
-        width: '100%',
-        paddingTop: '0px',
-        paddingBottom: containerPaddingBottom,
-        paddingLeft: containerPaddingX,
-        paddingRight: containerPaddingX,
-        backgroundColor: '#ffffffff',
-      }}
-    >
+    <div className="w-full pt-0 pb-10 sm:pb-[61px] px-4 sm:px-6 lg:px-10 bg-white">
       {/* Header Navigation */}
       <WorkHeader currentCategory={project.category} />
 
-      <div
-        style={{
-          maxWidth: '1440px',
-          margin: '0 auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: sectionGap,
-          paddingTop: '0px',
-        }}
-      >
+      <div className="max-w-[1440px] mx-auto flex flex-col gap-10 sm:gap-[60px] lg:gap-20 pt-0">
         <WorkDetailContent
           displayHero={displayHero}
           displayTitle={displayTitle}
@@ -116,7 +92,6 @@ export default function WorkDetailPage({ project }: WorkDetailPageProps) {
           displayEmail={displayEmail}
           displayDescription={displayDescription}
           displayGalleryImages={displayGalleryImages}
-          columnLayout={columnLayout}
           columnGap={columnGap}
           textColumnWidth={textColumnWidth}
           descFontSize={descFontSize}

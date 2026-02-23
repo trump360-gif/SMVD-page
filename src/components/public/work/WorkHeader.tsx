@@ -1,6 +1,5 @@
 'use client';
 
-import { useResponsive } from '@/lib/responsive';
 
 interface WorkHeaderProps {
   currentCategory?: string;
@@ -15,48 +14,16 @@ export default function WorkHeader({
   onCategoryChange,
   categories = defaultCategories,
 }: WorkHeaderProps) {
-  const { isMobile, isTablet } = useResponsive();
-
-  const categoryFontSize = isMobile ? '14px' : isTablet ? '15px' : '16px';
-  const categoryGap = isMobile ? '12px' : '16px';
 
   return (
-    <div
-      style={{
-        maxWidth: '1440px',
-        margin: '0 auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '0px',
-        width: '100%',
-        paddingTop: '0px',
-        paddingBottom: '0px',
-      }}
-    >
+    <div className="max-w-[1440px] mx-auto flex flex-col gap-0 w-full pt-0 pb-0">
       {/* Category Filter Tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: categoryGap,
-          flexWrap: 'wrap',
-          width: '100%',
-          paddingBottom: '0px',
-          borderBottom: 'none',
-        }}
-      >
+      <div className="flex flex-wrap gap-3 sm:gap-4 w-full pb-0 border-none">
         {categories.map((category) => (
           <span
             key={category}
             onClick={() => onCategoryChange?.(category)}
-            style={{
-              fontSize: categoryFontSize,
-              fontWeight: '500',
-              fontFamily: 'Satoshi',
-              color:
-                currentCategory === category ? '#141414ff' : '#7b828eff',
-              cursor: onCategoryChange ? 'pointer' : 'default',
-              transition: 'color 0.3s ease',
-            }}
+            className={`font-satoshi font-medium text-[14px] sm:text-[15px] lg:text-[16px] transition-colors duration-300 ease-in ${currentCategory === category ? 'text-neutral-1450' : 'text-[#7b828e]'} ${onCategoryChange ? 'cursor-pointer' : 'cursor-default'}`}
           >
             {category}
           </span>

@@ -1,4 +1,3 @@
-import { useResponsive } from '@/lib/responsive';
 import type { FilterOption } from './types';
 
 interface FilterSectionProps {
@@ -12,73 +11,27 @@ export default function FilterSection({
   classificationOptions,
   trackOptions,
 }: FilterSectionProps) {
-  const { isMobile, isTablet } = useResponsive();
-
-  const containerGap = isMobile ? '24px' : isTablet ? '40px' : '60px';
-  const labelFontSize = isMobile ? '14px' : '18px';
-  const trackGridColumns = isMobile ? '1fr' : isTablet ? 'repeat(2, auto)' : 'repeat(3, auto)';
-  const trackGap = isMobile ? '12px' : '20px';
-  const labelWidth = isMobile ? 'auto' : '35px';
-  const trackItemFontSize = isMobile ? '14px' : '18px';
-
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: isMobile ? 'column' : 'row',
-        gap: containerGap,
-        flexWrap: isMobile ? 'nowrap' : 'wrap',
-        paddingBottom: '20px',
-        borderBottom: '1px solid #e0e0e0ff',
-        alignItems: 'flex-start',
-      }}
-    >
+    <div className="flex flex-col sm:flex-row gap-6 sm:gap-10 lg:gap-[60px] flex-nowrap sm:flex-wrap pb-5 border-b border-[#e0e0e0] items-start">
       {/* Classification Filter */}
-      <div style={{ display: 'flex', gap: isMobile ? '12px' : '20px', alignItems: 'flex-start', minWidth: 0 }}>
-        <p
-          style={{
-            fontSize: labelFontSize,
-            fontWeight: '500',
-            fontFamily: 'Pretendard',
-            color: '#000000ff',
-            margin: '0',
-            whiteSpace: 'nowrap',
-            flexShrink: 0,
-          }}
-        >
+      <div className="flex gap-3 sm:gap-5 items-start min-w-0">
+        <p className="text-[14px] sm:text-[18px] font-medium font-pretendard text-neutral-1500 m-0 whitespace-nowrap shrink-0">
           분류
         </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div className="flex flex-col gap-2">
           {classificationOptions.map((option) => (
             <label
               key={option.value}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                fontSize: labelFontSize,
-                fontWeight: '500',
-                fontFamily: 'Pretendard',
-                color: '#000000ff',
-                margin: '0',
-              }}
+              className="flex items-center gap-2 cursor-pointer text-[14px] sm:text-[18px] font-medium font-pretendard text-neutral-1500 m-0"
             >
               <input
                 type="checkbox"
                 checked={checkedClassification === option.value}
                 onChange={() => {}}
                 disabled
-                style={{
-                  appearance: 'none',
-                  width: '12px',
-                  height: '12px',
-                  cursor: 'not-allowed',
-                  backgroundColor: checkedClassification === option.value ? '#d0d0d0ff' : '#ffffffff',
-                  border: '1px solid #ccc',
-                  borderRadius: '2px',
-                  flexShrink: 0,
-                }}
+                className={`appearance-none w-3 h-3 cursor-not-allowed border border-[#ccc] rounded-[2px] shrink-0 ${
+                  checkedClassification === option.value ? 'bg-[#d0d0d0]' : 'bg-[#ffffff]'
+                }`}
               />
               {option.label}
             </label>
@@ -87,63 +40,21 @@ export default function FilterSection({
       </div>
 
       {/* Track Filter */}
-      <div style={{ display: 'flex', gap: isMobile ? '12px' : '30px', alignItems: 'flex-start', minWidth: 0 }}>
-        <p
-          style={{
-            fontSize: labelFontSize,
-            fontWeight: '500',
-            fontFamily: 'Pretendard',
-            color: '#000000ff',
-            margin: '0',
-            whiteSpace: 'nowrap',
-            flexShrink: 0,
-            width: labelWidth,
-          }}
-        >
+      <div className="flex gap-3 sm:gap-[30px] items-start min-w-0">
+        <p className="text-[14px] sm:text-[18px] font-medium font-pretendard text-neutral-1500 m-0 whitespace-nowrap shrink-0 w-auto sm:w-[35px]">
           트랙
         </p>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: trackGridColumns,
-            columnGap: trackGap,
-            rowGap: isMobile ? '12px' : '20px',
-          }}
-        >
+        <div className="flex flex-wrap gap-x-3 sm:gap-x-5 gap-y-3 sm:gap-y-5 items-center">
           {trackOptions.map((option) => (
             <div
               key={option.value}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '0',
-                borderRadius: '0',
-                backgroundColor: 'transparent',
-                border: 'none',
-                minWidth: 0,
-              }}
+              className="flex items-center gap-2 p-0 rounded-none bg-transparent border-none min-w-0"
             >
               <div
-                style={{
-                  width: '18px',
-                  height: '18px',
-                  backgroundColor: option.color,
-                  flexShrink: 0,
-                }}
+                className="w-[18px] h-[18px] shrink-0"
+                style={{ backgroundColor: option.color }}
               />
-              <p
-                style={{
-                  fontSize: trackItemFontSize,
-                  fontWeight: '500',
-                  fontFamily: 'Pretendard',
-                  color: '#000000ff',
-                  margin: '0',
-                  whiteSpace: 'nowrap',
-                  wordBreak: 'keep-all',
-                  lineHeight: 1.3,
-                }}
-              >
+              <p className="text-[14px] sm:text-[18px] font-medium font-pretendard text-neutral-1500 m-0 whitespace-nowrap break-keep leading-[1.3]">
                 {option.label}
               </p>
             </div>

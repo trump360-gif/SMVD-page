@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useResponsive } from '@/lib/responsive';
-import { PADDING } from '@/constants/responsive';
+
 import UndergraduateTab from './UndergraduateTab';
 import GraduateTab from './GraduateTab';
 import type { UndergraduateContent, GraduateContent } from '@/lib/validation/curriculum';
@@ -16,14 +15,9 @@ export default function CurriculumTab({
   undergraduateContent,
   graduateContent,
 }: CurriculumTabProps) {
-  const { isMobile, isTablet } = useResponsive();
   const [activeTab, setActiveTab] = useState<'undergraduate' | 'graduate'>('undergraduate');
   const [activeSubTab, setActiveSubTab] = useState<'master' | 'doctor' | 'thesis'>('master');
 
-  // Responsive variables
-  const containerGap = isMobile ? '20px' : isTablet ? '30px' : '40px';
-  const buttonFontSize = isMobile ? '18px' : isTablet ? '20px' : '24px';
-  const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : 0;
 
   // Handle hash navigation
   useEffect(() => {
@@ -74,67 +68,32 @@ export default function CurriculumTab({
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: containerGap,
-        width: '100%',
-        paddingLeft: `${containerPadding}px`,
-        paddingRight: `${containerPadding}px`,
-      }}
-    >
+    <div className="flex flex-col gap-5 sm:gap-[30px] lg:gap-10 w-full box-border">
       {/* Tab Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          width: '100%',
-          paddingBottom: isMobile ? '16px' : '20px',
-          borderBottom: '2px solid #141414ff',
-        }}
-      >
+      <div className="flex items-start w-full pb-4 sm:pb-5 border-b-2 border-[#141414]">
         {/* Tab Buttons */}
-        <div
-          style={{
-            display: 'flex',
-            gap: isMobile ? '12px' : '16px',
-          }}
-        >
+        <div className="flex gap-4 sm:gap-[30px] border-b-[3px] border-neutral-1450 mb-0 pb-0">
           <button
             onClick={() => handleTabChange('undergraduate')}
-            style={{
-              fontSize: buttonFontSize,
-              fontWeight: '700',
-              fontFamily: 'Satoshi',
-              color: activeTab === 'undergraduate' ? '#141414ff' : '#7b828eff',
-              backgroundColor: 'transparent',
-              border: 'none',
-              padding: '8px 0',
-              cursor: 'pointer',
-              margin: '0',
-              transition: 'color 0.3s ease',
-            }}
+            className={`pb-4 sm:pb-5 text-[24px] sm:text-[28px] lg:text-[32px] font-bold transition-all ${
+              activeTab === 'undergraduate'
+                ? 'text-neutral-1450 border-b-4 border-neutral-1450 -mb-[3px]'
+                : 'text-[#d9d9d9]'
+            }`}
           >
-            {isMobile ? 'Under' : 'Undergraduate'}
+            <span className="sm:hidden">Under</span>
+            <span className="hidden sm:inline">Undergraduate</span>
           </button>
           <button
             onClick={() => handleTabChange('graduate')}
-            style={{
-              fontSize: buttonFontSize,
-              fontWeight: '700',
-              fontFamily: 'Satoshi',
-              color: activeTab === 'graduate' ? '#141414ff' : '#7b828eff',
-              backgroundColor: 'transparent',
-              border: 'none',
-              padding: '8px 0',
-              cursor: 'pointer',
-              margin: '0',
-              transition: 'color 0.3s ease',
-              whiteSpace: 'nowrap',
-            }}
+            className={`pb-4 sm:pb-5 text-[24px] sm:text-[28px] lg:text-[32px] font-bold transition-all ${
+              activeTab === 'graduate'
+                ? 'text-neutral-1450 border-b-4 border-neutral-1450 -mb-[3px]'
+                : 'text-[#d9d9d9]'
+            }`}
           >
-            {isMobile ? 'Grad' : 'Graduate School'}
+            <span className="sm:hidden">Grad</span>
+            <span className="hidden sm:inline">Graduate School</span>
           </button>
         </div>
       </div>

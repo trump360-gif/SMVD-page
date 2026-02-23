@@ -3,7 +3,6 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { sanitizeContent } from '@/lib/sanitize';
-import { useResponsive } from '@/lib/responsive';
 import { hasMarkdownSyntax } from './WorkDetailTypes';
 
 interface WorkDetailContentProps {
@@ -13,7 +12,6 @@ interface WorkDetailContentProps {
   displayEmail: string;
   displayDescription: string;
   displayGalleryImages: string[];
-  columnLayout: number;
   columnGap: number;
   textColumnWidth: string;
   descFontSize: number;
@@ -29,7 +27,6 @@ export default function WorkDetailContent({
   displayEmail,
   displayDescription,
   displayGalleryImages,
-  columnLayout,
   columnGap,
   textColumnWidth,
   descFontSize,
@@ -37,66 +34,62 @@ export default function WorkDetailContent({
   descColor,
   descLineHeight,
 }: WorkDetailContentProps) {
-  const { isMobile, isTablet } = useResponsive();
+  const responsiveDescFontSizeMobile = Math.min(descFontSize, 15);
+  const responsiveColumnGapTablet = Math.min(columnGap, 40);
 
-  const contentGap = isMobile ? '40px' : isTablet ? '60px' : '100px';
-  const heroHeight = isMobile ? '300px' : isTablet ? '500px' : '860px';
-  const titleFontSize = isMobile ? '32px' : isTablet ? '44px' : '60px';
-  const textDirection = isMobile ? 'column' : 'row' as const;
-  const responsiveColumnGap = isMobile ? '24px' : isTablet ? `${Math.min(columnGap, 40)}px` : `${columnGap}px`;
-  const leftMinWidth = isMobile ? 'auto' : isTablet ? '280px' : '400px';
-  const leftFlex = isMobile ? '1' : '0 0 auto';
-  const responsiveDescFontSize = isMobile ? Math.min(descFontSize, 15) : descFontSize;
+  const cssVariables = {
+    '--desc-font-size': `${descFontSize}px`,
+    '--desc-font-size-mobile': `${responsiveDescFontSizeMobile}px`,
+    '--column-gap': `${columnGap}px`,
+    '--column-gap-tablet': `${responsiveColumnGapTablet}px`,
+    '--desc-font-weight': descFontWeight,
+    '--desc-color': descColor,
+    '--desc-line-height': descLineHeight,
+  } as React.CSSProperties;
 
   const descriptionContent = hasMarkdownSyntax(displayDescription) ? (
     <div
-      style={{ fontSize: `${responsiveDescFontSize}px`, fontWeight: descFontWeight, fontFamily: 'Pretendard', color: descColor, lineHeight: `${descLineHeight}`, letterSpacing: '-0.18px', margin: '0' }}
-      className="prose prose-lg max-w-none"
+      className="prose prose-lg max-w-none font-pretendard m-0 tracking-[-0.18px] text-(--desc-font-size-mobile) sm:text-(--desc-font-size) font-(--desc-font-weight) text-(--desc-color) leading-(--desc-line-height)"
     >
       <ReactMarkdown remarkPlugins={[remarkGfm]}>
         {sanitizeContent(displayDescription)}
       </ReactMarkdown>
     </div>
   ) : (
-    <p style={{ fontSize: `${responsiveDescFontSize}px`, fontWeight: descFontWeight, fontFamily: 'Pretendard', color: descColor, lineHeight: `${descLineHeight}`, letterSpacing: '-0.18px', margin: '0', whiteSpace: 'pre-wrap' }}>
+    <p className="font-pretendard m-0 whitespace-pre-wrap tracking-[-0.18px] text-(--desc-font-size-mobile) sm:text-(--desc-font-size) font-(--desc-font-weight) text-(--desc-color) leading-(--desc-line-height)">
       {displayDescription}
     </p>
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: contentGap, width: '100%' }}>
+    <div className="flex flex-col gap-10 sm:gap-[60px] lg:gap-[100px] w-full" style={cssVariables}>
       {/* Hero Image */}
       {displayHero && (
-        <div style={{ width: '100%', height: heroHeight, backgroundColor: '#d9d9d9ff', borderRadius: '0px', overflow: 'hidden' }}>
-          <img src={displayHero} alt={displayTitle} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div className="w-full h-[300px] sm:h-[500px] lg:h-[860px] bg-[#d9d9d9] rounded-none overflow-hidden">
+          <img src={displayHero} alt={displayTitle} className="w-full h-full object-cover" />
         </div>
       )}
 
       {/* Text Section */}
-      <div
-        style={{ display: 'flex', flexDirection: textDirection, gap: responsiveColumnGap, width: '100%' }}
-      >
+      <div className="flex flex-col sm:flex-row w-full gap-[24px] sm:gap-[var(--column-gap-tablet)] lg:gap-[var(--column-gap)]">
         {/* Left Column - Title and Author */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '24px', flex: leftFlex, minWidth: leftMinWidth }}>
-          <h1 style={{ fontSize: titleFontSize, fontWeight: '700', color: '#1b1d1fff', fontFamily: 'Satoshi', margin: '0', letterSpacing: '-0.6px', lineHeight: '1.2', wordBreak: 'keep-all' }}>
+        <div className="flex flex-col gap-4 sm:gap-6 flex-1 sm:flex-none sm:min-w-[280px] lg:min-w-[400px]">
+          <h1 className="text-[32px] sm:text-[44px] lg:text-[60px] font-bold text-[#1b1d1f] font-satoshi m-0 tracking-[-0.6px] leading-[1.2] break-keep">
             {displayTitle}
           </h1>
-          <p style={{ fontSize: isMobile ? '13px' : '14px', fontFamily: 'Pretendard', color: '#1b1d1fff', margin: '0', whiteSpace: isMobile ? 'normal' : 'nowrap' }}>
-            <span style={{ fontWeight: '500' }}>{displayAuthor}</span>
+          <p className="text-[13px] sm:text-[14px] font-pretendard text-[#1b1d1f] m-0 whitespace-normal sm:whitespace-nowrap">
+            <span className="font-medium">{displayAuthor}</span>
             {displayEmail && (
-              <span style={{ fontWeight: '400', color: '#7b828eff' }}> {displayEmail}</span>
+              <span className="font-normal text-[#7b828e]"> {displayEmail}</span>
             )}
           </p>
         </div>
 
         {/* Right Column - Description */}
         <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: isMobile ? '16px' : '24px',
-            flex: isMobile ? '1' : textColumnWidth === 'narrow' ? '0 0 400px' : textColumnWidth === 'wide' ? '0 0 800px' : '1',
-          }}
+          className={`flex flex-col gap-4 sm:gap-6 flex-1 ${
+            textColumnWidth === 'narrow' ? 'sm:flex-none sm:w-[400px]' : textColumnWidth === 'wide' ? 'sm:flex-none sm:w-[800px]' : ''
+          }`}
         >
           {descriptionContent}
         </div>
@@ -104,16 +97,16 @@ export default function WorkDetailContent({
 
       {/* Gallery */}
       {displayGalleryImages.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0', width: '100%' }}>
+        <div className="flex flex-col gap-0 w-full">
           {displayGalleryImages.map((image, index) => (
             <div
               key={index}
-              style={{ width: '100%', backgroundColor: '#f0f0f0ff', borderRadius: '0px', overflow: 'hidden', lineHeight: '0', margin: index > 0 ? '-1px 0 0 0' : '0', padding: '0', fontSize: '0' }}
+              className={`w-full bg-[#f0f0f0] rounded-none overflow-hidden leading-none p-0 text-[0px] ${index > 0 ? '-mt-px' : 'mt-0'}`}
             >
               <img
                 src={image}
                 alt={`Gallery image ${index + 1}`}
-                style={{ width: '100%', height: 'auto', display: 'block', margin: '0', padding: '0' }}
+                className="w-full h-auto block m-0 p-0"
               />
             </div>
           ))}

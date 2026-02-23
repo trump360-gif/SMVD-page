@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { useResponsive } from '@/lib/responsive';
 
 interface WorkItem {
   src: string;
@@ -36,7 +35,6 @@ export default function WorkSection({
   items = workItems,
 }: WorkSectionProps) {
   const [activeCategory, setActiveCategory] = useState('All');
-  const { isMobile, isTablet, isDesktop } = useResponsive();
 
   const filteredItems = activeCategory === 'All'
     ? items
@@ -45,45 +43,24 @@ export default function WorkSection({
         (activeCategory === 'Game design' && item.category === 'Game')
       );
 
-  const headerPadding = isMobile ? '16px' : isTablet ? '24px' : '40px';
-  const headerFontSize = isMobile ? '28px' : isTablet ? '40px' : '48px';
-  const moreTextFontSize = isMobile ? '14px' : isTablet ? '16px' : '18px';
-  const cardGap = isMobile ? '24px' : isTablet ? '32px' : '40px';
   const totalRows = Math.ceil(filteredItems.length / 2);
 
-  const filterButtons = (vertical: boolean) =>
+  const filterButtons = (textClass: string, isVertical: boolean) =>
     categories.map((category) => {
       const isActive = activeCategory === category;
       return (
         <button
           key={category}
           onClick={() => setActiveCategory(category)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: isActive ? '4px 10px' : '4px 0',
-            fontSize: vertical ? '32px' : isMobile ? '18px' : '22px',
-            fontWeight: 'normal',
-            fontFamily: 'Inter',
-            letterSpacing: '0.4px',
-            lineHeight: 1.6,
-            whiteSpace: 'nowrap',
-            backgroundColor: isActive ? '#000000ff' : 'transparent',
-            color: isActive ? '#ffffffff' : '#3b3b3bff',
-            border: 'none',
-            cursor: 'pointer',
-            opacity: isActive ? 1 : 0.5,
-            transition: 'all 0.2s ease',
-          }}
+          className={`flex items-center gap-[6px] font-normal font-sans tracking-[0.4px] leading-normal whitespace-nowrap border-none cursor-pointer transition-all duration-200 ease-in-out ${isActive ? 'py-1 px-2.5 bg-[#000000ff] text-[#ffffffff] opacity-100' : 'py-1 px-0 bg-transparent text-[#3b3b3bff] opacity-50'} ${textClass}`}
         >
           {isActive && (
             <img
               src="/images/check.svg"
               alt="selected"
-              width={vertical ? 14 : 10}
-              height={vertical ? 16 : 12}
-              style={{ flexShrink: 0 }}
+              width={isVertical ? 14 : 10}
+              height={isVertical ? 16 : 12}
+              className="shrink-0"
             />
           )}
           {category}
@@ -94,137 +71,49 @@ export default function WorkSection({
   return (
     <section
       id="work"
-      style={{
-        width: '100%',
-        backgroundColor: '#ffffffff',
-        borderTop: '1px solid #adadadff',
-        paddingTop: isMobile ? '32px' : isTablet ? '48px' : '61px',
-        paddingBottom: isMobile ? '32px' : isTablet ? '48px' : '61px',
-        paddingLeft: headerPadding,
-        paddingRight: headerPadding,
-      }}
+      className="w-full bg-[#ffffffff] border-t border-[#adadadff] pt-8 sm:pt-12 lg:pt-[61px] pb-8 sm:pb-12 lg:pb-[61px] px-4 sm:px-6 lg:px-10"
     >
       {/* Header */}
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '1440px',
-          margin: '0 auto',
-          marginBottom: isMobile ? '32px' : '48px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          borderBottom: '1px solid #adadadff',
-          flexDirection: isMobile ? 'column' : 'row',
-          gap: isMobile ? '12px' : '0',
-        }}
-      >
-        <h2
-          style={{
-            fontSize: headerFontSize,
-            fontWeight: '500',
-            color: '#000000ff',
-            fontFamily: 'Inter',
-            margin: '0',
-            letterSpacing: '-0.128px',
-            lineHeight: 1.5,
-            paddingBottom: isMobile ? '12px' : '0',
-            width: isMobile ? '100%' : 'auto',
-          }}
-        >
+      <div className="w-full max-w-[1440px] mx-auto mb-8 sm:mb-12 flex items-center justify-between border-b border-[#adadadff] flex-col sm:flex-row gap-3 sm:gap-0">
+        <h2 className="text-[28px] sm:text-[40px] lg:text-[48px] font-medium text-[#000000ff] font-sans m-0 tracking-[-0.128px] leading-normal pb-3 sm:pb-0 w-full sm:w-auto">
           {title}
         </h2>
-        {!isMobile && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span
-              style={{
-                fontSize: moreTextFontSize,
-                fontWeight: 'normal',
-                color: '#000000ff',
-                fontFamily: 'Inter',
-                letterSpacing: '-0.439px',
-                lineHeight: 1.5,
-              }}
-            >
-              More
-            </span>
-            <img src="/images/icon/Right-3.svg" alt="more" width={14} height={14} />
-          </div>
-        )}
+        <div className="hidden sm:flex items-center gap-1">
+          <span className="text-[14px] sm:text-[16px] lg:text-[18px] font-normal text-[#000000ff] font-sans tracking-[-0.439px] leading-normal">
+            More
+          </span>
+          <img src="/images/icon/Right-3.svg" alt="more" width={14} height={14} />
+        </div>
       </div>
 
       {/* Content */}
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '1440px',
-          margin: '0 auto',
-        }}
-      >
+      <div className="w-full max-w-[1440px] mx-auto">
         {/* Mobile/Tablet filter (horizontal, on top) */}
-        <div
-          style={{
-            display: isDesktop ? 'none' : 'flex',
-            flexDirection: 'row',
-            gap: '8px',
-            overflowX: 'auto',
-            paddingBottom: '8px',
-            marginBottom: '24px',
-          }}
-        >
-          {filterButtons(false)}
+        <div className="flex lg:hidden flex-row gap-2 overflow-x-auto pb-2 mb-6">
+          {filterButtons('text-[18px] sm:text-[22px]', false)}
         </div>
 
         {/* Grid: 3-col on desktop (col1=cards, col2=filter sticky, col3=cards), 2-col tablet, 1-col mobile */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: isDesktop ? '1fr auto 1fr' : isTablet ? 'repeat(2, 1fr)' : '1fr',
-            columnGap: isDesktop ? '50px' : isTablet ? '32px' : '0',
-            rowGap: cardGap,
-          }}
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_auto_1fr] gap-x-0 sm:gap-x-8 lg:gap-x-[50px] gap-y-6 sm:gap-y-8 lg:gap-y-10">
           {/* Desktop: center filter in grid col 2, sticky */}
           <div
-            style={{
-              display: isDesktop ? 'flex' : 'none',
-              flexDirection: 'column',
-              gap: '2px',
-              gridColumn: '2',
-              gridRow: `1 / ${totalRows + 1}`,
-              position: 'sticky',
-              top: '100px',
-              alignSelf: 'start',
-              paddingTop: '4px',
-            }}
+            className="hidden lg:flex flex-col gap-[2px] col-start-2 sticky top-[100px] self-start pt-1"
+            style={{ gridRow: `1 / ${totalRows + 1}` }}
           >
-            {filterButtons(true)}
+            {filterButtons('text-[32px]', true)}
           </div>
 
           {/* Cards: explicit grid placement on desktop, auto-flow on mobile/tablet */}
           {filteredItems.map((item, idx) => (
             <div
               key={item.title}
+              className="flex flex-col lg:col-(--desk-col) lg:row-(--desk-row)"
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                ...(isDesktop
-                  ? {
-                      gridColumn: idx % 2 === 0 ? '1' : '3',
-                      gridRow: `${Math.floor(idx / 2) + 1}`,
-                    }
-                  : {}),
-              }}
+                '--desk-col': idx % 2 === 0 ? '1' : '3',
+                '--desk-row': `${Math.floor(idx / 2) + 1}`,
+              } as React.CSSProperties}
             >
-              <div
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  aspectRatio: '4 / 3',
-                  backgroundColor: '#e1e1e1ff',
-                  overflow: 'hidden',
-                }}
-              >
+              <div className="relative w-full aspect-4/3 bg-[#e1e1e1ff] overflow-hidden">
                 <Image
                   src={item.src}
                   alt={item.alt}
@@ -234,39 +123,11 @@ export default function WorkSection({
                   quality={75}
                 />
               </div>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingTop: '12px',
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: isMobile ? '16px' : isTablet ? '18px' : '20px',
-                    fontWeight: '500',
-                    color: '#000000ff',
-                    fontFamily: 'Inter',
-                    margin: '0',
-                    letterSpacing: '-0.449px',
-                    lineHeight: 1.5,
-                  }}
-                >
+              <div className="flex justify-between items-center pt-3">
+                <h3 className="text-[16px] sm:text-[18px] lg:text-[20px] font-medium text-[#000000ff] font-sans m-0 tracking-[-0.449px] leading-normal">
                   {item.title}
                 </h3>
-                <span
-                  style={{
-                    fontSize: isMobile ? '14px' : isTablet ? '15px' : '16px',
-                    fontWeight: 'normal',
-                    color: '#000000ff',
-                    fontFamily: 'Inter',
-                    opacity: 0.6,
-                    lineHeight: 1.5,
-                    flexShrink: 0,
-                    marginLeft: '12px',
-                  }}
-                >
+                <span className="text-[14px] sm:text-[15px] lg:text-[16px] font-normal text-[#000000ff] font-sans opacity-60 leading-normal shrink-0 ml-3">
                   {item.category}
                 </span>
               </div>

@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useResponsive } from '@/lib/responsive';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface ProjectNav {
   id: string | number;
@@ -14,57 +15,52 @@ interface WorkProjectNavigationProps {
 }
 
 export default function WorkProjectNavigation({ previousProject, nextProject }: WorkProjectNavigationProps) {
-  const { isMobile } = useResponsive();
-
-  const navPadding = isMobile ? '10px 12px' : '12px 16px';
-  const navFontSize = isMobile ? '13px' : '14px';
+  const router = useRouter();
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', width: '100%' }}>
-      {/* Previous Project */}
+    <div className="flex justify-between items-center w-full max-w-[1440px] mx-auto py-10 md:py-[60px] border-t border-[#1b1d1f]">
       {previousProject ? (
-        <Link href={`/work/${previousProject.id}`}>
-          <div
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: navPadding, borderRadius: '4px', backgroundColor: '#f5f5f5ff', cursor: 'pointer', transition: 'all 0.3s ease' }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.backgroundColor = '#efefefff';
-              (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.backgroundColor = '#f5f5f5ff';
-              (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-            }}
-          >
-            <span style={{ fontSize: navFontSize, fontWeight: '500', fontFamily: 'Pretendard', color: '#1b1d1fff' }}>
-              ← Previous
-            </span>
+        <button
+          type="button"
+          onClick={() => router.push(`/work/${previousProject.id}`)}
+          className="flex items-center gap-[15px] sm:gap-[30px] group text-left max-w-[45%]"
+        >
+          <div className="w-10 h-10 sm:w-[60px] sm:h-[60px] rounded-full border border-[#1b1d1f] flex items-center justify-center shrink-0 group-hover:bg-[#1b1d1f] transition-colors overflow-hidden relative">
+            <Image src="/arrow-left.svg" alt="Previous" width={24} height={24} className="sm:w-8 sm:h-8 group-hover:invert transition-all" />
           </div>
-        </Link>
+          <div className="flex flex-col gap-1 sm:gap-2">
+            <span className="text-[12px] sm:text-[14px] text-[#666666] font-medium tracking-[1.4px]">PREV</span>
+            <span className="text-[16px] sm:text-[24px] font-bold text-[#1b1d1f] font-pretendard line-clamp-2 md:line-clamp-1 break-keep">{previousProject.title}</span>
+          </div>
+        </button>
       ) : (
-        <div></div>
+        <div className="max-w-[45%]"></div>
       )}
 
-      {/* Next Project */}
+      <button
+        type="button"
+        onClick={() => router.push('/work')}
+        className="w-[18px] h-[18px] sm:w-[24px] sm:h-[24px] shrink-0 hover:opacity-70 transition-opacity"
+      >
+        <Image src="/grid-icon.svg" alt="List" width={24} height={24} className="w-full h-full" />
+      </button>
+
       {nextProject ? (
-        <Link href={`/work/${nextProject.id}`}>
-          <div
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: navPadding, borderRadius: '4px', backgroundColor: '#f5f5f5ff', cursor: 'pointer', transition: 'all 0.3s ease' }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.backgroundColor = '#efefefff';
-              (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.backgroundColor = '#f5f5f5ff';
-              (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-            }}
-          >
-            <span style={{ fontSize: navFontSize, fontWeight: '500', fontFamily: 'Pretendard', color: '#1b1d1fff' }}>
-              Next →
-            </span>
+        <button
+          type="button"
+          onClick={() => router.push(`/work/${nextProject.id}`)}
+          className="flex items-center gap-[15px] sm:gap-[30px] group text-right justify-end max-w-[45%]"
+        >
+          <div className="flex flex-col gap-1 sm:gap-2 items-end">
+            <span className="text-[12px] sm:text-[14px] text-[#666666] font-medium tracking-[1.4px]">NEXT</span>
+            <span className="text-[16px] sm:text-[24px] font-bold text-[#1b1d1f] font-pretendard line-clamp-2 md:line-clamp-1 break-keep">{nextProject.title}</span>
           </div>
-        </Link>
+          <div className="w-10 h-10 sm:w-[60px] sm:h-[60px] rounded-full border border-[#1b1d1f] flex items-center justify-center shrink-0 group-hover:bg-[#1b1d1f] transition-colors overflow-hidden relative">
+            <Image src="/arrow-right.svg" alt="Next" width={24} height={24} className="sm:w-8 sm:h-8 group-hover:invert transition-all" />
+          </div>
+        </button>
       ) : (
-        <div></div>
+        <div className="max-w-[45%]"></div>
       )}
     </div>
   );

@@ -1,7 +1,5 @@
 'use client';
 
-import { useResponsive } from '@/lib/responsive';
-import { PADDING } from '@/constants/responsive';
 import { CurriculumTab } from '@/components/public/curriculum';
 import type { UndergraduateContent, GraduateContent } from '@/lib/validation/curriculum';
 
@@ -14,31 +12,9 @@ export default function CurriculumContent({
   undergraduateContent,
   graduateContent,
 }: CurriculumContentProps) {
-  const { isMobile, isTablet } = useResponsive();
-
-  // Responsive variables
-  const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : PADDING.desktop;
-
   return (
-    <div
-      style={{
-        width: '100%',
-        paddingTop: '0px',
-        paddingBottom: '61px',
-        paddingLeft: `${containerPadding}px`,
-        paddingRight: `${containerPadding}px`,
-        backgroundColor: '#ffffffff',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: '1440px',
-          margin: '0 auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '40px',
-        }}
-      >
+    <div className="w-full box-border pt-0 pb-[61px] bg-white px-4 sm:px-6 lg:px-10">
+      <div className="max-w-[1440px] mx-auto flex flex-col gap-10">
         {/* Curriculum Tab Component */}
         <CurriculumTab
           undergraduateContent={undergraduateContent}

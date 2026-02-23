@@ -3,15 +3,19 @@
 import { useState, useEffect } from 'react';
 import { BREAKPOINTS } from '@/constants/responsive';
 
+// Global flag to track if hydration is complete (prevent flash on CSR)
+let isGlobalHydrated = false;
+
 /**
  * 현재 화면 크기에 따른 반응형 플래그 제공
  * @returns { isMobile, isTablet, isDesktop }
  */
 export const useResponsive = () => {
-  const [width, setWidth] = useState<number>(0);
-  const [mounted, setMounted] = useState(false);
+  const [width, setWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 0);
+  const [mounted, setMounted] = useState(isGlobalHydrated);
 
   useEffect(() => {
+    isGlobalHydrated = true;
     setMounted(true);
     setWidth(window.innerWidth);
 

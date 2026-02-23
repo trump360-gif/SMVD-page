@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useResponsive } from '@/lib/responsive';
-import { PADDING } from '@/constants/responsive';
 import WorkHeader from './WorkHeader';
 
 interface PortfolioItem {
@@ -25,9 +23,7 @@ interface ExhibitionItem {
   artist: string;
 }
 
-interface CategoryCount {
-  [key: string]: number;
-}
+
 
 // Default hardcoded data (fallback when DB is empty)
 const defaultPortfolioItems: PortfolioItem[] = [
@@ -185,7 +181,6 @@ export default function WorkArchive({
   portfolioItemsFromDB,
   exhibitionItemsFromDB,
 }: WorkArchiveProps = {}) {
-  const { isMobile, isTablet } = useResponsive();
   const portfolioItems = portfolioItemsFromDB ?? defaultPortfolioItems;
   const exhibitionItems = exhibitionItemsFromDB ?? defaultExhibitionItems;
   const searchParams = useSearchParams();
@@ -194,19 +189,11 @@ export default function WorkArchive({
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // Responsive variables
-  const gridColumns = isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)';
-  const gridGap = isMobile ? '16px' : isTablet ? '20px' : '20px';
-  const exhibitionGap = isMobile ? '24px' : isTablet ? '32px' : '40px';
-  const tabFontSize = isMobile ? '18px' : isTablet ? '20px' : '24px';
-  const itemTitleFontSize = isMobile ? '12px' : isTablet ? '13px' : '14px';
-  const exhibitionTitleFontSize = isMobile ? '14px' : isTablet ? '15px' : '16px';
-  const containerPadding = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : 0;
-
   // 쿼리 파라미터에 따라 activeTab 설정
   useEffect(() => {
     const tabParam = searchParams.get('tab');
     if (tabParam === 'achieve' || tabParam === 'exhibition') {
+      // eslint-disable-next-line
       setActiveTab(tabParam);
     }
   }, [searchParams]);
@@ -228,59 +215,23 @@ export default function WorkArchive({
     startIdx + ITEMS_PER_PAGE
   );
 
-  // Get category counts
-  const categoryCounts: CategoryCount = {
-    All: portfolioItems.length,
-  };
-  dynamicCategories.slice(1).forEach((cat) => {
-    categoryCounts[cat] = portfolioItems.filter(
-      (item) => item.category === cat
-    ).length;
-  });
-
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
     setCurrentPage(1);
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        width: '100%',
-        paddingLeft: `${containerPadding}px`,
-        paddingRight: `${containerPadding}px`,
-      }}
-    >
+    <div className="flex flex-col gap-4 w-full px-4 sm:px-6 lg:px-0">
       {/* Achieve / Exhibition Tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: isMobile ? '16px' : '20px',
-          width: '100%',
-          paddingBottom: isMobile ? '16px' : '20px',
-          borderBottom: '2px solid #141414ff',
-        }}
-      >
+      <div className="flex gap-4 sm:gap-5 w-full pb-4 sm:pb-5 border-b-2 border-neutral-1450">
         <button
           onClick={() => {
             setActiveTab('achieve');
             setCurrentPage(1);
           }}
-          style={{
-            fontSize: tabFontSize,
-            fontWeight: '700',
-            fontFamily: 'Satoshi',
-            color: activeTab === 'achieve' ? '#1b1d1fff' : '#7b828eff',
-            backgroundColor: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '8px 0',
-            margin: '0',
-            transition: 'all 0.3s ease',
-          }}
+          className={`text-[18px] sm:text-[20px] lg:text-[24px] font-bold font-satoshi bg-transparent border-none cursor-pointer py-2 m-0 transition-all duration-300 ease-in-out ${
+            activeTab === 'achieve' ? 'text-[#1b1d1f]' : 'text-[#7b828e]'
+          }`}
         >
           Achieve
         </button>
@@ -289,18 +240,9 @@ export default function WorkArchive({
             setActiveTab('exhibition');
             setCurrentPage(1);
           }}
-          style={{
-            fontSize: tabFontSize,
-            fontWeight: '700',
-            fontFamily: 'Satoshi',
-            color: activeTab === 'exhibition' ? '#1b1d1fff' : '#7b828eff',
-            backgroundColor: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '8px 0',
-            margin: '0',
-            transition: 'all 0.3s ease',
-          }}
+          className={`text-[18px] sm:text-[20px] lg:text-[24px] font-bold font-satoshi bg-transparent border-none cursor-pointer py-2 m-0 transition-all duration-300 ease-in-out ${
+            activeTab === 'exhibition' ? 'text-[#1b1d1f]' : 'text-[#7b828e]'
+          }`}
         >
           Exhibition
         </button>
@@ -317,101 +259,40 @@ export default function WorkArchive({
 
       {/* Achieve Tab Grid */}
       {activeTab === 'achieve' && (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: gridColumns,
-            gap: gridGap,
-            width: '100%',
-          }}
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full">
           {displayedItems.map((item) => (
             <Link key={item.id} href={`/work/${item.id}`}>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-                cursor: 'pointer',
-                transition: 'transform 0.3s ease',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.transform =
-                  'translateY(-4px)';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.transform =
-                  'translateY(0)';
-              }}
-            >
-              {/* Portfolio Item Image */}
-              <div
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  aspectRatio: '4 / 3',
-                  backgroundColor: '#f0f0f0ff',
-                  borderRadius: '4px',
-                  overflow: 'hidden',
-                }}
-              >
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  style={{ objectFit: 'cover' }}
-                  quality={75}
-                />
+              <div className="flex flex-col gap-[10px] cursor-pointer transition-transform duration-300 ease-in-out hover:-translate-y-1">
+                {/* Portfolio Item Image */}
+                <div className="relative w-full aspect-4/3 bg-[#f0f0f0] rounded overflow-hidden">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    style={{ objectFit: 'cover' }}
+                    quality={75}
+                  />
+                </div>
+
+                {/* Portfolio Item Info */}
+                <div className="flex flex-col gap-1">
+                  {/* Category Badge */}
+                  <span className="text-[11px] sm:text-[12px] font-medium text-[#7b828e] font-satoshi">
+                    {item.category}
+                  </span>
+
+                  {/* Title */}
+                  <h3 className="text-[12px] sm:text-[13px] lg:text-[14px] font-semibold text-neutral-1450 font-pretendard m-0 leading-[1.4]">
+                    {item.title}
+                  </h3>
+
+                  {/* Subtitle */}
+                  <span className="text-[11px] lg:text-[12px] font-normal text-black font-satoshi">
+                    {item.subtitle}
+                  </span>
+                </div>
               </div>
-
-              {/* Portfolio Item Info */}
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '4px',
-                }}
-              >
-                {/* Category Badge */}
-                <span
-                  style={{
-                    fontSize: isMobile ? '11px' : isTablet ? '12px' : '12px',
-                    fontWeight: '500',
-                    color: '#7b828eff',
-                    fontFamily: 'Satoshi',
-                  }}
-                >
-                  {item.category}
-                </span>
-
-                {/* Title */}
-                <h3
-                  style={{
-                    fontSize: itemTitleFontSize,
-                    fontWeight: '600',
-                    color: '#141414ff',
-                    fontFamily: 'Pretendard',
-                    margin: '0',
-                    lineHeight: '1.4',
-                  }}
-                >
-                  {item.title}
-                </h3>
-
-                {/* Subtitle */}
-                <span
-                  style={{
-                    fontSize: isMobile ? '11px' : isTablet ? '11px' : '12px',
-                    fontWeight: '400',
-                    color: '#000000',
-                    fontFamily: 'Satoshi',
-                  }}
-                >
-                  {item.subtitle}
-                </span>
-              </div>
-            </div>
             </Link>
           ))}
         </div>
@@ -419,45 +300,14 @@ export default function WorkArchive({
 
       {/* Exhibition Tab Grid */}
       {activeTab === 'exhibition' && (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: gridColumns,
-            gap: exhibitionGap,
-            width: '100%',
-            paddingTop: isMobile ? '16px' : '20px',
-          }}
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10 w-full pt-4 sm:pt-5">
           {exhibitionItems.map((item) => (
             <div
               key={item.id}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '16px',
-                cursor: 'pointer',
-                transition: 'transform 0.3s ease',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.transform =
-                  'translateY(-4px)';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.transform =
-                  'translateY(0)';
-              }}
+              className="flex flex-col gap-4 cursor-pointer transition-transform duration-300 ease-in-out hover:-translate-y-1"
             >
               {/* Exhibition Item Image */}
-              <div
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  aspectRatio: '4 / 3',
-                  backgroundColor: '#f0f0f0ff',
-                  borderRadius: '4px',
-                  overflow: 'hidden',
-                }}
-              >
+              <div className="relative w-full aspect-4/3 bg-[#f0f0f0] rounded overflow-hidden">
                 <Image
                   src={item.image}
                   alt={item.title}
@@ -469,36 +319,14 @@ export default function WorkArchive({
               </div>
 
               {/* Exhibition Item Info */}
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '4px',
-                }}
-              >
+              <div className="flex flex-col gap-1">
                 {/* Title */}
-                <h3
-                  style={{
-                    fontSize: exhibitionTitleFontSize,
-                    fontWeight: '600',
-                    color: '#141414ff',
-                    fontFamily: 'Pretendard',
-                    margin: '0',
-                    lineHeight: '1.4',
-                  }}
-                >
+                <h3 className="text-[14px] sm:text-[15px] lg:text-[16px] font-semibold text-neutral-1450 font-pretendard m-0 leading-[1.4]">
                   {item.title}
                 </h3>
 
                 {/* Date/Artist */}
-                <span
-                  style={{
-                    fontSize: isMobile ? '12px' : isTablet ? '13px' : '14px',
-                    fontWeight: '400',
-                    color: '#000000',
-                    fontFamily: 'Satoshi',
-                  }}
-                >
+                <span className="text-[12px] sm:text-[13px] lg:text-[14px] font-normal text-black font-satoshi">
                   {item.date}
                 </span>
               </div>
@@ -509,34 +337,16 @@ export default function WorkArchive({
 
       {/* Pagination - Only show for Achieve tab */}
       {activeTab === 'achieve' && totalPages > 1 && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '8px',
-            width: '100%',
-            marginTop: isMobile ? '32px' : isTablet ? '36px' : '40px',
-          }}
-        >
+        <div className="flex justify-center items-center gap-2 w-full mt-8 sm:mt-9 lg:mt-10">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
               onClick={() => setCurrentPage(page)}
-              style={{
-                fontSize: isMobile ? '12px' : '14px',
-                fontWeight: currentPage === page ? '600' : '500',
-                fontFamily: 'Satoshi',
-                color:
-                  currentPage === page ? '#141414ff' : '#7b828eff',
-                backgroundColor:
-                  currentPage === page ? '#f0f0f0ff' : 'transparent',
-                border: 'none',
-                padding: isMobile ? '6px 10px' : '8px 12px',
-                cursor: 'pointer',
-                borderRadius: '4px',
-                transition: 'all 0.3s ease',
-              }}
+              className={`text-[12px] sm:text-[14px] font-satoshi border-none cursor-pointer rounded transition-all duration-300 ease-in-out px-[10px] py-[6px] sm:px-3 sm:py-2 ${
+                currentPage === page
+                  ? 'font-semibold text-neutral-1450 bg-[#f0f0f0]'
+                  : 'font-medium text-[#7b828e] bg-transparent'
+              }`}
             >
               {page}
             </button>

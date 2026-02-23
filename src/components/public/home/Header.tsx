@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 import { useResponsive } from '@/lib/responsive';
 import { PADDING } from '@/constants/responsive';
 
@@ -35,6 +37,7 @@ const DEFAULT_NAV_ITEMS = [
 export function Header({ navigation, headerConfig }: HeaderProps) {
   const pathname = usePathname();
   const { isMobile, isTablet } = useResponsive();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
@@ -119,39 +122,138 @@ export function Header({ navigation, headerConfig }: HeaderProps) {
         )}
       </Link>
 
-      {/* Navigation */}
-      <nav
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: navGap,
-          height: '38px',
-        }}
-      >
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
+      {/* Desktop Navigation (Hidden on Mobile/Tablet) */}
+      {!(isMobile || isTablet) && (
+        <nav
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: navGap,
+            height: '38px',
+          }}
+        >
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '38px',
+                padding: '0 16px',
+                fontSize: '14px',
+                fontWeight: '500',
+                fontFamily: 'Helvetica',
+                textDecoration: 'none',
+                border: '1px solid #141414ff',
+                backgroundColor: isActive(item.href) ? '#141414ff' : '#ffffffff',
+                color: isActive(item.href) ? '#ffffffff' : '#141414ff',
+                borderRadius: '0px',
+              }}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+      )}
+
+      {/* Mobile/Tablet Hamburger Menu Toggle */}
+      {(isMobile || isTablet) && (
+        <button
+          onClick={() => setIsMobileMenuOpen(true)}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#141414ff',
+          }}
+          aria-label="Open Mobile Menu"
+        >
+          <Menu size={28} />
+        </button>
+      )}
+
+      {/* Mobile/Tablet Fullscreen Overlay */}
+      {isMobileMenuOpen && (isMobile || isTablet) && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: '#ffffffff',
+            zIndex: 9999,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {/* Overlay Header */}
+          <div
             style={{
+              width: '100%',
+              height: headerHeight,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              height: '38px',
-              padding: '0 16px',
-              fontSize: '14px',
-              fontWeight: '500',
-              fontFamily: 'Helvetica',
-              textDecoration: 'none',
-              border: '1px solid #141414ff',
-              backgroundColor: isActive(item.href) ? '#141414ff' : '#ffffffff',
-              color: isActive(item.href) ? '#ffffffff' : '#141414ff',
-              borderRadius: '0px',
+              justifyContent: 'flex-end',
+              paddingLeft: headerPaddingLeft,
+              paddingRight: headerPaddingRight,
+              borderBottom: '1px solid #e5e7ebff',
             }}
           >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#141414ff',
+              }}
+              aria-label="Close Mobile Menu"
+            >
+              <X size={28} />
+            </button>
+          </div>
+
+          {/* Overlay Navigation Links */}
+          <nav
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              padding: `${headerPadding}px`,
+              gap: '24px',
+            }}
+          >
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                style={{
+                  fontSize: '24px',
+                  fontWeight: isActive(item.href) ? '700' : '500',
+                  color: isActive(item.href) ? '#1A46E7' : '#141414ff',
+                  textDecoration: 'none',
+                  fontFamily: 'Helvetica',
+                  paddingBottom: '8px',
+                  borderBottom: '1px solid #f3f4f6ff',
+                }}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

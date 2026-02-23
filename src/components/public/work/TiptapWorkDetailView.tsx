@@ -1,6 +1,5 @@
 'use client';
 
-import { useResponsive } from '@/lib/responsive';
 import WorkHeader from './WorkHeader';
 import WorkProjectNavigation from './WorkProjectNavigation';
 import TiptapContentRenderer from '../news/TiptapContentRenderer';
@@ -36,45 +35,14 @@ export default function TiptapWorkDetailView({
   previousProject,
   nextProject,
 }: TiptapWorkDetailViewProps) {
-  const { isMobile, isTablet } = useResponsive();
-
-  const containerPaddingX = isMobile ? '16px' : isTablet ? '24px' : '40px';
-  const containerPaddingBottom = isMobile ? '40px' : '61px';
-  const sectionGap = isMobile ? '40px' : isTablet ? '60px' : '80px';
-
   return (
-    <div
-      style={{
-        width: '100%',
-        paddingTop: '0px',
-        paddingBottom: containerPaddingBottom,
-        paddingLeft: containerPaddingX,
-        paddingRight: containerPaddingX,
-        backgroundColor: '#ffffffff',
-      }}
-    >
+    <div className="w-full pt-0 pb-10 sm:pb-[61px] px-4 sm:px-6 lg:px-10 bg-white">
       {/* Header Navigation */}
       <WorkHeader currentCategory={category} />
 
-      <div
-        style={{
-          maxWidth: '1440px',
-          margin: '0 auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: sectionGap,
-          paddingTop: '0px',
-        }}
-      >
+      <div className="max-w-[1440px] mx-auto flex flex-col gap-10 sm:gap-[60px] lg:gap-20 pt-0">
         {/* All content rendered from Tiptap JSON (hero image is included in content) */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '40px',
-            width: '100%',
-          }}
-        >
+        <div className="flex flex-col gap-10 w-full">
           <TiptapContentRenderer content={content as unknown as Record<string, unknown>} />
         </div>
 

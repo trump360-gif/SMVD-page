@@ -1,7 +1,5 @@
 'use client';
 
-import { useResponsive } from '@/lib/responsive';
-import { PADDING } from '@/constants/responsive';
 
 const DEFAULT_TIMELINE_ITEMS = [
   { year: '2021', description: '디자인학부로 통합되었던 학과가 시각영상디자인전공, 산업디자인전공,\n환경디자인학과로 나누어져 1학년 때부터 전공을 심화하여 학습할 수 있도록 개편' },
@@ -28,139 +26,36 @@ export default function AboutPageHistory({
   introText = '숙명여자대학교 시각영상디자인과는 설립 이래 디지털 시대가 요구하는 창의적 시각 커뮤니케이션의 중심에서 인재를 배출해 왔습니다.\n축적된 전통과 혁신을 바탕으로 미래 디자인 교육을 선도하고 있습니다.',
   timelineItems = DEFAULT_TIMELINE_ITEMS,
 }: AboutPageHistoryProps) {
-  const { isMobile, isTablet } = useResponsive();
-
-  const titleFontSize = isMobile ? '24px' : isTablet ? '32px' : '48px';
-  const titleMinWidth = isMobile ? 'auto' : isTablet ? '200px' : '333px';
-  const contentFontSize = isMobile ? '14px' : isTablet ? '16px' : '18px';
-  const yearBadgeFontSize = isMobile ? '12px' : isTablet ? '13px' : '14px';
-  const containerFlexDirection = isMobile ? 'column' : 'row';
-  const containerGap = isMobile ? '10px' : isTablet ? '16px' : '10px';
-  const timelineGap = isMobile ? '24px' : isTablet ? '32px' : '40px';
-  const timelineWidth = isMobile ? '353px' : isTablet ? '100%' : '504px';
-  const contentGap = isMobile ? '36px' : isTablet ? '48px' : '60px';
-  const containerPaddingHorizontal = isMobile ? PADDING.mobile : isTablet ? PADDING.tablet : 0;
-
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: containerFlexDirection,
-        gap: containerGap,
-        width: '100%',
-        alignItems: isMobile ? 'center' : 'flex-start',
-        justifyContent: isMobile ? 'center' : 'flex-start',
-        paddingLeft: `${containerPaddingHorizontal}px`,
-        paddingRight: `${containerPaddingHorizontal}px`,
-      }}
-    >
+    <div className="flex flex-col sm:flex-row items-start justify-start gap-[10px] sm:gap-4 lg:gap-[10px] w-full">
       {/* Title */}
-      <h2
-        style={{
-          fontSize: titleFontSize,
-          fontWeight: '500',
-          color: '#141414ff',
-          fontFamily: 'Inter',
-          margin: '0',
-          letterSpacing: '-0.128px',
-          lineHeight: 1.1,
-          minWidth: titleMinWidth,
-          flex: isMobile ? '1' : '0 0 333px',
-        }}
-      >
+      <h2 className="text-[24px] sm:text-[32px] lg:text-[48px] font-medium text-neutral-1450 font-inter m-0 tracking-[-0.128px] leading-[1.1] min-w-auto sm:min-w-[200px] lg:min-w-[333px] flex-1 sm:flex-none sm:w-[200px] lg:w-[333px] pb-2 sm:pb-0">
         {title}
       </h2>
 
       {/* Content */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: isMobile ? 'center' : 'flex-end',
-          gap: contentGap,
-          flex: 1,
-          width: isMobile ? '100%' : 'auto',
-        }}
-      >
+      <div className="flex flex-col items-start sm:items-end gap-9 sm:gap-12 lg:gap-[60px] flex-1 w-full sm:w-auto">
         {/* Intro Text */}
-        <p
-          style={{
-            fontSize: contentFontSize,
-            fontWeight: '500',
-            color: '#141414ff',
-            fontFamily: 'Inter',
-            margin: '0',
-            letterSpacing: '-0.619px',
-            lineHeight: 1.5,
-            whiteSpace: 'pre-wrap',
-            alignSelf: isMobile ? 'center' : 'flex-start',
-            wordBreak: 'keep-all',
-            textAlign: isMobile ? 'center' : 'left',
-            width: isMobile ? '353px' : 'auto',
-          }}
-        >
+        <p className="text-[14px] sm:text-[16px] lg:text-[18px] font-medium text-neutral-1450 font-inter m-0 tracking-[-0.619px] leading-relaxed whitespace-pre-wrap self-start break-keep text-left w-full sm:w-auto">
           {introText}
         </p>
 
         {/* Timeline Container */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: timelineGap,
-            width: timelineWidth,
-          }}
-        >
+        <div className="flex flex-col gap-6 sm:gap-8 lg:gap-10 w-full lg:w-[504px]">
           {timelineItems.map((item, index) => (
             <div
               key={index}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
-              }}
+              className="flex flex-col gap-2"
             >
               {/* Year Badge */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: isMobile ? '24px' : '28px',
-                  padding: '0 8px',
-                  backgroundColor: '#ebecf0ff',
-                  borderRadius: '0px',
-                  width: 'fit-content',
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: yearBadgeFontSize,
-                    fontWeight: '500',
-                    color: '#141414ff',
-                    fontFamily: 'Inter',
-                    letterSpacing: '-0.29px',
-                    lineHeight: 1.5,
-                  }}
-                >
+              <div className="flex items-center justify-center h-6 sm:h-7 px-2 bg-[#ebecf0] rounded-none w-fit">
+                <span className="text-[12px] sm:text-[13px] lg:text-[14px] font-medium text-neutral-1450 font-inter tracking-[-0.29px] leading-relaxed">
                   {item.year}
                 </span>
               </div>
 
               {/* Description */}
-              <p
-                style={{
-                  fontSize: contentFontSize,
-                  fontWeight: '500',
-                  color: '#141414ff',
-                  fontFamily: 'Inter',
-                  margin: '0',
-                  letterSpacing: '-0.619px',
-                  lineHeight: 1.5,
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'keep-all',
-                }}
-              >
+              <p className="text-[14px] sm:text-[16px] lg:text-[18px] font-medium text-neutral-1450 font-inter m-0 tracking-[-0.619px] leading-relaxed whitespace-pre-wrap break-keep">
                 {item.description}
               </p>
             </div>

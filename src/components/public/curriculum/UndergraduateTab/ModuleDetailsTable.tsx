@@ -1,4 +1,3 @@
-import { useResponsive } from '@/lib/responsive';
 import type { ModuleDetail } from './types';
 
 interface ModuleDetailsTableProps {
@@ -8,231 +7,61 @@ interface ModuleDetailsTableProps {
 export default function ModuleDetailsTable({
   moduleDetails,
 }: ModuleDetailsTableProps) {
-  const { isMobile, isTablet } = useResponsive();
-
   return (
     <>
       {/* Module Details Table Header */}
-      {!isMobile && (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: isTablet ? 'repeat(2, 1fr)' : '1fr 1.5fr 1fr',
-            gap: '0',
-            width: '100%',
-            marginBottom: '0',
-            marginTop: '40px',
-          }}
-        >
-          {(isTablet
-            ? [
-                { label: '구분', padding: '12px 0' },
-                { label: '설명', padding: '12px 0 12px 12px' },
-              ]
-            : [
-                { label: '구분', padding: '12px 0' },
-                { label: '설명', padding: '12px 0 12px 12px' },
-                { label: '해당과목', padding: '12px 0 12px 12px' },
-              ]
-          ).map((header) => (
-            <div
-              key={header.label}
-              style={{
-                padding: header.padding,
-                borderBottom: '1px solid #000000ff',
-                fontSize: isTablet ? '14px' : '18px',
-                fontWeight: '700',
-                color: '#000000ff',
-                fontFamily: 'Pretendard',
-                textAlign: 'left',
-              }}
-            >
-              {header.label}
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-[1fr_1.5fr_1fr] gap-0 w-full mb-0 mt-10">
+        <div className="py-3 border-b border-neutral-1500 text-[14px] lg:text-[18px] font-bold text-neutral-1500 font-pretendard text-left">구분</div>
+        <div className="py-3 pl-3 border-b border-neutral-1500 text-[14px] lg:text-[18px] font-bold text-neutral-1500 font-pretendard text-left">설명</div>
+        <div className="hidden lg:block py-3 pl-3 border-b border-neutral-1500 text-[18px] font-bold text-neutral-1500 font-pretendard text-left">해당과목</div>
+      </div>
 
       {/* Module Details Rows */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+      <div className="flex flex-col gap-0">
         {moduleDetails.map((detail, index) => {
-          const gridCols = isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : '1fr 1.5fr 1fr';
-
           return (
             <div
               key={index}
-              style={{
-                display: isMobile ? 'flex' : 'grid',
-                flexDirection: isMobile ? 'column' : undefined,
-                gridTemplateColumns: isMobile ? undefined : gridCols,
-                gap: isMobile ? '12px' : '0',
-                alignItems: isMobile ? 'flex-start' : 'center',
-                minHeight: isMobile ? 'auto' : isTablet ? '100px' : '80px',
-                borderBottom: '1px solid #000000ff',
-                borderTop: '1px solid #000000ff',
-                boxSizing: 'border-box',
-                padding: isMobile ? '16px 12px' : '0',
-              }}
+              className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-[1fr_1.5fr_1fr] gap-3 sm:gap-0 items-start sm:items-center min-h-auto sm:min-h-[100px] lg:min-h-20 border-b border-t border-neutral-1500 box-border p-4 sm:p-0"
             >
               {/* Module & Title */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: isMobile ? 'flex-start' : 'center',
-                  justifyContent: 'flex-start',
-                  padding: isMobile ? '0' : '0px 0px',
-                  height: isMobile ? 'auto' : '100%',
-                  gap: isMobile ? '0' : '8px',
-                  flexDirection: isMobile ? 'column' : 'row',
-                  width: isMobile ? '100%' : 'auto',
-                }}
-              >
-                {isMobile && (
-                  <span
-                    style={{
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: '#4e535bff',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    구분
-                  </span>
-                )}
-                <p
-                  style={{
-                    fontSize: isMobile ? '13px' : isTablet ? '14px' : '18px',
-                    fontWeight: '700',
-                    color: '#000000ff',
-                    fontFamily: 'Pretendard',
-                    margin: '0',
-                    textAlign: 'left',
-                  }}
-                >
+              <div className="flex items-start sm:items-center justify-start p-0 h-auto sm:h-full gap-0 sm:gap-2 flex-col sm:flex-row w-full sm:w-auto">
+                <span className="sm:hidden text-[12px] font-semibold text-[#4e535b] mb-1">
+                  구분
+                </span>
+                <p className="text-[13px] sm:text-[14px] lg:text-[18px] font-bold text-neutral-1500 font-pretendard m-0 text-left">
                   {detail.module}
                 </p>
-                <p
-                  style={{
-                    fontSize: isMobile ? '13px' : isTablet ? '14px' : '18px',
-                    fontWeight: '500',
-                    color: '#000000ff',
-                    fontFamily: 'Pretendard',
-                    margin: '0',
-                    textAlign: 'left',
-                  }}
-                >
+                <p className="text-[13px] sm:text-[14px] lg:text-[18px] font-medium text-neutral-1500 font-pretendard m-0 text-left">
                   {detail.title}
                 </p>
               </div>
 
               {/* Description */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: isMobile ? 'flex-start' : 'center',
-                  justifyContent: 'flex-start',
-                  padding: isMobile ? '0' : '0px 12px',
-                  height: isMobile ? 'auto' : '100%',
-                  flexDirection: isMobile ? 'column' : 'row',
-                  width: isMobile ? '100%' : 'auto',
-                  gap: isMobile ? '4px' : '0',
-                }}
-              >
-                {isMobile && (
-                  <span
-                    style={{
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: '#4e535bff',
-                    }}
-                  >
-                    설명
-                  </span>
-                )}
-                <p
-                  style={{
-                    fontSize: isMobile ? '13px' : isTablet ? '14px' : '18px',
-                    fontWeight: '500',
-                    color: '#353030ff',
-                    fontFamily: 'Pretendard',
-                    margin: '0',
-                    textAlign: 'left',
-                    lineHeight: 1.5,
-                    wordBreak: 'keep-all',
-                  }}
-                >
+              <div className="flex items-start sm:items-center justify-start p-0 sm:px-3 h-auto sm:h-full flex-col sm:flex-row w-full sm:w-auto gap-1 sm:gap-0">
+                <span className="sm:hidden text-[12px] font-semibold text-[#4e535b]">
+                  설명
+                </span>
+                <p className="text-[13px] sm:text-[14px] lg:text-[18px] font-medium text-[#353030] font-pretendard m-0 text-left leading-normal wrap-break-word">
                   {detail.description}
                 </p>
               </div>
 
               {/* Courses */}
-              {!isMobile && (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    justifyContent: 'flex-start',
-                    padding: '0px 12px',
-                    height: '100%',
-                  }}
-                >
-                  <p
-                    style={{
-                      fontSize: isTablet ? '13px' : '18px',
-                      fontWeight: '500',
-                      color: '#353030ff',
-                      fontFamily: 'Pretendard',
-                      margin: '0',
-                      textAlign: 'left',
-                      whiteSpace: 'pre-wrap',
-                      wordBreak: 'keep-all',
-                      lineHeight: 1.6,
-                    }}
-                  >
-                    {detail.courses}
-                  </p>
-                </div>
-              )}
+              <div className="hidden sm:flex items-start justify-start px-3 h-full">
+                <p className="text-[13px] lg:text-[18px] font-medium text-[#353030] font-pretendard m-0 text-left whitespace-pre-wrap wrap-break-word leading-[1.6]">
+                  {detail.courses}
+                </p>
+              </div>
 
-              {isMobile && (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    justifyContent: 'flex-start',
-                    padding: '0',
-                    height: 'auto',
-                    flexDirection: 'column',
-                    width: '100%',
-                    gap: '4px',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: '#4e535bff',
-                    }}
-                  >
-                    해당과목
-                  </span>
-                  <p
-                    style={{
-                      fontSize: '13px',
-                      fontWeight: '500',
-                      color: '#353030ff',
-                      fontFamily: 'Pretendard',
-                      margin: '0',
-                      textAlign: 'left',
-                      whiteSpace: 'pre-wrap',
-                      wordBreak: 'keep-all',
-                      lineHeight: 1.6,
-                    }}
-                  >
-                    {detail.courses}
-                  </p>
-                </div>
-              )}
+              <div className="flex sm:hidden items-start justify-start p-0 h-auto flex-col w-full gap-1">
+                <span className="text-[12px] font-semibold text-[#4e535b]">
+                  해당과목
+                </span>
+                <p className="text-[13px] font-medium text-[#353030] font-pretendard m-0 text-left whitespace-pre-wrap wrap-break-word leading-[1.6]">
+                  {detail.courses}
+                </p>
+              </div>
             </div>
           );
         })}

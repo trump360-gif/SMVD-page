@@ -47,10 +47,9 @@ export default async function NewsPage() {
       <div
         style={{
           width: '100%',
+          boxSizing: 'border-box',
           paddingTop: '0px',
           paddingBottom: '61px',
-          paddingLeft: '40px',
-          paddingRight: '40px',
           backgroundColor: '#ffffffff',
         }}
       >

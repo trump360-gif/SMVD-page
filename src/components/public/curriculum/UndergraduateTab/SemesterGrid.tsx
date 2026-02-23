@@ -1,6 +1,5 @@
 'use client';
 
-import { useResponsive } from '@/lib/responsive';
 import type { Semester } from './types';
 
 interface SemesterGridProps {
@@ -12,91 +11,38 @@ export default function SemesterGrid({
   semesters,
   checkedClassification,
 }: SemesterGridProps) {
-  const { isMobile, isTablet } = useResponsive();
-
-  // Responsive grid columns: 1 column on mobile, 2 on tablet, 4 on desktop
-  const gridColumns = isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)';
-
-  // Responsive course item styles
-  const courseHeight = isMobile ? 'auto' : '95px';
-  const coursePadding = isMobile ? '16px 0' : '35px 0';
-  const courseFontSize = isMobile ? '14px' : '18px';
-  const semesterTitleFontSize = isMobile ? '14px' : '18px';
-
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: gridColumns,
-        gap: '10px',
-        rowGap: '60px',
-        width: '100%',
-        gridAutoRows: '1fr',
-      }}
-    >
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[10px] gap-y-[60px] w-full auto-rows-fr">
       {semesters.map((semester, index) => (
         <div
           key={index}
-          style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
+          className="flex flex-col gap-5"
         >
           {/* Semester Title */}
-          <h3
-            style={{
-              fontSize: semesterTitleFontSize,
-              fontWeight: '500',
-              color: '#000000ff',
-              fontFamily: 'Pretendard',
-              margin: '0',
-            }}
-          >
+          <h3 className="text-[14px] sm:text-[18px] font-medium text-neutral-1500 font-pretendard m-0">
             {semester.year}학년 {semester.term}학기
           </h3>
 
           {/* Courses List */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+          <div className="flex flex-col gap-0">
             {semester.courses.map((course, courseIndex) => {
               const isMatchedClassification =
                 course.classification === checkedClassification;
               return (
                 <div
                   key={courseIndex}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    height: courseHeight,
-                    padding: coursePadding,
-                    backgroundColor: isMatchedClassification
-                      ? '#f0f0f0ff'
-                      : '#ffffffff',
-                    borderBottom: '1px solid #000000ff',
-                    boxSizing: 'border-box',
-                  }}
+                  className={`flex items-center gap-[10px] h-auto sm:h-[95px] py-4 sm:py-[35px] border-b border-neutral-1500 box-border ${
+                    isMatchedClassification ? 'bg-[#f0f0f0]' : 'bg-[#ffffff]'
+                  }`}
                 >
                   {/* Color Tag */}
                   <div
-                    style={{
-                      width: '14px',
-                      height: '14px',
-                      backgroundColor: course.color,
-                      flexShrink: 0,
-                      marginLeft: '10px',
-                    }}
+                    className="w-[14px] h-[14px] shrink-0 ml-[10px]"
+                    style={{ backgroundColor: course.color }}
                   />
 
                   {/* Course Name */}
-                  <p
-                    style={{
-                      fontSize: courseFontSize,
-                      fontWeight: '500',
-                      color: '#353030ff',
-                      fontFamily: 'Pretendard',
-                      margin: '0',
-                      whiteSpace: 'pre-wrap',
-                      wordBreak: 'keep-all',
-                      lineHeight: 1.4,
-                    }}
-                  >
+                  <p className="text-[14px] sm:text-[18px] font-medium text-[#353030] font-pretendard m-0 whitespace-pre-wrap break-words leading-[1.4]">
                     {course.name}
                   </p>
                 </div>

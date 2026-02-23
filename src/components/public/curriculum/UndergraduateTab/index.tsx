@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useResponsive } from '@/lib/responsive';
 import type { UndergraduateContent } from '@/lib/validation/curriculum';
 import type { Semester, GraduateModule, ModuleDetail } from './types';
 import {
@@ -21,30 +20,18 @@ interface UndergraduateTabProps {
 }
 
 export default function UndergraduateTab({ content }: UndergraduateTabProps) {
-  const { isMobile, isTablet } = useResponsive();
   const [checkedClassification] = useState<string>('required');
 
   // Use DB data if available, otherwise fall back to hardcoded defaults
   const displaySemesters: Semester[] = content?.semesters ?? defaultSemesters;
-  const displayModules: GraduateModule[] = content?.tracks ?? defaultModules;
+  const displayModules: GraduateModule[] = (content?.tracks as GraduateModule[]) ?? defaultModules;
   const displayModuleDetails: ModuleDetail[] =
     content?.modules ?? defaultModuleDetails;
 
-  // Responsive variables
-  const mainGap = isMobile ? '40px' : isTablet ? '50px' : '60px';
-  const sectionGap = isMobile ? '40px' : '60px';
-
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: mainGap,
-        width: '100%',
-      }}
-    >
+    <div className="flex flex-col gap-10 sm:gap-[50px] lg:gap-[60px] w-full">
       {/* SECTION 1: Semester Courses */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
+      <div className="flex flex-col gap-[60px]">
         {/* Filter Section */}
         <FilterSection
           checkedClassification={checkedClassification}
@@ -60,34 +47,20 @@ export default function UndergraduateTab({ content }: UndergraduateTabProps) {
       </div>
 
       {/* SECTION 2: Track Information */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
+      <div className="flex flex-col gap-0">
         <TrackTable modules={displayModules} />
         <ModuleDetailsTable moduleDetails={displayModuleDetails} />
       </div>
 
       {/* Footer Note - Right aligned, above footer */}
-      <div style={{ textAlign: 'right', marginTop: '-55px', padding: '0' }}>
-        <p
-          style={{
-            fontSize: '16px',
-            fontWeight: '400',
-            color: '#666666',
-            fontFamily: 'Pretendard',
-            margin: '0',
-            lineHeight: 1,
-            padding: '0',
-          }}
-        >
+      <div className="text-right -mt-[55px] p-0">
+        <p className="text-[16px] font-normal text-[#666666] font-pretendard m-0 leading-none p-0">
           *
           <a
             href="https://www.sookmyung.ac.kr/kr/university-life/curriculum01.do"
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              color: '#666666',
-              textDecoration: 'underline',
-              cursor: 'pointer',
-            }}
+            className="text-[#666666] underline cursor-pointer"
           >
             [숙명여자대학교 홈페이지]-[대학생활]-[학사정보]-[교육과정]
           </a>

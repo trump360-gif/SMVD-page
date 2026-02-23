@@ -3,8 +3,6 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
 import Image from 'next/image';
 import gsap from 'gsap';
-import { useResponsive } from '@/lib/responsive';
-import { GAP } from '@/constants/responsive';
 
 interface ExhibitionItem {
   year: string;
@@ -35,17 +33,6 @@ export default function ExhibitionSection({
     },
   ],
 }: ExhibitionSectionProps) {
-  const { isMobile, isTablet } = useResponsive();
-
-  const sectionGap = isMobile ? GAP.mobile : isTablet ? GAP.tablet : GAP.desktop;
-  const sectionMarginBottom = isMobile ? '40px' : isTablet ? '60px' : '80px';
-  const titleFontSize = isMobile ? '20px' : isTablet ? '24px' : '32px';
-  const cardGap = isMobile ? GAP.mobile : isTablet ? GAP.tablet : GAP.desktop;
-
-  // Number of visible cards per viewport
-  const visibleCount = isMobile ? 1 : isTablet ? 2 : 3;
-  const canDrag = items.length > visibleCount;
-
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const dragState = useRef({
@@ -88,7 +75,6 @@ export default function ExhibitionSection({
 
   // Mouse handlers
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    if (!canDrag) return;
     const state = dragState.current;
     state.isDragging = true;
     state.startX = e.clientX;
@@ -103,7 +89,7 @@ export default function ExhibitionSection({
     if (trackRef.current) gsap.killTweensOf(trackRef.current);
 
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
-  }, [canDrag, getCurrentTranslate]);
+  }, [getCurrentTranslate]);
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     const state = dragState.current;
@@ -166,60 +152,17 @@ export default function ExhibitionSection({
   }, []);
 
   return (
-    <section
-      id="exhibition"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: `${sectionGap}px`,
-        width: '100%',
-        marginBottom: sectionMarginBottom,
-      }}
-    >
+    <section id="exhibition" className="flex flex-col gap-5 sm:gap-6 lg:gap-10 w-full mb-10 sm:mb-[60px] lg:mb-20">
       {/* Exhibition Header */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          borderBottom: '1px solid #141414ff',
-          paddingBottom: '20px',
-        }}
-      >
-        <h2
-          style={{
-            fontSize: titleFontSize,
-            fontWeight: '700',
-            fontFamily: 'Helvetica',
-            color: '#141414ff',
-            margin: 0,
-          }}
-        >
+      <div className="flex justify-between items-center border-b border-[#141414ff] pb-5">
+        <h2 className="text-[20px] sm:text-[24px] lg:text-[32px] font-bold font-['Helvetica'] text-[#141414ff] m-0">
           Exhibition
         </h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {canDrag && (
-            <span
-              style={{
-                fontSize: '12px',
-                fontWeight: '400',
-                fontFamily: 'Helvetica',
-                color: '#999',
-              }}
-            >
-              ← drag →
-            </span>
-          )}
-          <a
-            href="#"
-            style={{
-              fontSize: '14px',
-              fontWeight: '400',
-              fontFamily: 'Helvetica',
-              color: '#141414ff',
-              textDecoration: 'none',
-            }}
-          >
+        <div className="flex items-center gap-4">
+          <span className={`text-[12px] font-normal font-['Helvetica'] text-[#999] ${items.length <= 3 ? 'lg:hidden' : ''} ${items.length <= 2 ? 'sm:hidden' : ''} ${items.length <= 1 ? 'hidden' : ''}`}>
+            ← drag →
+          </span>
+          <a href="#" className="text-[14px] font-normal font-['Helvetica'] text-[#141414ff] no-underline">
             More →
           </a>
         </div>
@@ -228,12 +171,7 @@ export default function ExhibitionSection({
       {/* Exhibition Items - Horizontal Scrollable Track */}
       <div
         ref={containerRef}
-        style={{
-          overflow: 'hidden',
-          width: '100%',
-          cursor: canDrag ? (isDragging ? 'grabbing' : 'grab') : 'default',
-          touchAction: canDrag ? 'pan-y' : 'auto',
-        }}
+        className={`overflow-hidden w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'} touch-pan-y`}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -241,45 +179,16 @@ export default function ExhibitionSection({
       >
         <div
           ref={trackRef}
-          style={{
-            display: 'flex',
-            gap: `${cardGap}px`,
-            willChange: canDrag ? 'transform' : 'auto',
-          }}
+          className="flex gap-5 sm:gap-6 lg:gap-10 will-change-transform"
         >
-          {items.map((item, idx) => {
-            // Card width: fill visible area accounting for gaps
-            const gapTotal = (visibleCount - 1) * cardGap;
-            const cardWidthCalc = `calc((100% - ${gapTotal}px) / ${visibleCount})`;
-
-            return (
-              <div
-                key={idx}
-                style={{
-                  flex: `0 0 ${cardWidthCalc}`,
-                  minWidth: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '20px',
-                  userSelect: 'none',
-                }}
-              >
+          {items.map((item, idx) => (
+            <div
+              key={idx}
+              className="flex-none flex flex-col gap-5 select-none w-full sm:w-[calc(50%-12px)] lg:w-[calc((100%-80px)/3)]"
+            >
                 {/* Year Indicator */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: '400',
-                      fontFamily: 'Helvetica',
-                      color: '#141414ff',
-                    }}
-                  >
+                <div className="flex items-center gap-3">
+                  <span className="text-[14px] font-normal font-['Helvetica'] text-[#141414ff]">
                     {item.year}
                   </span>
                   <svg
@@ -300,16 +209,7 @@ export default function ExhibitionSection({
                 </div>
 
                 {/* Exhibition Image */}
-                <div
-                  style={{
-                    position: 'relative',
-                    width: '100%',
-                    aspectRatio: '9/13',
-                    backgroundColor: '#f5f5f5ff',
-                    overflow: 'hidden',
-                    borderRadius: '0',
-                  }}
-                >
+                <div className="relative w-full aspect-9/13 bg-[#f5f5f5ff] overflow-hidden rounded-none">
                   <Image
                     src={item.src}
                     alt={item.alt}
@@ -325,8 +225,7 @@ export default function ExhibitionSection({
                   />
                 </div>
               </div>
-            );
-          })}
+          ))}
         </div>
       </div>
     </section>

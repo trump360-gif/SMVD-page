@@ -12,7 +12,7 @@ export default function ProfessorHeader({ professor }: ProfessorHeaderProps) {
   const { isMobile, isTablet } = useResponsive();
 
   const imageWidth = isMobile ? '100%' : isTablet ? '200px' : '333px';
-  const imageHeight = isMobile ? '350px' : isTablet ? '280px' : '468px';
+  const imageHeight = isMobile ? 'auto' : isTablet ? '280px' : '468px';
   const imageFlexShrink = isMobile ? undefined : 0;
   const badgeFontSize = isMobile ? '14px' : '18px';
   const contentPaddingTop = isMobile ? '40px' : '100px';
@@ -34,6 +34,7 @@ export default function ProfessorHeader({ professor }: ProfessorHeaderProps) {
           position: 'relative',
           width: '100%',
           height: imageHeight,
+          aspectRatio: isMobile ? '236/356' : undefined,
           backgroundColor: '#f3f4f6ff',
           marginBottom: '0px',
         }}
