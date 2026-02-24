@@ -6,6 +6,7 @@ import { WorkDetailPage } from '@/components/public/work';
 import { workDetails, WorkDetail } from '@/constants/work-details';
 import type { BlogContent } from '@/components/admin/shared/BlockEditor/types';
 import { prisma } from '@/lib/db';
+import { normalizeContentUrls, normalizeMediaUrl } from '@/lib/media-url';
 import { notFound } from 'next/navigation';
 
 // ISR: regenerate every 60 seconds. Admin API calls revalidatePath() on mutations.
@@ -48,13 +49,18 @@ async function getProjectFromDB(slug: string): Promise<WorkDetail | null> {
     const nextProject = currentIndex < allProjects.length - 1 ? allProjects[currentIndex + 1] : allProjects[0];
 
     const galleryImages = Array.isArray(project.galleryImages)
-      ? (project.galleryImages as string[])
+      ? (project.galleryImages as string[]).map((p) => normalizeMediaUrl(p) ?? p)
       : [];
 
     // Detect content format: Tiptap JSON or BlockEditor
     const contentObj = project.content && typeof project.content === 'object' ? project.content as Record<string, unknown> : null;
     const isTiptapContent = contentObj && contentObj.type === 'doc' && Array.isArray(contentObj.content);
     const isBlocksContent = contentObj && 'blocks' in contentObj && Array.isArray((contentObj as any).blocks);
+
+    // Normalize all /uploads/ paths inside content JSON (server-side only)
+    const normalizedContent = (isBlocksContent || isTiptapContent)
+      ? normalizeContentUrls(contentObj) as unknown as BlogContent
+      : null;
 
     return {
       id: project.slug,
@@ -65,9 +71,9 @@ async function getProjectFromDB(slug: string): Promise<WorkDetail | null> {
       description: project.description,
       author: project.author,
       email: project.email,
-      heroImage: project.heroImage,
+      heroImage: normalizeMediaUrl(project.heroImage) ?? project.heroImage,
       galleryImages,
-      content: (isBlocksContent || isTiptapContent) ? contentObj as unknown as BlogContent : null, // BlockEditor or Tiptap content if available (NEW - 2026-02-19)
+      content: normalizedContent,
       previousProject: prevProject
         ? { id: prevProject.slug, title: prevProject.title }
         : undefined,

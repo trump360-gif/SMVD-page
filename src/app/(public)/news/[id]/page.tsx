@@ -8,6 +8,7 @@ import NewsDetailLayout from '@/components/public/news/NewsDetailLayout';
 import NewsBlockDetailView from '@/components/public/news/NewsBlockDetailView';
 import TiptapNewsDetailView from '@/components/public/news/TiptapNewsDetailView'; // NEW - 2026-02-19
 import { prisma } from '@/lib/db';
+import { normalizeContentUrls, normalizeMediaUrl } from '@/lib/media-url';
 
 // ISR: regenerate every 60 seconds. Admin API calls revalidatePath() on mutations.
 export const revalidate = 60;
@@ -98,6 +99,14 @@ async function getNewsDetail(slug: string): Promise<NewsDetailResult> {
         attachments: article.attachments as AttachmentData[] | null | undefined, // NEW - 2026-02-16
       };
 
+      // Normalize attachments (server-side, before passing to client)
+      if (baseData.attachments) {
+        baseData.attachments = baseData.attachments.map((a) => ({
+          ...a,
+          filepath: normalizeMediaUrl(a.filepath) ?? a.filepath,
+        }));
+      }
+
       // Check if content is in Tiptap JSON format (NEW - 2026-02-19)
       if (
         content &&
@@ -110,7 +119,7 @@ async function getNewsDetail(slug: string): Promise<NewsDetailResult> {
           type: 'tiptap',
           data: {
             ...baseData,
-            content: content as Record<string, unknown>,
+            content: normalizeContentUrls(content) as Record<string, unknown>,
           },
         };
       }
@@ -126,7 +135,7 @@ async function getNewsDetail(slug: string): Promise<NewsDetailResult> {
           type: 'blocks',
           data: {
             ...baseData,
-            blocks: content.blocks as Array<Record<string, unknown>>,
+            blocks: normalizeContentUrls(content.blocks) as Array<Record<string, unknown>>,
             version: (content.version as string) || '1.0',
           },
         };
@@ -142,14 +151,14 @@ async function getNewsDetail(slug: string): Promise<NewsDetailResult> {
           introTitle: (content?.introTitle as string) || undefined,
           introText: (content?.introText as string) || undefined,
           images: gallery
-            ? {
+            ? normalizeContentUrls({
                 main: gallery.main || '',
                 centerLeft: gallery.centerLeft || '',
                 centerRight: gallery.centerRight || '',
                 bottomLeft: gallery.bottomLeft || '',
                 bottomCenter: gallery.bottomCenter || '',
                 bottomRight: gallery.bottomRight || '',
-              }
+              })
             : undefined,
         },
       };

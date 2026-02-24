@@ -28,3 +28,34 @@ export function normalizeMediaUrl(filepath: string | null | undefined): string |
   // Static assets (/images/…) or other paths – return as-is
   return filepath;
 }
+
+/**
+ * Deep-traverse a JSON value and normalise every string that looks
+ * like a legacy /uploads/ path.  This is intended to be called from
+ * Server Components before handing data to client components, since
+ * the Blob token is only available server-side.
+ */
+export function normalizeContentUrls<T>(value: T): T {
+  if (value === null || value === undefined) return value;
+
+  if (typeof value === 'string') {
+    if (value.startsWith('/uploads/')) {
+      return (normalizeMediaUrl(value) ?? value) as unknown as T;
+    }
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => normalizeContentUrls(item)) as unknown as T;
+  }
+
+  if (typeof value === 'object') {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      out[k] = normalizeContentUrls(v);
+    }
+    return out as T;
+  }
+
+  return value;
+}
