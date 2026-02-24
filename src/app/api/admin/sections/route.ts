@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { checkAdminAuth } from "@/lib/auth-check";
+import { normalizeMediaUrl } from "@/lib/media-url";
 import {
   successResponse,
   errorResponse,
@@ -48,7 +49,24 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return successResponse(sections, "섹션 목록을 조회했습니다");
+    // Normalize media filepaths (convert legacy /uploads/ paths to Blob URLs)
+    const normalized = sections.map((section) => ({
+      ...section,
+      exhibitionItems: section.exhibitionItems.map((item) => ({
+        ...item,
+        media: item.media
+          ? { ...item.media, filepath: normalizeMediaUrl(item.media.filepath) ?? item.media.filepath }
+          : item.media,
+      })),
+      workPortfolios: section.workPortfolios.map((item) => ({
+        ...item,
+        media: item.media
+          ? { ...item.media, filepath: normalizeMediaUrl(item.media.filepath) ?? item.media.filepath }
+          : item.media,
+      })),
+    }));
+
+    return successResponse(normalized, "섹션 목록을 조회했습니다");
   } catch (error) {
     logger.error({ err: error, context: "GET /api/..." }, "섹션 조회 오류:");
     return errorResponse(

@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db';
 import { Header, VideoHero } from '@/components/public/home';
 import HomePageContent from './HomePageContent';
+import { normalizeMediaUrl } from '@/lib/media-url';
 
 // ISR: regenerate every 60 seconds. Admin API calls revalidatePath() on mutations.
 export const revalidate = 60;
@@ -58,13 +59,13 @@ export default async function HomePage() {
     // Map exhibition items to component props
     const exhibitionItems = exhibitionSection?.exhibitionItems?.map((item) => ({
       year: item.year,
-      src: item.media?.filepath || '',
+      src: normalizeMediaUrl(item.media?.filepath) || '',
       alt: item.media?.filename || `${item.year} exhibition`,
     })) || [];
 
     // Map work portfolios to component props
     const workItems = workSection?.workPortfolios?.map((item) => ({
-      src: item.media?.filepath || '',
+      src: normalizeMediaUrl(item.media?.filepath) || '',
       alt: item.media?.filename || item.title,
       title: item.title,
       category: item.category,
