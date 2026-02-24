@@ -7,7 +7,16 @@ import { useAboutEditor } from '@/hooks/useAboutEditor';
 import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import Link from 'next/link';
 import SectionEditor from './SectionEditor';
-import PeopleManager from './PeopleManager';
+import dynamic from 'next/dynamic';
+
+const PeopleManager = dynamic(() => import('./PeopleManager'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex justify-center items-center py-12">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    </div>
+  ),
+});
 import { SaveBar } from '@/components/admin/shared/SaveBar';
 
 export default function AboutDashboard() {
@@ -220,7 +229,7 @@ export default function AboutDashboard() {
         <div className="hidden lg:flex lg:w-1/2 bg-white border-l border-gray-200 flex-col overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center justify-between shrink-0">
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">실시간 미리보기</h3>
+              <h2 className="text-sm font-semibold text-gray-900">실시간 미리보기</h2>
               <p className="text-xs text-gray-600 mt-1">변경사항이 저장 후 반영됩니다</p>
             </div>
             <button

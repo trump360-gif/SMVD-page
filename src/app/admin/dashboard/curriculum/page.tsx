@@ -4,7 +4,15 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { UndergraduateEditor, GraduateEditor } from '@/components/admin/curriculum';
+import dynamic from 'next/dynamic';
+const UndergraduateEditor = dynamic(
+  () => import('@/components/admin/curriculum').then((mod) => mod.UndergraduateEditor),
+  { ssr: false }
+);
+const GraduateEditor = dynamic(
+  () => import('@/components/admin/curriculum').then((mod) => mod.GraduateEditor),
+  { ssr: false }
+);
 import type { GraduateContent } from '@/lib/validation/curriculum';
 import { useCurriculumEditor } from '@/hooks/curriculum';
 import { SaveBar } from '@/components/admin/shared/SaveBar';

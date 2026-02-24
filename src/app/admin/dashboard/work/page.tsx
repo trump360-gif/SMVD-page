@@ -7,12 +7,26 @@ import Link from 'next/link';
 import { useWorkEditor } from '@/hooks/useWorkEditor';
 import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import { SaveBar } from '@/components/admin/shared/SaveBar';
-import {
-  WorkProjectList,
-  WorkBlogModal,
-  WorkExhibitionList,
-  WorkExhibitionModal,
-} from '@/components/admin/work';
+import dynamic from 'next/dynamic';
+const WorkProjectList = dynamic(
+  () => import('@/components/admin/work').then((mod) => mod.WorkProjectList),
+  { ssr: false }
+);
+
+const WorkExhibitionList = dynamic(
+  () => import('@/components/admin/work').then((mod) => mod.WorkExhibitionList),
+  { ssr: false }
+);
+
+const WorkBlogModal = dynamic(
+  () => import('@/components/admin/work').then((mod) => mod.WorkBlogModal),
+  { ssr: false }
+);
+
+const WorkExhibitionModal = dynamic(
+  () => import('@/components/admin/work').then((mod) => mod.WorkExhibitionModal),
+  { ssr: false }
+);
 import type {
   WorkProjectData,
   WorkExhibitionData,

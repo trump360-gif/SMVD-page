@@ -231,7 +231,7 @@ export default function HeaderConfigEditor() {
               {editState.logoPreview && (
                 <button
                   onClick={handleRemoveLogo}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors"
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-red-50 text-red-700 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors"
                   data-testid="logo-remove-btn"
                 >
                   <X size={16} />
@@ -286,7 +286,7 @@ export default function HeaderConfigEditor() {
               {editState.faviconPreview && (
                 <button
                   onClick={handleRemoveFavicon}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors"
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-red-50 text-red-700 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors"
                   data-testid="favicon-remove-btn"
                 >
                   <X size={16} />

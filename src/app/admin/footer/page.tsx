@@ -5,7 +5,11 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { FooterEditor } from '@/components/admin/footer';
+import dynamic from 'next/dynamic';
+const FooterEditor = dynamic(
+  () => import('@/components/admin/footer').then((mod) => mod.FooterEditor),
+  { ssr: false }
+);
 
 export default function FooterAdminPage() {
   const { data: session, status } = useSession();

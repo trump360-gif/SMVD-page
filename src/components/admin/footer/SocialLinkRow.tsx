@@ -71,16 +71,22 @@ export default function SocialLinkRow({
 
       {/* URL */}
       <td className="px-4 py-3 max-w-xs">
-        <a
-          href={link.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-blue-600 hover:text-blue-800 hover:underline truncate block"
-          title={link.url}
-          data-testid={`social-link-url-${platform}`}
-        >
-          {link.url}
-        </a>
+        {link.url ? (
+          <a
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-blue-600 hover:text-blue-800 hover:underline truncate block"
+            title={link.url}
+            data-testid={`social-link-url-${platform}`}
+          >
+            {link.url}
+          </a>
+        ) : (
+          <span className="text-sm text-gray-400 italic" data-testid={`social-link-url-${platform}`}>
+            URL 미설정
+          </span>
+        )}
       </td>
 
       {/* Active toggle */}
@@ -91,7 +97,7 @@ export default function SocialLinkRow({
             link.isActive ? 'bg-blue-600' : 'bg-gray-200'
           }`}
           role="switch"
-          aria-checked={link.isActive}
+          aria-checked={link.isActive ?? false}
           aria-label={`${PLATFORM_LABELS[platform]} ${link.isActive ? '비활성화' : '활성화'}`}
           data-testid={`social-link-toggle-${platform}`}
         >
@@ -102,7 +108,7 @@ export default function SocialLinkRow({
           />
         </button>
         <span
-          className={`ml-2 text-xs ${link.isActive ? 'text-blue-600' : 'text-gray-400'}`}
+          className={`ml-2 text-xs ${link.isActive ? 'text-blue-600' : 'text-gray-500'}`}
         >
           {link.isActive ? '활성' : '비활성'}
         </span>

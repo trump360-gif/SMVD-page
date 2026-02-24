@@ -35,11 +35,11 @@ export default function SectionEditor({ section, onChange }: SectionEditorProps)
         className="w-full flex justify-between items-center p-4 hover:bg-gray-50 transition-colors"
       >
         <div className="text-left">
-          <h3 className="text-lg font-semibold">
+          <h2 className="text-lg font-semibold">
             {SECTION_TITLES[section.type] || section.type}
-          </h3>
+          </h2>
         </div>
-        <span className="text-gray-400 text-sm">
+        <span className="text-gray-500 text-sm">
           {isExpanded ? '접기' : '펼치기'}
         </span>
       </button>
@@ -100,10 +100,11 @@ function IntroEditor({
   return (
     <>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="intro-title" className="block text-sm font-medium text-gray-700 mb-2">
           소개 제목
         </label>
         <input
+          id="intro-title"
           type="text"
           value={introTitle}
           onChange={(e) => onChange({ ...content, title: e.target.value })}
@@ -112,10 +113,11 @@ function IntroEditor({
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="intro-desc" className="block text-sm font-medium text-gray-700 mb-2">
           설명
         </label>
         <textarea
+          id="intro-desc"
           value={description}
           onChange={(e) => onChange({ ...content, description: e.target.value })}
           rows={6}
@@ -124,10 +126,11 @@ function IntroEditor({
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="intro-image" className="block text-sm font-medium text-gray-700 mb-2">
           이미지 경로
         </label>
         <input
+          id="intro-image"
           type="text"
           value={imageSrc}
           onChange={(e) => onChange({ ...content, imageSrc: e.target.value })}
@@ -156,10 +159,11 @@ function VisionEditor({
   return (
     <>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="vision-title" className="block text-sm font-medium text-gray-700 mb-2">
           비전 제목
         </label>
         <input
+          id="vision-title"
           type="text"
           value={visionTitle}
           onChange={(e) => onChange({ ...content, title: e.target.value })}
@@ -168,10 +172,11 @@ function VisionEditor({
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="vision-content" className="block text-sm font-medium text-gray-700 mb-2">
           내용
         </label>
         <textarea
+          id="vision-content"
           value={visionContent}
           onChange={(e) => onChange({ ...content, content: e.target.value })}
           rows={6}
@@ -180,10 +185,11 @@ function VisionEditor({
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="vision-chips" className="block text-sm font-medium text-gray-700 mb-2">
           칩 (쉼표로 구분)
         </label>
         <input
+          id="vision-chips"
           type="text"
           value={chipsText}
           onChange={(e) =>
@@ -252,10 +258,11 @@ function HistoryEditor({
   return (
     <>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="history-title" className="block text-sm font-medium text-gray-700 mb-2">
           역사 제목
         </label>
         <input
+          id="history-title"
           type="text"
           value={historyTitle}
           onChange={(e) => onChange({ ...content, title: e.target.value })}
@@ -264,10 +271,11 @@ function HistoryEditor({
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="history-intro" className="block text-sm font-medium text-gray-700 mb-2">
           소개 텍스트
         </label>
         <textarea
+          id="history-intro"
           value={introText}
           onChange={(e) => onChange({ ...content, introText: e.target.value })}
           rows={4}
@@ -294,6 +302,7 @@ function HistoryEditor({
             <div key={idx} className="space-y-1 pb-2 border-b border-gray-200">
               <div className="flex gap-2 items-start">
                 <input
+                  aria-label={`Year for timeline item ${idx + 1}`}
                   type="text"
                   value={item.year}
                   onChange={(e) =>
@@ -303,6 +312,7 @@ function HistoryEditor({
                   className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                 />
                 <textarea
+                  aria-label={`Description for timeline item ${idx + 1}`}
                   value={item.description}
                   onChange={(e) =>
                     updateTimelineItem(idx, 'description', e.target.value)
@@ -315,7 +325,7 @@ function HistoryEditor({
                   type="button"
                   onClick={() => removeTimelineItem(idx)}
                   className="px-2 py-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors text-sm font-medium"
-                  title="삭제"
+                  title={`삭제 timeline item ${idx + 1}`}
                 >
                   삭제
                 </button>

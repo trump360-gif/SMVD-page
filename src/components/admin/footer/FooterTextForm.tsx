@@ -53,7 +53,7 @@ export default function FooterTextForm({
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             설명 (Description)
-            <span className="ml-1 text-xs text-gray-400">(선택)</span>
+            <span className="ml-1 text-xs text-gray-500">(선택)</span>
           </label>
           <textarea
             id="footer-description"
@@ -73,7 +73,7 @@ export default function FooterTextForm({
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             주소 (Address)
-            <span className="ml-1 text-xs text-gray-400">(선택)</span>
+            <span className="ml-1 text-xs text-gray-500">(선택)</span>
           </label>
           <input
             id="footer-address"
@@ -94,7 +94,7 @@ export default function FooterTextForm({
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               전화번호 (Phone)
-              <span className="ml-1 text-xs text-gray-400">(선택)</span>
+              <span className="ml-1 text-xs text-gray-500">(선택)</span>
             </label>
             <input
               id="footer-phone"
@@ -114,7 +114,7 @@ export default function FooterTextForm({
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               이메일 (Email)
-              <span className="ml-1 text-xs text-gray-400">(선택)</span>
+              <span className="ml-1 text-xs text-gray-500">(선택)</span>
             </label>
             <input
               id="footer-email"
@@ -135,7 +135,7 @@ export default function FooterTextForm({
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             저작권 (Copyright)
-            <span className="ml-1 text-xs text-gray-400">(선택)</span>
+            <span className="ml-1 text-xs text-gray-500">(선택)</span>
           </label>
           <input
             id="footer-copyright"

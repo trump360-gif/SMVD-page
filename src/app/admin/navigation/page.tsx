@@ -5,7 +5,11 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { NavigationEditor } from '@/components/admin/navigation';
+import dynamic from 'next/dynamic';
+const NavigationEditor = dynamic(
+  () => import('@/components/admin/navigation').then((mod) => mod.NavigationEditor),
+  { ssr: false }
+);
 import { HeaderConfigEditor } from '@/components/admin/header';
 
 export default function NavigationAdminPage() {

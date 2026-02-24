@@ -7,10 +7,16 @@ import Link from 'next/link';
 import { useNewsEditor } from '@/hooks/useNewsEditor';
 import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import { SaveBar } from '@/components/admin/shared/SaveBar';
-import {
-  NewsArticleList,
-  NewsBlogModal,
-} from '@/components/admin/news';
+import dynamic from 'next/dynamic';
+const NewsArticleList = dynamic(
+  () => import('@/components/admin/news').then((mod) => mod.NewsArticleList),
+  { ssr: false }
+);
+
+const NewsBlogModal = dynamic(
+  () => import('@/components/admin/news').then((mod) => mod.NewsBlogModal),
+  { ssr: false }
+);
 import type {
   NewsArticleData,
   CreateArticleInput,
