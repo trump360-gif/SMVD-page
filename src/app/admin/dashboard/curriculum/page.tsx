@@ -21,7 +21,7 @@ import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 type ActiveTab = 'undergraduate' | 'graduate';
 
 export default function CurriculumDashboard() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [activeTab, setActiveTab] = useState<ActiveTab>('undergraduate');
@@ -61,11 +61,10 @@ export default function CurriculumDashboard() {
     }
   }, [status, router]);
 
+  // Fetch immediately on mount - middleware already handles auth
   useEffect(() => {
-    if (status === 'authenticated') {
-      fetchSections();
-    }
-  }, [status, fetchSections]);
+    fetchSections();
+  }, [fetchSections]);
 
   const refreshPreview = useCallback(() => {
     if (iframeRef.current) {
@@ -107,7 +106,7 @@ export default function CurriculumDashboard() {
   const gradSection = getSection('CURRICULUM_GRADUATE');
   const gradContent = getGraduateContent();
 
-  if (status === 'loading' || isLoading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -297,6 +296,7 @@ export default function CurriculumDashboard() {
             src={`/curriculum#${activeTab}${activeTab === 'graduate' ? ':' + activeSubTab : ''}`}
             className="flex-1 border-0 w-full overflow-auto"
             title="Curriculum Page Preview"
+            loading="lazy"
           />
         </div>
       </main>

@@ -20,7 +20,7 @@ const PeopleManager = dynamic(() => import('./PeopleManager'), {
 import { SaveBar } from '@/components/admin/shared/SaveBar';
 
 export default function AboutDashboard() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const {
@@ -55,12 +55,11 @@ export default function AboutDashboard() {
     }
   }, [status, router]);
 
+  // Fetch immediately on mount - middleware already handles auth
   useEffect(() => {
-    if (status === 'authenticated') {
-      fetchSections();
-      fetchPeople();
-    }
-  }, [status, fetchSections, fetchPeople]);
+    fetchSections();
+    fetchPeople();
+  }, [fetchSections, fetchPeople]);
 
   const refreshPreview = useCallback(() => {
     if (iframeRef.current) {
@@ -97,7 +96,7 @@ export default function AboutDashboard() {
     showSuccess('변경사항이 저장되었습니다.');
   };
 
-  if (status === 'loading' || isLoading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -244,6 +243,7 @@ export default function AboutDashboard() {
             src={activeTab === 'people' ? '/about?tab=people' : '/about'}
             className="flex-1 border-0 w-full overflow-auto"
             title="About Page Preview"
+            loading="lazy"
           />
         </div>
       </main>

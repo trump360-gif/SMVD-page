@@ -125,23 +125,20 @@ export async function POST(request: NextRequest) {
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '');
 
-    // Race condition 방지: 정확한 일치도로 확인
+    // Check existing slugs in a single batch query instead of sequential lookups
+    const existingSlugs = await prisma.newsEvent.findMany({
+      where: {
+        slug: { startsWith: baseSlug },
+      },
+      select: { slug: true },
+    });
+    const slugSet = new Set(existingSlugs.map((a) => a.slug));
+
     let slug = baseSlug;
     let counter = 1;
-    let exists = true;
-
-    while (exists && counter <= 100) {  // 최대 100회 재시도
-      const found = await prisma.newsEvent.findUnique({
-        where: { slug },
-        select: { id: true },  // 최소 데이터만 요청
-      });
-
-      if (found) {
-        slug = `${baseSlug}-${counter}`;
-        counter++;
-      } else {
-        exists = false;
-      }
+    while (slugSet.has(slug) && counter <= 100) {
+      slug = `${baseSlug}-${counter}`;
+      counter++;
     }
 
     if (counter > 100) {

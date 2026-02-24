@@ -26,7 +26,7 @@ import type {
 const FILTER_CATEGORIES = ['ALL', 'Notice', 'Event', 'Awards', 'Recruiting'];
 
 export default function NewsDashboard() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -63,11 +63,10 @@ export default function NewsDashboard() {
     }
   }, [status, router]);
 
+  // Fetch immediately on mount - middleware already handles auth
   useEffect(() => {
-    if (status === 'authenticated') {
-      fetchArticles();
-    }
-  }, [status, fetchArticles]);
+    fetchArticles();
+  }, [fetchArticles]);
 
   const refreshPreview = useCallback(() => {
     if (iframeRef.current) {
@@ -155,7 +154,7 @@ export default function NewsDashboard() {
     }
   };
 
-  if (status === 'loading' || isLoading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -311,6 +310,7 @@ export default function NewsDashboard() {
             src="/news"
             className="flex-1 border-0 w-full overflow-auto"
             title="News Page Preview"
+            loading="lazy"
           />
         </div>
       </main>

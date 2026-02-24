@@ -37,7 +37,7 @@ import type {
 } from '@/hooks/useWorkEditor';
 
 export default function WorkDashboard() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -84,12 +84,11 @@ export default function WorkDashboard() {
     }
   }, [status, router]);
 
+  // Fetch immediately on mount - middleware already handles auth
   useEffect(() => {
-    if (status === 'authenticated') {
-      fetchProjects();
-      fetchExhibitions();
-    }
-  }, [status, fetchProjects, fetchExhibitions]);
+    fetchProjects();
+    fetchExhibitions();
+  }, [fetchProjects, fetchExhibitions]);
 
   const refreshPreview = useCallback(() => {
     if (iframeRef.current) {
@@ -202,7 +201,7 @@ export default function WorkDashboard() {
     }
   };
 
-  if (status === 'loading' || isLoading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -392,6 +391,7 @@ export default function WorkDashboard() {
             src={`/work?tab=${activeTab}`}
             className="flex-1 border-0 w-full h-full min-h-screen"
             title="Work Page Preview"
+            loading="lazy"
           />
         </div>
       </main>

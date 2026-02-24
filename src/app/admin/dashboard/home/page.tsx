@@ -32,7 +32,7 @@ interface WorkPortfolio {
 }
 
 export default function HomeEditorPage() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [loading, setLoading] = useState(true);
@@ -76,11 +76,10 @@ export default function HomeEditorPage() {
     }
   }, [status, router]);
 
+  // Fetch immediately on mount - middleware already handles auth
   useEffect(() => {
-    if (status === 'authenticated') {
-      initializeSections();
-    }
-  }, [status]);
+    initializeSections();
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -166,7 +165,7 @@ export default function HomeEditorPage() {
     }
   };
 
-  if (status === 'loading' || loading || isLoading) {
+  if (loading || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -436,6 +435,7 @@ export default function HomeEditorPage() {
             src={`/#${activeSection}`}
             className="flex-1 border-0 w-full overflow-auto"
             title="Home Page Preview"
+            loading="lazy"
           />
         </div>
       </main>
