@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
 import crypto from "crypto";
+import { put } from "@vercel/blob";
 import { prisma } from "@/lib/db";
 import { checkAdminAuth } from "@/lib/auth-check";
 import {
@@ -82,17 +81,16 @@ export async function POST(request: NextRequest) {
     let thumbnailPath: string | undefined;
 
     if (file.type === "image/svg+xml") {
-      // SVG 파일 직접 저장
+      // SVG 파일 직접 저장 (Vercel Blob)
       const now = new Date();
       const yearMonth = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, "0")}`;
-      const dir = path.join(process.cwd(), "public", "uploads", yearMonth);
-      await fs.mkdir(dir, { recursive: true });
-
+      
       filename = `${crypto.randomBytes(8).toString("hex")}.svg`;
-      const fullPath = path.join(dir, filename);
-      await fs.writeFile(fullPath, buffer);
+      const fullPath = `uploads/${yearMonth}/${filename}`;
+      
+      const blob = await put(fullPath, buffer, { access: 'public', contentType: 'image/svg+xml' });
 
-      filepath = `/uploads/${yearMonth}/${filename}`;
+      filepath = blob.url;
       mimeType = "image/svg+xml";
       fileSize = buffer.length;
       // SVG는 원본/썸네일이 없음
