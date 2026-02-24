@@ -18,6 +18,13 @@ const nextConfig: NextConfig = {
     // Allow SVG files
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
+    // Allow Vercel Blob storage images through Next.js Image optimization
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.public.blob.vercel-storage.com',
+      },
+    ],
   },
   // Security headers for production
   headers: async () => [
