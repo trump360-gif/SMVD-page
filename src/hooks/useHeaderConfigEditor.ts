@@ -53,11 +53,13 @@ export function useHeaderConfigEditor() {
       if (!res.ok) throw new Error(data.message || '헤더 설정 조회 실패');
       const config = data.data as HeaderConfigData;
       setHeaderConfig(config);
+      const logoPath = config.logoImage?.filepath;
+      const faviconPath = config.faviconImage?.filepath;
       resetSnapshot({
         logoImageId: config.logoImageId ?? null,
         faviconImageId: config.faviconImageId ?? null,
-        logoPreview: config.logoImage?.filepath ?? null,
-        faviconPreview: config.faviconImage?.filepath ?? null,
+        logoPreview: logoPath?.startsWith("http") ? logoPath : null,
+        faviconPreview: faviconPath?.startsWith("http") ? faviconPath : null,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : '헤더 설정 조회 실패');
@@ -92,11 +94,13 @@ export function useHeaderConfigEditor() {
       if (!res.ok) throw new Error(data.message || '헤더 설정 저장 실패');
       const config = data.data as HeaderConfigData;
       setHeaderConfig(config);
+      const savedLogoPath = config.logoImage?.filepath;
+      const savedFaviconPath = config.faviconImage?.filepath;
       resetSnapshot({
         logoImageId: config.logoImageId ?? null,
         faviconImageId: config.faviconImageId ?? null,
-        logoPreview: config.logoImage?.filepath ?? null,
-        faviconPreview: config.faviconImage?.filepath ?? null,
+        logoPreview: savedLogoPath?.startsWith("http") ? savedLogoPath : null,
+        faviconPreview: savedFaviconPath?.startsWith("http") ? savedFaviconPath : null,
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : '헤더 설정 저장 실패';
