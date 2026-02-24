@@ -2,7 +2,18 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { ModalShell } from '@/components/admin/shared/BlogEditorModal';
-import { TiptapEditor } from '@/components/admin/shared/TiptapEditor';
+import dynamic from 'next/dynamic';
+const TiptapEditor = dynamic(
+  () => import('@/components/admin/shared/TiptapEditor').then((mod) => mod.TiptapEditor),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+      </div>
+    ),
+  }
+);
 import type { TiptapContent } from '@/components/admin/shared/BlockEditor/types';
 import { isTiptapContent } from '@/components/admin/shared/BlockEditor/types';
 import {

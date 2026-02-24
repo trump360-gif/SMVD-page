@@ -88,8 +88,8 @@ export default async function HomePage() {
     // Map header config
     const headerConfigData = headerConfig
       ? {
-          logoImagePath: headerConfig.logoImage?.filepath ?? null,
-          faviconImagePath: headerConfig.faviconImage?.filepath ?? null,
+          logoImagePath: headerConfig.logoImage?.filepath?.startsWith("http") ? headerConfig.logoImage.filepath : null,
+          faviconImagePath: headerConfig.faviconImage?.filepath?.startsWith("http") ? headerConfig.faviconImage.filepath : null,
         }
       : undefined;
 

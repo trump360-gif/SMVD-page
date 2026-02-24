@@ -20,7 +20,9 @@ export async function generateMetadata(): Promise<Metadata> {
       include: { faviconImage: true },
     });
 
-    const faviconPath = headerConfig?.faviconImage?.filepath ?? "/favicon.ico";
+    const rawFavicon = headerConfig?.faviconImage?.filepath;
+    // Only use DB favicon if it's a full URL (Blob storage); relative paths 404 after migration
+    const faviconPath = rawFavicon?.startsWith("http") ? rawFavicon : "/favicon.ico";
 
     return {
       title: "숙명여자대학교 시각영상디자인과 CMS",
