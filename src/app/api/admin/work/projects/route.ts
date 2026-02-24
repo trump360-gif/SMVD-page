@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
-import { checkAdminAuth } from '@/lib/auth-check';
+import { checkAdminAuth, checkAdminAuthFast } from '@/lib/auth-check';
 import {
   successResponse,
   errorResponse,
@@ -31,9 +31,9 @@ const CreateProjectSchema = z.object({
  * GET /api/admin/work/projects
  * Work 프로젝트 전체 조회
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const authResult = await checkAdminAuth();
+    const authResult = await checkAdminAuthFast(request);
     if (!authResult.authenticated) return authResult.error;
 
     const projects = await prisma.workProject.findMany({

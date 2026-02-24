@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { checkAdminAuth } from '@/lib/auth-check';
+import { checkAdminAuth, checkAdminAuthFast } from '@/lib/auth-check';
 import { revalidatePath } from 'next/cache';
 import z from 'zod';
 import { logger } from "@/lib/logger";
@@ -32,7 +32,7 @@ const ProfessorSchema = z.object({
 // GET: 모든 교수/강사 조회
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await checkAdminAuth();
+    const authResult = await checkAdminAuthFast(request);
     if (!authResult.authenticated) return authResult.error;
 
     const people = await prisma.people.findMany({

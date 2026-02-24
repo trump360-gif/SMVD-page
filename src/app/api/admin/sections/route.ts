@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
-import { checkAdminAuth } from "@/lib/auth-check";
+import { checkAdminAuth, checkAdminAuthFast } from "@/lib/auth-check";
 import { normalizeMediaUrl } from "@/lib/media-url";
 import {
   successResponse,
@@ -21,7 +21,7 @@ import { logger } from "@/lib/logger";
  */
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await checkAdminAuth();
+    const authResult = await checkAdminAuthFast(request);
     if (!authResult.authenticated) return authResult.error;
 
     const pageId = request.nextUrl.searchParams.get("pageId");

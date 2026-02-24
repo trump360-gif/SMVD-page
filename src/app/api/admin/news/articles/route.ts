@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 import { Prisma } from '@/generated/prisma';
-import { checkAdminAuth } from '@/lib/auth-check';
+import { checkAdminAuth, checkAdminAuthFast } from '@/lib/auth-check';
 import {
   successResponse,
   errorResponse,
@@ -64,7 +64,7 @@ const CreateArticleSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await checkAdminAuth();
+    const authResult = await checkAdminAuthFast(request);
     if (!authResult.authenticated) return authResult.error;
 
     const { searchParams } = new URL(request.url);

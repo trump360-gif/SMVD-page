@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
-import { checkAdminAuth } from '@/lib/auth-check';
+import { checkAdminAuth, checkAdminAuthFast } from '@/lib/auth-check';
 import {
   successResponse,
   errorResponse,
@@ -18,9 +18,9 @@ const CreateNavigationSchema = z.object({
  * GET /api/admin/navigation
  * 모든 네비게이션 항목 조회 (order ASC)
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const authResult = await checkAdminAuth();
+    const authResult = await checkAdminAuthFast(request);
     if (!authResult.authenticated) return authResult.error;
 
     const items = await prisma.navigation.findMany({

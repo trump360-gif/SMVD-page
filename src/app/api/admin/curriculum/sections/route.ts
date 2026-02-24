@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { SectionType } from "@/generated/prisma";
-import { checkAdminAuth } from "@/lib/auth-check";
+import { checkAdminAuth, checkAdminAuthFast } from "@/lib/auth-check";
 import {
   successResponse,
   errorResponse,
@@ -20,9 +20,9 @@ import { logger } from "@/lib/logger";
  * GET /api/admin/curriculum/sections
  * Curriculum 페이지의 모든 섹션 조회
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const authResult = await checkAdminAuth();
+    const authResult = await checkAdminAuthFast(request);
     if (!authResult.authenticated) return authResult.error;
 
     // curriculum 페이지 찾기

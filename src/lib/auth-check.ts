@@ -1,4 +1,5 @@
 import { getServerSession } from "next-auth/next";
+import { getToken } from "next-auth/jwt";
 import { authOptions } from "@/lib/auth/auth";
 import { unauthorizedResponse, errorResponse } from "@/lib/api-response";
 import { NextResponse } from "next/server";
@@ -43,6 +44,48 @@ export async function checkAdminAuth(): Promise<AuthResult> {
   }
 
   return { authenticated: true, session };
+}
+
+/**
+ * Fast admin auth check using JWT token directly.
+ * Skips getServerSession overhead — use when middleware already validates the route.
+ * Requires the request object to read the JWT cookie.
+ */
+export async function checkAdminAuthFast(
+  request: Request
+): Promise<AuthResult> {
+  const token = await getToken({
+    req: request as Parameters<typeof getToken>[0]["req"],
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  if (!token) {
+    return { authenticated: false, session: null, error: unauthorizedResponse() };
+  }
+
+  if (token.role !== "admin") {
+    return {
+      authenticated: false,
+      session: null,
+      error: errorResponse("관리자 권한이 필요합니다", "FORBIDDEN", 403),
+    };
+  }
+
+  return {
+    authenticated: true,
+    session: {
+      user: {
+        id: token.id as string,
+        email: token.email as string,
+        role: token.role as string,
+        name: token.name ?? null,
+        image: null,
+      },
+      expires: new Date(
+        (token.exp as number) * 1000
+      ).toISOString(),
+    },
+  };
 }
 
 /**

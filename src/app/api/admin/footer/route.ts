@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 import { Prisma } from '@/generated/prisma';
-import { checkAdminAuth } from '@/lib/auth-check';
+import { checkAdminAuth, checkAdminAuthFast } from '@/lib/auth-check';
 import {
   successResponse,
   errorResponse,
@@ -13,9 +13,9 @@ import { UpdateFooterSchema } from '@/types/schemas';
  * GET /api/admin/footer
  * Footer 데이터 전체 조회
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const authResult = await checkAdminAuth();
+    const authResult = await checkAdminAuthFast(request);
     if (!authResult.authenticated) return authResult.error;
 
     const footer = await prisma.footer.findFirst();

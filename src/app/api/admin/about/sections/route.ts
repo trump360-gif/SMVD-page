@@ -1,19 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth/auth';
+import { checkAdminAuthFast } from '@/lib/auth-check';
 import z from 'zod';
 import { invalidateAbout } from '@/lib/cache';
 import { logger } from "@/lib/logger";
-
-// 인증 확인
-async function requireAuth() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return null;
-  }
-  return session;
-}
 
 // About 섹션 내용 스키마
 const AboutIntroSchema = z.object({
@@ -53,10 +43,8 @@ const AboutPeopleSchema = z.object({
 // GET: About 페이지의 모든 섹션 조회
 export async function GET(request: NextRequest) {
   try {
-    const session = await requireAuth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const authResult = await checkAdminAuthFast(request);
+    if (!authResult.authenticated) return authResult.error;
 
     const aboutPage = await prisma.page.findUnique({
       where: { slug: 'about' },
@@ -94,10 +82,8 @@ export async function GET(request: NextRequest) {
 // PUT: About 섹션 수정
 export async function PUT(request: NextRequest) {
   try {
-    const session = await requireAuth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const authResult = await checkAdminAuthFast(request);
+    if (!authResult.authenticated) return authResult.error;
 
     const body = await request.json();
     const { sectionId, type, title, content } = body;
