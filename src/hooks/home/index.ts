@@ -14,7 +14,7 @@ export type { Section, ExhibitionItem, WorkPortfolio } from "./types";
  * Uses useDirtyState for snapshot/local state tracking.
  * All sub-hook operations are local-only until saveChanges() is called.
  */
-export function useHomeEditor() {
+export function useHomeEditor(initialSections: Section[] = []) {
   const {
     localState: sections,
     setLocalState: setSections,
@@ -23,7 +23,7 @@ export function useHomeEditor() {
     changeCount,
     resetSnapshot,
     revert,
-  } = useDirtyState<Section[]>([]);
+  } = useDirtyState<Section[]>(initialSections);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);

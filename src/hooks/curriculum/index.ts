@@ -15,7 +15,7 @@ export type { CurriculumSection } from "./types";
  * Composes sub-hooks for courses, tracks/modules, and theses.
  * All CRUD is local-only until saveChanges() is called.
  */
-export function useCurriculumEditor() {
+export function useCurriculumEditor(initialSections: CurriculumSection[] = []) {
   const {
     sections,
     sectionsSnapshot,
@@ -33,7 +33,7 @@ export function useCurriculumEditor() {
     updateContent,
     revert,
     clearError,
-  } = useStateHelpers();
+  } = useStateHelpers(initialSections);
 
   // Compose sub-hooks with local-only deps
   const subDeps = { sections, updateContent };

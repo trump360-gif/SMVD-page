@@ -77,7 +77,7 @@ export interface UpdateArticleInput {
 
 let tempIdCounter = 0;
 
-export function useNewsEditor() {
+export function useNewsEditor(initialArticles: NewsArticleData[] = []) {
   const {
     localState: articles,
     setLocalState: setArticles,
@@ -86,7 +86,7 @@ export function useNewsEditor() {
     changeCount,
     resetSnapshot,
     revert,
-  } = useDirtyState<NewsArticleData[]>([]);
+  } = useDirtyState<NewsArticleData[]>(initialArticles);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);

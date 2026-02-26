@@ -76,7 +76,10 @@ export interface AboutPerson {
 
 let tempIdCounter = 0;
 
-export function useAboutEditor() {
+export function useAboutEditor(
+  initialSections: AboutSection[] = [],
+  initialPeople: AboutPerson[] = [],
+) {
   // ---- Sections: dirty state ----
   const {
     localState: sections,
@@ -86,7 +89,7 @@ export function useAboutEditor() {
     changeCount: sectionsChangeCount,
     resetSnapshot: resetSectionsSnapshot,
     revert: revertSections,
-  } = useDirtyState<AboutSection[]>([]);
+  } = useDirtyState<AboutSection[]>(initialSections);
 
   // ---- People: dirty state (converted from immediate save) ----
   const {
@@ -97,7 +100,7 @@ export function useAboutEditor() {
     changeCount: peopleChangeCount,
     resetSnapshot: resetPeopleSnapshot,
     revert: revertPeople,
-  } = useDirtyState<AboutPerson[]>([]);
+  } = useDirtyState<AboutPerson[]>(initialPeople);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);

@@ -95,7 +95,10 @@ export interface UpdateExhibitionInput {
 
 let tempIdCounter = 0;
 
-export function useWorkEditor() {
+export function useWorkEditor(
+  initialProjects: WorkProjectData[] = [],
+  initialExhibitions: WorkExhibitionData[] = [],
+) {
   const {
     localState: projects,
     setLocalState: setProjects,
@@ -104,7 +107,7 @@ export function useWorkEditor() {
     changeCount: projectsChangeCount,
     resetSnapshot: resetProjectsSnapshot,
     revert: revertProjects,
-  } = useDirtyState<WorkProjectData[]>([]);
+  } = useDirtyState<WorkProjectData[]>(initialProjects);
 
   const {
     localState: exhibitions,
@@ -114,7 +117,7 @@ export function useWorkEditor() {
     changeCount: exhibitionsChangeCount,
     resetSnapshot: resetExhibitionsSnapshot,
     revert: revertExhibitions,
-  } = useDirtyState<WorkExhibitionData[]>([]);
+  } = useDirtyState<WorkExhibitionData[]>(initialExhibitions);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);

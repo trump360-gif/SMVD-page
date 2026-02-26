@@ -12,7 +12,7 @@ import type {
  * Core state management for the curriculum editor.
  * Uses useDirtyState for snapshot/local state tracking.
  */
-export function useStateHelpers() {
+export function useStateHelpers(initialSections: CurriculumSection[] = []) {
   const {
     localState: sections,
     setLocalState: setSections,
@@ -21,7 +21,7 @@ export function useStateHelpers() {
     changeCount,
     resetSnapshot,
     revert,
-  } = useDirtyState<CurriculumSection[]>([]);
+  } = useDirtyState<CurriculumSection[]>(initialSections);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
