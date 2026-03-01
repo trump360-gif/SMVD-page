@@ -272,11 +272,20 @@ export function useWorkEditor(
       setIsSaving(true);
       setError(null);
 
+      const hasNewProjects = projects.some(p => p.id.startsWith('temp_'));
+      const hasNewExhibitions = exhibitions.some(e => e.id.startsWith('temp_'));
+
       await syncProjects(projectsSnapshot, projects);
       await syncExhibitions(exhibitionsSnapshot, exhibitions);
 
-      // Re-fetch to sync snapshot with server state
-      await Promise.all([fetchProjects(), fetchExhibitions()]);
+      // Only re-fetch if there were new items (need real IDs from server)
+      if (hasNewProjects || hasNewExhibitions) {
+        await Promise.all([fetchProjects(), fetchExhibitions()]);
+      } else {
+        // No new items - just reset snapshots to local state
+        resetProjectsSnapshot(projects);
+        resetExhibitionsSnapshot(exhibitions);
+      }
     } catch (err) {
       const msg = err instanceof Error ? err.message : '저장 실패';
       setError(msg);
@@ -284,7 +293,7 @@ export function useWorkEditor(
     } finally {
       setIsSaving(false);
     }
-  }, [projects, exhibitions, projectsSnapshot, exhibitionsSnapshot, fetchProjects, fetchExhibitions]);
+  }, [projects, exhibitions, projectsSnapshot, exhibitionsSnapshot, fetchProjects, fetchExhibitions, resetProjectsSnapshot, resetExhibitionsSnapshot]);
 
   // ---- Initialize ----
 
@@ -343,21 +352,22 @@ async function syncProjects(
   const localIds = new Set(localItems.map((i) => i.id));
   const snapMap = new Map(snapItems.map((i) => [i.id, i]));
 
-  // 1. Delete: in snapshot but not in local
-  for (const item of snapItems) {
-    if (!localIds.has(item.id)) {
-      const res = await fetch(`/api/admin/work/projects/${item.id}`, {
+  // 1. Delete: parallel
+  const toDelete = snapItems.filter(item => !localIds.has(item.id));
+  if (toDelete.length > 0) {
+    await Promise.all(toDelete.map(item =>
+      fetch(`/api/admin/work/projects/${item.id}`, {
         method: 'DELETE',
         credentials: 'include',
-      });
-      if (!res.ok) throw new Error('프로젝트 삭제 실패');
-    }
+      }).then(res => { if (!res.ok) throw new Error('프로젝트 삭제 실패'); })
+    ));
   }
 
-  // 2. Create: temp IDs (new items)
-  for (const item of localItems) {
-    if (item.id.startsWith('temp_')) {
-      const res = await fetch('/api/admin/work/projects', {
+  // 2. Create: parallel
+  const toCreate = localItems.filter(item => item.id.startsWith('temp_'));
+  if (toCreate.length > 0) {
+    await Promise.all(toCreate.map(item =>
+      fetch('/api/admin/work/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -376,18 +386,19 @@ async function syncProjects(
           content: item.content,
         }),
         credentials: 'include',
-      });
-      if (!res.ok) throw new Error('프로젝트 생성 실패');
-    }
+      }).then(res => { if (!res.ok) throw new Error('프로젝트 생성 실패'); })
+    ));
   }
 
-  // 3. Update: existing items with changed fields
-  for (const item of localItems) {
-    if (item.id.startsWith('temp_')) continue;
+  // 3. Update: parallel
+  const toUpdate = localItems.filter(item => {
+    if (item.id.startsWith('temp_')) return false;
     const orig = snapMap.get(item.id);
-    if (!orig) continue;
-    if (!deepEqual(orig, item)) {
-      const res = await fetch(`/api/admin/work/projects/${item.id}`, {
+    return orig && !deepEqual(orig, item);
+  });
+  if (toUpdate.length > 0) {
+    await Promise.all(toUpdate.map(item =>
+      fetch(`/api/admin/work/projects/${item.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -406,24 +417,28 @@ async function syncProjects(
           content: item.content,
         }),
         credentials: 'include',
-      });
-      if (!res.ok) throw new Error('프로젝트 수정 실패');
-    }
+      }).then(res => { if (!res.ok) throw new Error('프로젝트 수정 실패'); })
+    ));
   }
 
-  // 4. Reorder
+  // 4. Reorder: single batch call
+  const reorderItems: { id: string; order: number }[] = [];
   for (let i = 0; i < localItems.length; i++) {
     const item = localItems[i];
     if (item.id.startsWith('temp_')) continue;
     const orig = snapMap.get(item.id);
     if (orig && orig.order !== i) {
-      await fetch('/api/admin/work/projects/reorder', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectId: item.id, newOrder: i }),
-        credentials: 'include',
-      });
+      reorderItems.push({ id: item.id, order: i });
     }
+  }
+  if (reorderItems.length > 0) {
+    const res = await fetch('/api/admin/work/projects/reorder', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: reorderItems }),
+      credentials: 'include',
+    });
+    if (!res.ok) throw new Error('프로젝트 순서 변경 실패');
   }
 }
 
@@ -434,21 +449,22 @@ async function syncExhibitions(
   const localIds = new Set(localItems.map((i) => i.id));
   const snapMap = new Map(snapItems.map((i) => [i.id, i]));
 
-  // 1. Delete
-  for (const item of snapItems) {
-    if (!localIds.has(item.id)) {
-      const res = await fetch(`/api/admin/work/exhibitions/${item.id}`, {
+  // 1. Delete: parallel
+  const toDelete = snapItems.filter(item => !localIds.has(item.id));
+  if (toDelete.length > 0) {
+    await Promise.all(toDelete.map(item =>
+      fetch(`/api/admin/work/exhibitions/${item.id}`, {
         method: 'DELETE',
         credentials: 'include',
-      });
-      if (!res.ok) throw new Error('전시 삭제 실패');
-    }
+      }).then(res => { if (!res.ok) throw new Error('전시 삭제 실패'); })
+    ));
   }
 
-  // 2. Create (temp IDs)
-  for (const item of localItems) {
-    if (item.id.startsWith('temp_')) {
-      const res = await fetch('/api/admin/work/exhibitions', {
+  // 2. Create: parallel
+  const toCreate = localItems.filter(item => item.id.startsWith('temp_'));
+  if (toCreate.length > 0) {
+    await Promise.all(toCreate.map(item =>
+      fetch('/api/admin/work/exhibitions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -460,18 +476,19 @@ async function syncExhibitions(
           published: item.published,
         }),
         credentials: 'include',
-      });
-      if (!res.ok) throw new Error('전시 생성 실패');
-    }
+      }).then(res => { if (!res.ok) throw new Error('전시 생성 실패'); })
+    ));
   }
 
-  // 3. Update
-  for (const item of localItems) {
-    if (item.id.startsWith('temp_')) continue;
+  // 3. Update: parallel
+  const toUpdate = localItems.filter(item => {
+    if (item.id.startsWith('temp_')) return false;
     const orig = snapMap.get(item.id);
-    if (!orig) continue;
-    if (!deepEqual(orig, item)) {
-      const res = await fetch(`/api/admin/work/exhibitions/${item.id}`, {
+    return orig && !deepEqual(orig, item);
+  });
+  if (toUpdate.length > 0) {
+    await Promise.all(toUpdate.map(item =>
+      fetch(`/api/admin/work/exhibitions/${item.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -483,23 +500,27 @@ async function syncExhibitions(
           published: item.published,
         }),
         credentials: 'include',
-      });
-      if (!res.ok) throw new Error('전시 수정 실패');
-    }
+      }).then(res => { if (!res.ok) throw new Error('전시 수정 실패'); })
+    ));
   }
 
-  // 4. Reorder
+  // 4. Reorder: single batch call
+  const reorderItems: { id: string; order: number }[] = [];
   for (let i = 0; i < localItems.length; i++) {
     const item = localItems[i];
     if (item.id.startsWith('temp_')) continue;
     const orig = snapMap.get(item.id);
     if (orig && orig.order !== i) {
-      await fetch('/api/admin/work/exhibitions/reorder', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ exhibitionId: item.id, newOrder: i }),
-        credentials: 'include',
-      });
+      reorderItems.push({ id: item.id, order: i });
     }
+  }
+  if (reorderItems.length > 0) {
+    const res = await fetch('/api/admin/work/exhibitions/reorder', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: reorderItems }),
+      credentials: 'include',
+    });
+    if (!res.ok) throw new Error('전시 순서 변경 실패');
   }
 }

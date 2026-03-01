@@ -15,14 +15,22 @@ import type {
   UpdateExhibitionInput,
 } from '@/hooks/useWorkEditor';
 
+const ListSkeleton = () => (
+  <div className="space-y-4">
+    {[...Array(3)].map((_, i) => (
+      <div key={i} className="animate-pulse bg-gray-200 rounded-lg h-24" />
+    ))}
+  </div>
+);
+
 const WorkProjectList = dynamic(
   () => import('@/components/admin/work').then((mod) => mod.WorkProjectList),
-  { ssr: false }
+  { ssr: false, loading: ListSkeleton }
 );
 
 const WorkExhibitionList = dynamic(
   () => import('@/components/admin/work').then((mod) => mod.WorkExhibitionList),
-  { ssr: false }
+  { ssr: false, loading: ListSkeleton }
 );
 
 const WorkBlogModal = dynamic(
@@ -386,28 +394,32 @@ export default function WorkEditorClient({ initialProjects, initialExhibitions }
         </div>
       </main>
 
-      {/* Project Blog Modal */}
-      <WorkBlogModal
-        key={editingProject?.id || 'new'}
-        isOpen={isProjectModalOpen}
-        project={editingProject}
-        onClose={() => {
-          setIsProjectModalOpen(false);
-          setEditingProject(null);
-        }}
-        onSubmit={handleProjectSubmit}
-      />
+      {/* Project Blog Modal - conditional rendering to avoid heavy DOM */}
+      {isProjectModalOpen && (
+        <WorkBlogModal
+          key={editingProject?.id || 'new'}
+          isOpen={isProjectModalOpen}
+          project={editingProject}
+          onClose={() => {
+            setIsProjectModalOpen(false);
+            setEditingProject(null);
+          }}
+          onSubmit={handleProjectSubmit}
+        />
+      )}
 
-      {/* Exhibition Modal */}
-      <WorkExhibitionModal
-        isOpen={isExhibitionModalOpen}
-        exhibition={editingExhibition}
-        onClose={() => {
-          setIsExhibitionModalOpen(false);
-          setEditingExhibition(null);
-        }}
-        onSubmit={handleExhibitionSubmit}
-      />
+      {/* Exhibition Modal - conditional rendering to avoid heavy DOM */}
+      {isExhibitionModalOpen && (
+        <WorkExhibitionModal
+          isOpen={isExhibitionModalOpen}
+          exhibition={editingExhibition}
+          onClose={() => {
+            setIsExhibitionModalOpen(false);
+            setEditingExhibition(null);
+          }}
+          onSubmit={handleExhibitionSubmit}
+        />
+      )}
     </div>
   );
 }

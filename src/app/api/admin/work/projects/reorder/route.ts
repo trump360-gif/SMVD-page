@@ -3,16 +3,17 @@ import { prisma } from '@/lib/db';
 import { checkAdminAuth } from '@/lib/auth-check';
 import { successResponse, errorResponse } from '@/lib/api-response';
 import { z } from 'zod';
-import { logger } from "@/lib/logger";
 
-const ReorderSchema = z.object({
-  projectId: z.string().min(1),
-  newOrder: z.number().int().min(0),
+const BatchReorderSchema = z.object({
+  items: z.array(z.object({
+    id: z.string().min(1),
+    order: z.number().int().min(0),
+  })).min(1),
 });
 
 /**
  * PUT /api/admin/work/projects/reorder
- * Work 프로젝트 순서 변경 (트랜잭션 기반, unique constraint 안전)
+ * Work 프로젝트 순서 일괄 변경 (batch, 단일 트랜잭션)
  */
 export async function PUT(request: NextRequest) {
   try {
@@ -20,72 +21,36 @@ export async function PUT(request: NextRequest) {
     if (!authResult.authenticated) return authResult.error;
 
     const body = await request.json();
-    const validation = ReorderSchema.safeParse(body);
+    const validation = BatchReorderSchema.safeParse(body);
 
     if (!validation.success) {
       return errorResponse('유효하지 않은 요청입니다', 'VALIDATION_ERROR', 400);
     }
 
-    const { projectId, newOrder } = validation.data;
+    const { items } = validation.data;
 
-    const currentProject = await prisma.workProject.findUnique({
-      where: { id: projectId },
+    // Verify all projects exist
+    const ids = items.map(i => i.id);
+    const existing = await prisma.workProject.findMany({
+      where: { id: { in: ids } },
+      select: { id: true },
     });
 
-    if (!currentProject) {
-      return errorResponse('프로젝트를 찾을 수 없습니다', 'NOT_FOUND', 404);
+    if (existing.length !== ids.length) {
+      return errorResponse('일부 프로젝트를 찾을 수 없습니다', 'NOT_FOUND', 404);
     }
 
-    // Transaction with two-pass approach to avoid unique constraint violations
-    await prisma.$transaction(async (tx) => {
-      const allProjects = await tx.workProject.findMany({
-        orderBy: { order: 'asc' },
-      });
+    // Single transaction with direct updates (order is not unique)
+    await prisma.$transaction(
+      items.map(item =>
+        prisma.workProject.update({
+          where: { id: item.id },
+          data: { order: item.order },
+        })
+      )
+    );
 
-      // First pass: set temporary negative orders
-      let idx = 0;
-      for (const project of allProjects) {
-        if (project.id === projectId) continue;
-
-        if (idx === newOrder) idx++;
-
-        await tx.workProject.update({
-          where: { id: project.id },
-          data: { order: -(idx + 100) },
-        });
-        idx++;
-      }
-
-      await tx.workProject.update({
-        where: { id: projectId },
-        data: { order: -(newOrder + 100) },
-      });
-
-      // Second pass: set final positive orders
-      idx = 0;
-      for (const project of allProjects) {
-        if (project.id === projectId) continue;
-
-        if (idx === newOrder) idx++;
-
-        await tx.workProject.update({
-          where: { id: project.id },
-          data: { order: idx },
-        });
-        idx++;
-      }
-
-      await tx.workProject.update({
-        where: { id: projectId },
-        data: { order: newOrder },
-      });
-    });
-
-    const updated = await prisma.workProject.findUnique({
-      where: { id: projectId },
-    });
-
-    return successResponse(updated, '순서가 변경되었습니다');
+    return successResponse(null, '순서가 일괄 변경되었습니다');
   } catch (error) {
     console.error('프로젝트 순서 변경 오류:', error);
     return errorResponse('순서 변경 중 오류가 발생했습니다', 'REORDER_ERROR', 500);

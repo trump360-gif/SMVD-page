@@ -3,16 +3,17 @@ import { prisma } from '@/lib/db';
 import { checkAdminAuth } from '@/lib/auth-check';
 import { successResponse, errorResponse } from '@/lib/api-response';
 import { z } from 'zod';
-import { logger } from "@/lib/logger";
 
-const ReorderSchema = z.object({
-  exhibitionId: z.string().min(1),
-  newOrder: z.number().int().min(0),
+const BatchReorderSchema = z.object({
+  items: z.array(z.object({
+    id: z.string().min(1),
+    order: z.number().int().min(0),
+  })).min(1),
 });
 
 /**
  * PUT /api/admin/work/exhibitions/reorder
- * Work 전시 순서 변경 (트랜잭션 기반)
+ * Work 전시 순서 일괄 변경 (batch, 단일 트랜잭션)
  */
 export async function PUT(request: NextRequest) {
   try {
@@ -20,69 +21,36 @@ export async function PUT(request: NextRequest) {
     if (!authResult.authenticated) return authResult.error;
 
     const body = await request.json();
-    const validation = ReorderSchema.safeParse(body);
+    const validation = BatchReorderSchema.safeParse(body);
 
     if (!validation.success) {
       return errorResponse('유효하지 않은 요청입니다', 'VALIDATION_ERROR', 400);
     }
 
-    const { exhibitionId, newOrder } = validation.data;
+    const { items } = validation.data;
 
-    const currentExhibition = await prisma.workExhibition.findUnique({
-      where: { id: exhibitionId },
+    // Verify all exhibitions exist
+    const ids = items.map(i => i.id);
+    const existing = await prisma.workExhibition.findMany({
+      where: { id: { in: ids } },
+      select: { id: true },
     });
 
-    if (!currentExhibition) {
-      return errorResponse('전시를 찾을 수 없습니다', 'NOT_FOUND', 404);
+    if (existing.length !== ids.length) {
+      return errorResponse('일부 전시를 찾을 수 없습니다', 'NOT_FOUND', 404);
     }
 
-    await prisma.$transaction(async (tx) => {
-      const allExhibitions = await tx.workExhibition.findMany({
-        orderBy: { order: 'asc' },
-      });
+    // Single transaction with direct updates (order is not unique)
+    await prisma.$transaction(
+      items.map(item =>
+        prisma.workExhibition.update({
+          where: { id: item.id },
+          data: { order: item.order },
+        })
+      )
+    );
 
-      // First pass: temporary negative orders
-      let idx = 0;
-      for (const exhibition of allExhibitions) {
-        if (exhibition.id === exhibitionId) continue;
-        if (idx === newOrder) idx++;
-
-        await tx.workExhibition.update({
-          where: { id: exhibition.id },
-          data: { order: -(idx + 100) },
-        });
-        idx++;
-      }
-
-      await tx.workExhibition.update({
-        where: { id: exhibitionId },
-        data: { order: -(newOrder + 100) },
-      });
-
-      // Second pass: final positive orders
-      idx = 0;
-      for (const exhibition of allExhibitions) {
-        if (exhibition.id === exhibitionId) continue;
-        if (idx === newOrder) idx++;
-
-        await tx.workExhibition.update({
-          where: { id: exhibition.id },
-          data: { order: idx },
-        });
-        idx++;
-      }
-
-      await tx.workExhibition.update({
-        where: { id: exhibitionId },
-        data: { order: newOrder },
-      });
-    });
-
-    const updated = await prisma.workExhibition.findUnique({
-      where: { id: exhibitionId },
-    });
-
-    return successResponse(updated, '순서가 변경되었습니다');
+    return successResponse(null, '순서가 일괄 변경되었습니다');
   } catch (error) {
     console.error('전시 순서 변경 오류:', error);
     return errorResponse('순서 변경 중 오류가 발생했습니다', 'REORDER_ERROR', 500);
